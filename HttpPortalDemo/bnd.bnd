@@ -5,7 +5,7 @@ Bundle-License: http://www.gnu.org/licenses/gpl-3.0.txt
 
 -buildpath: osgi.core;version=6.0
 
-Bundle-Activator: org.jgrapes.http.demo.portal.HttpPortalDemo
+Bundle-Activator: org.jgrapes.portal.demo.HttpPortalDemo
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \
@@ -13,9 +13,6 @@ Bundle-Activator: org.jgrapes.http.demo.portal.HttpPortalDemo
     "The .classpath contains an unknown container: org.eclipse.buildship.core.gradleclasspathcontainer. This could make your build less portable.", \
     "The build path does not refer to the bnd container 'aQute.bnd.classpath.container'"
     
-Private-Package: \
-	org.jgrapes.http.demo.portal,\
-	org.jgrapes.http.demo.portlets,\
-	org.jgrapes.http.demo.portlets.helloworld
 
 -includeresource: resources
+Export-Package: org.jgrapes.portal.demo

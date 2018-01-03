@@ -16,4 +16,4 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.http.demo.portlets;
+package org.jgrapes.portal.demo.portlets;

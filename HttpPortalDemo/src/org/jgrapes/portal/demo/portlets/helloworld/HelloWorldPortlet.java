@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.http.demo.portlets.helloworld;
+package org.jgrapes.portal.demo.portlets.helloworld;
 
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
@@ -31,6 +31,7 @@ import org.jgrapes.portal.PortalSession;
 import org.jgrapes.portal.PortalView;
 import org.jgrapes.portal.UserPrincipal;
 import org.jgrapes.portal.Utils;
+import org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortlet;
 import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;

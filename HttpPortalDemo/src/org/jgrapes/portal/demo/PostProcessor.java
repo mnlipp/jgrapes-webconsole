@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.http.demo.portal;
+package org.jgrapes.portal.demo;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;

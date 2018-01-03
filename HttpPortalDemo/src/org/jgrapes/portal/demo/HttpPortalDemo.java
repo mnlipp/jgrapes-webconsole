@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.http.demo.portal;
+package org.jgrapes.portal.demo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,7 +44,6 @@ import org.jgrapes.http.HttpServer;
 import org.jgrapes.http.InMemorySessionManager;
 import org.jgrapes.http.LanguageSelector;
 import org.jgrapes.http.StaticContentDispatcher;
-import org.jgrapes.http.demo.portlets.helloworld.HelloWorldPortlet;
 import org.jgrapes.http.events.GetRequest;
 import org.jgrapes.http.events.PostRequest;
 import org.jgrapes.io.FileStorage;
@@ -55,6 +54,7 @@ import org.jgrapes.net.TcpServer;
 import org.jgrapes.portal.KVStoreBasedPortalPolicy;
 import org.jgrapes.portal.Portal;
 import org.jgrapes.portal.PortalLocalBackedKVStore;
+import org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortlet;
 import org.jgrapes.portal.providers.chartjs.ChartJsProvider;
 import org.jgrapes.portal.providers.datatables.DatatablesProvider;
 import org.jgrapes.portal.providers.markdownit.MarkdownItProvider;

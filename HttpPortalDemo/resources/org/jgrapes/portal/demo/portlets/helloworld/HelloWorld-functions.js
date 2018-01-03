@@ -9,7 +9,7 @@
     })
 
     JGPortal.registerPortletMethod(
-            "org.jgrapes.http.demo.portlets.helloworld.HelloWorldPortlet",
+            "org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortlet",
             "setWorldVisible", function(portletId, params) {
                 let portlet = JGPortal.findPortletView(portletId);
                 let image = portlet.find(".helloWorldIcon");
