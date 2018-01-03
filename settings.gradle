@@ -1,6 +1,14 @@
 rootProject.name = 'JGrapes-Portal'
 
 include 'org.jgrapes.portal'
+
+for (File file: rootDir.listFiles()) {
+        if (file.isDirectory() &&
+                file.name.startsWith("org.jgrapes.portal.themes.") ) {
+                include file.name
+        }
+}
+
 include 'org.jgrapes.portal.providers.datatables'
 include 'org.jgrapes.portal.providers.chartjs'
 include 'org.jgrapes.portal.providers.markdownit'

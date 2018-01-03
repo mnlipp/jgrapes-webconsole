@@ -74,6 +74,18 @@ subprojects {
 				transitive false
 			}
 		}
+		
+		if (project.name.startsWith("org.jgrapes.portal.themes.")) {
+			dependencies {
+				compile project(':org.jgrapes.portal')
+			}
+			
+			jar {
+				into('META-INF') {
+					from 'resources/META-INF'
+				}
+			}
+		}
 	}
 	
     dependencies {
