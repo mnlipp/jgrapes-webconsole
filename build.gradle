@@ -1,0 +1,240 @@
+import java.util.regex.Pattern
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+import aQute.bnd.osgi.Processor
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
+    }
+}
+
+plugins {
+	id "maven-publish"
+	id "signing"
+	id "org.jdrupes.mdoclet" version "1.0.3"
+	id "com.moowork.node" version "1.2.0"
+}
+
+ext {
+	isTravisBuild = System.getenv().get("TRAVIS") == 'true'
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url 'https://jitpack.io' }
+    }
+	
+	// Makes Eclipse-groovy handle *.gradle file properly
+	apply plugin:'groovy'
+}
+
+subprojects {
+
+	apply plugin: 'signing'
+	apply plugin: 'maven'
+	apply plugin: 'maven-publish'
+	
+    tasks.withType(Javadoc).all { enabled = false }
+
+	group = 'org.jgrapes'
+	
+	ext.releaseVersion = "0.9.3"
+	ext.isSnapshot = true
+	version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
+
+	if (project.file("bnd.bnd").exists()) {
+
+		apply plugin: 'biz.aQute.bnd.builder'
+		
+		// Provide the Bundle-Version (shared by all libraries)
+		String bundleVersion = releaseVersion +
+			(isSnapshot ? ".-\${tstamp}-SNAPSHOT" : releaseVersion + ".rel")
+		
+		jar {
+			manifest {
+				attributes('Bundle-Version': bundleVersion)
+			}
+		}
+
+		dependencies {
+			// Use gradle mechanims to get the artifact to baseline against.
+			// We baseline against the previous release 
+			// (latest excluding current)
+			baseline("${group}:${project.name}:(,${releaseVersion})") {
+				transitive false
+			}
+		}
+	}
+	
+    dependencies {
+        compileOnly 'org.osgi:org.osgi.annotation:6.0.0'
+        testCompile 'junit:junit:4.12', 'net.jodah:concurrentunit:0.4.2'
+		testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-3"
+    }
+
+    // Configure sensible layout
+    sourceSets {
+        main {
+            java {
+                srcDir 'src'
+            }
+            resources {
+                srcDir 'resources'
+            }
+        }
+
+        test {
+            java {
+                srcDir 'test'
+            }
+			groovy {
+				srcDir 'test'
+			}
+            resources {
+                srcDir 'resources'
+            }
+        }
+    }
+    
+    test {
+		if (!rootProject.isTravisBuild) {
+			jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=18888'
+		}
+		
+        testLogging {
+            events TestLogEvent.FAILED,
+                   TestLogEvent.SKIPPED,
+                   TestLogEvent.PASSED,
+                   TestLogEvent.STANDARD_ERROR,
+                   TestLogEvent.STANDARD_OUT
+
+            exceptionFormat TestExceptionFormat.FULL
+
+            showStandardStreams = true
+            showExceptions = true
+            showStackTraces = true
+            showCauses = true
+        }
+		
+		if (isTravisBuild) {
+            maxParallelForks = 2
+            maxHeapSize = '768m'
+        }
+    }
+
+	// Additional jars for publishing
+
+	task sourcesJar(type: Jar) {
+		from sourceSets.main.allJava
+		classifier "sources"
+	}
+	
+	task javadocJar(type: Jar) {
+		from (project.rootDir) {
+			include 'README.md'
+		}
+		classifier "javadoc"
+	}
+	
+	// MavenPublishing (new)
+	
+	publishing {
+		
+		repositories {
+			maven {
+				name "snapshot"
+				url "https://oss.sonatype.org/content/repositories/snapshots/"
+				credentials {
+					username project.properties['sonatypeUsername'] ?: "nouser"
+					password project.properties['sonatypePassword'] ?: "nopass"
+				}
+			}
+			maven {
+				name "release"
+				url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+				credentials {
+					username project.properties['sonatypeUsername'] ?: "nouser"
+					password project.properties['sonatypePassword'] ?: "nopass"
+				}
+			}
+		}
+	}
+
+	// Additional configuration of publishing
+	apply plugin: ConfigurePublishing
+
+	configurePublishing {
+		withPomXml {
+			asNode().with {
+				appendNode('url', 'http://mnlipp.github.io/jgrapes/')
+				appendNode('scm').with {
+					appendNode('url', 'scm:git@github.com:mnlipp/jgrapes.git')
+					appendNode('connection', 'scm:git@github.com:mnlipp/jgrapes.git')
+					appendNode('developerConnection', 'git@github.com:mnlipp/jgrapes.git')
+				}
+				appendNode('licenses').with {
+					appendNode('license').with {
+						appendNode('name', 'GPL 3.0')
+						appendNode('url', 'https://www.gnu.org/licenses/gpl-3.0.en.html')
+						appendNode('distribution', 'repo')
+					}
+				}
+				appendNode('developers').with {
+					appendNode('developer').with {
+						appendNode('id', 'mnlipp')
+						appendNode('name', 'Michael N. Lipp')
+					}
+				}
+			}
+		}
+	}
+	
+	afterEvaluate {
+		if(!project.name.startsWith("org.jgrapes")) {
+			tasks.matching { it.group == "publishing" }.all {
+				enabled = false
+			}
+			tasks.matching { it.name == "baseline" }.all {
+				enabled = false
+			}
+		}
+	}
+	
+}
+
+configurations {
+    javadocTaglets
+}
+
+dependencies {
+    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:1.0.+"
+    // javadocTaglets "com.github.mnlipp:jdrupes-taglets:master-SNAPSHOT"
+}
+
+javadoc {
+
+    options.tagletPath = configurations.javadocTaglets.files as List
+    options.taglets = ["org.jdrupes.taglets.plantUml.Taglet"]
+
+    classpath = files(subprojects.collect {project -> 
+        project.sourceSets.main.compileClasspath})
+    source subprojects.collect {project -> project.sourceSets.main.allJava } 
+	options.addStringOption("overview", "overview.md")
+	inputs.file "overview.md"
+	options.addBooleanOption("use", true)
+	options.addBooleanOption("linksource", true)
+	options.stylesheetFile(file("stylesheet.css"))
+    options.addStringOption("bottom", file("misc/javadoc.bottom.txt").text)
+    options.addStringOption("link", "http://docs.oracle.com/javase/8/docs/api/")
+	destinationDir = file("../jgrapes.gh-pages/javadoc")
+}
