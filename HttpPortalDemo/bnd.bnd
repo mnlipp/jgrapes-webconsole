@@ -16,3 +16,6 @@ Bundle-Activator: org.jgrapes.portal.demo.HttpPortalDemo
 
 -includeresource: resources
 Export-Package: org.jgrapes.portal.demo
+Private-Package: \
+	org.jgrapes.portal.demo.portlets,\
+	org.jgrapes.portal.demo.portlets.helloworld
