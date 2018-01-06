@@ -521,7 +521,7 @@ var JGPortal = {
     
     /**
      * Registers a portlet method that to be invoked if a
-     * JSON RPC notification with method <code>invokePortletMethod</code>
+     * JSON RPC notification with method <code>notifyPortletView</code>
      * is received.
      * 
      * @param {string} portletClass the portlet type for which
@@ -538,8 +538,8 @@ var JGPortal = {
         classRegistry[methodName] = method;
     }
 
-    webSocketConnection.addMessageHandler('invokePortletMethod',
-        function invokePortletMethod(portletClass, portletId, method, params) {
+    webSocketConnection.addMessageHandler('notifyPortletView',
+        function notifyPortletView(portletClass, portletId, method, params) {
             let classRegistry = portletFunctionRegistry[portletClass];
             if (classRegistry) {
                 let f = classRegistry[method];
@@ -965,7 +965,7 @@ var JGPortal = {
     };
 
     /**
-     * Send a notification with method <code>sendToPortlet</code>
+     * Send a notification with method <code>notifyPortletModel</code>
      * and the given portlet id, method and parameters as the 
      * notification's parameters to the server.
      * 
@@ -973,12 +973,12 @@ var JGPortal = {
      * @param {string} method the method to invoke
      * @param params the parameters to send
      */
-    JGPortal.sendToPortlet = function(portletId, method, ...params) {
+    JGPortal.notifyPortletModel = function(portletId, method, ...params) {
         if (params === undefined) {
-            webSocketConnection.send({"jsonrpc": "2.0", "method": "sendToPortlet",
+            webSocketConnection.send({"jsonrpc": "2.0", "method": "notifyPortletModel",
                 "params": [ portletId, method ]});
         } else {
-            webSocketConnection.send({"jsonrpc": "2.0", "method": "sendToPortlet",
+            webSocketConnection.send({"jsonrpc": "2.0", "method": "notifyPortletModel",
                 "params": [ portletId, method, params ]});
         }
     };

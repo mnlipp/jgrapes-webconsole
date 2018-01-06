@@ -39,7 +39,7 @@ import org.jgrapes.core.Event;
  * 
  * The complete sequence of events is shown in the diagram.
  * 
- * ![Portal Ready Event Sequence](AddPortletTypeSeq.svg)
+ * ![Portal Ready Event Sequence](AddToHead.svg)
  * 
  * Of course, due to internal buffering, the "Response Header" data
  * and the "Response body" data may collapse in a single message

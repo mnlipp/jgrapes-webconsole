@@ -45,8 +45,9 @@
  * an initial HTML document that implements the basic structure of
  * the portal. Aside from additional HTTP requests for static resources
  * like JavaScript libraries, CSS, images etc. all information is
- * then exchanged using a web socket connection that is established
- * immediately after the initial HTML has been loaded.
+ * then exchanged using JSON messages exchanged over a web socket 
+ * connection that is established immediately after the initial 
+ * HTML has been loaded.
  * 
  * Page resource providers
  * -----------------------
@@ -58,8 +59,7 @@
  * usually preferable to add such libraries independent from individual
  * portlets in order to avoid duplicate loading and version conflicts.
  * This is done by {@link org.jgrapes.portal.PageResourceProvider}s
- * that issue {@link org.jgrapes.portal.events.AddPageResources} events
- * on startup. See the event's description for details.
+ * that fire the required events on portal startup (see below).
  * 
  * Portlets
  * --------
@@ -97,11 +97,11 @@
  * and another component that ensures that the portal is not empty when
  * a new session is initially created. The demo includes such a component.
  * 
- * Data exchange
- * -------------
+ * Portal session startup
+ * ----------------------
  * 
- * The following diagram shows the start of the 
- * portal bootstrap to the first JSON messages.
+ * The following diagram shows the start of a portal session 
+ * up to the exchange of the first messages on the web socket connection.
  * 
  * ![Boot Event Sequence](PortalBootSeq.svg)
  * 
@@ -128,8 +128,8 @@
  * serializes the data and sends it to the websocket using 
  * {@link org.jgrapes.io.events.Output} events.
  * 
- * Boot sequence
- * -------------
+ * Portal session preparation and configuration
+ * --------------------------------------------
  * 
  * The diagram below shows the complete mandatory sequence of events 
  * following the portal ready message. The diagram uses a 
@@ -140,37 +140,66 @@
  * 
  * ![Portal Ready Event Sequence](PortalReadySeq.svg)
  * 
- * The remaining part of this section provides an overview of the boot 
- * sequence. Detailed information about the purpose and handling of the 
- * different events can be found in their respective JavaDoc or in the 
- * documentation of the components that handle them. Note that the more 
- * detailed descriptions use the simplified version of the sequence 
- * diagram as well.
+ * The remaining part of this section provides an overview of the 
+ * preparation and configuration sequence. Detailed information 
+ * about the purpose and handling of the different events can be 
+ * found in their respective JavaDoc or in the documentation of 
+ * the components that handle them. Note that the these 
+ * detailed descriptions use the simplified version of the 
+ * sequence diagram as well.
  * 
- * The boot sequence starts with 
- * {@link org.jgrapes.portal.events.AddPortletType} events fired 
- * by the portlets in response to the 
- * {@link org.jgrapes.portal.events.PortalReady} event. These cause the
- * portal page in the browser to register the portlet type in the 
- * portal's menu of instantiable portlets and to load any additionally 
+ * The preparation sequence starts with 
+ * {@link org.jgrapes.portal.events.AddPageResources} events fired 
+ * by the {@link org.jgrapes.portal.PageResourceProvider} components
+ * in response to the {@link org.jgrapes.portal.events.PortalReady} event.
+ * These cause the portal page to load additional, global resources.
+ * 
+ * In parallel (also in response to the 
+ * {@link org.jgrapes.portal.events.PortalReady} event), each portlet 
+ * component fires an {@link org.jgrapes.portal.events.AddPortletType} event.
+ * This cause the portal page in the browser to register the portlet type 
+ * in the portal's menu of instantiable portlets and to load any additionally 
  * required resources.
  * 
- * When all {@link org.jgrapes.portal.events.AddPortletType} events have
- * been processed, the portal is considered ready for usage and a
+ * When all previously mentioned events have
+ * been processed, the portal is considered prepared for usage and a
  * {@link org.jgrapes.portal.events.PortalPrepared} event is generated
  * (by the framework as {@link org.jgrapes.core.CompletionEvent} of the
  * {@link org.jgrapes.portal.events.PortalReady} event). This causes
  * the portal policy to send the last known layout to the portal page
  * in the browser and to send 
- * {@link org.jgrapes.portal.events.RenderPortletRequest} events to
- * the portlets. These are the same events as those sent by the browser
+ * {@link org.jgrapes.portal.events.RenderPortletRequest} events 
+ * for all portlets (portelt instances) in that last known layout.
+ * These are the same events as those sent by the browser
  * when the user adds a new portlet instance to the portal page.
+ * The portal policy thus "replays" the creation of the portelts.
  * 
  * As completion event of the {@link org.jgrapes.portal.events.PortalPrepared}
  * event, the framework generates a 
  * {@link org.jgrapes.portal.events.PortalConfigured} event which is sent to
  * the portal, indicating that it is now ready for use.
  * 
+ * Portal session use
+ * ------------------
+ * 
+ * After the portal session has been configured, the system usually
+ * waits for input from the user. Changes of the layout of the
+ * portal page result in events such as 
+ * {@link org.jgrapes.portal.events.AddPortletRequest},
+ * {@link org.jgrapes.portal.events.DeletePortletRequest} and
+ * {@link org.jgrapes.portal.events.RenderPortletRequest}.
+ * 
+ * Actions on portlets trigger JSON messages that result in
+ * {@link org.jgrapes.portal.events.NotifyPortletModel} events
+ * that are processed by the respective portlet component. If,
+ * due to the results of the action, the representation of the
+ * portlet on the portal page must be updated, the portlet 
+ * component fires a 
+ * {@link org.jgrapes.portal.events.NotifyPortletView} event.
+ * 
+ * {@link org.jgrapes.portal.events.NotifyPortletView} events
+ * can also be sent unsolicitedly by portelt components if
+ * the model data changes independent of user actions.
  * 
  * @startuml PortalStructure.svg
  * skinparam packageStyle rectangle
@@ -259,24 +288,28 @@
  * Browser -> Portal: "portalReady"
  * activate Portal
  * 
- * loop for all page resource providers
- *     Portal -> PageResourceProviderX: PortalReady
- *     activate PageResourceProviderX
- *     PageResourceProviderX -> Portal: AddPageResources
- *     deactivate PageResourceProviderX
- *     activate Portal
- *     Portal -> Browser: "addPageResources"
- *     deactivate Portal
- * end
+ * par
  * 
- * loop for all portlets
- *     Portal -> PortletX: PortalReady
- *     activate PortletX
- *     PortletX -> Portal: AddPortletType 
- *     deactivate PortletX
- *     activate Portal
- *     Portal -> Browser: "addPortletType"
- *     deactivate Portal
+ *     loop for all page resource providers
+ *         Portal -> PageResourceProviderX: PortalReady
+ *         activate PageResourceProviderX
+ *         PageResourceProviderX -> Portal: AddPageResources
+ *         deactivate PageResourceProviderX
+ *         activate Portal
+ *         Portal -> Browser: "addPageResources"
+ *         deactivate Portal
+ *     end
+ * 
+ *     loop for all portlets
+ *         Portal -> PortletX: PortalReady
+ *         activate PortletX
+ *         PortletX -> Portal: AddPortletType 
+ *         deactivate PortletX
+ *         activate Portal
+ *         Portal -> Browser: "addPortletType"
+ *         deactivate Portal
+ *     end
+ * 
  * end
  * 
  * actor Framework

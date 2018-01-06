@@ -5,7 +5,7 @@
     $("body").on("click", ".HelloWorld-view .HelloWorld-toggle",
             function(event) {
         let portletId = $(this).closest("[data-portlet-id]").attr("data-portlet-id");
-        JGPortal.sendToPortlet(portletId, "toggleWorld");
+        JGPortal.notifyPortletModel(portletId, "toggleWorld");
     })
 
     JGPortal.registerPortletMethod(

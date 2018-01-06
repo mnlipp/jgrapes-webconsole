@@ -25,7 +25,27 @@ import org.jgrapes.portal.RenderSupport;
 
 /**
  * A decoded notification (as defined by the JSON RPC specification) that
- * invokes a method on a portlet model.
+ * invokes a method on a portlet model. Usually, though not necessarily,
+ * the portlet component responds by sending a
+ * {@link NotifyPortletView} to update the portlet representation.
+ * 
+ * ![Event Sequence](NotifyPortletModelSeq.svg)
+ * 
+ * @startuml NotifyPortletModelSeq.svg
+ * hide footbox
+ * 
+ * Browser -> Portal: "notifyPortletModel"
+ * activate Portal
+ * Portal -> Portlet: NotifyPortletModel
+ * deactivate Portal
+ * activate Portlet
+ * Portlet -> Portal: NotifyPortletView
+ * deactivate Portlet
+ * activate Portal
+ * Portal -> Browser: "notifyPortletView"
+ * deactivate Portal
+ * 
+ * @enduml
  */
 public class NotifyPortletModel extends Event<Void> {
 

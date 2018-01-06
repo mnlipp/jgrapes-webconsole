@@ -26,7 +26,7 @@ import org.jgrapes.core.Event;
  */
 public class NotifyPortletView extends Event<Void> {
 
-	private String portletClass;
+	private String portletType;
 	private String portletId;
 	private String method;
 	private Object[] params;
@@ -34,16 +34,17 @@ public class NotifyPortletView extends Event<Void> {
 	/**
 	 * Creates a new event.
 	 *  
-	 * @param portletClass the portlet class (used to look up the available
-	 * functions)
-	 * @param portletId the portlet (view) that the notification is directed
-	 * at
-	 * @param method the method (function) to be executed
+	 * @param portletType the portlet type (used by the portal 
+	 * core JS to look up the available functions, see {@link AddPortletType})
+	 * @param portletId the portlet (view) instance that the 
+	 * notification is directed at
+	 * @param method the method (function) to be executed, must
+	 * have been registered by handling {@link AddPortletType}
 	 * @param params the parameters
 	 */
-	public NotifyPortletView(String portletClass,
+	public NotifyPortletView(String portletType,
 	        String portletId, String method, Object... params) {
-		this.portletClass = portletClass;
+		this.portletType = portletType;
 		this.portletId = portletId;
 		this.method = method;
 		this.params = params;
@@ -54,8 +55,8 @@ public class NotifyPortletView extends Event<Void> {
 	 * 
 	 * @return the portlet class
 	 */
-	public String portletClass() {
-		return portletClass;
+	public String portletType() {
+		return portletType;
 	}
 
 	/**

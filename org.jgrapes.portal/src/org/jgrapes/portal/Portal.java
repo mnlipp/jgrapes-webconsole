@@ -243,8 +243,8 @@ public class Portal extends Component {
 	public void onNotifyPortletView(
 			NotifyPortletView event, PortalSession channel) 
 					throws InterruptedException, IOException {
-		fire(new JsonOutput("invokePortletMethod",
-				event.portletClass(), event.portletId(), 
+		fire(new JsonOutput("notifyPortletView",
+				event.portletType(), event.portletId(), 
 				event.method(), event.params()), channel);
 	}
 
@@ -296,7 +296,7 @@ public class Portal extends Component {
 			fire(new SetTheme(params.getString(0)), channel);
 			break;
 		}
-		case "sendToPortlet": {
+		case "notifyPortletModel": {
 			fire(new NotifyPortletModel(view.renderSupport(), params.getString(0),
 					params.getString(1), params.size() <= 2
 					? JsonValue.EMPTY_JSON_ARRAY : params.getJsonArray(2)),

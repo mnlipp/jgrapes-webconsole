@@ -22,8 +22,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jgrapes.portal.events.AddPageResources.ScriptResource;
+
 /**
- * 
+ * This interface provides portlet related constants. Portlets
+ * need not implement this interface, not even as a marker interface.
+ * They only have to expose a specific response behavior to certain
+ * events. An overview of the event sequences is provided by the
+ * package description. Make sure to read this description first.
+ * The sections following provide details for some of the
+ * event sequences.
  */
 public interface Portlet {
 	

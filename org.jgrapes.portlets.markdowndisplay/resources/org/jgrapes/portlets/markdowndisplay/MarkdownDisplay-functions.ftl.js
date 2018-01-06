@@ -76,7 +76,7 @@ var orgJGrapesPortletsMarkdownDisplay = {
             let oet = event.originalEvent.target;
             if (oet.classList && oet.classList.contains("ui-dialog-titlebar-close")) {
                 let portletId = $(event.target).attr("data-portlet-id");
-                JGPortal.sendToPortlet(portletId, "update", titleSource.val(),
+                JGPortal.notifyPortletModel(portletId, "update", titleSource.val(),
                         previewSource.val(), viewSource.val());
             }
         })
