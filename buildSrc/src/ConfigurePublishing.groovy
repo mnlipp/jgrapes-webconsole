@@ -67,6 +67,19 @@ class ConfigurePublishing implements Plugin<Project> {
 					pom.withXml(project.configurePublishing.withPomXml)
 					
 					if (project.hasProperty("signing.keyId")) {
+						// Add signature files to publication (see MavenPublication.artifact)
+						project.tasks.signArchives.signatureFiles.each {
+							artifact(it) {
+								def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+								if (matcher.find()) {
+									classifier = matcher.group(1)
+								} else {
+									classifier = null
+								}
+								extension = 'jar.asc'
+							}
+						}
+	
 						// Sign and add the pom
 						pom.withXml {
 							def pomFile = project.file("${project.buildDir}/generated-pom.xml")
@@ -85,12 +98,6 @@ class ConfigurePublishing implements Plugin<Project> {
 		
 		if (project.hasProperty("signing.keyId")) {
 			project.model {
-				tasks.publishMavenJavaPublicationToMavenLocal {
-					dependsOn(project.tasks.signArchives)
-				}
-				tasks.publishMavenJavaPublicationToSnapshotRepository {
-					dependsOn(project.tasks.signArchives)
-				}
 				tasks.publishMavenJavaPublicationToReleaseRepository {
 					dependsOn(project.tasks.signArchives)
 				}
