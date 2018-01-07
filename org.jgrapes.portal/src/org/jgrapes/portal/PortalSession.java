@@ -29,7 +29,6 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.Manager;
-import org.jgrapes.http.LanguageSelector.Selection;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.IOSubchannel.DefaultSubchannel;
@@ -68,7 +67,7 @@ import org.jgrapes.io.events.Closed;
  * usually only be obtained from the HTTP event or WebSocket
  * channel by looking for an association of type {@link Session}.
  * It also provides access to the {@link Locale} as maintained
- * by the upstream web socket.
+ * by the browser session.
  * 
  * @startuml PortalSession.svg
  * class PortalSession {
@@ -107,7 +106,6 @@ public class PortalSession extends DefaultSubchannel {
 	private long timeout;
 	private Timer timeoutTimer;
 	private Session browserSession = null;
-	private Locale locale = Locale.getDefault();
 	private EventPipeline eventPipeline = null;
 	// Must be weak, else there will always be a reference to the 
 	// upstream channel and, through the reverseMap, to this object.
@@ -199,8 +197,6 @@ public class PortalSession extends DefaultSubchannel {
 			this.upstreamChannel = null;
 		} else {
 			this.upstreamChannel = new WeakReference<IOSubchannel>(upstreamChannel);
-			upstreamChannel.associated(Selection.class).ifPresent(
-					s -> locale = s.get()[0]);
 		}
 		return this;
 	}
@@ -242,22 +238,12 @@ public class PortalSession extends DefaultSubchannel {
 
 	/**
 	 * Return the portal session's locale. The locale is obtained
-	 * from the upstream channel set with 
-	 * {@link #setUpstreamChannel(IOSubchannel)}.
+	 * from the browser session.
 	 * 
 	 * @return the locale
 	 */
 	public Locale locale() {
-		return locale;
-	}
-
-	/**
-	 * Set the locale on the upstream channel.
-	 * 
-	 * @param locale the locale to set
-	 */
-	public void setLocale(Locale locale) {
-		upstreamChannel().ifPresent(u -> 
-			u.associated(Selection.class).ifPresent(s -> s.prefer(locale)));
+		return browserSession == null ? Locale.getDefault() 
+				: browserSession.locale();
 	}
 }

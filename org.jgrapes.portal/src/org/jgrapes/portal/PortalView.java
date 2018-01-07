@@ -694,9 +694,15 @@ public class PortalView extends Component {
 	@Handler(dynamic=true)
 	public void onSetLocale(SetLocale event, PortalSession channel)
 			throws InterruptedException, IOException {
-		supportedLocales.stream()
-			.filter(l -> l.equals(event.locale())).findFirst()
-			.ifPresent(l ->	channel.setLocale(l));
+		Session session = channel.browserSession();
+		if (session != null) {
+			Selection selection = (Selection)session.get(Selection.class);
+			if (selection != null) {
+				supportedLocales.stream()
+				.filter(l -> l.equals(event.locale())).findFirst()
+				.ifPresent(l -> selection.prefer(l));
+			}
+		}
 		fire(new JsonOutput("reload"), channel);
 	}
 	
