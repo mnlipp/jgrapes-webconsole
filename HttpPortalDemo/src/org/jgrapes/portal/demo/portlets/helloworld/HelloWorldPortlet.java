@@ -37,6 +37,7 @@ import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
 import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
+import org.jgrapes.portal.events.DisplayNotification;
 import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
@@ -212,6 +213,10 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		channel.respond(new NotifyPortletView(type(),
 				portletModel.getPortletId(), "setWorldVisible", 
 				portletModel.isWorldVisible()));
+		channel.respond(new DisplayNotification("<span>"
+				+ resourceBundle(channel.locale()).getString("visibilityChange")
+				+ "</span>")
+				.addOption("autoClose", 2000));
 	}
 
 	@SuppressWarnings("serial")

@@ -29,6 +29,7 @@ import java.nio.CharBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -56,6 +57,7 @@ import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
 import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
+import org.jgrapes.portal.events.DisplayNotification;
 import org.jgrapes.portal.events.JsonInput;
 import org.jgrapes.portal.events.JsonOutput;
 import org.jgrapes.portal.events.LastPortalLayout;
@@ -246,6 +248,16 @@ public class Portal extends Component {
 		fire(new JsonOutput("notifyPortletView",
 				event.portletType(), event.portletId(), 
 				event.method(), event.params()), channel);
+	}
+
+	@Handler 
+	public void onDisplayNotification(
+			DisplayNotification event, PortalSession channel) 
+					throws InterruptedException, IOException {
+		Map<String,Object> options = event.options();
+		options.put("destroyOnClose", true);
+		fire(new JsonOutput("displayNotification",
+				event.content(), options), channel);
 	}
 
 	@Handler

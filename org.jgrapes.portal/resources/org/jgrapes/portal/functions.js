@@ -896,7 +896,7 @@ var JGPortal = {
             }
         });
     
-    webSocketConnection.addMessageHandler('createNotification',
+    webSocketConnection.addMessageHandler('displayNotification',
         function (content, options) {
             $( content ).notification( options );
         });
@@ -1021,6 +1021,13 @@ var JGPortal = {
     
 })();
 
+/**
+ * A jQuery UI plugin for displaying notifications on the top of 
+ * the portal page.
+ * 
+ * @name NotificationPlugin
+ * @namespace NotificationPlugin
+ */
 (function() {
     var notificationContainer = null;
     var notificationCounter = 0;
@@ -1034,7 +1041,30 @@ var JGPortal = {
     
     $.widget( "ui.notification", {
         
-        // Default options.
+        /**
+         * <dl>
+         * <dt>error {Boolean}</dt>
+         *   <dd>Indicates that the notification is to be display as error.</dd>
+         * <dt>autoClose {integer}</dt>
+         *   <dd>If specified, closes the botification automatically after
+         *   the given number of milliseconds.</dd>
+         * <dt>destroyOnClose {Boolean}</dt>
+         *   <dd>Indicates that the widget should be destroyed if the
+         *   notification is closed.</dd>
+         * <dt>show {Object}</dt>
+         *   <dd>If and how to animate the showing of the notification
+         *   (see the <a href="https://api.jqueryui.com/jQuery.widget/#option-show">
+         *   jQuery UI</a> documentation). Defaults to: <code>
+         *   { effect: "blind", direction: "up", duration: "fast", }</code></dd>
+         * <dt>hide {Object}</dt>
+         *   <dd>If and how to animate the showing of the notification
+         *   (see the <a href="https://api.jqueryui.com/jQuery.widget/#option-hide">
+         *   jQuery UI</a> documentation). Defaults to: <code>
+         *   { effect: "blind", direction: "up", duration: "fast", }</dd>
+         * </dl>
+         * 
+         * @memberof NotificationPlugin
+         */
         options: {
             classes: {
                 "ui-notification": "ui-corner-all ui-widget-shadow",
