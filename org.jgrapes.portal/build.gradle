@@ -42,7 +42,7 @@ jar {
 
 apply plugin: 'com.moowork.node'
 
-ext.jsDocDestDir = "${rootProject.projectDir}/../jgrapes.gh-pages/portal/jsdoc" 
+ext.jsDocDestDir = "${rootProject.projectDir}/../jgrapes.gh-pages/jsdoc-portal" 
 
 task documentationjs(type: NodeTask) {
 	dependsOn(':npmInstall')
