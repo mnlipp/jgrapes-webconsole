@@ -22,8 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
-
 /**
  * This interface provides portlet related constants. Portlets
  * need not implement this interface, not even as a marker interface.
