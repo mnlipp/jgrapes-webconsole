@@ -245,7 +245,8 @@ javadoc {
 
     classpath = files(subprojects.collect {project -> 
         project.sourceSets.main.compileClasspath})
-    source subprojects.collect {project -> project.sourceSets.main.allJava } 
+    source subprojects.findAll({project -> project.name != "HttpPortalDemo"}) \
+		.collect {project -> project.sourceSets.main.allJava }
     options.addStringOption("doctitle", "JGrapes Portal ${project.version}")
 	options.addStringOption("overview", "overview.md")
 	inputs.file "overview.md"
