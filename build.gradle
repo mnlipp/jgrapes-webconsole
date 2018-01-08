@@ -20,10 +20,17 @@ plugins {
 	id "signing"
 	id "org.jdrupes.mdoclet" version "1.0.3"
 	id "com.moowork.node" version "1.2.0"
+	id 'org.ajoberstar.git-publish' version '0.4.0-rc.2'
 }
 
 ext {
 	isTravisBuild = System.getenv().get("TRAVIS") == 'true'
+}
+
+// Prepare github authentication for plugins
+if (System.properties['org.ajoberstar.grgit.auth.username'] == null) {
+	System.setProperty('org.ajoberstar.grgit.auth.username',
+		System.getenv("GH_TOKEN") ?: project.properties['github.token'] ?: "nouser")
 }
 
 allprojects {
@@ -258,3 +265,37 @@ javadoc {
     options.links "../javadoc"
 	destinationDir = file("../jgrapes.gh-pages/javadoc-portal")
 }
+
+gitPublish {
+	repoUri = 'https://github.com/mnlipp/jgrapes.git'
+	branch = 'gh-pages'
+	contents {
+		from(javadoc) {
+			into 'javadoc-portal'
+		}
+		from('../jgrapes.gh-pages/jsdoc-portal') {
+			into 'jsdoc-portal'
+		}
+	}
+	preserve { include '**/*' }
+	commitMessage = "Updated."
+}
+
+// Until https://github.com/ajoberstar/gradle-git-publish/issues/41 is fixed
+tasks.gitPublishCopy.dependsOn javadoc
+afterEvaluate {
+	tasks.gitPublishCopy.dependsOn(':org.jgrapes.portal:documentationjs')
+}
+
+task stage {
+	// Build everything first
+	subprojects.tasks.each { tc -> dependsOn tc.findByName("build") }
+	// Publish JavaDoc
+	dependsOn gitPublishPush	
+}
+
+configure(stage) {
+	description = 'To be executed by travis, build and update JavaDoc.'
+	group = 'build'
+}
+
