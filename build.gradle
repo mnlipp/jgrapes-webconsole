@@ -249,7 +249,7 @@ gitPublish {
 	branch = 'gh-pages'
 	contents {
 		from("${buildDir}/javadoc") {
-			into 'javadoc'
+			into 'javadoc-portal'
 		}
 	}
 	preserve { include '**/*' }
