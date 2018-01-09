@@ -28,8 +28,6 @@ import java.util.Set;
  * They only have to expose a specific response behavior to certain
  * events. An overview of the event sequences is provided by the
  * package description. Make sure to read this description first.
- * The sections following provide details for some of the
- * event sequences.
  */
 public interface Portlet {
 	

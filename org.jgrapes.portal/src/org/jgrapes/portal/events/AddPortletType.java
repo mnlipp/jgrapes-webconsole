@@ -44,6 +44,11 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
  * and the "Response body" data may collapse in a single message
  * that is sent to the browser (in case of a small resource).
  * 
+ * A portelt's JavaScript may (and probably must) make use of
+ * the functions provided by the portal page. See the 
+ * <a href="../../../../jsdoc/index.html">JavaScript
+ * documentation of these functions</a> for details.
+ * 
  * @startuml AddPortletTypeSeq.svg
  * hide footbox
  * 

@@ -22,8 +22,10 @@
  * 
  * [TOC formatted]
  *
- * Portal and PortalView
- * --------------------- 
+ * Portal Components
+ * -----------------
+ *
+ * ### Portal and PortalView 
  * 
  * The {@link org.jgrapes.portal.Portal} component 
  * is conceptually the main component of the portal. It exchanges events 
@@ -49,8 +51,7 @@
  * connection that is established immediately after the initial 
  * HTML has been loaded.
  * 
- * Page resource providers
- * -----------------------
+ * ### Page Resource Providers
  * 
  * The initial HTML document already includes some JavaScript resources
  * like [jQuery](http://jquery.com/) and [jQuery-UI](http://jqueryui.com/).
@@ -61,8 +62,7 @@
  * This is done by {@link org.jgrapes.portal.PageResourceProvider}s
  * that fire the required events on portal startup (see below).
  * 
- * Portlets
- * --------
+ * ### Portlets
  * 
  * Portlet components represent available portlet types. If a 
  * portlet is actually used (instantiated) in the portal, and state
@@ -81,10 +81,14 @@
  * a view of some model maintained elsewhere. If the state information
  * associated with this view (e.g. columns displayed or hidden in
  * a table representation) needs to be persisted across 
- * sessions, it's up to the portlet to provide a persistence mechanism.
+ * sessions, it's up to the portlet to do this, using a persistence 
+ * mechanism of its choice.
  * 
- * Portal Policies
- * ---------------
+ * The functionality that must be provided by a portlet with respect 
+ * to its display on the portal page will be discussed later, after
+ * all components and their interactions have been introduced.
+ * 
+ * ### Portal Policies
  * 
  * Portal policy components are responsible for establishing the initial
  * set of portlets shown after the portal page has loaded. Usually,
@@ -97,8 +101,10 @@
  * and another component that ensures that the portal is not empty when
  * a new session is initially created. The demo includes such a component.
  * 
- * Portal session startup
+ * Portal Session Startup
  * ----------------------
+ * 
+ * ### Portal Page Loading
  * 
  * The following diagram shows the start of a portal session 
  * up to the exchange of the first messages on the web socket connection.
@@ -128,8 +134,7 @@
  * serializes the data and sends it to the websocket using 
  * {@link org.jgrapes.io.events.Output} events.
  * 
- * Portal session preparation and configuration
- * --------------------------------------------
+ * ### Portal Session Preparation and Configuration
  * 
  * The diagram below shows the complete mandatory sequence of events 
  * following the portal ready message. The diagram uses a 
@@ -169,17 +174,17 @@
  * the portal policy to send the last known layout to the portal page
  * in the browser and to send 
  * {@link org.jgrapes.portal.events.RenderPortletRequest} events 
- * for all portlets (portelt instances) in that last known layout.
+ * for all portlets (portlet instances) in that last known layout.
  * These are the same events as those sent by the browser
  * when the user adds a new portlet instance to the portal page.
- * The portal policy thus "replays" the creation of the portelts.
+ * The portal policy thus "replays" the creation of the portlets.
  * 
  * As completion event of the {@link org.jgrapes.portal.events.PortalPrepared}
  * event, the framework generates a 
  * {@link org.jgrapes.portal.events.PortalConfigured} event which is sent to
  * the portal, indicating that it is now ready for use.
  * 
- * Portal session use
+ * Portal Session Use
  * ------------------
  * 
  * After the portal session has been configured, the system usually
@@ -198,8 +203,18 @@
  * {@link org.jgrapes.portal.events.NotifyPortletView} event.
  * 
  * {@link org.jgrapes.portal.events.NotifyPortletView} events
- * can also be sent unsolicitedly by portelt components if
+ * can also be sent unsolicitedly by portlet components if
  * the model data changes independent of user actions.
+ * 
+ * Writing a Portlet
+ * -----------------
+ * 
+ * Portlets are components that consume and produce events. They
+ * don't have to implement a specific interface. Rather they have
+ * exhibit a specific behaviour that can be derived from the
+ * descritions above. The documentation of the base class
+ * {@link org.jgrapes.portal.AbstractPortlet} summarizes
+ * the responsibilities of a portal component.
  * 
  * @startuml PortalStructure.svg
  * skinparam packageStyle rectangle

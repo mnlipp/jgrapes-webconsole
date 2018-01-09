@@ -39,7 +39,7 @@ public class DisplayNotification extends Event<Void> {
 	 * Creates a new event. The content must be valid HTML, i.e. it
 	 * must start with a tag (usually a "`<span>`"). See the JavaScript 
 	 * documentation of the
-	 * <a href="../../../../../jsdoc-portal/index.html#notificationplugin">
+	 * <a href="../../../../jsdoc/index.html#notificationplugin">
 	 * notification plugin</a> for details about the available options.
 	 * 
 	 * @param content the content (valid HTML)
@@ -63,7 +63,7 @@ public class DisplayNotification extends Event<Void> {
 
 	/**
 	 * Adds an option to the event. See the JavaScript documentation of the
-	 * <a href="../../../../../jsdoc-portal/index.html#notificationplugin">
+	 * <a href="../../../../jsdoc/index.html#notificationplugin">
 	 * notification plugin</a> for details about the available options.
 	 * 
 	 * @param name the option name
