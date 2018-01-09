@@ -7,24 +7,15 @@ buildscript {
 	}
 }
 
-apply plugin: 'com.github.ksoichiro.web.resource'
-
-webResource {
-	base {
-		// Change base directories for src/dest
-		src = 'webResource'
-		dest = 'build/generated/webResources/org/jgrapes/portal'
-	}
-	
-	coffeeScript {
-        // Default: true
-        minify = !project.version.endsWith("-SNAPSHOT")
-    }
+task javadocJar(type: Jar) {
+	from (javadoc)
+	classifier "javadoc"
 }
 
-classes.dependsOn 'webResourceCompile'
-sourceSets.main.output.dir project.file('build/generated/webResources')
-
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
 
 dependencies {
 	compile 'org.jgrapes:org.jgrapes.http:[0.9.3,)'
@@ -42,7 +33,7 @@ jar {
 
 apply plugin: 'com.moowork.node'
 
-ext.jsDocDestDir = "${rootProject.projectDir}/../jgrapes.gh-pages/jsdoc-portal" 
+ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
 
 task documentationjs(type: NodeTask) {
 	dependsOn(':npmInstall')
@@ -51,3 +42,26 @@ task documentationjs(type: NodeTask) {
 	args = ["build", "--format", "html", "--output", jsDocDestDir,
 		"resources/org/jgrapes/portal/functions.js"]
 }
+
+javadoc {
+	dependsOn documentationjs
+
+		options.tagletPath = rootProject.configurations.javadocTaglets.files as List
+	options.taglets = ["org.jdrupes.taglets.plantUml.Taglet"]
+	
+	classpath = files(rootProject.subprojects.collect {project ->
+		project.sourceSets.main.compileClasspath})
+	source rootProject.subprojects.findAll({project -> project.name.startsWith("org.jgrapes.")}) \
+		.collect {project -> project.sourceSets.main.allJava }
+	options.addStringOption("doctitle", "JGrapes Portal ${project.version}")
+	options.addStringOption("overview", "${rootProject.rootDir}/overview.md")
+	inputs.file "${rootProject.rootDir}/overview.md"
+	options.addBooleanOption("use", true)
+	options.addBooleanOption("linksource", true)
+	options.stylesheetFile(file("${rootProject.rootDir}/misc/stylesheet.css"))
+	options.addStringOption("bottom", file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text)
+	options.links "https://docs.oracle.com/javase/8/docs/api/"
+	options.links "http://mnlipp.github.io/jgrapes/latest-release/javadoc/"
+	destinationDir = file("${rootProject.buildDir}/javadoc")
+}
+
