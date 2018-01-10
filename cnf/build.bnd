@@ -23,19 +23,13 @@
         releaseUrls=https://repo1.maven.org/maven2; \
         query='q=g:%22org.apache.felix%22&rows=1000'
 
--plugin.4.JDrupes: \
-    aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
-        name=JDrupes; \
-        snapshotUrls=https://oss.sonatype.org/content/repositories/snapshots/; \
-        releaseUrls=https://repo1.maven.org/maven2; \
-        query='q=g:%22org.jdrupes.httpcodec%22&rows=1000'
-
--plugin.5.JGrapes: \
-    aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
+-plugin.4.JGrapes: \
+    de.mnl.osgi.bnd.repository.maven.provider.NexusSearchRepositoryProvider; \
+        path:="${workspace}/cnf/plugins/de.mnl.osgi.bnd.repository-0.0.7.jar,\
+            ${workspace}/cnf/plugins/biz.aQute.repository-3.5.0.jar"; \
         name=JGrapes; \
-        snapshotUrls=https://oss.sonatype.org/content/repositories/snapshots/; \
-        releaseUrls=https://repo1.maven.org/maven2; \
-        query='q=g:%22org.jgrapes%22&rows=1000'
+        server="https://oss.sonatype.org"; \
+        query="g=org.jgrapes"
 
 -baselinerepo: JGrapes
 
