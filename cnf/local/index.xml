@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<repository increment="1515671839000" name="Local" xmlns="http://www.osgi.org/xmlns/repository/v1.0.0">
+<repository increment="1515676949675" name="Untitled" xmlns="http://www.osgi.org/xmlns/repository/v1.0.0">
   <resource>
     <capability namespace="osgi.identity">
       <attribute name="osgi.identity" value="org.apache.aries.spifly.dynamic.bundle"/>
@@ -7,9 +7,9 @@
       <attribute name="version" type="Version" value="1.0.11.SNAPSHOT"/>
     </capability>
     <capability namespace="osgi.content">
-      <attribute name="osgi.content" value="c790380500c2b37e318368170277f7c6e56370be2a8e2b1afa3f30a66d279640"/>
+      <attribute name="osgi.content" value="a48bf4e14374e9b560ef46f834817b2a061860b7456c9e528b355e422d91af51"/>
       <attribute name="url" value="org.apache.aries.spifly.dynamic.bundle-1.0.11-SNAPSHOT.jar"/>
-      <attribute name="size" type="Long" value="63660"/>
+      <attribute name="size" type="Long" value="63663"/>
       <attribute name="mime" value="application/vnd.osgi.bundle"/>
     </capability>
     <capability namespace="osgi.wiring.bundle">
