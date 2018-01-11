@@ -11,6 +11,13 @@ api_version = 0.1.0.${tstamp}
 
 -includeresource: resources
 
+Require-Capability: \
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+
+Provide-Capability: osgi.serviceloader; \
+    osgi.serviceloader=org.jgrapes.portal.PortletComponentFactory; \
+    uses:="org.jgrapes.portal,org.jgrapes.core"
+
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.",\

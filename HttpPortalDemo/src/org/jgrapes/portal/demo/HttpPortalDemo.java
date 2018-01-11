@@ -37,6 +37,7 @@ import javax.net.ssl.SSLContext;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
+import org.jgrapes.core.ComponentCollector;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.NamedChannel;
 import org.jgrapes.core.events.Stop;
@@ -52,14 +53,10 @@ import org.jgrapes.io.util.PermitsPool;
 import org.jgrapes.net.SslServer;
 import org.jgrapes.net.TcpServer;
 import org.jgrapes.portal.KVStoreBasedPortalPolicy;
+import org.jgrapes.portal.PageResourceProviderFactory;
 import org.jgrapes.portal.Portal;
 import org.jgrapes.portal.PortalLocalBackedKVStore;
-import org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortlet;
-import org.jgrapes.portal.providers.chartjs.ChartJsProvider;
-import org.jgrapes.portal.providers.datatables.DatatablesProvider;
-import org.jgrapes.portal.providers.markdownit.MarkdownItProvider;
-import org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet;
-import org.jgrapes.portlets.sysinfo.SysInfoPortlet;
+import org.jgrapes.portal.PortletComponentFactory;
 import org.jgrapes.util.PreferencesStore;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -130,12 +127,12 @@ public class HttpPortalDemo extends Component implements BundleActivator {
 				portal, portal.prefix().getPath()));
 		portal.attach(new KVStoreBasedPortalPolicy(portal));
 		portal.attach(new NewPortalSessionPolicy(portal));
-		portal.attach(new HelloWorldPortlet(portal));
-		portal.attach(new ChartJsProvider(portal));
-		portal.attach(new DatatablesProvider(portal));
-		portal.attach(new MarkdownItProvider(portal));
-		portal.attach(new SysInfoPortlet(portal));
-		portal.attach(new MarkdownDisplayPortlet(portal));
+		// Add all available page resource providers
+		portal.attach(new ComponentCollector<>(
+				PageResourceProviderFactory.class, portal));
+		// Add all available portlets
+		portal.attach(new ComponentCollector<>(
+				PortletComponentFactory.class, portal));
 		Components.start(app);
 	}
 
