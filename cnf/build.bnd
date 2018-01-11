@@ -31,6 +31,12 @@
         server="https://oss.sonatype.org"; \
         query="g=org.jgrapes"
 
+-plugin.5.Local: \
+    aQute.bnd.deployer.repository.LocalIndexedRepo; \
+        name = Local; \
+        pretty = true; \
+        local = ${build}/local
+
 -baselinerepo: JGrapes
 
 bin=bin/main
