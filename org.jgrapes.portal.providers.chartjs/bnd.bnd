@@ -3,6 +3,8 @@ Bundle-SymbolicName: org.jgrapes.portal.providers.chartjs
 Bundle-Copyright: Michael N. Lipp (c) 2017
 Bundle-License: http://www.gnu.org/licenses/gpl-3.0.txt
 Export-Package: org.jgrapes.portal.providers.chartjs
+Provide-Capability: \
+    org.jgrapes.portal.page.resource;name:List<String>="chartjs.org"
 
 api_version = 0.9.0.${tstamp}
 

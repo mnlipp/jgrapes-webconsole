@@ -3,6 +3,8 @@ Bundle-SymbolicName: org.jgrapes.portal.providers.datatables
 Bundle-Copyright: Michael N. Lipp (c) 2017
 Bundle-License: http://www.gnu.org/licenses/gpl-3.0.txt
 Export-Package: org.jgrapes.portal.providers.datatables
+Provide-Capability: \
+    org.jgrapes.portal.page.resource;name:List<String>="datatables.net"
 
 api_version = 0.9.0.${tstamp}
 
