@@ -21,7 +21,7 @@ package org.jgrapes.portal;
 import org.jgrapes.core.ComponentFactory;
 
 /**
- * A factory interface for {@link PageResourceProvider} comonents.
+ * A factory interface for {@link PageResourceProvider} components.
  */
 public interface PageResourceProviderFactory 
 	extends ComponentFactory {
