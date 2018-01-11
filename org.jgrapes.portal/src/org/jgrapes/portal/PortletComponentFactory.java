@@ -21,7 +21,7 @@ package org.jgrapes.portal;
 import org.jgrapes.core.ComponentFactory;
 
 /**
- * A factory interface for portlet comonents.
+ * A factory interface for portlet components.
  */
 public interface PortletComponentFactory 
 	extends ComponentFactory {
