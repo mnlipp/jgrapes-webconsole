@@ -36,6 +36,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.jgrapes.core.Channel;
+import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.ComponentCollector;
 import org.jgrapes.core.Components;
@@ -68,6 +69,10 @@ public class HttpPortalDemo extends Component implements BundleActivator {
 
 	HttpPortalDemo app;
 	
+	public HttpPortalDemo() {
+		super(new ClassChannel() {});
+	}
+
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
@@ -103,7 +108,7 @@ public class HttpPortalDemo extends Component implements BundleActivator {
 
 		// Create an HTTP server as converter between transport and application
 		// layer.
-		app.attach(new HttpServer(app, 
+		app.attach(new HttpServer(app.channel(), 
 		        httpTransport, GetRequest.class, PostRequest.class));
 		
 		// Build application layer
