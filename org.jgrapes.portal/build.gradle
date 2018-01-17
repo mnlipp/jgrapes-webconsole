@@ -22,7 +22,7 @@ dependencies {
 	compile 'org.jgrapes:org.jgrapes.util:[0.9.33,)'
 	compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 	compile group: 'org.glassfish', name: 'javax.json', version: '1.1'
-	compile 'org.jdrupes.json:json:[1.0.4,1.1)'
+	compile 'org.jdrupes.json:json:[1.0.6,1.1)'
 }
 
 jar {
