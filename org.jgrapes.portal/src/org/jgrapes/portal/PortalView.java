@@ -309,7 +309,7 @@ public class PortalView extends Component {
 			.setField(HttpField.LOCATION, portal.prefix());
 		fire(new Response(response), channel);
 		try {
-			fire(Output.wrap(portal.prefix().toString()
+			fire(Output.from(portal.prefix().toString()
 					.getBytes("utf-8"), true), channel);
 		} catch (UnsupportedEncodingException e) {
 			// Supported by definition
