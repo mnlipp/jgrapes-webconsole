@@ -46,7 +46,7 @@ task documentationjs(type: NodeTask) {
 javadoc {
 	dependsOn documentationjs
 
-		options.tagletPath = rootProject.configurations.javadocTaglets.files as List
+	options.tagletPath = rootProject.configurations.javadocTaglets.files as List
 	options.taglets = ["org.jdrupes.taglets.plantUml.Taglet"]
 	
 	classpath = files(rootProject.subprojects.collect {project ->
