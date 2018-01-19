@@ -91,7 +91,6 @@ import org.jgrapes.io.util.ByteBufferOutputStream;
 import org.jgrapes.io.util.CharBufferWriter;
 import org.jgrapes.io.util.InputStreamPipeline;
 import org.jgrapes.io.util.LinkedIOSubchannel;
-import org.jgrapes.io.util.ManagedCharBuffer;
 import org.jgrapes.portal.events.JsonInput;
 import org.jgrapes.portal.events.JsonOutput;
 import org.jgrapes.portal.events.PortalReady;
@@ -591,7 +590,7 @@ public class PortalView extends Component {
 	}
 	
 	@Handler
-	public void onInput(Input<ManagedCharBuffer> event, IOSubchannel wsChannel)
+	public void onInput(Input<CharBuffer> event, IOSubchannel wsChannel)
 			throws IOException {
 		Optional<WsInputReader> optWsInputReader 
 			= wsChannel.associated(this, WsInputReader.class);
@@ -740,7 +739,7 @@ public class PortalView extends Component {
 		private PipedWriter decodeWriter;
 		private Future<JsonObject> decodeResult;
 		
-		public JsonObject toJsonObject(Input<ManagedCharBuffer> event)
+		public JsonObject toJsonObject(Input<CharBuffer> event)
 						throws IOException {
 			CharBuffer buffer = event.buffer().backingBuffer();
 			if (decodeWriter == null) {
