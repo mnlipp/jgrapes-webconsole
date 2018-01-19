@@ -18,6 +18,12 @@
 
 package org.jgrapes.portal.providers.chartjs;
 
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateNotFoundException;
+
+import java.io.IOException;
+
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
@@ -27,12 +33,6 @@ import org.jgrapes.portal.PortalSession;
 import org.jgrapes.portal.events.AddPageResources;
 import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.PortalReady;
-
-import freemarker.core.ParseException;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.TemplateNotFoundException;
-
-import java.io.IOException;
 
 /**
  * 

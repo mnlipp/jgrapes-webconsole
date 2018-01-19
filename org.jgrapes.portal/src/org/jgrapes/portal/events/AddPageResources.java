@@ -158,7 +158,7 @@ public class AddPageResources extends Event<Void> {
 	 * for a URI or inline JavaScript, not for both.
 	 */
 	public static class ScriptResource {
-		private String[] EMPTY_ARRAY = new String[0];
+		private static final String[] EMPTY_ARRAY = new String[0];
 		
 		private URI scriptUri;
 		private String scriptSource;

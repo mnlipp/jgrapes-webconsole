@@ -53,6 +53,7 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.Portlet.RenderMode;
 import org.jgrapes.portal.events.AddPageResources;
+import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
 import org.jgrapes.portal.events.DeletePortlet;
@@ -70,7 +71,6 @@ import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.events.SetLocale;
 import org.jgrapes.portal.events.SetTheme;
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 
 /**
  * 

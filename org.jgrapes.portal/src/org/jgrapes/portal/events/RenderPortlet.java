@@ -33,7 +33,7 @@ import static org.jgrapes.portal.Portlet.*;
  */
 public class RenderPortlet extends Event<Void> {
 
-	private final static Set<RenderMode> DEFAULT_SUPPORTED 
+	private static final Set<RenderMode> DEFAULT_SUPPORTED 
 		= Collections.unmodifiableSet(new HashSet<>(
 				Arrays.asList(new RenderMode[] { RenderMode.Preview })));
 
