@@ -113,6 +113,16 @@ public class PortalView extends Component {
 	private ServiceLoader<ThemeProvider> themeLoader;
 	private static Configuration fmConfig = null;
 	
+	static {
+		fmConfig = new Configuration(Configuration.VERSION_2_3_26);
+		fmConfig.setClassLoaderForTemplateLoading(
+				PortalView.class.getClassLoader(), "org/jgrapes/portal");
+		fmConfig.setDefaultEncoding("utf-8");
+		fmConfig.setTemplateExceptionHandler(
+				TemplateExceptionHandler.RETHROW_HANDLER);
+        fmConfig.setLogTemplateExceptions(false);
+	}
+	
 	private Function<Locale,ResourceBundle> resourceBundleSupplier;
 	private BiFunction<ThemeProvider,String,InputStream> fallbackResourceSupplier
 		= (themeProvider, resource) -> { return null; };
@@ -132,15 +142,6 @@ public class PortalView extends Component {
 	public PortalView(Portal portal, Channel componentChannel) {
 		super(componentChannel);
 		this.portal = portal;
-		if (fmConfig == null) {
-			fmConfig = new Configuration(Configuration.VERSION_2_3_26);
-			fmConfig.setClassLoaderForTemplateLoading(
-					getClass().getClassLoader(), "org/jgrapes/portal");
-			fmConfig.setDefaultEncoding("utf-8");
-			fmConfig.setTemplateExceptionHandler(
-					TemplateExceptionHandler.RETHROW_HANDLER);
-	        fmConfig.setLogTemplateExceptions(false);
-		}
 		baseTheme = new Provider();
 		
 		supportedLocales = new HashSet<>();
