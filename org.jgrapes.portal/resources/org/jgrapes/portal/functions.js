@@ -160,9 +160,12 @@ var JGPortal = {
     };
     
     PortalWebSocket.prototype._connect = function() {
+        log.debug("Creating WebSocket for " + this._location);
         this._ws = new WebSocket(this._location);
+        log.debug("Created WebSocket with redayState " + this._ws.readyState);
         let self = this;
         this._ws.onopen = function() {
+            log.debug("OnOpen called for WebSocket.");
             if (self._connectionLostNotification != null) {
                 self._connectionLostNotification.notification( "close" );
                 $( "#server-connection-restored-notification" ).notification({
@@ -197,6 +200,7 @@ var JGPortal = {
             }, portalSessionRefreshInterval);
         }
         this._ws.onclose = function(event) {
+            log.debug("OnClose called for WebSocket.");
             if (self._refreshTimer !== null) {
                 clearInterval(self._refreshTimer);
                 self._refreshTimer = null;
@@ -217,16 +221,10 @@ var JGPortal = {
                 self._initiateReconnect();
             }
         }
-        this._ws.onerror = function(event) {
-            if (self._refreshTimer !== null) {
-                clearInterval(self._refreshTimer);
-                self._refreshTimer = null;
-            }
-            self._ws = null;
-            if (self._connectRequested) {
-                self._initiateReconnect();
-            }
-        }
+        // "onClose" is called even if the initial connection fails,
+        // so we don't need "onError".
+        // this._ws.onerror = function(event) {
+        // }
         this._ws.onmessage = function(event) {
             var msg = JSON.parse(event.data);
             self._recvQueue.push(msg);
