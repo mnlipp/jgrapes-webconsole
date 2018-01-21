@@ -94,18 +94,6 @@ subprojects {
 		}
 	}
 	
-	apply plugin: 'eclipse'
-	
-	eclipse {
-		classpath {
-			containers 'aQute.bnd.classpath.container'
-		}
-		project {
-			buildCommand 'bndtools.core.bndbuilder'
-			natures 'bndtools.core.bndnature'
-		}
-	}
-
     dependencies {
         compileOnly 'org.osgi:org.osgi.annotation:6.0.0'
         testCompile 'junit:junit:4.12', 'net.jodah:concurrentunit:0.4.2'
@@ -245,6 +233,18 @@ subprojects {
 		}
 	}
 	
+	apply plugin: 'eclipse'
+	
+	eclipse {
+		classpath {
+			containers 'aQute.bnd.classpath.container'
+		}
+		project {
+			buildCommand 'bndtools.core.bndbuilder'
+			natures 'bndtools.core.bndnature'
+		}
+	}
+
 }
 
 configurations {
