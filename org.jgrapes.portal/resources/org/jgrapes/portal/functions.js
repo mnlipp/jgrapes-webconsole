@@ -146,7 +146,8 @@ var JGPortal = {
         if (!this._location.endsWith("/")) {
             this._location += "/";
         }
-        this._location += "portal-session/" + this._portalSessionId;
+        this._location += "portal-session/" + this._portalSessionId +
+            "?q=" + generateUUID();
         this._connectionLostNotification = null;
     };
 
