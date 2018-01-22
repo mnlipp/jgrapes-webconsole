@@ -18,6 +18,22 @@
 
 package org.jgrapes.portlets.markdowndisplay;
 
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.Template;
+import freemarker.template.TemplateNotFoundException;
+
+import java.beans.ConstructorProperties;
+import java.io.IOException;
+import java.io.Serializable;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jdrupes.json.JsonDecodeException;
@@ -30,6 +46,10 @@ import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.PortalSession;
 import org.jgrapes.portal.PortalView;
+
+import static org.jgrapes.portal.Portlet.*;
+import static org.jgrapes.portal.Portlet.RenderMode.*;
+
 import org.jgrapes.portal.UserPrincipal;
 import org.jgrapes.portal.Utils;
 import org.jgrapes.portal.events.AddPageResources.ScriptResource;
@@ -48,25 +68,6 @@ import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 
-import freemarker.core.ParseException;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateNotFoundException;
-
-import static org.jgrapes.portal.Portlet.*;
-import static org.jgrapes.portal.Portlet.RenderMode.*;
-
-import java.beans.ConstructorProperties;
-import java.io.IOException;
-import java.io.Serializable;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-
 /**
  * A portlet used to display information to the user. Instances
  * may be used as a kind of note, i.e. created and configured by
@@ -79,7 +80,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	 * The supported preferences.
 	 */
 	public enum Preferences { PORTLET_ID, TITLE, PREVIEW_SOURCE, 
-		VIEW_SOURCE, DELETABLE, EDITABLE_BY };
+		VIEW_SOURCE, DELETABLE, EDITABLE_BY }
 	
 	/**
 	 * Creates a new component with its channel set to the given 
@@ -215,7 +216,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet(org.jgrapes.portal.events.RenderPortletRequest, org.jgrapes.io.IOSubchannel, org.jgrapes.portal.AbstractPortlet.PortletModelBean)
+	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
 	 */
 	@Override
 	protected void doRenderPortlet(RenderPortletRequest event,
@@ -294,7 +295,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel(org.jgrapes.portal.events.NotifyPortletModel, org.jgrapes.io.IOSubchannel, org.jgrapes.http.Session, java.io.Serializable)
+	 * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
 	 */
 	@Override
 	protected void doNotifyPortletModel(NotifyPortletModel event,
