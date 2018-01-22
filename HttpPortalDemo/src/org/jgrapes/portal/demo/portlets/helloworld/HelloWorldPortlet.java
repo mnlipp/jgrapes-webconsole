@@ -18,6 +18,17 @@
 
 package org.jgrapes.portal.demo.portlets.helloworld;
 
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.Template;
+import freemarker.template.TemplateNotFoundException;
+
+import java.beans.ConstructorProperties;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jdrupes.json.JsonDecodeException;
@@ -29,6 +40,10 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.portal.PortalSession;
 import org.jgrapes.portal.PortalView;
+
+import static org.jgrapes.portal.Portlet.*;
+import static org.jgrapes.portal.Portlet.RenderMode.*;
+
 import org.jgrapes.portal.UserPrincipal;
 import org.jgrapes.portal.Utils;
 import org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortlet;
@@ -48,26 +63,12 @@ import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 
-import freemarker.core.ParseException;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateNotFoundException;
-
-import static org.jgrapes.portal.Portlet.*;
-import static org.jgrapes.portal.Portlet.RenderMode.*;
-
-import java.beans.ConstructorProperties;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ResourceBundle;
-import java.util.Set;
-
 /**
  * 
  */
 public class HelloWorldPortlet extends FreeMarkerPortlet {
 
-	private final static Set<RenderMode> MODES = RenderMode.asSet(
+	private static final Set<RenderMode> MODES = RenderMode.asSet(
 			DeleteablePreview, View);
 	
 	/**
@@ -128,8 +129,8 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 	public String doAddPortlet(AddPortletRequest event,
 			PortalSession channel) throws Exception {
 		String portletId = generatePortletId();
-		HelloWorldModel portletModel = putInSession
-				(channel.browserSession(), new HelloWorldModel(portletId));
+		HelloWorldModel portletModel = putInSession(
+				channel.browserSession(), new HelloWorldModel(portletId));
 		String jsonState = JsonBeanEncoder.create()
 				.writeObject(portletModel).toJson();
 		channel.respond(new KeyValueStoreUpdate().update(
@@ -145,7 +146,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet(org.jgrapes.portal.events.DeletePortletRequest, org.jgrapes.io.IOSubchannel, org.jgrapes.portal.AbstractPortlet.PortletModelBean)
+	 * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
 	 */
 	@Override
 	protected void doDeletePortlet(DeletePortletRequest event,
@@ -158,7 +159,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 	
 	
 	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet(org.jgrapes.portal.events.RenderPortletRequest, org.jgrapes.io.IOSubchannel, org.jgrapes.portal.AbstractPortlet.PortletModelBean)
+	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
 	 */
 	@Override
 	protected void doRenderPortlet(RenderPortletRequest event,
@@ -195,7 +196,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel(org.jgrapes.portal.events.NotifyPortletModel, org.jgrapes.io.IOSubchannel, org.jgrapes.http.Session, java.io.Serializable)
+	 * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
 	 */
 	@Override
 	protected void doNotifyPortletModel(NotifyPortletModel event,

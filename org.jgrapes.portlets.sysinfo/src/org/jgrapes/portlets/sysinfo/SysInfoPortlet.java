@@ -18,32 +18,10 @@
 
 package org.jgrapes.portlets.sysinfo;
 
-import org.jgrapes.core.Channel;
-import org.jgrapes.core.Event;
-import org.jgrapes.core.Manager;
-import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.http.Session;
-import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.portal.PortalSession;
-import org.jgrapes.portal.PortalView;
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
-import org.jgrapes.portal.events.AddPortletRequest;
-import org.jgrapes.portal.events.AddPortletType;
-import org.jgrapes.portal.events.DeletePortlet;
-import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.NotifyPortletView;
-import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
-import org.jgrapes.portal.events.RenderPortletRequest;
-import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
-
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
-
-import static org.jgrapes.portal.Portlet.*;
-import static org.jgrapes.portal.Portlet.RenderMode.*;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
@@ -56,12 +34,35 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.jgrapes.core.Channel;
+import org.jgrapes.core.Event;
+import org.jgrapes.core.Manager;
+import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.http.Session;
+import org.jgrapes.io.IOSubchannel;
+import org.jgrapes.portal.PortalSession;
+import org.jgrapes.portal.PortalView;
+
+import static org.jgrapes.portal.Portlet.*;
+import static org.jgrapes.portal.Portlet.RenderMode.*;
+
+import org.jgrapes.portal.events.AddPageResources.ScriptResource;
+import org.jgrapes.portal.events.AddPortletRequest;
+import org.jgrapes.portal.events.AddPortletType;
+import org.jgrapes.portal.events.DeletePortlet;
+import org.jgrapes.portal.events.DeletePortletRequest;
+import org.jgrapes.portal.events.NotifyPortletView;
+import org.jgrapes.portal.events.PortalReady;
+import org.jgrapes.portal.events.RenderPortlet;
+import org.jgrapes.portal.events.RenderPortletRequest;
+import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
+
 /**
  * 
  */
 public class SysInfoPortlet extends FreeMarkerPortlet {
 
-	private final static Set<RenderMode> MODES = RenderMode.asSet(
+	private static final Set<RenderMode> MODES = RenderMode.asSet(
 			DeleteablePreview, View);
 	
 	/**
@@ -102,7 +103,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#modelFromSession(org.jgrapes.io.IOSubchannel, java.lang.String)
+	 * @see org.jgrapes.portal.AbstractPortlet#modelFromSession
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -131,7 +132,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet(org.jgrapes.portal.events.RenderPortletRequest, org.jgrapes.io.IOSubchannel, org.jgrapes.portal.AbstractPortlet.PortletModelBean)
+	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
 	 */
 	@Override
 	protected void doRenderPortlet(RenderPortletRequest event,
@@ -175,7 +176,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet(org.jgrapes.portal.events.DeletePortletRequest, org.jgrapes.io.IOSubchannel, org.jgrapes.portal.AbstractPortlet.PortletModelBean)
+	 * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
 	 */
 	@Override
 	protected void doDeletePortlet(DeletePortletRequest event,
