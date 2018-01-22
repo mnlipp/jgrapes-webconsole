@@ -12,6 +12,20 @@ See the [project's home page](http://mnlipp.github.io/jgrapes/).
 This repository comprises the sources for jars that provide
 the portal components.
 
+Building
+--------
+
+The libraries can be built with `gradle build`. For working with 
+the project in Eclipse run `gradle eclipse` before importing the 
+project. 
+
+If you want to use 
+[buildship](https://projects.eclipse.org/projects/tools.buildship),
+import the project as "Gradle / Existing Gradle Project". Should you
+encounter the (in)famous 
+["sync problem"](https://github.com/eclipse/buildship/issues/478),
+simply restart Eclipse.
+
 <!-- Piwik Image Tracker-->
 <img src="https://piwik.mnl.de/piwik.php?idsite=10&rec=1&url=https%3A%2F%2Fgithub.com%2Fmnlipp%2Fjgrapes-portal" style="border:0" alt="" />
 <!-- End Piwik -->
