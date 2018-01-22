@@ -66,7 +66,7 @@ public class UpdatePortletModel extends Event<Void> {
 	/**
 	 * Creates a new event. This constructor creates an empty map of
 	 * properties and is therefore intended to be used together with
-	 * {@link #addProperty(Object, Object)}.
+	 * {@link #addPreference(Object, Object)}.
 	 *
 	 * @param portletId the portlet id
 	 */
@@ -102,7 +102,7 @@ public class UpdatePortletModel extends Event<Void> {
 	 * @param value the property value
 	 * @return the event for easy chaining
 	 */
-	public UpdatePortletModel addProperty(Object key, Object value) {
+	public UpdatePortletModel addPreference(Object key, Object value) {
 		properties().put(key, value);
 		return this;
 	}

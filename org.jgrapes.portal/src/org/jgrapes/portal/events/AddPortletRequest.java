@@ -121,7 +121,7 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
 	 * @param value the property value
 	 * @return the event for easy chaining
 	 */
-	public AddPortletRequest addProperty(Object key, Object value) {
+	public AddPortletRequest addPreference(Object key, Object value) {
 		properties().put(key, value);
 		return this;
 	}
