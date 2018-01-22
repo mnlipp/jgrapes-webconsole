@@ -2,8 +2,10 @@
 .metadata/
 .recommenders/
 /build/
-**/.classpath
 **/.project
-!cnf/.project
+**/.classpath
+!/.project
+!/.classpath
+!/cnf/.project
 /node_modules/
 /package-lock.json
