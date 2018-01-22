@@ -12,6 +12,12 @@ See the [project's home page](http://mnlipp.github.io/jgrapes/).
 This repository comprises the sources for jars that provide
 the portal components.
 
+Demo
+----
+
+A [demo configuration](https://jgrapes-portal-demo.herokuapp.com/)
+of the portal is available at [heroku](https://www.heroku.com/).
+
 Building
 --------
 
