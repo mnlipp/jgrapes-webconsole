@@ -163,7 +163,7 @@ var JGPortal = {
     PortalWebSocket.prototype._connect = function() {
         log.debug("Creating WebSocket for " + this._location);
         this._ws = new WebSocket(this._location);
-        log.debug("Created WebSocket with redayState " + this._ws.readyState);
+        log.debug("Created WebSocket with readyState " + this._ws.readyState);
         let self = this;
         this._ws.onopen = function() {
             log.debug("OnOpen called for WebSocket.");
@@ -264,7 +264,7 @@ var JGPortal = {
     }
     
     PortalWebSocket.prototype._drainSendQueue = function() {
-        while (this._ws.readyState == 1 && this._sendQueue.length > 0) {
+        while (this._ws.readyState == this._ws.OPEN && this._sendQueue.length > 0) {
             let msg = this._sendQueue[0];
             try {
                 this._ws.send(msg);
