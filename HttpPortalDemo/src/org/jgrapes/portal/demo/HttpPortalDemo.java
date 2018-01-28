@@ -87,7 +87,7 @@ public class HttpPortalDemo extends Component implements BundleActivator {
 		Channel httpTransport = new NamedChannel("httpTransport");
 		// Create a TCP server listening on port 8888
 		app.attach(new TcpServer(httpTransport)
-				.setServerAddress(new InetSocketAddress(8888)));
+				.setServerAddress(new InetSocketAddress(9888)));
 
 		// Create TLS "converter"
 		KeyStore serverStore = KeyStore.getInstance("JKS");
@@ -102,7 +102,7 @@ public class HttpPortalDemo extends Component implements BundleActivator {
 		sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
 		// Create a TCP server for SSL
 		Channel securedNetwork = app.attach(
-				new TcpServer().setServerAddress(new InetSocketAddress(4443))
+				new TcpServer().setServerAddress(new InetSocketAddress(5443))
 				.setBacklog(3000).setConnectionLimiter(new PermitsPool(50)));
 		app.attach(new SslServer(httpTransport, securedNetwork, sslContext));
 
