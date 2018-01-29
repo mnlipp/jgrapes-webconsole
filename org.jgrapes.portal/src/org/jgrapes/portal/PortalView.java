@@ -33,6 +33,7 @@ import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URI;
@@ -109,6 +110,9 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  */
 public class PortalView extends Component {
 
+	private static final String LOADED_PORTALS 
+		= PortalView.class.getName() + ".loadedPortals";
+	
 	private Portal portal;
 	private ServiceLoader<ThemeProvider> themeLoader;
 	private static Configuration fmConfig = null;
@@ -319,7 +323,7 @@ public class PortalView extends Component {
 	
 	@RequestHandler(dynamic=true)
 	public void onGet(GetRequest event, IOSubchannel channel) 
-			throws InterruptedException, IOException {
+			throws InterruptedException, IOException, ParseException {
 		URI requestUri = event.requestUri();
 		// Append trailing slash, if missing
 		if ((requestUri.getRawPath() + "/").equals(
@@ -327,24 +331,17 @@ public class PortalView extends Component {
 			requestUri = portal.prefix();
 		}
 		
-		// Request for portal?
-		if (!requestUri.getRawPath().startsWith(portal.prefix().getRawPath())) {
+		// Request for portal? (Only valid with session)
+		if (!requestUri.getRawPath().startsWith(portal.prefix().getRawPath())
+				|| !event.associated(Session.class).isPresent()) {
 			return;
 		}
+		final Session browserSession = event.associated(Session.class).get();
 		
 		// Normalize and evaluate
 		requestUri = portal.prefix().relativize(
 				URI.create(requestUri.getRawPath()));
 		if (requestUri.getRawPath().isEmpty()) {
-			if (event.httpRequest().findField(
-					HttpField.UPGRADE, Converters.STRING_LIST)
-					.map(f -> f.value().containsIgnoreCase("websocket"))
-					.orElse(false)) {
-				channel.setAssociated(this, new WsInputReader());
-				channel.respond(new WebSocketAccepted(event));
-				event.stop();
-				return;
-			}
 			renderPortal(event, channel);
 			return;
 		}
@@ -360,21 +357,27 @@ public class PortalView extends Component {
 		}
 		subUri = uriFromPath("portal-session/").relativize(requestUri);
 		if (!subUri.equals(requestUri)) {
+			// Can only connect to sessions that have been prepared
+			// by loading the portal. (Prevents using a newly created
+			// session for re-connecting after a long disconnect or restart).
+			@SuppressWarnings("unchecked")
+			Set<URI> loadedPortals = (Set<URI>)browserSession.getOrDefault(
+					LOADED_PORTALS, (Serializable)Collections.emptySet());
+			if (!loadedPortals.contains(portal.prefix())) {
+				forceReload(event, channel);
+				return;
+			}
 			if (event.httpRequest().findField(
 					HttpField.UPGRADE, Converters.STRING_LIST)
 					.map(f -> f.value().containsIgnoreCase("websocket"))
 					.orElse(false)) {
 				// Establish portlet session
-				Optional<Session> optSession = event.associated(Session.class);
-				if (!optSession.isPresent()) {
-					return;
-				}
 				String portalSessionId = subUri.getPath();
 				PortalSession portalSession = PortalSession
 						.findOrCreate(portalSessionId, portal, portalSessionNetworkTimeout)
 						.setUpstreamChannel(channel)
 						.setEventPipeline(activeEventPipeline())
-						.setSession(optSession.get());
+						.setSession(browserSession);
 				channel.setAssociated(PortalSession.class, portalSession);
 				// Channel now used as JSON input
 				channel.setAssociated(this, new WsInputReader());
@@ -403,6 +406,13 @@ public class PortalView extends Component {
 		// may be out-dated
 		event.associated(Selection.class)
 			.ifPresent(s ->	s.prefer(s.get()[0]));
+
+		// This is a portal session now (can be connected to)
+		Session session = event.associated(Session.class).get();
+		@SuppressWarnings("unchecked")
+		Set<URI> loadedPortals = (Set<URI>)session.computeIfAbsent(
+				LOADED_PORTALS, k -> new HashSet<URI>());
+		loadedPortals.add(portal.prefix());
 		
 		// Prepare response
 		HttpResponse response = event.httpRequest().response().get();
@@ -588,6 +598,17 @@ public class PortalView extends Component {
 				portletRequest, portalChannel(channel)).get())) {
 			event.stop();
 		}
+	}
+	
+	private void forceReload(GetRequest event, IOSubchannel channel)
+			throws InterruptedException, IOException, ParseException {
+		event.stop();
+		channel.respond(new WebSocketAccepted(event)).get();
+		@SuppressWarnings("resource")
+		CharBufferWriter out = new CharBufferWriter(channel, 
+				channel.responsePipeline()).suppressClose();
+		new JsonOutput("reload").toJson(out);
+		out.close();
 	}
 	
 	@Handler
