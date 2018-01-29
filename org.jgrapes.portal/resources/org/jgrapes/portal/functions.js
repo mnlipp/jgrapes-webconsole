@@ -201,12 +201,12 @@ var JGPortal = {
             }, portalSessionRefreshInterval);
         }
         this._ws.onclose = function(event) {
-            log.debug("OnClose called for WebSocket.");
+            log.debug("OnClose called for WebSocket (reconnect: " +
+                    self._connectRequested + ").");
             if (self._refreshTimer !== null) {
                 clearInterval(self._refreshTimer);
                 self._refreshTimer = null;
             }
-            self._ws = null;
             if (self._connectRequested) {
                 // Not an intended disconnect
                 if (self._connectionLostNotification == null) {
@@ -240,6 +240,10 @@ var JGPortal = {
      */
     PortalWebSocket.prototype.connect = function() {
         this._connectRequested = true;
+        $(window).on('beforeunload', function(){
+            log.debug("Closing WebSocket due to page unload");
+            webSocketConnection.close();
+        });
         this._connect();
     } 
 
@@ -367,6 +371,7 @@ var JGPortal = {
         portalSessionRefreshInterval = refreshInterval;
         portalSessionInactivityTimeout = inactivityTimeout;
         
+        log.debug("Locking screen");
         $("body").faLoading({
             icon: "fa-circle-o-notch",
             spin: true,
@@ -570,6 +575,7 @@ var JGPortal = {
         function portalConfigured() {
             portalIsConfigured = true;
             layoutChanged();
+            log.debug("Unlocking screen");
             $("body").faLoading('remove');
         });
 
