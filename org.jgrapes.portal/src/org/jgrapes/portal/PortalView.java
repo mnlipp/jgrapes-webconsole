@@ -336,7 +336,6 @@ public class PortalView extends Component {
 				|| !event.associated(Session.class).isPresent()) {
 			return;
 		}
-		final Session browserSession = event.associated(Session.class).get();
 		
 		// Normalize and evaluate
 		requestUri = portal.prefix().relativize(
@@ -357,33 +356,7 @@ public class PortalView extends Component {
 		}
 		subUri = uriFromPath("portal-session/").relativize(requestUri);
 		if (!subUri.equals(requestUri)) {
-			// Can only connect to sessions that have been prepared
-			// by loading the portal. (Prevents using a newly created
-			// session for re-connecting after a long disconnect or restart).
-			@SuppressWarnings("unchecked")
-			Set<URI> loadedPortals = (Set<URI>)browserSession.getOrDefault(
-					LOADED_PORTALS, (Serializable)Collections.emptySet());
-			if (!loadedPortals.contains(portal.prefix())) {
-				forceReload(event, channel);
-				return;
-			}
-			if (event.httpRequest().findField(
-					HttpField.UPGRADE, Converters.STRING_LIST)
-					.map(f -> f.value().containsIgnoreCase("websocket"))
-					.orElse(false)) {
-				// Establish portlet session
-				String portalSessionId = subUri.getPath();
-				PortalSession portalSession = PortalSession
-						.findOrCreate(portalSessionId, portal, portalSessionNetworkTimeout)
-						.setUpstreamChannel(channel)
-						.setEventPipeline(activeEventPipeline())
-						.setSession(browserSession);
-				channel.setAssociated(PortalSession.class, portalSession);
-				// Channel now used as JSON input
-				channel.setAssociated(this, new WsInputReader());
-				channel.respond(new WebSocketAccepted(event));
-				event.stop();
-			}
+			handleSessionRequest(event, channel, subUri);
 			return;
 		}
 		subUri = uriFromPath("theme-resource/").relativize(requestUri);
@@ -600,17 +573,48 @@ public class PortalView extends Component {
 		}
 	}
 	
-	private void forceReload(GetRequest event, IOSubchannel channel)
-			throws InterruptedException, IOException, ParseException {
+	private void handleSessionRequest(
+			GetRequest event, IOSubchannel channel, URI subUri)
+					throws InterruptedException, IOException, ParseException {
+		// Must be WebSocket request.
+		if (!event.httpRequest().findField(
+				HttpField.UPGRADE, Converters.STRING_LIST)
+				.map(f -> f.value().containsIgnoreCase("websocket"))
+				.orElse(false)) {
+			return;
+		}
+		// Can only connect to sessions that have been prepared
+		// by loading the portal. (Prevents using a newly created
+		// browser session from being (re-)connected to after a 
+		// long disconnect or restart).
+		final Session browserSession = event.associated(Session.class).get();
+		@SuppressWarnings("unchecked")
+		Set<URI> loadedPortals = (Set<URI>)browserSession.getOrDefault(
+				LOADED_PORTALS, (Serializable)Collections.emptySet());
+		if (!loadedPortals.contains(portal.prefix())) {
+			channel.respond(new WebSocketAccepted(event)).get();
+			@SuppressWarnings("resource")
+			CharBufferWriter out = new CharBufferWriter(channel, 
+					channel.responsePipeline()).suppressClose();
+			new JsonOutput("reload").toJson(out);
+			out.close();
+			event.stop();
+			return;
+		}
+		// Establish portlet session
+		String portalSessionId = subUri.getPath();
+		PortalSession portalSession = PortalSession
+				.lookupOrCreate(portalSessionId, portal, portalSessionNetworkTimeout)
+				.setUpstreamChannel(channel)
+				.setEventPipeline(activeEventPipeline())
+				.setSession(browserSession);
+		channel.setAssociated(PortalSession.class, portalSession);
+		// Channel now used as JSON input
+		channel.setAssociated(this, new WsInputReader());
+		channel.respond(new WebSocketAccepted(event));
 		event.stop();
-		channel.respond(new WebSocketAccepted(event)).get();
-		@SuppressWarnings("resource")
-		CharBufferWriter out = new CharBufferWriter(channel, 
-				channel.responsePipeline()).suppressClose();
-		new JsonOutput("reload").toJson(out);
-		out.close();
 	}
-	
+
 	@Handler
 	public void onInput(Input<CharBuffer> event, IOSubchannel wsChannel)
 			throws IOException {

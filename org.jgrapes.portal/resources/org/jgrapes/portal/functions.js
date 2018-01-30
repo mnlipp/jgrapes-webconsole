@@ -136,6 +136,7 @@ var JGPortal = {
         this._inactivity = 0;
         this._reconnectTimer = null;
         this._connectRequested = false;
+        this._initialConnect = true;
         this._portalSessionId = sessionStorage.getItem("org.jgrapes.portal.sessionId");
         if (!this._portalSessionId) {
             this._portalSessionId = generateUUID();
@@ -173,13 +174,18 @@ var JGPortal = {
                     autoClose: 2000,
                 });
             }
-            findPreviewIds().forEach(function(id) {
-                JGPortal.sendRenderPortlet(id, "Preview", false);
-            });
-            findViewIds().forEach(function(id) {
-                JGPortal.sendRenderPortlet(id, "View", false);
-            });
             self._drainSendQueue();
+            if (this._initialConnect) {
+                this._initialConnect = false;
+            } else {
+                // Make sure to get any lost updates
+                findPreviewIds().forEach(function(id) {
+                    JGPortal.sendRenderPortlet(id, "Preview", false);
+                });
+                findViewIds().forEach(function(id) {
+                    JGPortal.sendRenderPortlet(id, "View", false);
+                });
+            }
             self._refreshTimer = setInterval(function() {
                 if (self._sendQueue.length == 0) {
                     self._inactivity += portalSessionRefreshInterval;
@@ -429,7 +435,6 @@ var JGPortal = {
      
         // With everything prepared, send portal ready
         JGPortal.sendPortalReady();
-
     }
     
     let providedScriptResources = new Set(); // Names, i.e. strings
@@ -534,11 +539,6 @@ var JGPortal = {
                 JGPortal.lockMessageQueue();
                 unlockMessageQueueAfterLoad = true;
             }
-        });
-    
-    webSocketConnection.addMessageHandler('reload',
-        function() { 
-            window.location.reload(true);
         });
     
     /**
@@ -923,10 +923,17 @@ var JGPortal = {
         function (content, options) {
             $( content ).notification( options );
         });
-    
-    // Everything set up, connect web socket
-	webSocketConnection.connect();
 
+    webSocketConnection.addMessageHandler('reload',
+        function() { 
+            window.location.reload(true);
+        });
+
+    // Everything set up, can connect web socket now.
+    webSocketConnection.connect();
+
+    // Send methods
+    
 	/**
 	 * Sends a portal ready notification to the server.
 	 */

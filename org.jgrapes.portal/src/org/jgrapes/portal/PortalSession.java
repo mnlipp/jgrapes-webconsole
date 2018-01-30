@@ -112,17 +112,28 @@ public class PortalSession extends DefaultSubchannel {
 	private WeakReference<IOSubchannel> upstreamChannel = null;
 	
 	/**
+	 * Lookup the portal browserSession channel
+	 * for the given portal browserSession id.
+	 * 
+	 * @param portalSessionId the browserSession id
+	 * @return the channel
+	 */
+	public static Optional<PortalSession> lookup(String portalSessionId) {
+		return Optional.ofNullable(portalSessions.get(portalSessionId));
+	}
+	
+	/**
 	 * Lookup (and create if not found) the portal browserSession channel
 	 * for the given portal browserSession id.
 	 * 
+	 * @param portalSessionId the browserSession id
 	 * @param component the component to pass to the super 
 	 * class' constructor if a new channel is created, usually 
 	 * the portal
-	 * @param portalSessionId the browserSession id
 	 * @param timeout the portal session timeout in milli seconds
 	 * @return the channel
 	 */
-	public static PortalSession findOrCreate(
+	public static PortalSession lookupOrCreate(
 			String portalSessionId, Manager component, long timeout) {
 		return portalSessions.computeIfAbsent(portalSessionId, 
 				psi -> new PortalSession(component, portalSessionId, timeout));
