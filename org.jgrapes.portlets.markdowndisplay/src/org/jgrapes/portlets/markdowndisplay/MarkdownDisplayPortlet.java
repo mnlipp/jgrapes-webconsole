@@ -38,7 +38,6 @@ import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
-import org.jgrapes.core.CompletionLock;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
@@ -124,9 +123,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 				.addCss(PortalView.uriFromPath("MarkdownDisplay-style.css"))
 				.setInstantiable());
 		KeyValueStoreQuery query = new KeyValueStoreQuery(
-				storagePath(portalSession.browserSession()), true);
-		portalSession.setAssociated(
-				MarkdownDisplayPortlet.class, new CompletionLock(event, 3000));
+				storagePath(portalSession.browserSession()), portalSession);
 		fire(query, portalSession);
 	}
 
@@ -137,8 +134,6 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		if (!event.event().query().equals(storagePath(channel.browserSession()))) {
 			return;
 		}
-		channel.associated(MarkdownDisplayPortlet.class, CompletionLock.class)
-			.ifPresent(lock -> lock.remove());
 		for (String json: event.data().values()) {
 			MarkdownDisplayModel model = JsonBeanDecoder.create(json)
 					.readObject(MarkdownDisplayModel.class);

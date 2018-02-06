@@ -75,7 +75,6 @@ import org.jdrupes.httpcodec.types.Directive;
 import org.jdrupes.httpcodec.types.MediaType;
 import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
-import org.jgrapes.core.CompletionLock;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.LanguageSelector.Selection;
@@ -669,8 +668,7 @@ public class PortalView extends Component {
 		String principal = 	Utils.userFromSession(channel.browserSession())
 				.map(UserPrincipal::toString).orElse("");
 		KeyValueStoreQuery query = new KeyValueStoreQuery(
-				"/" + principal + "/themeProvider", true);
-		channel.setAssociated(this, new CompletionLock(event, 3000));
+				"/" + principal + "/themeProvider", channel);
 		fire(query, channel);
 	}
 
@@ -684,8 +682,6 @@ public class PortalView extends Component {
 		if (!event.event().query().equals("/" + principal + "/themeProvider")) {
 			return;
 		}
-		channel.associated(this, CompletionLock.class)
-			.ifPresent(lock -> lock.remove());
 		if (!event.data().values().iterator().hasNext()) {
 			return;
 		}

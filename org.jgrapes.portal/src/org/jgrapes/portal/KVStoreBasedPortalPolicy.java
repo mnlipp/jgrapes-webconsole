@@ -28,7 +28,6 @@ import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
-import org.jgrapes.core.CompletionLock;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
@@ -51,10 +50,7 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  * This component requires another component that handles the key/value
  * store events ({@link KeyValueStoreUpdate}, {@link KeyValueStoreQuery})
  * used by this component for implementing persistence. When the portal becomes
- * ready, this policy sends a query for the persisted data. To ensure
- * that the data is available before the boot sequence continues, the 
- * completion of the {@link PortalReady} event is delayed (using a 
- * {@link CompletionLock}) until the requested data becomes available.
+ * ready, this policy sends a query for the persisted data.
  * 
  * When the portal has been prepared, the policy sends the last layout
  * as retrieved from persistent storage to the portal and then generates
@@ -169,7 +165,6 @@ public class KVStoreBasedPortalPolicy extends Component {
 	private class PortalSessionDataStore {
 
 		private String storagePath;
-		private CompletionLock readyLock;
 		private Map<String,Object> persisted = null;
 		
 		public PortalSessionDataStore(Session session) {
@@ -185,8 +180,7 @@ public class KVStoreBasedPortalPolicy extends Component {
 				return;
 			}
 			KeyValueStoreQuery query = new KeyValueStoreQuery(
-					storagePath, true);
-			readyLock = new CompletionLock(event, 3000);
+					storagePath, channel);
 			fire(query, channel);
 		}
 
@@ -204,8 +198,6 @@ public class KVStoreBasedPortalPolicy extends Component {
 					= (Class<Map<String,Object>>)(Class<?>)HashMap.class;
 				persisted = decoder.readObject(cls);
 			}
-			readyLock.remove();
-			readyLock = null;
 		}
 		
 		public void onPortalPrepared(
