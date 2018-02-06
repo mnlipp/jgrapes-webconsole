@@ -33,7 +33,6 @@ import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
-import org.jgrapes.core.CompletionLock;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
@@ -103,9 +102,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 				.addCss(PortalView.uriFromPath("HelloWorld-style.css"))
 				.setInstantiable());
 		KeyValueStoreQuery query = new KeyValueStoreQuery(
-				storagePath(portalSession.browserSession()), true);
-		portalSession.setAssociated(
-				HelloWorldPortlet.class, new CompletionLock(event, 3000));
+				storagePath(portalSession.browserSession()), portalSession);
 		fire(query, portalSession);
 	}
 
@@ -116,8 +113,6 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		if (!event.event().query().equals(storagePath(channel.browserSession()))) {
 			return;
 		}
-		channel.associated(HelloWorldPortlet.class, CompletionLock.class)
-			.ifPresent(lock -> lock.remove());
 		for (String json: event.data().values()) {
 			HelloWorldModel model = JsonBeanDecoder.create(json)
 					.readObject(HelloWorldModel.class);
