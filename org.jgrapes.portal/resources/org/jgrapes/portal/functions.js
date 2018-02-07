@@ -138,6 +138,7 @@ var JGPortal = {
         this._connectRequested = false;
         this._initialConnect = true;
         this._connectionLostNotification = null;
+        this._portalSessionId = null;
         this._oldPortalSessionId = sessionStorage.getItem("org.jgrapes.portal.sessionId");
     };
 
@@ -156,8 +157,8 @@ var JGPortal = {
         if (!location.endsWith("/")) {
             location += "/";
         }
-        let portalSessionId = sessionStorage.getItem("org.jgrapes.portal.sessionId");
-        location += "portal-session/" + portalSessionId;
+        this._portalSessionId = sessionStorage.getItem("org.jgrapes.portal.sessionId");
+        location += "portal-session/" + this._portalSessionId;
         if (this._oldPortalSessionId) {
             location += "?was=" + this._oldPortalSessionId;
             this._oldPortalSessionId = null;
@@ -247,9 +248,12 @@ var JGPortal = {
      */
     PortalWebSocket.prototype.connect = function() {
         this._connectRequested = true;
+        let self = this;
         $(window).on('beforeunload', function(){
             log.debug("Closing WebSocket due to page unload");
-            webSocketConnection.close();
+            // Internal connect, don't send disconnect
+            self._connectRequested = false;
+            self._ws.close();
         });
         this._connect();
     } 
@@ -258,8 +262,10 @@ var JGPortal = {
      * Closes the connection.
      */
     PortalWebSocket.prototype.close = function() {
-        this._send({"jsonrpc": "2.0", "method": "disconnect",
-            "params": [ this._portalSessionId ]});
+        if (this._portalSessionId) {
+            this._send({"jsonrpc": "2.0", "method": "disconnect",
+                "params": [ this._portalSessionId ]});
+        }
         this._connectRequested = false;
         this._ws.close();
     }

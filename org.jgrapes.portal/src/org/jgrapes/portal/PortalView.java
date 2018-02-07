@@ -33,7 +33,6 @@ import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URI;
@@ -384,9 +383,9 @@ public class PortalView extends Component {
 		Session session = event.associated(Session.class).get();
 		UUID portalSessionId = UUID.randomUUID();
 		@SuppressWarnings("unchecked")
-		Set<UUID> knownIds = ((Set<UUID>)session.computeIfAbsent(
-				PORTAL_SESSION_IDS, k -> new HashSet<UUID>()));
-		knownIds.add(portalSessionId);
+		Map<URI,UUID> knownIds = (Map<URI,UUID>)session.computeIfAbsent(
+				PORTAL_SESSION_IDS, k -> new HashMap<URI,UUID>());
+		knownIds.put(portal.prefix(), portalSessionId);
 		
 		// Prepare response
 		HttpResponse response = event.httpRequest().response().get();
@@ -594,9 +593,9 @@ public class PortalView extends Component {
 		String portalSessionId = subUri.getPath();
 		final Session browserSession = event.associated(Session.class).get();
 		@SuppressWarnings("unchecked")
-		Set<UUID> knownIds = (Set<UUID>)browserSession.getOrDefault(
-				PORTAL_SESSION_IDS, (Serializable)Collections.emptySet());
-		if (!knownIds.contains(UUID.fromString(portalSessionId))) {
+		Map<URI,UUID> knownIds = (Map<URI,UUID>)browserSession.computeIfAbsent(
+				PORTAL_SESSION_IDS, k -> new HashMap<URI,UUID>());
+		if (!UUID.fromString(portalSessionId).equals(knownIds.get(portal.prefix()))) {
 			channel.respond(new WebSocketAccepted(event)).get();
 			@SuppressWarnings("resource")
 			CharBufferWriter out = new CharBufferWriter(channel, 
