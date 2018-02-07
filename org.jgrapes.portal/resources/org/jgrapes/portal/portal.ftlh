@@ -51,7 +51,7 @@
 
   <script>
   $( function() {
-    JGPortal.init(${portalSessionRefreshInterval?c}, ${portalSessionInactivityTimeout?c});    
+    JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, ${portalSessionInactivityTimeout?c});    
   } );
   </script>
   

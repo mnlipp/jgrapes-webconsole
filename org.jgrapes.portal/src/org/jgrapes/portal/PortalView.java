@@ -55,6 +55,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -109,8 +110,8 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  */
 public class PortalView extends Component {
 
-	private static final String LOADED_PORTALS 
-		= PortalView.class.getName() + ".loadedPortals";
+	private static final String PORTAL_SESSION_IDS 
+		= PortalView.class.getName() + ".portalSessionId";
 	
 	private Portal portal;
 	private ServiceLoader<ThemeProvider> themeLoader;
@@ -381,10 +382,11 @@ public class PortalView extends Component {
 
 		// This is a portal session now (can be connected to)
 		Session session = event.associated(Session.class).get();
+		UUID portalSessionId = UUID.randomUUID();
 		@SuppressWarnings("unchecked")
-		Set<URI> loadedPortals = (Set<URI>)session.computeIfAbsent(
-				LOADED_PORTALS, k -> new HashSet<URI>());
-		loadedPortals.add(portal.prefix());
+		Set<UUID> knownIds = ((Set<UUID>)session.computeIfAbsent(
+				PORTAL_SESSION_IDS, k -> new HashSet<UUID>()));
+		knownIds.add(portalSessionId);
 		
 		// Prepare response
 		HttpResponse response = event.httpRequest().response().get();
@@ -398,6 +400,9 @@ public class PortalView extends Component {
 				channel, channel.responsePipeline()), "utf-8")) {
 			Map<String,Object> portalModel = new HashMap<>(portalBaseModel);
 
+			// Portal Session UUID
+			portalModel.put("portalSessionId", portalSessionId.toString());
+			
 			// Add locale
 			final Locale locale = event.associated(Selection.class).map(
 					s -> s.get()[0]).orElse(Locale.getDefault());
@@ -585,12 +590,13 @@ public class PortalView extends Component {
 		// Can only connect to sessions that have been prepared
 		// by loading the portal. (Prevents using a newly created
 		// browser session from being (re-)connected to after a 
-		// long disconnect or restart).
+		// long disconnect or restart and, of course, CSF).
+		String portalSessionId = subUri.getPath();
 		final Session browserSession = event.associated(Session.class).get();
 		@SuppressWarnings("unchecked")
-		Set<URI> loadedPortals = (Set<URI>)browserSession.getOrDefault(
-				LOADED_PORTALS, (Serializable)Collections.emptySet());
-		if (!loadedPortals.contains(portal.prefix())) {
+		Set<UUID> knownIds = (Set<UUID>)browserSession.getOrDefault(
+				PORTAL_SESSION_IDS, (Serializable)Collections.emptySet());
+		if (!knownIds.contains(UUID.fromString(portalSessionId))) {
 			channel.respond(new WebSocketAccepted(event)).get();
 			@SuppressWarnings("resource")
 			CharBufferWriter out = new CharBufferWriter(channel, 
@@ -600,10 +606,15 @@ public class PortalView extends Component {
 			event.stop();
 			return;
 		}
-		// Establish portlet session
-		String portalSessionId = subUri.getPath();
-		PortalSession portalSession = PortalSession
-				.lookupOrCreate(portalSessionId, portal, portalSessionNetworkTimeout)
+		// Reuse old portal session if still available
+		String oldPortalSessionId = Optional.ofNullable(
+				event.httpRequest().queryData().get("was")).map(l -> l.get(0))
+				.orElse(null);
+		PortalSession portalSession = Optional.ofNullable(
+				oldPortalSessionId).flatMap(opsId -> PortalSession.lookup(opsId))
+				.map(ps -> ps.replaceId(portalSessionId))
+				.orElse(PortalSession.lookupOrCreate(
+						portalSessionId, portal, portalSessionNetworkTimeout))
 				.setUpstreamChannel(channel)
 				.setEventPipeline(activeEventPipeline())
 				.setSession(browserSession);

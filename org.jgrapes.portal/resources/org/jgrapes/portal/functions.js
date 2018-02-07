@@ -137,19 +137,8 @@ var JGPortal = {
         this._reconnectTimer = null;
         this._connectRequested = false;
         this._initialConnect = true;
-        this._portalSessionId = sessionStorage.getItem("org.jgrapes.portal.sessionId");
-        if (!this._portalSessionId) {
-            this._portalSessionId = generateUUID();
-            sessionStorage.setItem("org.jgrapes.portal.sessionId", this._portalSessionId);
-        }
-        this._location = (window.location.protocol === "https:" ? "wss" : "ws") +
-            "://" + window.location.host + window.location.pathname;
-        if (!this._location.endsWith("/")) {
-            this._location += "/";
-        }
-        this._location += "portal-session/" + this._portalSessionId +
-            "?q=" + generateUUID();
         this._connectionLostNotification = null;
+        this._oldPortalSessionId = sessionStorage.getItem("org.jgrapes.portal.sessionId");
     };
 
     /**
@@ -162,8 +151,19 @@ var JGPortal = {
     };
     
     PortalWebSocket.prototype._connect = function() {
-        log.debug("Creating WebSocket for " + this._location);
-        this._ws = new WebSocket(this._location);
+        let location = (window.location.protocol === "https:" ? "wss" : "ws") +
+            "://" + window.location.host + window.location.pathname;
+        if (!location.endsWith("/")) {
+            location += "/";
+        }
+        let portalSessionId = sessionStorage.getItem("org.jgrapes.portal.sessionId");
+        location += "portal-session/" + portalSessionId;
+        if (this._oldPortalSessionId) {
+            location += "?was=" + this._oldPortalSessionId;
+            this._oldPortalSessionId = null;
+        }
+        log.debug("Creating WebSocket for " + location);
+        this._ws = new WebSocket(location);
         log.debug("Created WebSocket with readyState " + this._ws.readyState);
         let self = this;
         this._ws.onopen = function() {
@@ -373,10 +373,14 @@ var JGPortal = {
     var portalSessionRefreshInterval;
     var portalSessionInactivityTimeout;
     
-    JGPortal.init = function(refreshInterval, inactivityTimeout) {
+    JGPortal.init = function(portalSessionId, refreshInterval, inactivityTimeout) {
+        sessionStorage.setItem("org.jgrapes.portal.sessionId", portalSessionId);
         portalSessionRefreshInterval = refreshInterval;
         portalSessionInactivityTimeout = inactivityTimeout;
         
+        // Everything set up, can connect web socket now.
+        webSocketConnection.connect();
+
         log.debug("Locking screen");
         $("body").faLoading({
             icon: "fa-circle-o-notch",
@@ -928,9 +932,6 @@ var JGPortal = {
         function() { 
             window.location.reload(true);
         });
-
-    // Everything set up, can connect web socket now.
-    webSocketConnection.connect();
 
     // Send methods
     

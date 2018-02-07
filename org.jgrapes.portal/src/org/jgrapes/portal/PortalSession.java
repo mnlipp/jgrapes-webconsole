@@ -139,6 +139,20 @@ public class PortalSession extends DefaultSubchannel {
 				psi -> new PortalSession(component, portalSessionId, timeout));
 	}
 	
+	
+	/**
+	 * Replace the id of the portal session with the new id.
+	 *
+	 * @param newPortalSessionId the new portal session id
+	 * @return the portal session
+	 */
+	public PortalSession replaceId(String newPortalSessionId) {
+		portalSessions.remove(portalSessionId);
+		portalSessionId = newPortalSessionId;
+		portalSessions.put(portalSessionId, this);
+		return this;
+	}
+	
 	private PortalSession(Manager component, String portalSessionId,
 			long timeout) {
 		super(component);
