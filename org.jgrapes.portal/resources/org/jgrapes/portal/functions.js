@@ -200,6 +200,7 @@ var JGPortal = {
                                     }
                                 });
                         $( "#portal-session-suspended-dialog" ).dialog( "open" );
+                        return;
                     }
                     self._send({"jsonrpc": "2.0", "method": "keepAlive",
                         "params": []});
