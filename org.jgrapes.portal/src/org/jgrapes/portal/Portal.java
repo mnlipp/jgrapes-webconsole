@@ -26,11 +26,14 @@ import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.nio.CharBuffer;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -106,7 +109,8 @@ public class Portal extends Component {
 		view = attach(new PortalView(this, viewChannel));
 		try {
 			ObjectName mxbeanName = new ObjectName("org.jgrapes.portal:type="
-					+ Portal.class.getSimpleName() + "#" + Components.objectId(this));
+					+ Portal.class.getSimpleName() + "#" + Components.objectId(this)
+					+ " (" + prefix.toString() + ")");
 			mbeanServer.registerMBean(new MBeanView(), mxbeanName);
 		} catch (InstanceAlreadyExistsException | MBeanRegistrationException
 		        | NotCompliantMBeanException | MalformedObjectNameException e) {
@@ -337,6 +341,28 @@ public class Portal extends Component {
 	 * An MBean interface for the portal component.
 	 */
 	public static interface ManagedPortalMXBean {
+
+		public static class PortalSessionInfo {
+			
+			private PortalSession session;
+
+			public PortalSessionInfo(PortalSession session) {
+				super();
+				this.session = session;
+			}
+
+			public String getChannel() {
+				return session.upstreamChannel().map(
+						ch -> ch.toString()).orElse("<unknown>");
+			}
+			
+			public String getExpiresAt() {
+				return session.expiresAt().atZone(ZoneId.systemDefault())
+						.toString();
+			}
+		}
+		
+		String getPrefix();
 		
 		/**
 		 * Indicates if minified resources are sent to the browser.
@@ -351,9 +377,16 @@ public class Portal extends Component {
 		 * @param useMinified
 		 */
 		void setUseMinifiedResources(boolean useMinified);
+		
+		public SortedMap<String,PortalSessionInfo> getPortalSessions();
 	}
 	
 	private class MBeanView implements ManagedPortalMXBean {
+
+		@Override
+		public String getPrefix() {
+			return prefix.toString();
+		}
 
 		/* (non-Javadoc)
 		 * @see org.jgrapes.portal.Portal.ManagedPortalMXBean#getUseMinifiedResources()
@@ -371,5 +404,13 @@ public class Portal extends Component {
 			view.setUseMinifiedResources(useMinifiedResources);
 		}
 		
+		public SortedMap<String,PortalSessionInfo> getPortalSessions() {
+			SortedMap<String,PortalSessionInfo> result = new TreeMap<>();
+			for (PortalSession ps: PortalSession.byPortal(Portal.this)) {
+				result.put(Components.simpleObjectName(ps), 
+						new PortalSessionInfo(ps));
+			}
+			return result;
+		}
 	}
 }

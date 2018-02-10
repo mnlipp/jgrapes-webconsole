@@ -20,15 +20,17 @@ package org.jgrapes.portal;
 
 import java.lang.ref.WeakReference;
 import java.time.Duration;
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.EventPipeline;
-import org.jgrapes.core.Manager;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.IOSubchannel.DefaultSubchannel;
@@ -102,6 +104,7 @@ public class PortalSession extends DefaultSubchannel {
 		= new ConcurrentHashMap<>();
 	
 	private String portalSessionId;
+	private Portal portal;
 	private boolean closed = false;
 	private long timeout;
 	private Timer timeoutTimer;
@@ -123,20 +126,36 @@ public class PortalSession extends DefaultSubchannel {
 	}
 	
 	/**
+	 * Return all sessions that belong to the given portal.
+	 *
+	 * @param portal the portal
+	 * @return the sets the
+	 */
+	public static Set<PortalSession> byPortal(Portal portal) {
+		Set<PortalSession> result  = new HashSet<>();
+		for (PortalSession ps: portalSessions.values()) {
+			if (ps.portal.equals(portal)) {
+				result.add(ps);
+			}
+		}
+		return result;
+	}
+	
+	/**
 	 * Lookup (and create if not found) the portal browserSession channel
 	 * for the given portal browserSession id.
 	 * 
 	 * @param portalSessionId the browserSession id
-	 * @param component the component to pass to the super 
+	 * @param portal the portal that this session belongs to 
 	 * class' constructor if a new channel is created, usually 
 	 * the portal
 	 * @param timeout the portal session timeout in milli seconds
 	 * @return the channel
 	 */
 	public static PortalSession lookupOrCreate(
-			String portalSessionId, Manager component, long timeout) {
+			String portalSessionId, Portal portal, long timeout) {
 		return portalSessions.computeIfAbsent(portalSessionId, 
-				psi -> new PortalSession(component, portalSessionId, timeout));
+				psi -> new PortalSession(portal, portalSessionId, timeout));
 	}
 	
 	
@@ -153,9 +172,10 @@ public class PortalSession extends DefaultSubchannel {
 		return this;
 	}
 	
-	private PortalSession(Manager component, String portalSessionId,
+	private PortalSession(Portal portal, String portalSessionId,
 			long timeout) {
-		super(component);
+		super(portal);
+		this.portal = portal;
 		this.portalSessionId = portalSessionId;
 		this.timeout = timeout;
 		timeoutTimer = Components.schedule(
@@ -173,6 +193,15 @@ public class PortalSession extends DefaultSubchannel {
 		this.timeout = timeout;
 		timeoutTimer.reschedule(Duration.ofMillis(timeout));
 		return this;
+	}
+	
+	/**
+	 * Returns the time when this session will expire.
+	 *
+	 * @return the instant
+	 */
+	public Instant expiresAt() {
+		return timeoutTimer.scheduledFor();
 	}
 	
 	/**
