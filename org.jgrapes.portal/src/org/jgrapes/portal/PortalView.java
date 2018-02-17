@@ -40,8 +40,6 @@ import java.net.URL;
 import java.nio.CharBuffer;
 import java.text.Collator;
 import java.text.ParseException;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -71,7 +69,6 @@ import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jdrupes.httpcodec.types.Converters;
-import org.jdrupes.httpcodec.types.Directive;
 import org.jdrupes.httpcodec.types.MediaType;
 import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
@@ -96,7 +93,8 @@ import org.jgrapes.portal.events.JsonOutput;
 import org.jgrapes.portal.events.PageResourceRequest;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.PortletResourceRequest;
-import org.jgrapes.portal.events.PortletResourceResponse;
+import org.jgrapes.portal.events.ResourceRequest;
+import org.jgrapes.portal.events.ResourceRequestCompleted;
 import org.jgrapes.portal.events.SetLocale;
 import org.jgrapes.portal.events.SetTheme;
 import org.jgrapes.portal.themes.base.Provider;
@@ -175,8 +173,7 @@ public class PortalView extends Component {
 		// Handlers attached to the portal side channel
 		Handler.Evaluator.add(this, "onPortalReady", portal.channel());
 		Handler.Evaluator.add(this, "onKeyValueStoreData", portal.channel());
-		Handler.Evaluator.add(
-				this, "onPortletResourceResponse", portal.channel());
+		Handler.Evaluator.add(this, "onResourceRequestCompleted", portal.channel());
 		Handler.Evaluator.add(this, "onOutput", portal.channel());
 		Handler.Evaluator.add(this, "onJsonOutput", portal.channel());
 		Handler.Evaluator.add(this, "onSetLocale", portal.channel());
@@ -497,22 +494,6 @@ public class PortalView extends Component {
 				p -> resUrl, null);
 	}
 
-	public static void prepareResourceResponse(
-			HttpResponse response, URI request, boolean noCache) {
-		response.setContentType(request);
-		// Set max age in cache-control header
-		List<Directive> directives = new ArrayList<>();
-		if (noCache) {
-			directives.add(new Directive("no-cache"));
-		} else {
-			directives.add(new Directive("max-age", 600));
-		}
-		response.setField(HttpField.CACHE_CONTROL, directives);
-		response.setField(HttpField.LAST_MODIFIED, Instant.now());
-
-		response.setStatus(HttpStatus.OK);
-	}
-
 	private void requestPageResource(GetRequest event, IOSubchannel channel,
 			URI resource) throws InterruptedException {
 		// Send events to providers on portal's channel
@@ -523,10 +504,8 @@ public class PortalView extends Component {
 		// a websocket request).
 		event.associated(Session.class).ifPresent(
 				session -> pageResourceRequest.setAssociated(Session.class, session));
-		if (Boolean.TRUE.equals(newEventPipeline().fire(
-				pageResourceRequest, portalChannel(channel)).get())) {
-			event.stop();
-		}
+		event.stop();
+		fire(pageResourceRequest, portalChannel(channel));
 	}
 	
 	private void requestPortletResource(GetRequest event, IOSubchannel channel,
@@ -542,10 +521,29 @@ public class PortalView extends Component {
 		// a websocket request).
 		event.associated(Session.class).ifPresent(
 				session -> portletRequest.setAssociated(Session.class, session));
-		if (Boolean.TRUE.equals(newEventPipeline().fire(
-				portletRequest, portalChannel(channel)).get())) {
-			event.stop();
+		event.stop();
+		fire(portletRequest, portalChannel(channel));
+	}
+
+	@Handler(dynamic=true)
+	public void onResourceRequestCompleted(
+			ResourceRequestCompleted event, IOSubchannel channel) 
+					throws InterruptedException {
+		event.stop();
+		final HttpRequest request = event.event().httpRequest();
+		final URL resourceUrl = event.event().get();
+		if (resourceUrl == ResourceRequest.RESPONSE_GENERATED) {
+			return;
 		}
+		if (resourceUrl == null) {
+			ResponseCreationSupport.sendResponse(
+					request, event.event().httpChannel(), HttpStatus.NOT_FOUND);
+			return;
+		}
+		
+		// Send resource
+		ResponseCreationSupport.sendStaticContent(
+				request, event.event().httpChannel(), path -> resourceUrl, null);
 	}
 	
 	private void handleSessionRequest(
@@ -679,16 +677,6 @@ public class PortalView extends Component {
 		}
 	}
 	
-	@Handler(dynamic=true)
-	public void onPortletResourceResponse(PortletResourceResponse event,
-	        LinkedIOSubchannel channel) {
-		HttpRequest request = event.request().httpRequest();
-		// Send header
-		HttpResponse response = request.response().get();
-		prepareResourceResponse(response, request.requestUri(), event.dynamic());
-		channel.upstreamChannel().respond(new Response(response));
-	}
-
 	@Handler(dynamic=true)
 	public void onOutput(Output<?> event, LinkedIOSubchannel channel) {
 		channel.upstreamChannel().respond(new Output<>(event));

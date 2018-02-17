@@ -21,7 +21,6 @@ package org.jgrapes.portal.events;
 import java.net.URI;
 
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
-import org.jgrapes.core.Event;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.RenderSupport;
 
@@ -31,13 +30,9 @@ import org.jgrapes.portal.RenderSupport;
  * generated during portal boot. See the description of
  * {@link AddPortletType} for details.
  */
-public class PortletResourceRequest extends Event<Boolean> {
+public class PortletResourceRequest extends ResourceRequest {
 
-	private HttpRequest httpRequest;
-	private IOSubchannel httpChannel;
 	private String portletType;
-	private URI resourceUri;
-	private RenderSupport renderSupport;
 
 	/**
 	 * Creates a new request.
@@ -51,27 +46,8 @@ public class PortletResourceRequest extends Event<Boolean> {
 	public PortletResourceRequest(String portletType, URI resourceUri,
 			HttpRequest httpRequest, IOSubchannel httpChannel,
 			RenderSupport renderSupport) {
+		super(resourceUri, httpRequest, httpChannel, renderSupport);
 		this.portletType = portletType;
-		this.resourceUri = resourceUri;
-		this.httpRequest = httpRequest;
-		this.httpChannel = httpChannel;
-		this.renderSupport = renderSupport;
-	}
-
-	/**
-	 * Returns the "raw" request as provided by the HTTP decoder.
-	 * 
-	 * @return the request
-	 */
-	public HttpRequest httpRequest() {
-		return httpRequest;
-	}
-
-	/**
-	 * @return the httpChannel
-	 */
-	public IOSubchannel httpChannel() {
-		return httpChannel;
 	}
 
 	/**
@@ -81,19 +57,4 @@ public class PortletResourceRequest extends Event<Boolean> {
 		return portletType;
 	}
 
-	/**
-	 * @return the resourceUri
-	 */
-	public URI resourceUri() {
-		return resourceUri;
-	}
-	
-	/**
-	 * Returns the render support.
-	 * 
-	 * @return the render support
-	 */
-	public RenderSupport renderSupport() {
-		return renderSupport;
-	}
 }

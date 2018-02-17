@@ -32,6 +32,7 @@ import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +42,14 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
+import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
+import org.jdrupes.httpcodec.protocols.http.HttpField;
+import org.jdrupes.httpcodec.protocols.http.HttpRequest;
+import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jgrapes.core.Channel;
+import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
+import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.util.CharBufferWriter;
 import org.jgrapes.portal.AbstractPortlet;
@@ -50,9 +57,9 @@ import org.jgrapes.portal.AbstractPortlet.PortletBaseModel;
 import org.jgrapes.portal.PortalSession;
 import org.jgrapes.portal.RenderSupport;
 import org.jgrapes.portal.events.PortletResourceRequest;
-import org.jgrapes.portal.events.PortletResourceResponse;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.events.RenderPortletRequestBase;
+import org.jgrapes.portal.events.ResourceRequest;
 
 /**
  * 
@@ -227,15 +234,30 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 			return;
 		}
 		try {
-			Template tpl = freemarkerConfig().getTemplate(event.resourceUri().getPath());
+			// Prepare template
+			final Template tpl = freemarkerConfig().getTemplate(
+					event.resourceUri().getPath());
 			Map<String, Object> model = fmSessionModel(
 					event.associated(Session.class).get());
 			model.putAll(fmTypeModel(event.renderSupport()));
-			channel.respond(new PortletResourceResponse(event, true));
-			Writer out = new CharBufferWriter(channel).suppressClose();
+			
+			// Prepare response
+			HttpRequest request = event.httpRequest();
+			HttpResponse response = request.response().get();
+			response.setContentType(request.requestUri());
+			ResponseCreationSupport.setMaxAge(
+					response, (req, mt) -> 0, request, null);
+			response.setField(HttpField.LAST_MODIFIED, Instant.now());
+			response.setStatus(HttpStatus.OK);
+			IOSubchannel httpChannel = event.httpChannel();
+
+			// Everything successfully prepared, no way back
+			event.setResult(ResourceRequest.RESPONSE_GENERATED);
+			event.stop();
+			httpChannel.respond(new Response(response));
+			Writer out = new CharBufferWriter(httpChannel).suppressClose();
 			tpl.process(model, out);
 			out.close();
-			event.setResult(true);
 		} catch (TemplateException | IOException e) {
 			throw new IllegalArgumentException(e);
 		}

@@ -19,8 +19,8 @@
 package org.jgrapes.portal;
 
 import java.beans.ConstructorProperties;
-import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
@@ -44,8 +44,6 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.events.Closed;
-import org.jgrapes.io.events.Output;
-import org.jgrapes.io.util.InputStreamPipeline;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
 import org.jgrapes.portal.events.DeletePortlet;
@@ -54,7 +52,6 @@ import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.PortletResourceRequest;
-import org.jgrapes.portal.events.PortletResourceResponse;
 import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
 
@@ -347,13 +344,9 @@ public abstract class AbstractPortlet extends Component {
 	}
 
 	/**
-	 * Generates the reponse event for a resource request
-	 * (a {@link PortletResourceResponse} and at least one
-	 * {@link Output} event.
-	 * 
-	 * The default implementation searches for
-	 * a file with the requested URI in the portlets class path
-	 * and sends its content if found.
+	 * The default implementation searches for a file with the 
+	 * requested resource URI in the portlet's class path and sets 
+	 * its {@link URL} as result if found.
 	 * 
 	 * @param event the event. The result will be set to
 	 * `true` on success
@@ -361,16 +354,15 @@ public abstract class AbstractPortlet extends Component {
 	 */
 	protected void doGetResource(PortletResourceRequest event,
 			IOSubchannel channel) {
-		InputStream stream = this.getClass().getResourceAsStream(
+		URL resourceUrl = this.getClass().getResource(
 				event.resourceUri().getPath());
-		if (stream == null) {
+		if (resourceUrl == null) {
 			return;
 		}
 		
-		// Resource found, send.
-		channel.respond(new PortletResourceResponse(event, false));
-		new InputStreamPipeline(stream, channel).suppressClose().run();
-		event.setResult(true);
+		// Resource found, set as result.
+		event.setResult(resourceUrl);
+		event.stop();
 	}
 	
 	/**

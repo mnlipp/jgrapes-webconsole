@@ -18,17 +18,14 @@
 
 package org.jgrapes.portal;
 
-import java.io.InputStream;
+import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.io.util.InputStreamPipeline;
 import org.jgrapes.portal.events.PageResourceRequest;
 
 /**
@@ -62,9 +59,9 @@ public abstract class PageResourceProvider extends Component {
 	}
 
 	/**
-	 * A default handler for resource requests. searches for
-	 * a file with the requested URI in the component's class path
-	 * and sends its content if found.
+	 * A default handler for resource requests. Searches for
+	 * a file with the requested resource URI in the component's 
+	 * class path and sets its {@link URL} as result if found.
 	 * 
 	 * @param event the resource request event
 	 * @param channel the channel that the request was received on
@@ -72,25 +69,14 @@ public abstract class PageResourceProvider extends Component {
 	@Handler
 	public final void onResourceRequest(
 			PageResourceRequest event, IOSubchannel channel) {
-		InputStream stream = this.getClass().getResourceAsStream(
+		URL resourceUrl = this.getClass().getResource(
 				event.resourceUri().getPath());
-		if (stream == null) {
+		if (resourceUrl == null) {
 			return;
 		}
 		
-		// Resource found, send.
-		// Send header
-		HttpResponse response = event.httpRequest().response().get();
-		PortalView.prepareResourceResponse(
-				response, event.httpRequest().requestUri(), false);
-		event.httpChannel().respond(new Response(response));
-		
-		// Send content
-		event.httpChannel().responsePipeline().executorService()
-			.submit(new InputStreamPipeline(stream, event.httpChannel()));
-		
-		// Done
-		event.setResult(true);
+		// Resource found, set as result.
+		event.setResult(resourceUrl);
 		event.stop();
 	}
 	
