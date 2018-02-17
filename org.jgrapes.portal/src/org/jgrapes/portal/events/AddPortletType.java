@@ -34,15 +34,14 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
  * This in turn causes the browser to issue `GET` request that
  * (usually) refer to the portlet's resources. These requests are
  * converted to {@link PortletResourceRequest}s by the portal and
- * sent to the portlets, which must respond to these requests.
+ * sent to the portlets, which must respond to the requests.
  * 
- * The complete sequence of events is shown in the diagram.
+ * The sequence of events is shown in the diagram.
  * 
  * ![Portal Ready Event Sequence](AddPortletTypeSeq.svg)
  * 
- * Of course, due to internal buffering, the "Response Header" data
- * and the "Response body" data may collapse in a single message
- * that is sent to the browser (in case of a small resource).
+ * See {@link ResourceRequest} for details about the processing
+ * of the {@link PortletResourceRequest}.
  * 
  * A portelt's JavaScript may (and probably must) make use of
  * the functions provided by the portal page. See the 
@@ -52,6 +51,12 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
  * @startuml AddPortletTypeSeq.svg
  * hide footbox
  * 
+ * activate Browser
+ * Browser -> Portal: "portalReady"
+ * deactivate Browser
+ * activate Portal
+ * Portal -> PortletX: PortalReady 
+ * deactivate Portal
  * activate PortletX
  * PortletX -> Portal: AddPortletType 
  * deactivate PortletX
@@ -59,22 +64,12 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
  * Portal -> Browser: "addPortletType"
  * activate Browser
  * deactivate Portal
- * deactivate Portal
- * Browser -> Portal: "GET <portlet resource1 URL>"
+ * Browser -> Portal: "GET <portlet resource URI>"
  * activate Portal
  * Portal -> PortletX: PortletResourceRequest
- * activate PortletX
- * PortletX -> Portal: PortletResourceResponse
- * Portal -> Browser: "Response Header"
- * deactivate Portal
- * loop until end of data
- *     PortletX -> Portal: Output
- *     activate Portal
- *     Portal -> Browser: "Response body"
- *     deactivate Portal
- * end loop
- * deactivate PortletX
  * deactivate Browser
+ * activate PortletX
+ * deactivate PortletX
  * 
  * @enduml
  */

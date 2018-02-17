@@ -37,13 +37,12 @@ import org.jgrapes.core.Event;
  * (usually) refer to resources that must be provided by the component
  * that created the {@link AddPageResources} event.
  * 
- * The complete sequence of events is shown in the diagram.
+ * The sequence of events is shown in the diagram.
  * 
  * ![Portal Ready Event Sequence](AddToHead.svg)
  * 
- * Of course, due to internal buffering, the "Response Header" data
- * and the "Response body" data may collapse in a single message
- * that is sent to the browser (in case of a small resource).
+ * See {@link ResourceRequest} for details about the processing
+ * of the {@link PageResourceRequest}.
  * 
  * The `GET` request may also, of course, refer to a resource from 
  * another server.
@@ -72,15 +71,12 @@ import org.jgrapes.core.Event;
  * deactivate Portal
  * activate Browser
  * deactivate Portal
- * Browser -> Portal: "GET <page resource1 URL>"
+ * Browser -> Portal: "GET <page resource URI>"
  * activate Portal
  * Portal -> PageResourceProvider: PageResourceRequest
  * deactivate Portal
  * activate PageResourceProvider
- * PageResourceProvider -> Browser: "Response Header"
- * PageResourceProvider -> Browser: "Resource Data"
  * deactivate PageResourceProvider
- * 
  * @enduml
  */
 public class AddPageResources extends Event<Void> {

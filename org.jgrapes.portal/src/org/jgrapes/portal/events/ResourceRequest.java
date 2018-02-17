@@ -33,19 +33,70 @@ import org.jgrapes.portal.RenderSupport;
  * 
  * This event is effectively a "transformed" {@link GetRequest}. It 
  * simplifies handling of such an event by portal components, because
- * they only have to provide a {@link URL} as result and thus need
- * no knowledge about generating all the events required to properly
- * respond to a {@link GetRequest}.
+ * they only have to provide a {@link URL} as result of the event and 
+ * thus need no knowledge about generating all the events required to 
+ * properly respond to a {@link GetRequest}.
+ * 
+ * The complete sequence of events is shown in the diagram.
+ * 
+ * ![Resource Response Sequence](ResourceResponseSeq.svg)
+ * 
+ * Of course, due to internal buffering, the "Response Header" data
+ * and the "Response body" data may collapse in a single message
+ * that is sent to the browser (in case of a small resource).
  * 
  * Handlers of {@link ResourceRequest} events use usually only
  * the information provided by {@link #resourceUri()}. The other
  * items are needed by the handler of the {@link ResourceRequestCompleted}
- * event to generate the response for the {@link GetRequest}.
+ * event (the portal) to generate the response for the {@link GetRequest}.
  * 
  * If a matching resource cannot be expressed by a {@link URL},
  * the resource provider may generate the response itself. To
- * indicate that the request has been handled it must set the
+ * indicate that the request has been handled, it must set the
  * result value of this event to {@link #RESPONSE_GENERATED}.
+ * 
+ * ![Extended Resource Response Sequence](ResourceResponseSelfSeq.svg)
+ * 
+ * @startuml ResourceResponseSeq.svg
+ * hide footbox
+ * 
+ * activate Portal
+ * actor Framework
+ * Portal -> ResourceProvider: ResourceRequest
+ * activate ResourceProvider
+ * deactivate ResourceProvider
+ * deactivate Portal
+ * Framework -> Portal: ResourceRequestCompleted
+ * activate Portal
+ * Portal -> Browser: "Response Header"
+ * loop until end of data
+ *     Portal -> Browser: Output
+ *     Portal -> Browser: "Response body"
+ *     deactivate Portal
+ * end loop
+ * deactivate ResourceProvider
+ * deactivate Browser
+ * @enduml
+ * 
+ * @startuml ResourceResponseSelfSeq.svg
+ * hide footbox
+ * 
+ * activate Portal
+ * actor Framework
+ * Portal -> ResourceProvider: ResourceRequest
+ * activate ResourceProvider
+ * Framework -> Portal: ResourceRequestCompleted
+ * deactivate Portal
+ * ResourceProvider -> Browser: "Response Header"
+ * loop until end of data
+ *     ResourceProvider -> Browser: Output
+ *     ResourceProvider -> Browser: "Response body"
+ *     deactivate Portal
+ * end loop
+ * deactivate ResourceProvider
+ * deactivate Browser
+ * 
+ * @enduml
  */
 public class ResourceRequest extends Event<URL> {
 	
