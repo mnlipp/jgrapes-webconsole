@@ -37,7 +37,11 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral()
-		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        // Sometimes, synchronization with central is too slow
+        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
+        // Snapshots
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        // Experimental, not sure if this is the way tpo go...
         maven { url 'https://jitpack.io' }
     }
 	

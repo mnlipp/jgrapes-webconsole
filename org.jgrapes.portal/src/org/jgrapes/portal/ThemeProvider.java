@@ -18,7 +18,7 @@
 
 package org.jgrapes.portal;
 
-import java.io.InputStream;
+import java.net.URL;
 
 /**
  * 
@@ -45,17 +45,17 @@ public abstract class ThemeProvider {
 	}
 
 	/**
-	 * Find and open the given resource.
+	 * Find the requested resource.
 	 * 
 	 * @param name the resource name
 	 * @return the data as input stream
 	 */
-	public InputStream getResourceAsStream(String name)
+	public URL getResource(String name)
 	        throws ResourceNotFoundException {
-		InputStream in = getClass().getResourceAsStream(name);
-		if (in == null) {
+		URL resource = getClass().getResource(name);
+		if (resource == null) {
 			throw new ResourceNotFoundException();
 		}
-		return in;
+		return resource;
 	}
 }

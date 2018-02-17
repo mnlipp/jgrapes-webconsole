@@ -20,11 +20,11 @@ package org.jgrapes.portal;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
+import java.net.URL;
 import java.nio.CharBuffer;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -146,7 +146,7 @@ public class Portal extends Component {
 	 * @return the portal fo reasy chaining
 	 */
 	public Portal setFallbackResourceSupplier(
-			BiFunction<ThemeProvider,String,InputStream> supplier) {
+			BiFunction<ThemeProvider,String,URL> supplier) {
 		view.setFallbackResourceSupplier(supplier);
 		return this;
 	}

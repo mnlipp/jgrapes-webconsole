@@ -28,7 +28,6 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
@@ -37,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.CharBuffer;
 import java.text.Collator;
 import java.text.ParseException;
@@ -78,6 +78,7 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.LanguageSelector.Selection;
+import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
 import org.jgrapes.http.annotation.RequestHandler;
 import org.jgrapes.http.events.GetRequest;
@@ -89,7 +90,6 @@ import org.jgrapes.io.events.Input;
 import org.jgrapes.io.events.Output;
 import org.jgrapes.io.util.ByteBufferOutputStream;
 import org.jgrapes.io.util.CharBufferWriter;
-import org.jgrapes.io.util.InputStreamPipeline;
 import org.jgrapes.io.util.LinkedIOSubchannel;
 import org.jgrapes.portal.events.JsonInput;
 import org.jgrapes.portal.events.JsonOutput;
@@ -127,7 +127,7 @@ public class PortalView extends Component {
 	}
 	
 	private Function<Locale,ResourceBundle> resourceBundleSupplier;
-	private BiFunction<ThemeProvider,String,InputStream> fallbackResourceSupplier
+	private BiFunction<ThemeProvider,String,URL> fallbackResourceSupplier
 		= (themeProvider, resource) -> { return null; };
 	private Set<Locale> supportedLocales;
 	
@@ -286,7 +286,7 @@ public class PortalView extends Component {
 	}
 	
 	void setFallbackResourceSupplier(
-			BiFunction<ThemeProvider,String,InputStream> supplier) {
+			BiFunction<ThemeProvider,String,URL> supplier) {
 		this.fallbackResourceSupplier = supplier;
 	}
 	
@@ -345,7 +345,9 @@ public class PortalView extends Component {
 		}
 		URI subUri = uriFromPath("portal-resource/").relativize(requestUri);
 		if (!subUri.equals(requestUri)) {
-			sendPortalResource(event, channel, subUri.getPath());
+			final String resource = subUri.getPath();
+			ResponseCreationSupport.sendStaticContent(event, channel, 
+					p -> PortalView.this.getClass().getResource(resource), null);
 			return;
 		}
 		subUri = uriFromPath("page-resource/").relativize(requestUri);
@@ -468,29 +470,8 @@ public class PortalView extends Component {
 		}
 	}
 
-	private void sendPortalResource(GetRequest event, IOSubchannel channel,
-			String resource) {
-		// Look for content
-		InputStream in = this.getClass().getResourceAsStream(resource);
-		if (in == null) {
-			return;
-		}
-		
-		// Send header
-		HttpResponse response = event.httpRequest().response().get();
-		prepareResourceResponse(response, event.requestUri(), false);
-		channel.respond(new Response(response));
-		
-		// Send content
-		channel.responsePipeline().executorService()
-			.submit(new InputStreamPipeline(in, channel));
-		
-		// Done
-		event.stop();
-	}
-
 	private void sendThemeResource(GetRequest event, IOSubchannel channel,
-			String resource) {
+			String resource) throws ParseException {
 		// Get resource
 		ThemeProvider themeProvider = event.associated(Session.class).flatMap(
 				session -> Optional.ofNullable(session.get("themeProvider")).flatMap(
@@ -498,31 +479,22 @@ public class PortalView extends Component {
 						.stream(themeLoader().spliterator(), false)
 						.filter(t -> t.themeId().equals(themeId)).findFirst()
 				)).orElse(baseTheme);
-		InputStream resIn;
+		URL resourceUrl;
 		try {
-			resIn = themeProvider.getResourceAsStream(resource);
+			resourceUrl = themeProvider.getResource(resource);
 		} catch (ResourceNotFoundException e) {
 			try {
-				resIn = baseTheme.getResourceAsStream(resource);
+				resourceUrl = baseTheme.getResource(resource);
 			} catch (ResourceNotFoundException e1) {
-				resIn = fallbackResourceSupplier.apply(themeProvider, resource);
-				if (resIn == null) {
+				resourceUrl = fallbackResourceSupplier.apply(themeProvider, resource);
+				if (resourceUrl == null) {
 					return;
 				}
 			}
 		}
-
-		// Send header
-		HttpResponse response = event.httpRequest().response().get();
-		prepareResourceResponse(response, event.requestUri(), false);
-		channel.respond(new Response(response));
-
-		// Send content
-		channel.responsePipeline().executorService()
-		        .submit(new InputStreamPipeline(resIn, channel));
-
-		// Done
-		event.stop();
+		final URL resUrl = resourceUrl;
+		ResponseCreationSupport.sendStaticContent(event, channel, 
+				p -> resUrl, null);
 	}
 
 	public static void prepareResourceResponse(
