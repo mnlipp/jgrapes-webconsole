@@ -210,7 +210,7 @@ public class Portal extends Component {
 	}
 
 	@Handler
-	public void onAddPageResource(AddPageResources event, PortalSession channel) {
+	public void onAddPageResources(AddPageResources event, PortalSession channel) {
 		JsonArrayBuilder paramBuilder = Json.createArrayBuilder();
 		for (ScriptResource scriptResource: event.scriptResources()) {
 			paramBuilder.add(scriptResource.toJsonValue());

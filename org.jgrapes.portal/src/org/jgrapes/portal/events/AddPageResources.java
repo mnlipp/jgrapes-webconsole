@@ -65,7 +65,7 @@ import org.jgrapes.core.Event;
  * activate Portal
  * Portal -> PageResourceProvider: PortalReady 
  * activate PageResourceProvider
- * PageResourceProvider -> Portal: AddPageResource
+ * PageResourceProvider -> Portal: AddPageResources
  * deactivate PageResourceProvider
  * Portal -> Browser: "addPageResource"
  * deactivate Portal
