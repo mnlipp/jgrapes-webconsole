@@ -235,7 +235,15 @@ var JGPortal = {
         // this._ws.onerror = function(event) {
         // }
         this._ws.onmessage = function(event) {
-            var msg = JSON.parse(event.data);
+            var msg;
+            try {
+                msg = JSON.parse(event.data);
+            } catch (e) {
+                log.error(e.name + ":" + e.lineNumber + ":" + e.columnNumber 
+                        + ": " + e.message + ". Data: ");
+                log.error(event.data);
+                return;
+            }
             self._recvQueue.push(msg);
             if (self._recvQueue.length === 1) {
                 self._handleMessages();
