@@ -19,6 +19,7 @@
 package org.jgrapes.portal.events;
 
 import java.net.URI;
+import java.net.URL;
 import java.time.Instant;
 import java.util.Optional;
 

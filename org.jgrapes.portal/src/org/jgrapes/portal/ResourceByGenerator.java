@@ -49,8 +49,10 @@ public class ResourceByGenerator extends ResourceResult {
 	 * Instantiates a result that is provided by an {@link OutputStream}.
 	 *
 	 * @param request the request
-	 * @param stream the stream
-	 * @param maxAge
+	 * @param generator the generator
+	 * @param mediaType the media type
+	 * @param lastModifiedAt the last modified at
+	 * @param maxAge the max age
 	 */
 	public ResourceByGenerator(ResourceRequest request, 
 			Generator generator, MediaType mediaType, 
