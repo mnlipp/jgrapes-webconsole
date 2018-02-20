@@ -19,6 +19,7 @@
 package org.jgrapes.portal.events;
 
 import java.net.URI;
+import java.time.Instant;
 
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jgrapes.io.IOSubchannel;
@@ -44,9 +45,11 @@ public class PortletResourceRequest extends ResourceRequest {
 	 * @param renderSupport the render support
 	 */
 	public PortletResourceRequest(String portletType, URI resourceUri,
+			Instant ifModifiedSince,
 			HttpRequest httpRequest, IOSubchannel httpChannel,
 			RenderSupport renderSupport) {
-		super(resourceUri, httpRequest, httpChannel, renderSupport);
+		super(resourceUri, ifModifiedSince,
+				httpRequest, httpChannel, renderSupport);
 		this.portletType = portletType;
 	}
 

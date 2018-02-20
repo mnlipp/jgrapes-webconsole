@@ -19,6 +19,7 @@
 package org.jgrapes.portal.events;
 
 import java.net.URI;
+import java.time.Instant;
 
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jgrapes.io.IOSubchannel;
@@ -42,10 +43,11 @@ public class PageResourceRequest extends ResourceRequest {
 	 * @param httpChannel the channel that the HTTP request was received on
 	 * @param renderSupport the render support
 	 */
-	public PageResourceRequest(URI resourceUri,
+	public PageResourceRequest(URI resourceUri, Instant ifModifiedSince,
 			HttpRequest httpRequest, IOSubchannel httpChannel,
 			RenderSupport renderSupport) {
-		super(resourceUri, httpRequest, httpChannel, renderSupport);
+		super(resourceUri, ifModifiedSince, 
+				httpRequest, httpChannel, renderSupport);
 	}
 
 }

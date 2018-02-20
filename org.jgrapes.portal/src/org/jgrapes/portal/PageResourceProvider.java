@@ -74,9 +74,7 @@ public abstract class PageResourceProvider extends Component {
 		if (resourceUrl == null) {
 			return;
 		}
-		
-		// Resource found, set as result.
-		event.setResult(resourceUrl);
+		event.setResult(new ResourceByUrl(event, resourceUrl));
 		event.stop();
 	}
 	

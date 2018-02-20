@@ -66,7 +66,6 @@ import javax.json.JsonReader;
 
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
-import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jdrupes.httpcodec.types.Converters;
 import org.jdrupes.httpcodec.types.MediaType;
@@ -93,7 +92,6 @@ import org.jgrapes.portal.events.JsonOutput;
 import org.jgrapes.portal.events.PageResourceRequest;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.PortletResourceRequest;
-import org.jgrapes.portal.events.ResourceRequest;
 import org.jgrapes.portal.events.ResourceRequestCompleted;
 import org.jgrapes.portal.events.SetLocale;
 import org.jgrapes.portal.events.SetTheme;
@@ -314,6 +312,7 @@ public class PortalView extends Component {
 		} catch (UnsupportedEncodingException e) {
 			// Supported by definition
 		}
+		event.setResult(true);
 		event.stop();
 	}
 	
@@ -371,6 +370,7 @@ public class PortalView extends Component {
 
 	private void renderPortal(GetRequest event, IOSubchannel channel)
 		throws IOException, InterruptedException {
+		event.setResult(true);
 		event.stop();
 		
 		// Because language is changed via websocket, locale cookie 
@@ -499,11 +499,14 @@ public class PortalView extends Component {
 		// Send events to providers on portal's channel
 		PageResourceRequest pageResourceRequest = new PageResourceRequest(
 				uriFromPath(resource.getPath()),
+				event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE, 
+						Converters.DATE_TIME).orElse(null),
 				event.httpRequest(), channel, renderSupport());
 		// Make session available (associate with event, this is not
 		// a websocket request).
 		event.associated(Session.class).ifPresent(
 				session -> pageResourceRequest.setAssociated(Session.class, session));
+		event.setResult(true);
 		event.stop();
 		fire(pageResourceRequest, portalChannel(channel));
 	}
@@ -516,11 +519,14 @@ public class PortalView extends Component {
 		PortletResourceRequest portletRequest = new PortletResourceRequest(
 				resPath.substring(0, sep), 
 				uriFromPath(resPath.substring(sep + 1)),
+				event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE, 
+						Converters.DATE_TIME).orElse(null),
 				event.httpRequest(), channel, renderSupport());
 		// Make session available (associate with event, this is not
 		// a websocket request).
 		event.associated(Session.class).ifPresent(
 				session -> portletRequest.setAssociated(Session.class, session));
+		event.setResult(true);
 		event.stop();
 		fire(portletRequest, portalChannel(channel));
 	}
@@ -528,22 +534,14 @@ public class PortalView extends Component {
 	@Handler(dynamic=true)
 	public void onResourceRequestCompleted(
 			ResourceRequestCompleted event, IOSubchannel channel) 
-					throws InterruptedException {
+					throws IOException, InterruptedException {
 		event.stop();
-		final HttpRequest request = event.event().httpRequest();
-		final URL resourceUrl = event.event().get();
-		if (resourceUrl == ResourceRequest.RESPONSE_GENERATED) {
+		if (event.event().get() == null) {
+			ResponseCreationSupport.sendResponse(event.event().httpRequest(), 
+					event.event().httpChannel(), HttpStatus.NOT_FOUND);
 			return;
 		}
-		if (resourceUrl == null) {
-			ResponseCreationSupport.sendResponse(
-					request, event.event().httpChannel(), HttpStatus.NOT_FOUND);
-			return;
-		}
-		
-		// Send resource
-		ResponseCreationSupport.sendStaticContent(
-				request, event.event().httpChannel(), path -> resourceUrl, null);
+		event.event().get().process();
 	}
 	
 	private void handleSessionRequest(
