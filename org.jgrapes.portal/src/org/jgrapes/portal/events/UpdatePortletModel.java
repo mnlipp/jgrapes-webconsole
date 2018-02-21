@@ -42,7 +42,7 @@ import org.jgrapes.core.Event;
  * write an event handler for the portlet that converts a 
  * {@link NotifyPortletModel} to a {@link UpdatePortletModel} that is
  * fired on its channel instead of handling it immediately. This allows 
- * event sent from the portal page and from other components in the 
+ * events sent from the portal page and from other components in the 
  * application to be handled in a uniform way.
  */
 public class UpdatePortletModel extends Event<Void> {
