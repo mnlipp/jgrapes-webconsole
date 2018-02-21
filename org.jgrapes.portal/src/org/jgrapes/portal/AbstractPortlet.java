@@ -385,14 +385,18 @@ public abstract class AbstractPortlet extends Component {
 	}
 	
 	/**
-	 * Returns the tracked models and channels.
+	 * Returns the tracked models and channels as unmodifiable map.
+	 * If sessions are not tracked, the method returns an empty map.
+	 * It is therefore always safe to invoke the method and use its
+	 * result.
 	 * 
 	 * @return the result
 	 */
 	protected Map<PortalSession,Set<String>> portletIdsByPortalSession() {
 		// Create copy to get a non-weak map.
 		if (portletIdsByPortalSession != null) {
-			return new HashMap<>(portletIdsByPortalSession);
+			return Collections.unmodifiableMap(
+					new HashMap<>(portletIdsByPortalSession));
 		}
 		return Collections.emptyMap();
 	}
@@ -400,8 +404,8 @@ public abstract class AbstractPortlet extends Component {
 	/**
 	 * Returns the tracked sessions. This is effectively
 	 * `portletIdsByPortalSession().keySet()` converted to
-	 * an array. This representation is useful when the
-	 * portal sessions are used as argument for 
+	 * an array. This representation is especially useful 
+	 * when the portal sessions are used as argument for 
 	 * {@link #fire(Event, Channel...)}.
 	 *
 	 * @return the portal sessions
@@ -411,6 +415,23 @@ public abstract class AbstractPortlet extends Component {
 				portletIdsByPortalSession.keySet());
 		return sessions.toArray(new PortalSession[sessions.size()]);
 		
+	}
+	
+	/**
+	 * Returns the set of portlet ids associated with the portal session.
+	 * The set is created if it doesn't exist yet. If sessions aren't
+	 * tracked, an empty set is returned. The method can therefore always
+	 * be called and always returns a usable result.
+	 * 
+	 * @param portalSession the portal session
+	 * @return the set
+	 */
+	protected Set<String> portletIds(PortalSession portalSession) {
+		if (portletIdsByPortalSession != null) {
+			return portletIdsByPortalSession.computeIfAbsent(
+					portalSession, ps -> new HashSet<>());
+		}
+		return new HashSet<>();
 	}
 	
 	/**
@@ -506,21 +527,6 @@ public abstract class AbstractPortlet extends Component {
 	}
 
 	/**
-	 * Returns the set of portlet ids associated with the portal session.
-	 * The set is created if it doesn't exist yet.
-	 * 
-	 * @param portalSession the portal session
-	 * @return the set
-	 */
-	private Set<String> portletIdsOfPortalSession(PortalSession portalSession) {
-		if (portletIdsByPortalSession != null) {
-			return portletIdsByPortalSession.computeIfAbsent(
-					portalSession, ps -> new HashSet<>());
-		}
-		return Collections.emptySet();
-	}
-	
-	/**
 	 * Checks if the request applies to this component. If so, stops the event,
 	 * and calls {@link #doAddPortlet}. 
 	 * 
@@ -536,10 +542,8 @@ public abstract class AbstractPortlet extends Component {
 		event.stop();
 		String portletId = doAddPortlet(event, portalSession);
 		event.setResult(portletId);
-		if (portletIdsByPortalSession != null) {
-			portletIdsOfPortalSession(portalSession).add(portletId);
-			updateRefresh();
-		}
+		portletIds(portalSession).add(portletId);
+		updateRefresh();
 	}
 
 	/**
@@ -635,11 +639,10 @@ public abstract class AbstractPortlet extends Component {
 			return;
 		}
 		event.stop();
-		if (portletIdsByPortalSession != null) {
-			portletIdsOfPortalSession(portalSession).add(event.portletId());
-			updateRefresh();
-		}
-		doRenderPortlet(event, portalSession, event.portletId(), optPortletState.get());
+		portletIds(portalSession).add(event.portletId());
+		updateRefresh();
+		doRenderPortlet(
+				event, portalSession, event.portletId(), optPortletState.get());
 	}
 
 	/**
