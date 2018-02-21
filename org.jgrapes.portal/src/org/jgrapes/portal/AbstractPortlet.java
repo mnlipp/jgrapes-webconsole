@@ -309,10 +309,7 @@ public abstract class AbstractPortlet extends Component {
 		}
 		refreshTimer = Components.schedule(t -> {
 			t.reschedule(t.scheduledFor().plus(refreshInterval));
-			Set<PortalSession> channels = new HashSet<>(
-					portletIdsByPortalSession.keySet());
-			fire(refreshEventSupplier.get(), 
-					channels.toArray(new PortalSession[channels.size()]));
+			fire(refreshEventSupplier.get(), trackedSessions());
 		}, Instant.now().plus(refreshInterval));
 	}
 
@@ -398,6 +395,22 @@ public abstract class AbstractPortlet extends Component {
 			return new HashMap<>(portletIdsByPortalSession);
 		}
 		return Collections.emptyMap();
+	}
+
+	/**
+	 * Returns the tracked sessions. This is effectively
+	 * `portletIdsByPortalSession().keySet()` converted to
+	 * an array. This representation is useful when the
+	 * portal sessions are used as argument for 
+	 * {@link #fire(Event, Channel...)}.
+	 *
+	 * @return the portal sessions
+	 */
+	protected PortalSession[] trackedSessions() {
+		Set<PortalSession> sessions = new HashSet<>(
+				portletIdsByPortalSession.keySet());
+		return sessions.toArray(new PortalSession[sessions.size()]);
+		
 	}
 	
 	/**
