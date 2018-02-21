@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -65,6 +64,9 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	private static final Set<RenderMode> MODES = RenderMode.asSet(
 			DeleteablePreview, View);
 	
+	public static class Update extends Event<Void> {
+	}
+	
 	/**
 	 * Creates a new component with its channel set to the given 
 	 * channel.
@@ -75,7 +77,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	 */
 	public SysInfoPortlet(Channel componentChannel) {
 		super(componentChannel, true);
-		setPeriodicRefresh(Duration.ofSeconds(1));
+		setPeriodicRefresh(Duration.ofSeconds(1), () -> new Update());
 	}
 
 	@Handler
@@ -185,15 +187,12 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		channel.respond(new DeletePortlet(portletId));
 	}
 
-	@Override
-	public void doRefreshPortletViews() {
-		for (Map.Entry<PortalSession, Set<String>> e : portletIdsByPortalSession()
-		        .entrySet()) {
-			PortalSession portalSession = e.getKey();
-			Locale locale = portalSession.locale();
-			for (String portletId : e.getValue()) {
-				updateView(portalSession, portletId, locale);
-			}
+	@Handler
+	public void onUpdate(Update event, PortalSession portalSession) {
+		Set<String> portletIds = portletIdsByPortalSession().get(portalSession);
+		Locale locale = portalSession.locale();
+		for (String portletId: portletIds) {
+			updateView(portalSession, portletId, locale);			
 		}
 	}
 	

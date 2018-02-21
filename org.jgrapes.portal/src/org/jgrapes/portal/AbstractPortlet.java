@@ -35,11 +35,13 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.function.Supplier;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
+import org.jgrapes.core.Event;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
@@ -252,6 +254,7 @@ public abstract class AbstractPortlet extends Component {
 
 	private Map<PortalSession,Set<String>> portletIdsByPortalSession = null;
 	private Duration refreshInterval = null;
+	private Supplier<Event<?>> refreshEventSupplier;
 	private Timer refreshTimer = null;
 
 	/**
@@ -271,15 +274,17 @@ public abstract class AbstractPortlet extends Component {
 	}
 
 	/**
-	 * If set to a value different from `null` causes 
-	 * {@link #doRefreshPortletViews()} to be called periodically
-	 * if at least one {@link PortalSession} is being tracked.
+	 * If set to a value different from `null` causes an event
+	 * from the given supplier to be fired on all tracked portal
+	 * sessions periodically.
 	 * 
 	 * @param interval the refresh interval
 	 * @return the portlet for easy chaining
 	 */
-	public AbstractPortlet setPeriodicRefresh(Duration interval) {
+	public AbstractPortlet setPeriodicRefresh(
+			Duration interval, Supplier<Event<?>> supplier) {
 		refreshInterval = interval;
+		refreshEventSupplier = supplier;
 		if (refreshTimer != null) {
 			refreshTimer.cancel();
 			refreshTimer = null;
@@ -304,18 +309,13 @@ public abstract class AbstractPortlet extends Component {
 		}
 		refreshTimer = Components.schedule(t -> {
 			t.reschedule(t.scheduledFor().plus(refreshInterval));
-			doRefreshPortletViews();
+			Set<PortalSession> channels = new HashSet<>(
+					portletIdsByPortalSession.keySet());
+			fire(refreshEventSupplier.get(), 
+					channels.toArray(new PortalSession[channels.size()]));
 		}, Instant.now().plus(refreshInterval));
 	}
 
-	/**
-	 * Called periodically if periodical refreshs are enabled.
-	 * See {@link #setPeriodicRefresh(Duration)}. The default
-	 * implementation does nothing.
-	 */
-	protected void doRefreshPortletViews() {
-	}
-	
 	/**
 	 * Returns the portlet type. The default implementation
 	 * returns the class' name.
