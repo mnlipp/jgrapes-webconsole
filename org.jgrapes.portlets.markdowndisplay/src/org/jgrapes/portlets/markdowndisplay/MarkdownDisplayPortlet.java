@@ -44,7 +44,7 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.PortalSession;
-import org.jgrapes.portal.PortalView;
+import org.jgrapes.portal.PortalWeblet;
 
 import static org.jgrapes.portal.Portlet.*;
 import static org.jgrapes.portal.Portlet.RenderMode.*;
@@ -120,7 +120,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 								"github.com/markdown-it/markdown-it-sup"})
 						.setScriptUri(event.renderSupport().portletResource(
 								type(), "MarkdownDisplay-functions.ftl.js")))
-				.addCss(PortalView.uriFromPath("MarkdownDisplay-style.css"))
+				.addCss(PortalWeblet.uriFromPath("MarkdownDisplay-style.css"))
 				.setInstantiable());
 		KeyValueStoreQuery query = new KeyValueStoreQuery(
 				storagePath(portalSession.browserSession()), portalSession);

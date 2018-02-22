@@ -83,7 +83,7 @@ public class Portal extends Component {
 	static MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 	
 	private URI prefix;
-	private PortalView view;
+	private PortalWeblet view;
 	
 	/**
 	 * 
@@ -106,7 +106,7 @@ public class Portal extends Component {
 		super(componentChannel);
 		this.prefix = URI.create(prefix.getPath().endsWith("/") 
 				? prefix.getPath() : (prefix.getPath() + "/"));
-		view = attach(new PortalView(this, viewChannel));
+		view = attach(new PortalWeblet(this, viewChannel));
 		try {
 			ObjectName mxbeanName = new ObjectName("org.jgrapes.portal:type="
 					+ Portal.class.getSimpleName() + "#" + Components.objectId(this)
@@ -153,7 +153,7 @@ public class Portal extends Component {
 	
 	/**
 	 * Sets the portal session timeout. This call is simply
-	 * forwarded to the {@link PortalView}.
+	 * forwarded to the {@link PortalWeblet}.
 	 * 
 	 * @param timeout the timeout in milli seconds
 	 * @return the portal for easy chaining
@@ -165,7 +165,7 @@ public class Portal extends Component {
 	
 	/**
 	 * Sets the portal session refresh interval.This call is simply
-	 * forwarded to the {@link PortalView}.
+	 * forwarded to the {@link PortalWeblet}.
 	 * 
 	 * @param interval the interval in milli seconds
 	 * @return the portal for easy chaining
@@ -177,7 +177,7 @@ public class Portal extends Component {
 	
 	/**
 	 * Sets the portal session inactivity timeout.This call is simply
-	 * forwarded to the {@link PortalView}.
+	 * forwarded to the {@link PortalWeblet}.
 	 * 
 	 * @param timeout the timeout in milli seconds
 	 * @return the portal for easy chaining

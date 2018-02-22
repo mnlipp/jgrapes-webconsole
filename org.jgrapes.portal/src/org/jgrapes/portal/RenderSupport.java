@@ -48,7 +48,7 @@ public interface RenderSupport {
 	 * @return the resulting URI
 	 */
 	default URI pageResource(String path) {
-		return pageResource(PortalView.uriFromPath(path));
+		return pageResource(PortalWeblet.uriFromPath(path));
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public interface RenderSupport {
 	 * @return the resulting URI
 	 */
 	default URI portletResource(String portletType, String path) {
-		return portletResource(portletType, PortalView.uriFromPath(path));
+		return portletResource(portletType, PortalWeblet.uriFromPath(path));
 	}
 	
 	/**

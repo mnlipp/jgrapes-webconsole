@@ -19,11 +19,11 @@
 package org.jgrapes.portal.events;
 
 import org.jgrapes.core.Event;
-import org.jgrapes.portal.PortalView;
+import org.jgrapes.portal.PortalWeblet;
 
 /**
  * Signals that the theme for the portal has changed. This  event is
- * handled by the {@link PortalView} but may, of course, also be
+ * handled by the {@link PortalWeblet} but may, of course, also be
  * used by other components.
  * 
  * ![Event Sequence](SetTheme.svg)
@@ -33,11 +33,11 @@ import org.jgrapes.portal.PortalView;
  * 
  * Browser -> Portal: "settheme"
  * activate Portal
- * Portal -> PortalView: SetTheme
+ * Portal -> PortalWeblet: SetTheme
  * deactivate Portal
- * activate PortalView
- * PortalView -> Browser: "reload"
- * deactivate PortalView
+ * activate PortalWeblet
+ * PortalWeblet -> Browser: "reload"
+ * deactivate PortalWeblet
  * 
  * @enduml
  */

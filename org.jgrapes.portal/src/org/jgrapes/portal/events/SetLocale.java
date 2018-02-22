@@ -21,11 +21,11 @@ package org.jgrapes.portal.events;
 import java.util.Locale;
 
 import org.jgrapes.core.Event;
-import org.jgrapes.portal.PortalView;
+import org.jgrapes.portal.PortalWeblet;
 
 /**
  * Signals that the locale for the portal has changed. This  event is
- * handled by the {@link PortalView} but may, of course, also be
+ * handled by the {@link PortalWeblet} but may, of course, also be
  * used by other components.
  * 
  * ![Event Sequence](SetLocale.svg)
@@ -35,11 +35,11 @@ import org.jgrapes.portal.PortalView;
  * 
  * Browser -> Portal: "setLocale"
  * activate Portal
- * Portal -> PortalView: SetLocale
+ * Portal -> PortalWeblet: SetLocale
  * deactivate Portal
- * activate PortalView
- * PortalView -> Browser: "reload"
- * deactivate PortalView
+ * activate PortalWeblet
+ * PortalWeblet -> Browser: "reload"
+ * deactivate PortalWeblet
  * 
  * @enduml
  */

@@ -241,7 +241,7 @@ public class PortalSession extends DefaultSubchannel {
 	/**
 	 * Sets or updates the upstream channel. This method should only
 	 * be invoked by the creator of the {@link PortalSession}, by default
-	 * the {@link PortalView}.
+	 * the {@link PortalWeblet}.
 	 * 
 	 * @param upstreamChannel the upstream channel (WebSocket connection)
 	 * @return the portal session for easy chaining
@@ -258,7 +258,7 @@ public class PortalSession extends DefaultSubchannel {
 	/**
 	 * Sets or updates associated browser session. This method should only
 	 * be invoked by the creator of the {@link PortalSession}, by default
-	 * the {@link PortalView}.
+	 * the {@link PortalWeblet}.
 	 * 
 	 * @param browserSession the browser session
 	 * @return the portal session for easy chaining

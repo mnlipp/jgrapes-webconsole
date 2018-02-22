@@ -25,17 +25,19 @@
  * Portal Components
  * -----------------
  *
- * ### Portal and PortalView 
+ * ### Portal and PortalWeblet 
  * 
  * The {@link org.jgrapes.portal.Portal} component 
  * is conceptually the main component of the portal. It exchanges events 
  * with the portlets and helper components, using a channel that is 
- * independent of the  channel used for the communication with the browser.
+ * independent of the channel used for the communication with the browser.
  *
  * When created, a {@link org.jgrapes.portal.Portal} component automatically 
- * instantiates a child component of type {@link org.jgrapes.portal.PortalView}
- * which handles the communication with the browser. You can think of the 
- * {@link org.jgrapes.portal.PortalView}/{@link org.jgrapes.portal.Portal}
+ * instantiates a child component of type 
+ * {@link org.jgrapes.portal.PortalWeblet} which handles the 
+ * communication with the {@link org.jgrapes.http.HttpServer} and thus
+ * with the browser. You can think of the 
+ * {@link org.jgrapes.portal.PortalWeblet}/{@link org.jgrapes.portal.Portal}
  * pair as a gateway that translates the Input/Output related events on the 
  * HTTP/WebSocket side to portal/portlet related events on the portlet side and 
  * vice versa.
@@ -43,7 +45,7 @@
  * ![Portal Structure](PortalStructure.svg)
  * 
  * In the browser, the portal is implemented as a single page 
- * application. The {@link org.jgrapes.portal.PortalView} provides
+ * application. The {@link org.jgrapes.portal.PortalWeblet} provides
  * an initial HTML document that implements the basic structure of
  * the portal. Aside from additional HTTP requests for static resources
  * like JavaScript libraries, CSS, images etc. all information is
@@ -114,7 +116,7 @@
  * After the portal page has loaded and the web socket connection has been
  * established, all information is exchanged using 
  * [JSON RPC notifications](http://www.jsonrpc.org/specification#notification). 
- * The {@link org.jgrapes.portal.PortalView} processes 
+ * The {@link org.jgrapes.portal.PortalWeblet} processes 
  * {@link org.jgrapes.io.events.Input} events with serialized JSON RPC 
  * data from the web socket channel until the complete JSON RPC notification 
  * has been received. The notification
@@ -130,7 +132,7 @@
  * higher level events on the {@link org.jgrapes.portal.PortalSession} 
  * channel. These events are handled by the portal which converts them 
  * to {@link org.jgrapes.portal.events.JsonOutput} events. These are
- * processed by the {@link org.jgrapes.portal.PortalView} which
+ * processed by the {@link org.jgrapes.portal.PortalWeblet} which
  * serializes the data and sends it to the websocket using 
  * {@link org.jgrapes.io.events.Output} events.
  * 
@@ -139,7 +141,7 @@
  * The diagram below shows the complete mandatory sequence of events 
  * following the portal ready message. The diagram uses a 
  * simplified version of the sequence diagram that combines the 
- * {@link org.jgrapes.portal.PortalView} and the 
+ * {@link org.jgrapes.portal.PortalWeblet} and the 
  * {@link org.jgrapes.portal.Portal} into a single object and leaves out the
  * details about the JSON serialization/deserialization.
  * 
@@ -224,12 +226,12 @@
  * 
  * package "Conceptual Portal\n(Portal Gateway)" {
  *    class Portal
- * 	  class PortalView
+ * 	  class PortalWeblet
  * 
- *    Portal "1" -left- "1" PortalView
+ *    Portal "1" -left- "1" PortalWeblet
  * }
  * 
- * PortalView "*" -left- "*" Browser
+ * PortalWeblet "*" -left- "*" Browser
  * 
  * together {
  * 
@@ -260,27 +262,27 @@
  * @startuml PortalBootSeq.svg
  * hide footbox
  * 
- * Browser -> PortalView: "GET <portal URL>"
- * activate PortalView
- * PortalView -> Browser: "HTML document"
- * deactivate PortalView
+ * Browser -> PortalWeblet: "GET <portal URL>"
+ * activate PortalWeblet
+ * PortalWeblet -> Browser: "HTML document"
+ * deactivate PortalWeblet
  * activate Browser
- * Browser -> PortalView: "GET <resource1 URL>"
- * activate PortalView
- * PortalView -> Browser: Resource
- * deactivate PortalView
- * Browser -> PortalView: "GET <resource2 URL>"
- * activate PortalView
- * PortalView -> Browser: Resource
- * deactivate PortalView
- * Browser -> PortalView: "GET <Upgrade to WebSocket>"
- * activate PortalView
+ * Browser -> PortalWeblet: "GET <resource1 URL>"
+ * activate PortalWeblet
+ * PortalWeblet -> Browser: Resource
+ * deactivate PortalWeblet
+ * Browser -> PortalWeblet: "GET <resource2 URL>"
+ * activate PortalWeblet
+ * PortalWeblet -> Browser: Resource
+ * deactivate PortalWeblet
+ * Browser -> PortalWeblet: "GET <Upgrade to WebSocket>"
+ * activate PortalWeblet
  * loop while request data
- *     Browser -> PortalView: Input (JSON RPC)
+ *     Browser -> PortalWeblet: Input (JSON RPC)
  * end
  * deactivate Browser
- * PortalView -> Portal: JsonInput("portalReady")
- * deactivate PortalView
+ * PortalWeblet -> Portal: JsonInput("portalReady")
+ * deactivate PortalWeblet
  * activate Portal
  * Portal -> PortalPolicy: PortalReady
  * deactivate Portal
@@ -288,13 +290,13 @@
  * PortalPolicy -> Portal: LastPortalLayout
  * deactivate PortalPolicy
  * activate Portal
- * Portal -> PortalView: JsonOutput("lastPortalLayout")
+ * Portal -> PortalWeblet: JsonOutput("lastPortalLayout")
  * deactivate Portal
- * activate PortalView
+ * activate PortalWeblet
  * loop while request data
- *     PortalView -> Browser: Output (JSON RPC)
+ *     PortalWeblet -> Browser: Output (JSON RPC)
  * end
- * deactivate PortalView
+ * deactivate PortalWeblet
  * @enduml
  * 
  * @startuml PortalReadySeq.svg

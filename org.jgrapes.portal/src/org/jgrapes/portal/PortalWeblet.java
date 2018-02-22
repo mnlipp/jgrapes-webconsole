@@ -103,10 +103,10 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
 /**
  * 
  */
-public class PortalView extends Component {
+public class PortalWeblet extends Component {
 
 	private static final String PORTAL_SESSION_IDS 
-		= PortalView.class.getName() + ".portalSessionId";
+		= PortalWeblet.class.getName() + ".portalSessionId";
 	
 	private Portal portal;
 	private ServiceLoader<ThemeProvider> themeLoader;
@@ -115,7 +115,7 @@ public class PortalView extends Component {
 	static {
 		fmConfig = new Configuration(Configuration.VERSION_2_3_26);
 		fmConfig.setClassLoaderForTemplateLoading(
-				PortalView.class.getClassLoader(), "org/jgrapes/portal");
+				PortalWeblet.class.getClassLoader(), "org/jgrapes/portal");
 		fmConfig.setDefaultEncoding("utf-8");
 		fmConfig.setTemplateExceptionHandler(
 				TemplateExceptionHandler.RETHROW_HANDLER);
@@ -138,7 +138,7 @@ public class PortalView extends Component {
 	/**
 	 * @param componentChannel
 	 */
-	public PortalView(Portal portal, Channel componentChannel) {
+	public PortalWeblet(Portal portal, Channel componentChannel) {
 		super(componentChannel);
 		this.portal = portal;
 		baseTheme = new Provider();
@@ -212,7 +212,7 @@ public class PortalView extends Component {
 	 * @param timeout the timeout in milli seconds
 	 * @return the portal view for easy chaining
 	 */
-	public PortalView setPortalSessionNetworkTimeout(long timeout) {
+	public PortalWeblet setPortalSessionNetworkTimeout(long timeout) {
 		portalSessionNetworkTimeout = timeout;
 		return this;
 	}
@@ -226,7 +226,7 @@ public class PortalView extends Component {
 	 * @param interval the interval in milliseconds
 	 * @return the portal view for easy chaining
 	 */
-	public PortalView setPortalSessionRefreshInterval(long interval) {
+	public PortalWeblet setPortalSessionRefreshInterval(long interval) {
 		portalSessionRefreshInterval = interval;
 		portalBaseModel = createPortalBaseModel();
 		return this;
@@ -241,7 +241,7 @@ public class PortalView extends Component {
 	 * @param timeout the timeout in milliseconds
 	 * @return the portal view for easy chaining
 	 */
-	public PortalView setPortalSessionInactivityTimeout(long timeout) {
+	public PortalWeblet setPortalSessionInactivityTimeout(long timeout) {
 		portalSessionInactivityTimeout = timeout;
 		portalBaseModel = createPortalBaseModel();
 		return this;
@@ -343,7 +343,7 @@ public class PortalView extends Component {
 		if (!subUri.equals(requestUri)) {
 			final String resource = subUri.getPath();
 			ResponseCreationSupport.sendStaticContent(event, channel, 
-					p -> PortalView.this.getClass().getResource(resource), null);
+					p -> PortalWeblet.this.getClass().getResource(resource), null);
 			return;
 		}
 		subUri = uriFromPath("page-resource/").relativize(requestUri);
@@ -409,7 +409,7 @@ public class PortalView extends Component {
 			// Add supported locales
 			final Collator coll = Collator.getInstance(locale);
 			final Comparator<LanguageInfo> comp 
-				= new Comparator<PortalView.LanguageInfo>() {
+				= new Comparator<PortalWeblet.LanguageInfo>() {
 				@Override
 				public int compare(LanguageInfo o1,  LanguageInfo o2) {
 					return coll.compare(o1.getLabel(), o2.getLabel());
