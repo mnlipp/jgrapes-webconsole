@@ -51,15 +51,15 @@ import static org.jgrapes.portal.Portlet.RenderMode.*;
 
 import org.jgrapes.portal.UserPrincipal;
 import org.jgrapes.portal.Utils;
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
+import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
-import org.jgrapes.portal.events.DeletePortlet;
+import org.jgrapes.portal.events.DeletePortletCmd;
 import org.jgrapes.portal.events.DeletePortletRequest;
 import org.jgrapes.portal.events.NotifyPortletModel;
-import org.jgrapes.portal.events.NotifyPortletView;
+import org.jgrapes.portal.events.NotifyPortletCmd;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
+import org.jgrapes.portal.events.RenderPortletCmd;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.events.UpdatePortletModel;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
@@ -199,7 +199,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		Set<RenderMode> modes = renderModes(model);
 		Template tpl = freemarkerConfig().getTemplate(
 				"MarkdownDisplay-preview.ftl.html");
-		portalSession.respond(new RenderPortlet(
+		portalSession.respond(new RenderPortletCmd(
 				MarkdownDisplayPortlet.class, model.getPortletId(),
 				templateProcessor(tpl, fmModel(event, portalSession, model)))
 				.setRenderMode(DeleteablePreview).setSupportedModes(modes)
@@ -226,7 +226,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-preview.ftl.html");
-			portalSession.respond(new RenderPortlet(
+			portalSession.respond(new RenderPortletCmd(
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, portalSession, model)))
 					.setRenderMode(event.renderMode()).setSupportedModes(modes)
@@ -236,7 +236,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-view.ftl.html");
-			portalSession.respond(new RenderPortlet(
+			portalSession.respond(new RenderPortletCmd(
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, portalSession, model)))
 					.setRenderMode(View).setSupportedModes(modes)
@@ -246,7 +246,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		}
 		case Edit: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-edit.ftl.html");
-			portalSession.respond(new RenderPortlet(
+			portalSession.respond(new RenderPortletCmd(
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, portalSession, model)))
 					.setRenderMode(Edit).setSupportedModes(modes));
@@ -271,7 +271,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	
 	private void updateView(IOSubchannel channel, MarkdownDisplayModel model,
 	        Locale locale) {
-		channel.respond(new NotifyPortletView(type(),
+		channel.respond(new NotifyPortletCmd(type(),
 				model.getPortletId(), "updateAll", model.getTitle(), 
 				model.getPreviewContent(), model.getViewContent(),
 				renderModes(model)));
@@ -286,7 +286,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	        Serializable retrievedState) throws Exception {
 		channel.respond(new KeyValueStoreUpdate().delete(
 				storagePath(channel.browserSession()) + portletId));
-		channel.respond(new DeletePortlet(portletId));
+		channel.respond(new DeletePortletCmd(portletId));
 	}
 
 	/* (non-Javadoc)

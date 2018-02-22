@@ -25,7 +25,7 @@ import org.jgrapes.portal.RenderSupport;
 /**
  * Sent to the portal (server) if an existing portlet instance 
  * should be updated. The portal server usually responds with 
- * a {@link RenderPortlet} event that has as payload the
+ * a {@link RenderPortletCmd} event that has as payload the
  * HTML that displays the portlet on the portal page.
  * 
  * ![Event Sequence](RenderPortletRequestSeq.svg)

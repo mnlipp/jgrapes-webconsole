@@ -32,8 +32,8 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.PageResourceProvider;
 import org.jgrapes.portal.PortalSession;
-import org.jgrapes.portal.events.AddPageResources;
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
+import org.jgrapes.portal.events.AddPageResourcesCmd;
+import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
 import org.jgrapes.portal.events.PortalReady;
 
 /**
@@ -83,7 +83,7 @@ public class DatatablesProvider extends PageResourceProvider {
 				+ "} );\n"
 				+ "$.extend( $.fn.dataTable.defaults.oLanguage, "
 				+ rb.getString("DataTablesL10n") +  ");\n";
-		portalSession.respond(new AddPageResources()
+		portalSession.respond(new AddPageResourcesCmd()
 				.addCss(event.renderSupport().pageResource(
 						"datatables/datatables" + minExt + ".css"))
 				.addScriptResource(new ScriptResource()

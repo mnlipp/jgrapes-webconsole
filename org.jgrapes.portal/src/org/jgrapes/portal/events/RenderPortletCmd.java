@@ -31,7 +31,7 @@ import static org.jgrapes.portal.Portlet.*;
  * Send to the portal page for adding or updating a complete portlet
  * representation.
  */
-public class RenderPortlet extends Event<Void> {
+public class RenderPortletCmd extends Event<Void> {
 
 	private static final Set<RenderMode> DEFAULT_SUPPORTED 
 		= Collections.unmodifiableSet(new HashSet<>(
@@ -50,7 +50,7 @@ public class RenderPortlet extends Event<Void> {
 	 * @param portletClass the portlet class
 	 * @param portletId the id of the portlet
 	 */
-	public RenderPortlet(Class<?> portletClass, String portletId, 
+	public RenderPortletCmd(Class<?> portletClass, String portletId, 
 			Reader contentReader) {
 		this.portletClass = portletClass;
 		this.portletId = portletId;
@@ -63,7 +63,7 @@ public class RenderPortlet extends Event<Void> {
 	 * @param renderMode the render mode to set
 	 * @return the event for easy chaining
 	 */
-	public RenderPortlet setRenderMode(RenderMode renderMode) {
+	public RenderPortletCmd setRenderMode(RenderMode renderMode) {
 		this.renderMode = renderMode;
 		return this;
 	}
@@ -75,7 +75,7 @@ public class RenderPortlet extends Event<Void> {
 	 * @param supportedModes the supported render modes to set
 	 * @return the event for easy chaining
 	 */
-	public RenderPortlet setSupportedModes(Set<RenderMode> supportedModes) {
+	public RenderPortletCmd setSupportedModes(Set<RenderMode> supportedModes) {
 		this.supportedModes = supportedModes;
 		return this;
 	}
@@ -86,7 +86,7 @@ public class RenderPortlet extends Event<Void> {
 	 * @param supportedMode the supported render modes to add
 	 * @return the event for easy chaining
 	 */
-	public RenderPortlet addSupportedMode(RenderMode supportedMode) {
+	public RenderPortletCmd addSupportedMode(RenderMode supportedMode) {
 		if (supportedModes == DEFAULT_SUPPORTED) {
 			supportedModes = new HashSet<>(DEFAULT_SUPPORTED);
 		}
@@ -101,7 +101,7 @@ public class RenderPortlet extends Event<Void> {
 	 * @param foreground if set, the portlet is put in foreground
 	 * @return the event for easy chaining
 	 */
-	public RenderPortlet setForeground(boolean foreground) {
+	public RenderPortletCmd setForeground(boolean foreground) {
 		this.foreground = foreground;
 		return this;
 	}

@@ -28,7 +28,7 @@ import org.jgrapes.portal.Portlet;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.PortalConfigured;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
+import org.jgrapes.portal.events.RenderPortletCmd;
 import org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet;
 import org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet.Preferences;
 
@@ -61,7 +61,7 @@ public class NewPortalSessionPolicy extends Component {
 	}
 	
 	@Handler
-	public void onRenderPortlet(RenderPortlet event, PortalSession portalsession) {
+	public void onRenderPortlet(RenderPortletCmd event, PortalSession portalsession) {
 		portalsession.browserSession().put(renderedFlagName, true);
 	}
 	

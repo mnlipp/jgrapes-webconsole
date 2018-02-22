@@ -30,7 +30,7 @@ import org.jgrapes.core.Event;
  * The event triggers the creation of a notification widget in the
  * portal page. 
  */
-public class DisplayNotification extends Event<Void> {
+public class DisplayNotificationCmd extends Event<Void> {
 
 	private String content;
 	private Map<String,Object> options = null;
@@ -45,7 +45,7 @@ public class DisplayNotification extends Event<Void> {
 	 * @param content the content (valid HTML)
 	 * @param options the options (must be serializable as JSON)
 	 */
-	public DisplayNotification(String content, Map<String,Object> options) {
+	public DisplayNotificationCmd(String content, Map<String,Object> options) {
 		this.content = content;
 		this.options = options;
 	}
@@ -57,7 +57,7 @@ public class DisplayNotification extends Event<Void> {
 	 * 
 	 * @param content the content (valid HTML)
 	 */
-	public DisplayNotification(String content) {
+	public DisplayNotificationCmd(String content) {
 		this(content, null);
 	}
 
@@ -70,7 +70,7 @@ public class DisplayNotification extends Event<Void> {
 	 * @param value the option value (must be serializable as JSON)
 	 * @return the event for easy chaining
 	 */
-	public DisplayNotification addOption(String name, Object value) {
+	public DisplayNotificationCmd addOption(String name, Object value) {
 		if (options == null) {
 			options = new HashMap<String, Object>();
 		}

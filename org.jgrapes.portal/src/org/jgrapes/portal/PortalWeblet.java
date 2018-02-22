@@ -72,12 +72,15 @@ import org.jdrupes.httpcodec.types.MediaType;
 import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
+import org.jgrapes.core.EventPipeline;
+import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.LanguageSelector.Selection;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
 import org.jgrapes.http.annotation.RequestHandler;
 import org.jgrapes.http.events.GetRequest;
+import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.http.events.WebSocketAccepted;
 import org.jgrapes.io.IOSubchannel;
@@ -101,7 +104,9 @@ import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 
 /**
- * 
+ * Provides resources using {@link Request}/{@link Response}
+ * events. Some resource requests (page resource, portlet resource)
+ * are forwarded via the {@link Portal} component to the portlets.
  */
 public class PortalWeblet extends Component {
 
@@ -136,10 +141,13 @@ public class PortalWeblet extends Component {
 	private long portalSessionInactivityTimeout = -1;
 
 	/**
-	 * @param componentChannel
+	 * Instantiates a new portal weblet.
+	 *
+	 * @param webletChannel the weblet channel
+	 * @param portal the portal
 	 */
-	public PortalWeblet(Portal portal, Channel componentChannel) {
-		super(componentChannel);
+	public PortalWeblet(Channel webletChannel, Portal portal) {
+		super(webletChannel);
 		this.portal = portal;
 		baseTheme = new Provider();
 		
@@ -289,15 +297,6 @@ public class PortalWeblet extends Component {
 		return renderSupport;
 	}
 	
-	private IOSubchannel portalChannel(IOSubchannel channel) {
-		@SuppressWarnings("unchecked")
-		Optional<LinkedIOSubchannel> portalChannel
-			= (Optional<LinkedIOSubchannel>)LinkedIOSubchannel
-				.downstreamChannel(portal, channel);
-		return portalChannel.orElseGet(
-				() -> new LinkedIOSubchannel(portal, channel));
-	}
-
 	@RequestHandler(dynamic=true)
 	public void onGetRedirect(GetRequest event, IOSubchannel channel) 
 			throws InterruptedException, IOException, ParseException {
@@ -305,10 +304,10 @@ public class PortalWeblet extends Component {
 		response.setStatus(HttpStatus.MOVED_PERMANENTLY)
 			.setContentType("text", "plain", "utf-8")
 			.setField(HttpField.LOCATION, portal.prefix());
-		fire(new Response(response), channel);
+		channel.respond(new Response(response));
 		try {
-			fire(Output.from(portal.prefix().toString()
-					.getBytes("utf-8"), true), channel);
+			channel.respond(Output.from(portal.prefix().toString()
+					.getBytes("utf-8"), true));
 		} catch (UnsupportedEncodingException e) {
 			// Supported by definition
 		}
@@ -531,9 +530,27 @@ public class PortalWeblet extends Component {
 		fire(portletRequest, portalChannel(channel));
 	}
 
+	/**
+	 * The portal channel for getting resources. Resource providers
+	 * respond on the same event pipeline as they receive, because
+	 * handling is just a mapping to {@link ResourceRequestCompleted}.
+	 *
+	 * @param channel the channel
+	 * @return the IO subchannel
+	 */
+	private IOSubchannel portalChannel(IOSubchannel channel) {
+		@SuppressWarnings("unchecked")
+		Optional<LinkedIOSubchannel> portalChannel
+			= (Optional<LinkedIOSubchannel>)LinkedIOSubchannel
+				.downstreamChannel(portal, channel);
+		return portalChannel.orElseGet(
+				() -> new PortalResourceChannel(
+						portal, channel, activeEventPipeline()));
+	}
+
 	@Handler(dynamic=true)
 	public void onResourceRequestCompleted(
-			ResourceRequestCompleted event, IOSubchannel channel) 
+			ResourceRequestCompleted event, PortalResourceChannel channel) 
 					throws IOException, InterruptedException {
 		event.stop();
 		if (event.event().get() == null) {
@@ -850,6 +867,19 @@ public class PortalWeblet extends Component {
 			return new URI(null, null, path, null);
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	/**
+	 * The channel used to send {@link PageResourceRequest}s and
+	 * {@link PortletResourceRequest}s to the portlets (via the
+	 * portal).
+	 */
+	public class PortalResourceChannel extends LinkedIOSubchannel {
+
+		public PortalResourceChannel(Manager hub,
+		        IOSubchannel upstreamChannel, EventPipeline responsePipeline) {
+			super(hub, hub.channel(), upstreamChannel, responsePipeline);
 		}
 	}
 	

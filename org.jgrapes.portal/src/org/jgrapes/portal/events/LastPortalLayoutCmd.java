@@ -27,7 +27,7 @@ import org.jgrapes.core.Event;
  * (see this event's description for details). The provided information
  * enables the portal to restore portlets to their previous positions.
  */
-public class LastPortalLayout extends Event<Void> {
+public class LastPortalLayoutCmd extends Event<Void> {
 
 	private List<List<String>> previewLayout;
 	private List<String> tabsLayout;
@@ -36,7 +36,7 @@ public class LastPortalLayout extends Event<Void> {
 	 * @param previewLayout
 	 * @param tabsLayout
 	 */
-	public LastPortalLayout(
+	public LastPortalLayoutCmd(
 			List<List<String>> previewLayout, List<String> tabsLayout) {
 		this.previewLayout = previewLayout;
 		this.tabsLayout = tabsLayout;

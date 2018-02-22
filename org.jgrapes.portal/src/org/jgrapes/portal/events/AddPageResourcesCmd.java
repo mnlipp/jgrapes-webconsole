@@ -35,7 +35,7 @@ import org.jgrapes.core.Event;
  * 
  * Adding resource references causes the browser to issue `GET` request that
  * (usually) refer to resources that must be provided by the component
- * that created the {@link AddPageResources} event.
+ * that created the {@link AddPageResourcesCmd} event.
  * 
  * The sequence of events is shown in the diagram.
  * 
@@ -79,7 +79,7 @@ import org.jgrapes.core.Event;
  * deactivate PageResourceProvider
  * @enduml
  */
-public class AddPageResources extends Event<Void> {
+public class AddPageResourcesCmd extends Event<Void> {
 
 	private List<ScriptResource> scriptResources = new ArrayList<>();
 	private List<URI> cssUris = new ArrayList<>();
@@ -88,7 +88,7 @@ public class AddPageResources extends Event<Void> {
 	/**
 	 * Create a new event.
 	 */
-	public AddPageResources() {
+	public AddPageResourcesCmd() {
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class AddPageResources extends Event<Void> {
 	 * @param scriptResource the resource to add
 	 * @return the event for easy chaining
 	 */
-	public AddPageResources addScriptResource(ScriptResource scriptResource) {
+	public AddPageResourcesCmd addScriptResource(ScriptResource scriptResource) {
 		scriptResources.add(scriptResource);
 		return this;
 	}
@@ -119,7 +119,7 @@ public class AddPageResources extends Event<Void> {
 	 * @param uri the URI
 	 * @return the event for easy chaining
 	 */
-	public AddPageResources addCss(URI uri) {
+	public AddPageResourcesCmd addCss(URI uri) {
 		cssUris.add(uri);
 		return this;
 	}
@@ -143,7 +143,7 @@ public class AddPageResources extends Event<Void> {
 	/**
 	 * @param cssSource the cssSource to set
 	 */
-	public AddPageResources setCssSource(String cssSource) {
+	public AddPageResourcesCmd setCssSource(String cssSource) {
 		this.cssSource = cssSource;
 		return this;
 	}

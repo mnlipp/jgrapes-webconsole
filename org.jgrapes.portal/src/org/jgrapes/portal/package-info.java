@@ -156,7 +156,7 @@
  * sequence diagram as well.
  * 
  * The preparation sequence starts with 
- * {@link org.jgrapes.portal.events.AddPageResources} events fired 
+ * {@link org.jgrapes.portal.events.AddPageResourcesCmd} events fired 
  * by the {@link org.jgrapes.portal.PageResourceProvider} components
  * in response to the {@link org.jgrapes.portal.events.PortalReady} event.
  * These cause the portal page to load additional, global resources.
@@ -202,9 +202,9 @@
  * due to the results of the action, the representation of the
  * portlet on the portal page must be updated, the portlet 
  * component fires a 
- * {@link org.jgrapes.portal.events.NotifyPortletView} event.
+ * {@link org.jgrapes.portal.events.NotifyPortletCmd} event.
  * 
- * {@link org.jgrapes.portal.events.NotifyPortletView} events
+ * {@link org.jgrapes.portal.events.NotifyPortletCmd} events
  * can also be sent unsolicitedly by portlet components if
  * the model data changes independent of user actions.
  * 

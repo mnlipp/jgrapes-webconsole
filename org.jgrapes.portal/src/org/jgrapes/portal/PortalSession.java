@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.EventPipeline;
@@ -63,6 +64,11 @@ import org.jgrapes.io.events.Closed;
  * (see {@link #upstreamChannel()}) is the channel of the
  * WebSocket. It may be unavailable if the connection has
  * been interrupted and not (yet) re-established.
+ * 
+ * The response {@link EventPipeline} must be used to send
+ * events (responses) to the portal session in the browser.
+ * No other event pipeline may be used for this purpose, else
+ * messages will interleave.
  * 
  * As a convenience, the {@link PortalSession} provides
  * direct access to the browser session, which can 
@@ -174,7 +180,7 @@ public class PortalSession extends DefaultSubchannel {
 	
 	private PortalSession(Portal portal, String portalSessionId,
 			long timeout) {
-		super(portal);
+		super(portal.channel(), portal.newEventPipeline());
 		this.portal = portal;
 		this.portalSessionId = portalSessionId;
 		this.timeout = timeout;
@@ -300,4 +306,20 @@ public class PortalSession extends DefaultSubchannel {
 		return browserSession == null ? Locale.getDefault() 
 				: browserSession.locale();
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(IOSubchannel.toString(this));
+		builder.append(" (");
+		if (upstreamChannel != null) {
+			builder.append("―>");
+			builder.append(Channel.toString(upstreamChannel.get()));
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+	
 }

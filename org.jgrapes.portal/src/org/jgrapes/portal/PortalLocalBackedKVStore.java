@@ -130,8 +130,8 @@ public class PortalLocalBackedKVStore extends Component {
 				data.remove(action.key());
 			}
 		}
-		channel.respond(new JsonOutput("storeLocalData", 
-				new Object[] { actions.toArray() }));
+		fire(new JsonOutput("storeLocalData", 
+				new Object[] { actions.toArray() }), channel);
 	}
 
 	@Handler

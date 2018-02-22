@@ -24,17 +24,39 @@ import org.jgrapes.core.Event;
  * A notification (as defined by the JSON RPC specification) to be sent to
  * the portlet view (the browser).
  */
-public class DeletePortlet extends Event<Void> {
+public class NotifyPortletCmd extends Event<Void> {
 
+	private String portletType;
 	private String portletId;
+	private String method;
+	private Object[] params;
 	
 	/**
 	 * Creates a new event.
 	 *  
-	 * @param portletId the portlet (view) that should be deleted
+	 * @param portletType the portlet type (used by the portal 
+	 * core JS to look up the available functions, see {@link AddPortletType})
+	 * @param portletId the portlet (view) instance that the 
+	 * notification is directed at
+	 * @param method the method (function) to be executed, must
+	 * have been registered by handling {@link AddPortletType}
+	 * @param params the parameters
 	 */
-	public DeletePortlet(String portletId) {
+	public NotifyPortletCmd(String portletType,
+	        String portletId, String method, Object... params) {
+		this.portletType = portletType;
 		this.portletId = portletId;
+		this.method = method;
+		this.params = params;
+	}
+
+	/**
+	 * Returns the portlet class.
+	 * 
+	 * @return the portlet class
+	 */
+	public String portletType() {
+		return portletType;
 	}
 
 	/**
@@ -45,5 +67,24 @@ public class DeletePortlet extends Event<Void> {
 	public String portletId() {
 		return portletId;
 	}
+
+	/**
+	 * Returns the method to be executed.
+	 * 
+	 * @return the method
+	 */
+	public String method() {
+		return method;
+	}
+
+	/**
+	 * Returns the parameters.
+	 * 
+	 * @return the parameters
+	 */
+	public Object[] params() {
+		return params;
+	}
+	
 
 }

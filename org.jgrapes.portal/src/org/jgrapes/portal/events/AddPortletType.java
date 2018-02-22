@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapes.core.Event;
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
+import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
 
 /**
  * Adds a portlet type with its global resources (JavaScript and/or CSS) 

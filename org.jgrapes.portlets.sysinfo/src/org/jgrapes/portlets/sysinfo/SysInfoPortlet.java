@@ -38,21 +38,20 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
-import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.PortalSession;
 import org.jgrapes.portal.PortalWeblet;
 
 import static org.jgrapes.portal.Portlet.*;
 import static org.jgrapes.portal.Portlet.RenderMode.*;
 
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
+import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
-import org.jgrapes.portal.events.DeletePortlet;
+import org.jgrapes.portal.events.DeletePortletCmd;
 import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.NotifyPortletView;
+import org.jgrapes.portal.events.NotifyPortletCmd;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
+import org.jgrapes.portal.events.RenderPortletCmd;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 
@@ -86,14 +85,14 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 			ParseException, IOException {
 		ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
 		// Add SysInfoPortlet resources to page
-		fire(new AddPortletType(type())
+		portalSession.respond(new AddPortletType(type())
 				.setDisplayName(resourceBundle.getString("portletName"))
 				.addScript(new ScriptResource()
 						.setRequires(new String[] {"chartjs.org"})
 						.setScriptUri(event.renderSupport().portletResource(
 								type(), "SysInfo-functions.ftl.js")))
 				.addCss(PortalWeblet.uriFromPath("SysInfo-style.css"))
-				.setInstantiable(), portalSession);
+				.setInstantiable());
 	}
 
 	/* (non-Javadoc)
@@ -124,11 +123,11 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		SysInfoModel portletModel = putInSession(
 				portalSession.browserSession(), new SysInfoModel(portletId));
 		Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-		fire(new RenderPortlet(
+		portalSession.respond(new RenderPortletCmd(
 				SysInfoPortlet.class, portletModel.getPortletId(),
 				templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
 				.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
-				.setForeground(true), portalSession);
+				.setForeground(true));
 		updateView(portalSession, portletId, portalSession.locale());
 		return portletId;
 	}
@@ -146,21 +145,21 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-			fire(new RenderPortlet(
+			portalSession.respond(new RenderPortletCmd(
 					SysInfoPortlet.class, portletModel.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
 					.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
-					.setForeground(event.isForeground()), portalSession);
+					.setForeground(event.isForeground()));
 			updateView(portalSession, portletModel.getPortletId(), locale);
 			break;
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
-			fire(new RenderPortlet(
+			portalSession.respond(new RenderPortletCmd(
 					SysInfoPortlet.class, portletModel.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
 					.setRenderMode(View).setSupportedModes(MODES)
-					.setForeground(event.isForeground()), portalSession);
+					.setForeground(event.isForeground()));
 			break;
 		}
 		default:
@@ -168,13 +167,13 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		}
 	}
 
-	private void updateView(IOSubchannel channel, String portletId,
+	private void updateView(PortalSession portalSession, String portletId,
 	        Locale locale) {
 		Runtime runtime = Runtime.getRuntime();
-		fire(new NotifyPortletView(type(),
+		portalSession.respond(new NotifyPortletCmd(type(),
 				portletId, "updateMemorySizes", 
 				System.currentTimeMillis(), runtime.maxMemory(),
-				runtime.totalMemory(), runtime.freeMemory()), channel);
+				runtime.totalMemory(), runtime.freeMemory()));
 	}
 	
 	/* (non-Javadoc)
@@ -182,9 +181,9 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	 */
 	@Override
 	protected void doDeletePortlet(DeletePortletRequest event,
-	        PortalSession channel, String portletId, 
+	        PortalSession portalSession, String portletId, 
 	        Serializable retrievedState) throws Exception {
-		fire(new DeletePortlet(portletId), channel);
+		portalSession.respond(new DeletePortletCmd(portletId));
 	}
 
 	@Handler

@@ -55,22 +55,22 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.Portlet.RenderMode;
-import org.jgrapes.portal.events.AddPageResources;
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
+import org.jgrapes.portal.events.AddPageResourcesCmd;
+import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
-import org.jgrapes.portal.events.DeletePortlet;
+import org.jgrapes.portal.events.DeletePortletCmd;
 import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.DisplayNotification;
+import org.jgrapes.portal.events.DisplayNotificationCmd;
 import org.jgrapes.portal.events.JsonInput;
 import org.jgrapes.portal.events.JsonOutput;
-import org.jgrapes.portal.events.LastPortalLayout;
+import org.jgrapes.portal.events.LastPortalLayoutCmd;
+import org.jgrapes.portal.events.NotifyPortletCmd;
 import org.jgrapes.portal.events.NotifyPortletModel;
-import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalConfigured;
 import org.jgrapes.portal.events.PortalLayoutChanged;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
+import org.jgrapes.portal.events.RenderPortletCmd;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.events.SetLocale;
 import org.jgrapes.portal.events.SetTheme;
@@ -102,11 +102,11 @@ public class Portal extends Component {
 	/**
 	 * @param componentChannel
 	 */
-	public Portal(Channel componentChannel, Channel viewChannel, URI prefix) {
+	public Portal(Channel componentChannel, Channel webletChannel, URI prefix) {
 		super(componentChannel);
 		this.prefix = URI.create(prefix.getPath().endsWith("/") 
 				? prefix.getPath() : (prefix.getPath() + "/"));
-		view = attach(new PortalWeblet(this, viewChannel));
+		view = attach(new PortalWeblet(webletChannel, this));
 		try {
 			ObjectName mxbeanName = new ObjectName("org.jgrapes.portal:type="
 					+ Portal.class.getSimpleName() + "#" + Components.objectId(this)
@@ -188,7 +188,7 @@ public class Portal extends Component {
 	}
 	
 	@Handler
-	public void onRenderPortlet(RenderPortlet event, PortalSession channel) 
+	public void onRenderPortlet(RenderPortletCmd event, PortalSession channel) 
 			throws InterruptedException, IOException {
 		StringWriter content = new StringWriter();
 		CharBuffer buffer = CharBuffer.allocate(8192);
@@ -210,7 +210,7 @@ public class Portal extends Component {
 	}
 
 	@Handler
-	public void onAddPageResources(AddPageResources event, PortalSession channel) {
+	public void onAddPageResources(AddPageResourcesCmd event, PortalSession channel) {
 		JsonArrayBuilder paramBuilder = Json.createArrayBuilder();
 		for (ScriptResource scriptResource: event.scriptResources()) {
 			paramBuilder.add(scriptResource.toJsonValue());
@@ -240,14 +240,14 @@ public class Portal extends Component {
 	}
 	
 	@Handler
-	public void onDeletePortlet(DeletePortlet event, PortalSession channel) 
+	public void onDeletePortlet(DeletePortletCmd event, PortalSession channel) 
 					throws InterruptedException, IOException {
 		fire(new JsonOutput("deletePortlet", event.portletId()), channel);
 	}
 	
 	@Handler 
 	public void onNotifyPortletView(
-			NotifyPortletView event, PortalSession channel) 
+			NotifyPortletCmd event, PortalSession channel) 
 					throws InterruptedException, IOException {
 		fire(new JsonOutput("notifyPortletView",
 				event.portletType(), event.portletId(), 
@@ -256,7 +256,7 @@ public class Portal extends Component {
 
 	@Handler 
 	public void onDisplayNotification(
-			DisplayNotification event, PortalSession channel) 
+			DisplayNotificationCmd event, PortalSession channel) 
 					throws InterruptedException, IOException {
 		Map<String,Object> options = event.options();
 		options.put("destroyOnClose", true);
@@ -326,12 +326,12 @@ public class Portal extends Component {
 	public void onPortalConfigured(
 			PortalConfigured event, PortalSession channel) 
 					throws InterruptedException, IOException {
-		fire(new JsonOutput("portalConfigured"), channel);
+		channel.respond(new JsonOutput("portalConfigured"));
 	}
 	
 	@Handler
 	public void onLastPortalLayout(
-			LastPortalLayout event, PortalSession channel) 
+			LastPortalLayoutCmd event, PortalSession channel) 
 					throws InterruptedException, IOException {
 		fire(new JsonOutput("lastPortalLayout",
 				event.previewLayout(), event.tabsLayout()), channel);
