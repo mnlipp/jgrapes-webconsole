@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.EventPipeline;
@@ -37,6 +36,7 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.IOSubchannel.DefaultSubchannel;
 import org.jgrapes.io.events.Close;
 import org.jgrapes.io.events.Closed;
+import org.jgrapes.io.util.LinkedIOSubchannel;
 
 /**
  * The server side representation of a window in the browser 
@@ -313,11 +313,8 @@ public class PortalSession extends DefaultSubchannel {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(IOSubchannel.toString(this));
-		builder.append(" (");
-		if (upstreamChannel != null) {
-			builder.append("―>");
-			builder.append(Channel.toString(upstreamChannel.get()));
-		}
+		upstreamChannel().ifPresent(up -> builder.append(
+				LinkedIOSubchannel.upstreamToString(up)));
 		builder.append(")");
 		return builder.toString();
 	}
