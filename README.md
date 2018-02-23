@@ -12,6 +12,12 @@ See the [project's home page](http://mnlipp.github.io/jgrapes/).
 This repository comprises the sources for jars that provide
 the portal components.
 
+Themes
+------
+
+Additional themes are maintained in an 
+[independant repository](https://github.com/mnlipp/jgrapes-portal-themes).
+
 Demo
 ----
 
