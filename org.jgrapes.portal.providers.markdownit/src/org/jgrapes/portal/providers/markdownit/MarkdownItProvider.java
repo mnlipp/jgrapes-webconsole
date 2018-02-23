@@ -30,8 +30,8 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.PageResourceProvider;
 import org.jgrapes.portal.PortalSession;
-import org.jgrapes.portal.events.AddPageResourcesCmd;
-import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
+import org.jgrapes.portal.events.AddPageResources;
+import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.PortalReady;
 
 /**
@@ -57,7 +57,7 @@ public class MarkdownItProvider extends PageResourceProvider {
 			ParseException, IOException {
 		String minExt = event.renderSupport()
 				.useMinifiedResources() ? ".min" : "";
-		portalSession.respond(new AddPageResourcesCmd()
+		portalSession.respond(new AddPageResources()
 				.addScriptResource(new ScriptResource()
 						.setProvides(new String[] {"markdown-it.github.io"})
 						.setScriptUri(event.renderSupport().pageResource(

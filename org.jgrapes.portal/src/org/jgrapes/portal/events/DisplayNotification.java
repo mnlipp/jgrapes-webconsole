@@ -18,11 +18,10 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jgrapes.core.Event;
 
 /**
  * Causes a notification to be display on the top of the portal page.
@@ -30,7 +29,7 @@ import org.jgrapes.core.Event;
  * The event triggers the creation of a notification widget in the
  * portal page. 
  */
-public class DisplayNotificationCmd extends Event<Void> {
+public class DisplayNotification extends PortalCommand {
 
 	private String content;
 	private Map<String,Object> options = null;
@@ -45,7 +44,7 @@ public class DisplayNotificationCmd extends Event<Void> {
 	 * @param content the content (valid HTML)
 	 * @param options the options (must be serializable as JSON)
 	 */
-	public DisplayNotificationCmd(String content, Map<String,Object> options) {
+	public DisplayNotification(String content, Map<String,Object> options) {
 		this.content = content;
 		this.options = options;
 	}
@@ -57,7 +56,7 @@ public class DisplayNotificationCmd extends Event<Void> {
 	 * 
 	 * @param content the content (valid HTML)
 	 */
-	public DisplayNotificationCmd(String content) {
+	public DisplayNotification(String content) {
 		this(content, null);
 	}
 
@@ -70,7 +69,7 @@ public class DisplayNotificationCmd extends Event<Void> {
 	 * @param value the option value (must be serializable as JSON)
 	 * @return the event for easy chaining
 	 */
-	public DisplayNotificationCmd addOption(String name, Object value) {
+	public DisplayNotification addOption(String name, Object value) {
 		if (options == null) {
 			options = new HashMap<String, Object>();
 		}
@@ -95,4 +94,12 @@ public class DisplayNotificationCmd extends Event<Void> {
 	public Map<String,Object> options() {
 		return options == null ? Collections.emptyMap() : options;
 	}
+
+	@Override
+	public void toJson(Writer writer) {
+		Map<String,Object> options = options();
+		options.put("destroyOnClose", true);
+		toJson(writer, "displayNotification", content(), options);
+	}
+	
 }

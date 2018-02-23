@@ -32,7 +32,7 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.portal.events.LastPortalLayoutCmd;
+import org.jgrapes.portal.events.LastPortalLayout;
 import org.jgrapes.portal.events.PortalLayoutChanged;
 import org.jgrapes.portal.events.PortalPrepared;
 import org.jgrapes.portal.events.PortalReady;
@@ -216,7 +216,7 @@ public class KVStoreBasedPortalPolicy extends Component {
 					"tabsLayout", k -> { return Collections.emptyList(); });
 
 			// Update layout
-			channel.respond(new LastPortalLayoutCmd(previewLayout, tabsLayout));
+			channel.respond(new LastPortalLayout(previewLayout, tabsLayout));
 			
 			// Restore portlets
 			for (String portletId: tabsLayout) {

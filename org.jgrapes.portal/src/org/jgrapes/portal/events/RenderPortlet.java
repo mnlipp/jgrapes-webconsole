@@ -18,20 +18,24 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.CharBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.jgrapes.core.Event;
 
-import static org.jgrapes.portal.Portlet.*;
+import org.jgrapes.portal.Portlet.RenderMode;
 
 /**
  * Send to the portal page for adding or updating a complete portlet
  * representation.
  */
-public class RenderPortletCmd extends Event<Void> {
+public class RenderPortlet extends PortalCommand {
 
 	private static final Set<RenderMode> DEFAULT_SUPPORTED 
 		= Collections.unmodifiableSet(new HashSet<>(
@@ -50,7 +54,7 @@ public class RenderPortletCmd extends Event<Void> {
 	 * @param portletClass the portlet class
 	 * @param portletId the id of the portlet
 	 */
-	public RenderPortletCmd(Class<?> portletClass, String portletId, 
+	public RenderPortlet(Class<?> portletClass, String portletId, 
 			Reader contentReader) {
 		this.portletClass = portletClass;
 		this.portletId = portletId;
@@ -63,7 +67,7 @@ public class RenderPortletCmd extends Event<Void> {
 	 * @param renderMode the render mode to set
 	 * @return the event for easy chaining
 	 */
-	public RenderPortletCmd setRenderMode(RenderMode renderMode) {
+	public RenderPortlet setRenderMode(RenderMode renderMode) {
 		this.renderMode = renderMode;
 		return this;
 	}
@@ -75,7 +79,7 @@ public class RenderPortletCmd extends Event<Void> {
 	 * @param supportedModes the supported render modes to set
 	 * @return the event for easy chaining
 	 */
-	public RenderPortletCmd setSupportedModes(Set<RenderMode> supportedModes) {
+	public RenderPortlet setSupportedModes(Set<RenderMode> supportedModes) {
 		this.supportedModes = supportedModes;
 		return this;
 	}
@@ -86,7 +90,7 @@ public class RenderPortletCmd extends Event<Void> {
 	 * @param supportedMode the supported render modes to add
 	 * @return the event for easy chaining
 	 */
-	public RenderPortletCmd addSupportedMode(RenderMode supportedMode) {
+	public RenderPortlet addSupportedMode(RenderMode supportedMode) {
 		if (supportedModes == DEFAULT_SUPPORTED) {
 			supportedModes = new HashSet<>(DEFAULT_SUPPORTED);
 		}
@@ -101,7 +105,7 @@ public class RenderPortletCmd extends Event<Void> {
 	 * @param foreground if set, the portlet is put in foreground
 	 * @return the event for easy chaining
 	 */
-	public RenderPortletCmd setForeground(boolean foreground) {
+	public RenderPortlet setForeground(boolean foreground) {
 		this.foreground = foreground;
 		return this;
 	}
@@ -153,5 +157,27 @@ public class RenderPortletCmd extends Event<Void> {
 	 */
 	public Reader contentReader() {
 		return contentReader;
+	}
+
+	@Override
+	public void toJson(Writer writer) {
+		StringWriter content = new StringWriter();
+		CharBuffer buffer = CharBuffer.allocate(8192);
+		try (Reader in = new BufferedReader(contentReader())) {
+			while (true) {
+				if (in.read(buffer) < 0) {
+					break;
+				}
+				buffer.flip();
+				content.append(buffer);
+				buffer.clear();
+			}
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+		toJson(writer, "updatePortlet", portletId(), renderMode().name(),
+				supportedRenderModes().stream().map(RenderMode::name)
+					.toArray(size -> new String[size]),
+				content.toString(), isForeground());
 	}
 }

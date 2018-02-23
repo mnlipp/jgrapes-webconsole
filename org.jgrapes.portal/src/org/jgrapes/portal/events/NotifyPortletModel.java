@@ -27,7 +27,7 @@ import org.jgrapes.portal.RenderSupport;
  * A decoded notification (as defined by the JSON RPC specification) that
  * invokes a method on a portlet model. Usually, though not necessarily,
  * the portlet component responds by sending a
- * {@link NotifyPortletCmd} to update the portlet representation.
+ * {@link NotifyPortlet} to update the portlet representation.
  * 
  * ![Event Sequence](NotifyPortletModelSeq.svg)
  * 

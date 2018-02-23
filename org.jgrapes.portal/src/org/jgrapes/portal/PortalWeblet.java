@@ -91,13 +91,14 @@ import org.jgrapes.io.util.ByteBufferOutputStream;
 import org.jgrapes.io.util.CharBufferWriter;
 import org.jgrapes.io.util.LinkedIOSubchannel;
 import org.jgrapes.portal.events.JsonInput;
-import org.jgrapes.portal.events.JsonOutput;
 import org.jgrapes.portal.events.PageResourceRequest;
+import org.jgrapes.portal.events.PortalCommand;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.PortletResourceRequest;
 import org.jgrapes.portal.events.ResourceRequestCompleted;
 import org.jgrapes.portal.events.SetLocale;
 import org.jgrapes.portal.events.SetTheme;
+import org.jgrapes.portal.events.SimplePortalCommand;
 import org.jgrapes.portal.themes.base.Provider;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
@@ -181,7 +182,7 @@ public class PortalWeblet extends Component {
 		Handler.Evaluator.add(this, "onKeyValueStoreData", portal.channel());
 		Handler.Evaluator.add(this, "onResourceRequestCompleted", portal.channel());
 		Handler.Evaluator.add(this, "onOutput", portal.channel());
-		Handler.Evaluator.add(this, "onJsonOutput", portal.channel());
+		Handler.Evaluator.add(this, "onPortalSessionCommand", portal.channel());
 		Handler.Evaluator.add(this, "onSetLocale", portal.channel());
 		Handler.Evaluator.add(this, "onSetTheme", portal.channel());
 	}
@@ -585,7 +586,7 @@ public class PortalWeblet extends Component {
 			@SuppressWarnings("resource")
 			CharBufferWriter out = new CharBufferWriter(channel, 
 					channel.responsePipeline()).suppressClose();
-			new JsonOutput("reload").toJson(out);
+			new SimplePortalCommand("reload").toJson(out);
 			out.close();
 			event.stop();
 			return;
@@ -709,7 +710,7 @@ public class PortalWeblet extends Component {
 				.ifPresent(l -> selection.prefer(l));
 			}
 		}
-		fire(new JsonOutput("reload"), channel);
+		channel.respond(new SimplePortalCommand("reload"));
 	}
 	
 	@Handler(dynamic=true)
@@ -724,11 +725,12 @@ public class PortalWeblet extends Component {
 				"/" + Utils.userFromSession(channel.browserSession())
 				.map(UserPrincipal::toString).orElse("") 
 				+ "/themeProvider", themeProvider.themeId())).get();
-		fire(new JsonOutput("reload"), channel);
+		channel.respond(new SimplePortalCommand("reload"));
 	}
 	
-	@Handler(dynamic=true)
-	public void onJsonOutput(JsonOutput event, PortalSession channel)
+	@Handler(dynamic=true, priority=-1000)
+	public void onPortalSessionCommand(
+			PortalCommand event, PortalSession channel)
 			throws InterruptedException, IOException {
 		Optional<IOSubchannel> optUpstream = channel.upstreamChannel();
 		if (optUpstream.isPresent()) {

@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2017-2018 Michael N. Lipp
+ * Copyright (C) 2018 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by 
@@ -25,36 +25,33 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 
 import org.jdrupes.json.JsonBeanEncoder;
-import org.jgrapes.core.Channel;
-import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
 
 /**
- * A JSON request from the server to the browser. 
+ * Events derived from this class are transformed to JSON messages
+ * that are sent to the portal session. They may only be fired
+ * on the {@link org.jgrapes.portal.PortalSession#responsePipeline()}
+ * (usually with 
+ * {@link org.jgrapes.portal.PortalSession#respond(org.jgrapes.core.Event)}).
  */
-public class JsonOutput extends Event<Void> {
+public abstract class PortalCommand extends Event<Void> {
 
-	private String method;
-	private Object[] params;
-	
 	/**
-	 * Create a new request that invokes the given method with the
-	 * given parameters.
-	 * 
-	 * @param method the method
-	 * @param params the parameters
-	 */
-	public JsonOutput(String method, Object... params) {
-		this.method = method;
-		this.params = params;
-	}
-	
-	/**
-	 * Writes the event's JSON data to th egiven writer.
+	 * Writes the event as JSON notification to the given writer.
+	 * Derived classes usually simply call 
+	 * {@link #toJson(Writer, String, Object...)} with the method
+	 * name and parameters.
 	 * 
 	 * @param writer the writer
 	 */
-	public void toJson(Writer writer) {
+	public abstract void toJson(Writer writer);
+	
+	/**
+	 * Creates a JSON notification from the given data.
+	 * 
+	 * @param writer the writer
+	 */
+	protected void toJson(Writer writer, String method, Object... params) {
 		JsonGenerator generator = Json.createGenerator(writer);
 		generator.writeStartObject();
 		generator.write("jsonrpc", "2.0");
@@ -77,23 +74,5 @@ public class JsonOutput extends Event<Void> {
 		}
 		generator.writeEnd();
 		generator.flush();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(Components.objectName(this));
-		builder.append(" [");
-		builder.append("method=");
-		builder.append(method);
-		if (channels != null) {
-			builder.append(", channels=");
-			builder.append(Channel.toString(channels));
-		}
-		builder.append("]");
-		return builder.toString();
 	}
 }

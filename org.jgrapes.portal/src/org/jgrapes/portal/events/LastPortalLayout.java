@@ -18,16 +18,15 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.Writer;
 import java.util.List;
-
-import org.jgrapes.core.Event;
 
 /**
  * Sent by the server to the browser in response to {@link PortalPrepared} 
  * (see this event's description for details). The provided information
  * enables the portal to restore portlets to their previous positions.
  */
-public class LastPortalLayoutCmd extends Event<Void> {
+public class LastPortalLayout extends PortalCommand {
 
 	private List<List<String>> previewLayout;
 	private List<String> tabsLayout;
@@ -36,7 +35,7 @@ public class LastPortalLayoutCmd extends Event<Void> {
 	 * @param previewLayout
 	 * @param tabsLayout
 	 */
-	public LastPortalLayoutCmd(
+	public LastPortalLayout(
 			List<List<String>> previewLayout, List<String> tabsLayout) {
 		this.previewLayout = previewLayout;
 		this.tabsLayout = tabsLayout;
@@ -54,6 +53,11 @@ public class LastPortalLayoutCmd extends Event<Void> {
 	 */
 	public List<String> tabsLayout() {
 		return tabsLayout;
+	}
+
+	@Override
+	public void toJson(Writer writer) {
+		toJson(writer, "lastPortalLayout", previewLayout(), tabsLayout());
 	}
 
 }

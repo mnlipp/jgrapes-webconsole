@@ -31,7 +31,7 @@ import org.jgrapes.portal.RenderSupport;
  *
  * Requests for such resources are usually
  * generated during portal boot. See the description of
- * {@link AddPageResourcesCmd} for details.
+ * {@link AddPageResources} for details.
  */
 public class PageResourceRequest extends ResourceRequest {
 

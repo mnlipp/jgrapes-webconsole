@@ -18,8 +18,10 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.json.Json;
@@ -27,15 +29,13 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import org.jgrapes.core.Event;
-
 /**
  * Adds `<link .../>`, `<style>...</style>` or `<script ...></script>` nodes
  * to the portal's `<head>` node.
  * 
  * Adding resource references causes the browser to issue `GET` request that
  * (usually) refer to resources that must be provided by the component
- * that created the {@link AddPageResourcesCmd} event.
+ * that created the {@link AddPageResources} event.
  * 
  * The sequence of events is shown in the diagram.
  * 
@@ -79,7 +79,7 @@ import org.jgrapes.core.Event;
  * deactivate PageResourceProvider
  * @enduml
  */
-public class AddPageResourcesCmd extends Event<Void> {
+public class AddPageResources extends PortalCommand {
 
 	private List<ScriptResource> scriptResources = new ArrayList<>();
 	private List<URI> cssUris = new ArrayList<>();
@@ -88,7 +88,7 @@ public class AddPageResourcesCmd extends Event<Void> {
 	/**
 	 * Create a new event.
 	 */
-	public AddPageResourcesCmd() {
+	public AddPageResources() {
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class AddPageResourcesCmd extends Event<Void> {
 	 * @param scriptResource the resource to add
 	 * @return the event for easy chaining
 	 */
-	public AddPageResourcesCmd addScriptResource(ScriptResource scriptResource) {
+	public AddPageResources addScriptResource(ScriptResource scriptResource) {
 		scriptResources.add(scriptResource);
 		return this;
 	}
@@ -119,7 +119,7 @@ public class AddPageResourcesCmd extends Event<Void> {
 	 * @param uri the URI
 	 * @return the event for easy chaining
 	 */
-	public AddPageResourcesCmd addCss(URI uri) {
+	public AddPageResources addCss(URI uri) {
 		cssUris.add(uri);
 		return this;
 	}
@@ -143,9 +143,20 @@ public class AddPageResourcesCmd extends Event<Void> {
 	/**
 	 * @param cssSource the cssSource to set
 	 */
-	public AddPageResourcesCmd setCssSource(String cssSource) {
+	public AddPageResources setCssSource(String cssSource) {
 		this.cssSource = cssSource;
 		return this;
+	}
+
+	@Override
+	public void toJson(Writer writer) {
+		JsonArrayBuilder paramBuilder = Json.createArrayBuilder();
+		for (ScriptResource scriptResource: scriptResources()) {
+			paramBuilder.add(scriptResource.toJsonValue());
+		}
+		toJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
+				uri -> uri.toString()).toArray(String[]::new), 
+				cssSource(), paramBuilder.build());
 	}
 
 	/**

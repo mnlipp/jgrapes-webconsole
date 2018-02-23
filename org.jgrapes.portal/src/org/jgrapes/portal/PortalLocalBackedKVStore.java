@@ -32,8 +32,8 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.events.JsonInput;
-import org.jgrapes.portal.events.JsonOutput;
 import org.jgrapes.portal.events.PortalReady;
+import org.jgrapes.portal.events.SimplePortalCommand;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.util.events.KeyValueStoreUpdate.Action;
@@ -75,7 +75,7 @@ public class PortalLocalBackedKVStore extends Component {
 		channel.setAssociated(PortalLocalBackedKVStore.class, event);
 		String keyStart = portalPrefix 
 				+ PortalLocalBackedKVStore.class.getName() + "/";
-		channel.respond(new JsonOutput("retrieveLocalData", keyStart));
+		channel.respond(new SimplePortalCommand("retrieveLocalData", keyStart));
 	}
 	
 	@Handler
@@ -130,7 +130,7 @@ public class PortalLocalBackedKVStore extends Component {
 				data.remove(action.key());
 			}
 		}
-		fire(new JsonOutput("storeLocalData", 
+		fire(new SimplePortalCommand("storeLocalData", 
 				new Object[] { actions.toArray() }), channel);
 	}
 

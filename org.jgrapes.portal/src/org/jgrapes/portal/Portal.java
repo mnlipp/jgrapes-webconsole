@@ -18,19 +18,13 @@
 
 package org.jgrapes.portal;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.net.URL;
-import java.nio.CharBuffer;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -38,9 +32,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.management.InstanceAlreadyExistsException;
@@ -55,25 +47,17 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.Portlet.RenderMode;
-import org.jgrapes.portal.events.AddPageResourcesCmd;
-import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
-import org.jgrapes.portal.events.AddPortletType;
-import org.jgrapes.portal.events.DeletePortletCmd;
 import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.DisplayNotificationCmd;
 import org.jgrapes.portal.events.JsonInput;
-import org.jgrapes.portal.events.JsonOutput;
-import org.jgrapes.portal.events.LastPortalLayoutCmd;
-import org.jgrapes.portal.events.NotifyPortletCmd;
 import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.PortalConfigured;
 import org.jgrapes.portal.events.PortalLayoutChanged;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortletCmd;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.events.SetLocale;
 import org.jgrapes.portal.events.SetTheme;
+import org.jgrapes.portal.events.SimplePortalCommand;
 
 /**
  * 
@@ -188,83 +172,6 @@ public class Portal extends Component {
 	}
 	
 	@Handler
-	public void onRenderPortlet(RenderPortletCmd event, PortalSession channel) 
-			throws InterruptedException, IOException {
-		StringWriter content = new StringWriter();
-		CharBuffer buffer = CharBuffer.allocate(8192);
-		try (Reader in = new BufferedReader(event.contentReader())) {
-			while (true) {
-				if (in.read(buffer) < 0) {
-					break;
-				}
-				buffer.flip();
-				content.append(buffer);
-				buffer.clear();
-			}
-		}
-		fire(new JsonOutput("updatePortlet",
-				event.portletId(), event.renderMode().name(),
-				event.supportedRenderModes().stream().map(RenderMode::name)
-				.toArray(size -> new String[size]),
-				content.toString(), event.isForeground()), channel);
-	}
-
-	@Handler
-	public void onAddPageResources(AddPageResourcesCmd event, PortalSession channel) {
-		JsonArrayBuilder paramBuilder = Json.createArrayBuilder();
-		for (ScriptResource scriptResource: event.scriptResources()) {
-			paramBuilder.add(scriptResource.toJsonValue());
-		}
-		fire(new JsonOutput("addPageResources", 
-				Arrays.stream(event.cssUris()).map(
-						uri -> uri.toString()).toArray(String[]::new), 
-				event.cssSource(), paramBuilder.build()), channel);
-	}
-	
-	@Handler
-	public void onAddPortletType(AddPortletType event, PortalSession channel)
-			throws InterruptedException, IOException {
-		JsonArrayBuilder paramBuilder = Json.createArrayBuilder();
-		for (ScriptResource scriptResource: event.scriptResources()) {
-			paramBuilder.add(scriptResource.toJsonValue());
-		}
-		fire(new JsonOutput("addPortletType",
-				event.portletType(),
-				event.displayName(),
-				Arrays.stream(event.cssUris()).map(uri -> 
-					view.renderSupport().portletResource(
-							event.portletType(), uri).toString())
-				.toArray(String[]::new),
-				paramBuilder.build(),
-				event.isInstantiable()), channel);
-	}
-	
-	@Handler
-	public void onDeletePortlet(DeletePortletCmd event, PortalSession channel) 
-					throws InterruptedException, IOException {
-		fire(new JsonOutput("deletePortlet", event.portletId()), channel);
-	}
-	
-	@Handler 
-	public void onNotifyPortletView(
-			NotifyPortletCmd event, PortalSession channel) 
-					throws InterruptedException, IOException {
-		fire(new JsonOutput("notifyPortletView",
-				event.portletType(), event.portletId(), 
-				event.method(), event.params()), channel);
-	}
-
-	@Handler 
-	public void onDisplayNotification(
-			DisplayNotificationCmd event, PortalSession channel) 
-					throws InterruptedException, IOException {
-		Map<String,Object> options = event.options();
-		options.put("destroyOnClose", true);
-		fire(new JsonOutput("displayNotification",
-				event.content(), options), channel);
-	}
-
-	@Handler
 	public void onJsonInput(JsonInput event, PortalSession channel) 
 			throws InterruptedException, IOException {
 		// Send events to portlets on portal's channel
@@ -326,15 +233,7 @@ public class Portal extends Component {
 	public void onPortalConfigured(
 			PortalConfigured event, PortalSession channel) 
 					throws InterruptedException, IOException {
-		channel.respond(new JsonOutput("portalConfigured"));
-	}
-	
-	@Handler
-	public void onLastPortalLayout(
-			LastPortalLayoutCmd event, PortalSession channel) 
-					throws InterruptedException, IOException {
-		fire(new JsonOutput("lastPortalLayout",
-				event.previewLayout(), event.tabsLayout()), channel);
+		channel.respond(new SimplePortalCommand("portalConfigured"));
 	}
 	
 	/**

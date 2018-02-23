@@ -18,12 +18,17 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.jgrapes.core.Event;
-import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+
+import org.jgrapes.portal.RenderSupport;
+import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 
 /**
  * Adds a portlet type with its global resources (JavaScript and/or CSS) 
@@ -73,7 +78,7 @@ import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
  * 
  * @enduml
  */
-public class AddPortletType extends Event<Void> {
+public class AddPortletType extends PortalCommand {
 
 	private String portletType;
 	private String displayName = "";
@@ -153,12 +158,13 @@ public class AddPortletType extends Event<Void> {
 	/**
 	 * Add the URI of a CSS resource that is to be added to the
 	 * header section of the portal page.
-	 * 
+	 *
+	 * @param renderSupport the render support for mapping the `uri`
 	 * @param uri the URI
 	 * @return the event for easy chaining
 	 */
-	public AddPortletType addCss(URI uri) {
-		cssUris.add(uri);
+	public AddPortletType addCss(RenderSupport renderSupport, URI uri) {
+		cssUris.add(renderSupport.portletResource(portletType(), uri));
 		return this;
 	}
 
@@ -178,5 +184,17 @@ public class AddPortletType extends Event<Void> {
 	 */
 	public URI[] cssUris() {
 		return cssUris.toArray(new URI[cssUris.size()]);
+	}
+
+	@Override
+	public void toJson(Writer writer) {
+		JsonArrayBuilder paramBuilder = Json.createArrayBuilder();
+		for (ScriptResource scriptResource: scriptResources()) {
+			paramBuilder.add(scriptResource.toJsonValue());
+		}
+		toJson(writer, "addPortletType", portletType(), displayName(),
+				Arrays.stream(cssUris()).map(
+						uri ->	uri.toString()).toArray(String[]::new),
+				paramBuilder.build(), isInstantiable());
 	}
 }

@@ -18,12 +18,6 @@
 
 /**
  * The events used by the portal related components.
- * 
- * Events that end with "...Cmd" are transformed to JSON messages
- * that are sent to the portal session. They may only be fired
- * on the {@link org.jgrapes.portal.PortalSession#responsePipeline()}
- * (usually with 
- * {@link org.jgrapes.portal.PortalSession#respond(org.jgrapes.core.Event)}).
  */
 @org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.portal.events;

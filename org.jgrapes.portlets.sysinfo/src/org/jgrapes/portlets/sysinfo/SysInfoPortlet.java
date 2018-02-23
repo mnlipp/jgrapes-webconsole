@@ -44,14 +44,14 @@ import org.jgrapes.portal.PortalWeblet;
 import static org.jgrapes.portal.Portlet.*;
 import static org.jgrapes.portal.Portlet.RenderMode.*;
 
-import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
+import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
-import org.jgrapes.portal.events.DeletePortletCmd;
+import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.NotifyPortletCmd;
+import org.jgrapes.portal.events.NotifyPortlet;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortletCmd;
+import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 
@@ -91,7 +91,8 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 						.setRequires(new String[] {"chartjs.org"})
 						.setScriptUri(event.renderSupport().portletResource(
 								type(), "SysInfo-functions.ftl.js")))
-				.addCss(PortalWeblet.uriFromPath("SysInfo-style.css"))
+				.addCss(event.renderSupport(), PortalWeblet.uriFromPath(
+						"SysInfo-style.css"))
 				.setInstantiable());
 	}
 
@@ -123,7 +124,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		SysInfoModel portletModel = putInSession(
 				portalSession.browserSession(), new SysInfoModel(portletId));
 		Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-		portalSession.respond(new RenderPortletCmd(
+		portalSession.respond(new RenderPortlet(
 				SysInfoPortlet.class, portletModel.getPortletId(),
 				templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
 				.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
@@ -145,7 +146,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-			portalSession.respond(new RenderPortletCmd(
+			portalSession.respond(new RenderPortlet(
 					SysInfoPortlet.class, portletModel.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
 					.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
@@ -155,7 +156,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
-			portalSession.respond(new RenderPortletCmd(
+			portalSession.respond(new RenderPortlet(
 					SysInfoPortlet.class, portletModel.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
 					.setRenderMode(View).setSupportedModes(MODES)
@@ -170,7 +171,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	private void updateView(PortalSession portalSession, String portletId,
 	        Locale locale) {
 		Runtime runtime = Runtime.getRuntime();
-		portalSession.respond(new NotifyPortletCmd(type(),
+		portalSession.respond(new NotifyPortlet(type(),
 				portletId, "updateMemorySizes", 
 				System.currentTimeMillis(), runtime.maxMemory(),
 				runtime.totalMemory(), runtime.freeMemory()));
@@ -183,7 +184,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	protected void doDeletePortlet(DeletePortletRequest event,
 	        PortalSession portalSession, String portletId, 
 	        Serializable retrievedState) throws Exception {
-		portalSession.respond(new DeletePortletCmd(portletId));
+		portalSession.respond(new DeletePortlet(portletId));
 	}
 
 	@Handler

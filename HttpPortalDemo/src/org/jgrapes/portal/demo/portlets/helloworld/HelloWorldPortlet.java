@@ -46,16 +46,16 @@ import static org.jgrapes.portal.Portlet.RenderMode.*;
 import org.jgrapes.portal.UserPrincipal;
 import org.jgrapes.portal.Utils;
 import org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortlet;
-import org.jgrapes.portal.events.AddPageResourcesCmd.ScriptResource;
+import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
-import org.jgrapes.portal.events.DeletePortletCmd;
+import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.DisplayNotificationCmd;
+import org.jgrapes.portal.events.DisplayNotification;
+import org.jgrapes.portal.events.NotifyPortlet;
 import org.jgrapes.portal.events.NotifyPortletModel;
-import org.jgrapes.portal.events.NotifyPortletCmd;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortletCmd;
+import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 import org.jgrapes.util.events.KeyValueStoreData;
@@ -99,7 +99,8 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 				.addScript(new ScriptResource().setScriptUri(
 						event.renderSupport().portletResource(type(),
 								"HelloWorld-functions.js")))
-				.addCss(PortalWeblet.uriFromPath("HelloWorld-style.css"))
+				.addCss(event.renderSupport(), PortalWeblet.uriFromPath(
+						"HelloWorld-style.css"))
 				.setInstantiable());
 		KeyValueStoreQuery query = new KeyValueStoreQuery(
 				storagePath(portalSession.browserSession()), portalSession);
@@ -132,7 +133,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 				storagePath(channel.browserSession()) + portletModel.getPortletId(),
 				jsonState));
 		Template tpl = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
-		channel.respond(new RenderPortletCmd(
+		channel.respond(new RenderPortlet(
 				HelloWorldPortlet.class, portletModel.getPortletId(),
 				templateProcessor(tpl, fmModel(event, channel, portletModel)))
 				.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
@@ -149,7 +150,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 	        Serializable portletState) throws Exception {
 		channel.respond(new KeyValueStoreUpdate().delete(
 				storagePath(channel.browserSession()) + portletId));
-		channel.respond(new DeletePortletCmd(portletId));
+		channel.respond(new DeletePortlet(portletId));
 	}
 	
 	
@@ -165,7 +166,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
-			channel.respond(new RenderPortletCmd(
+			channel.respond(new RenderPortlet(
 					HelloWorldPortlet.class, portletModel.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, channel, portletModel)))
 					.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
@@ -175,12 +176,12 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
-			channel.respond(new RenderPortletCmd(
+			channel.respond(new RenderPortlet(
 					HelloWorldPortlet.class, portletModel.getPortletId(), 
 					templateProcessor(tpl, fmModel(event, channel, portletModel)))
 					.setRenderMode(View).setSupportedModes(MODES)
 					.setForeground(event.isForeground()));
-			channel.respond(new NotifyPortletCmd(type(),
+			channel.respond(new NotifyPortlet(type(),
 					portletModel.getPortletId(), "setWorldVisible",
 					portletModel.isWorldVisible()));
 			break;
@@ -206,10 +207,10 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		channel.respond(new KeyValueStoreUpdate().update(
 				storagePath(channel.browserSession()) + portletModel.getPortletId(),
 				jsonState));
-		channel.respond(new NotifyPortletCmd(type(),
+		channel.respond(new NotifyPortlet(type(),
 				portletModel.getPortletId(), "setWorldVisible", 
 				portletModel.isWorldVisible()));
-		channel.respond(new DisplayNotificationCmd("<span>"
+		channel.respond(new DisplayNotification("<span>"
 				+ resourceBundle(channel.locale()).getString("visibilityChange")
 				+ "</span>")
 				.addOption("autoClose", 2000));

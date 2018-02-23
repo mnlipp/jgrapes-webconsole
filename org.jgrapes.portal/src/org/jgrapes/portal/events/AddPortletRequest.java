@@ -29,7 +29,7 @@ import org.jgrapes.portal.RenderSupport;
 /**
  * Sent to the portal (server) if a new portlet instance of a given 
  * type should be added to the portal page. The portal server usually 
- * responds with a {@link RenderPortletCmd} event that has as payload the
+ * responds with a {@link RenderPortlet} event that has as payload the
  * HTML that displays the portlet on the portal page.
  * 
  * Properties may be passed with the event. The interpretation
