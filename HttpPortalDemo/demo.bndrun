@@ -10,7 +10,7 @@
 	javax.json-api;version='[1.1.0,1.1.1)',\
 	org.apache.felix.gogo.runtime;version='[1.0.0,1.0.1)',\
 	org.jdrupes.httpcodec;version='[1.0.0,1.0.1)',\
-	org.jdrupes.json;version='[1.0.3,1.0.4)',\
+	org.jdrupes.json;version='[1.1.0,1.2.0)',\
     org.jgrapes.core;version=latest,\
     org.jgrapes.http;version=latest,\
     org.jgrapes.io;version=latest,\
