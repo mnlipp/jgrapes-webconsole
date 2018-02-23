@@ -287,11 +287,8 @@
  * Portal -> PortalPolicy: PortalReady
  * deactivate Portal
  * activate PortalPolicy
- * PortalPolicy -> Portal: LastPortalLayout
+ * PortalPolicy -> PortalWeblet: LastPortalLayout
  * deactivate PortalPolicy
- * activate Portal
- * Portal -> PortalWeblet: JsonOutput("lastPortalLayout")
- * deactivate Portal
  * activate PortalWeblet
  * loop while request data
  *     PortalWeblet -> Browser: Output (JSON RPC)
