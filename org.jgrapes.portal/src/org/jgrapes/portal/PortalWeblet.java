@@ -739,7 +739,6 @@ public class PortalWeblet extends Component {
 			CharBufferWriter out = new CharBufferWriter(upstream, 
 					upstream.responsePipeline()).suppressClose();
 			event.toJson(out);
-			out.close();
 		}
 	}
 	
