@@ -129,11 +129,11 @@
  * {@link org.jgrapes.portal.PortalSession} channel.
  * 
  * Components such as portlets or portal policies respond by sending 
- * higher level events on the {@link org.jgrapes.portal.PortalSession} 
- * channel. These events are handled by the portal which converts them 
- * to {@link org.jgrapes.portal.events.JsonOutput} events. These are
- * processed by the {@link org.jgrapes.portal.PortalWeblet} which
- * serializes the data and sends it to the websocket using 
+ * {@link org.jgrapes.portal.events.PortalCommand}s on the
+ * {@link org.jgrapes.portal.PortalSession} channel as responses.
+ * The {@link org.jgrapes.portal.events.PortalCommand}s are handled 
+ * by the {@link org.jgrapes.portal.PortalWeblet} which serializes 
+ * the data and sends it to the websocket using 
  * {@link org.jgrapes.io.events.Output} events.
  * 
  * ### Portal Session Preparation and Configuration
