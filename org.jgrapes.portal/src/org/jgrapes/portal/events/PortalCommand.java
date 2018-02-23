@@ -48,6 +48,7 @@ public abstract class PortalCommand extends Event<Void> {
 	
 	/**
 	 * Creates a JSON notification from the given data.
+	 * Closes the `writer`.
 	 * 
 	 * @param writer the writer
 	 */
@@ -73,6 +74,6 @@ public abstract class PortalCommand extends Event<Void> {
 			generator.writeEnd();
 		}
 		generator.writeEnd();
-		generator.flush();
+		generator.close();
 	}
 }
