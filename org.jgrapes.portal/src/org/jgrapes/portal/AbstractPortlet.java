@@ -50,7 +50,7 @@ import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
 import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.NotifyPortlet;
+import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.PortletResourceRequest;
@@ -105,7 +105,7 @@ import org.jgrapes.portal.events.RenderPortletRequest;
  * the HTML that represents the portlet on the page to the portal
  * session. The portlet state may be used to generate HTML that represents
  * the state. Alternatively, state independent HTML may be delivered
- * followed by a {@link NotifyPortlet} event that updates
+ * followed by a {@link NotifyPortletView} event that updates
  * the HTML using JavaScript in the portal page.
  * 
  * ## RenderPortlet
@@ -147,7 +147,7 @@ import org.jgrapes.portal.events.RenderPortletRequest;
  * portlet id exists. If so, it invokes 
  * {@link #doNotifyPortletModel doNotifyPortletModel} with the
  * retrieved information. The portal component usually responds with
- * a {@link NotifyPortlet} event. However, it can also
+ * a {@link NotifyPortletView} event. However, it can also
  * re-render the complete portelt display.
  *
  * Support for unsolicited updates

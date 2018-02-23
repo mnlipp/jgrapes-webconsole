@@ -24,7 +24,7 @@ import java.io.Writer;
  * A notification (as defined by the JSON RPC specification) to be sent to
  * the portlet view (the browser).
  */
-public class NotifyPortlet extends PortalCommand {
+public class NotifyPortletView extends PortalCommand {
 
 	private String portletType;
 	private String portletId;
@@ -42,7 +42,7 @@ public class NotifyPortlet extends PortalCommand {
 	 * have been registered by handling {@link AddPortletType}
 	 * @param params the parameters
 	 */
-	public NotifyPortlet(String portletType,
+	public NotifyPortletView(String portletType,
 	        String portletId, String method, Object... params) {
 		this.portletType = portletType;
 		this.portletId = portletId;

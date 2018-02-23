@@ -52,7 +52,7 @@ import org.jgrapes.portal.events.AddPortletType;
 import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
 import org.jgrapes.portal.events.DisplayNotification;
-import org.jgrapes.portal.events.NotifyPortlet;
+import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.RenderPortlet;
@@ -181,7 +181,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 					templateProcessor(tpl, fmModel(event, channel, portletModel)))
 					.setRenderMode(View).setSupportedModes(MODES)
 					.setForeground(event.isForeground()));
-			channel.respond(new NotifyPortlet(type(),
+			channel.respond(new NotifyPortletView(type(),
 					portletModel.getPortletId(), "setWorldVisible",
 					portletModel.isWorldVisible()));
 			break;
@@ -207,7 +207,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		channel.respond(new KeyValueStoreUpdate().update(
 				storagePath(channel.browserSession()) + portletModel.getPortletId(),
 				jsonState));
-		channel.respond(new NotifyPortlet(type(),
+		channel.respond(new NotifyPortletView(type(),
 				portletModel.getPortletId(), "setWorldVisible", 
 				portletModel.isWorldVisible()));
 		channel.respond(new DisplayNotification("<span>"

@@ -202,9 +202,9 @@
  * due to the results of the action, the representation of the
  * portlet on the portal page must be updated, the portlet 
  * component fires a 
- * {@link org.jgrapes.portal.events.NotifyPortlet} event.
+ * {@link org.jgrapes.portal.events.NotifyPortletView} event.
  * 
- * {@link org.jgrapes.portal.events.NotifyPortlet} events
+ * {@link org.jgrapes.portal.events.NotifyPortletView} events
  * can also be sent unsolicitedly by portlet components if
  * the model data changes independent of user actions.
  * 

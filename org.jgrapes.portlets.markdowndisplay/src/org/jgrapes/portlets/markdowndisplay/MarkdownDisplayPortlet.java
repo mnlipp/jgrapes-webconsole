@@ -56,7 +56,7 @@ import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
 import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.NotifyPortlet;
+import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.RenderPortlet;
@@ -272,7 +272,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	
 	private void updateView(IOSubchannel channel, MarkdownDisplayModel model,
 	        Locale locale) {
-		channel.respond(new NotifyPortlet(type(),
+		channel.respond(new NotifyPortletView(type(),
 				model.getPortletId(), "updateAll", model.getTitle(), 
 				model.getPreviewContent(), model.getViewContent(),
 				renderModes(model)));

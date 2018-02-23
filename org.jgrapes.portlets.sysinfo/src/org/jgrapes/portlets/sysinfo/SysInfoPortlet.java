@@ -49,7 +49,7 @@ import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.AddPortletType;
 import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.NotifyPortlet;
+import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
@@ -171,7 +171,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	private void updateView(PortalSession portalSession, String portletId,
 	        Locale locale) {
 		Runtime runtime = Runtime.getRuntime();
-		portalSession.respond(new NotifyPortlet(type(),
+		portalSession.respond(new NotifyPortletView(type(),
 				portletId, "updateMemorySizes", 
 				System.currentTimeMillis(), runtime.maxMemory(),
 				runtime.totalMemory(), runtime.freeMemory()));
