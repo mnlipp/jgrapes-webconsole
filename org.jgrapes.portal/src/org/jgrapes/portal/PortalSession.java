@@ -18,6 +18,8 @@
 
 package org.jgrapes.portal;
 
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.time.Duration;
 import java.time.Instant;
@@ -106,8 +108,10 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  */
 public class PortalSession extends DefaultSubchannel {
 
-	private static Map<String,PortalSession> portalSessions
+	private static Map<String,WeakReference<PortalSession>> portalSessions
 		= new ConcurrentHashMap<>();
+	private static ReferenceQueue<PortalSession> unusedSessions
+		= new ReferenceQueue<>();
 	
 	private String portalSessionId;
 	private Portal portal;
@@ -115,10 +119,17 @@ public class PortalSession extends DefaultSubchannel {
 	private long timeout;
 	private Timer timeoutTimer;
 	private Session browserSession = null;
-	private EventPipeline eventPipeline = null;
-	// Must be weak, else there will always be a reference to the 
-	// upstream channel and, through the reverseMap, to this object.
-	private WeakReference<IOSubchannel> upstreamChannel = null;
+	private IOSubchannel upstreamChannel = null;
+	
+	private static void cleanUnused() {
+		while(true) {
+			Reference<? extends PortalSession> unused = unusedSessions.poll();
+			if (unused == null) {
+				break;
+			}
+			portalSessions.remove(unused.get().portalSessionId());
+		}
+	}
 	
 	/**
 	 * Lookup the portal browserSession channel
@@ -128,7 +139,9 @@ public class PortalSession extends DefaultSubchannel {
 	 * @return the channel
 	 */
 	public static Optional<PortalSession> lookup(String portalSessionId) {
-		return Optional.ofNullable(portalSessions.get(portalSessionId));
+		cleanUnused();
+		return Optional.ofNullable(portalSessions.get(portalSessionId))
+				.flatMap(wr -> Optional.ofNullable(wr.get()));
 	}
 	
 	/**
@@ -138,8 +151,10 @@ public class PortalSession extends DefaultSubchannel {
 	 * @return the sets the
 	 */
 	public static Set<PortalSession> byPortal(Portal portal) {
+		cleanUnused();
 		Set<PortalSession> result  = new HashSet<>();
-		for (PortalSession ps: portalSessions.values()) {
+		for (WeakReference<PortalSession> psr: portalSessions.values()) {
+			PortalSession ps = psr.get();
 			if (ps.portal.equals(portal)) {
 				result.add(ps);
 			}
@@ -160,8 +175,11 @@ public class PortalSession extends DefaultSubchannel {
 	 */
 	public static PortalSession lookupOrCreate(
 			String portalSessionId, Portal portal, long timeout) {
+		cleanUnused();
 		return portalSessions.computeIfAbsent(portalSessionId, 
-				psi -> new PortalSession(portal, portalSessionId, timeout));
+				psi -> new WeakReference<>(new PortalSession(
+						portal, portalSessionId, timeout), unusedSessions))
+				.get();
 	}
 	
 	
@@ -174,7 +192,8 @@ public class PortalSession extends DefaultSubchannel {
 	public PortalSession replaceId(String newPortalSessionId) {
 		portalSessions.remove(portalSessionId);
 		portalSessionId = newPortalSessionId;
-		portalSessions.put(portalSessionId, this);
+		portalSessions.put(portalSessionId, new WeakReference<>(
+				this, unusedSessions));
 		return this;
 	}
 	
@@ -223,25 +242,19 @@ public class PortalSession extends DefaultSubchannel {
 	public void close() {
 		if (!closed) {
 			closed = true;
-			upstreamChannel().ifPresent(up -> up.respond(new Close()));
-			if (eventPipeline != null) {
-				eventPipeline.fire(new Closed(), PortalSession.this);
-			}
+			Optional.ofNullable(upstreamChannel).ifPresent(
+					up -> up.respond(new Close()));
 			portalSessions.remove(portalSessionId);
 		}
 	}
-	
+
 	/**
-	 * Sets the event pipeline used by upstream to send events 
-	 * over this channel. This event pipeline is used to send
-	 * the {@link Closed} event when the portal session times out.
-	 * 
-	 * @param eventPipeline the event pipeline
-	 * @return the portal session for easy chaining
+	 * Called by the initiator of this {@link IOSubchannel} when
+	 * it receives a {@link Closed} event. Releases any allocated
+	 * resources.
 	 */
-	public PortalSession setEventPipeline(EventPipeline eventPipeline) {
-		this.eventPipeline = eventPipeline;
-		return this;
+	public void closed() {
+		portalSessions.remove(portalSessionId);
 	}
 	
 	/**
@@ -254,10 +267,9 @@ public class PortalSession extends DefaultSubchannel {
 	 */
 	public PortalSession setUpstreamChannel(IOSubchannel upstreamChannel) {
 		if (upstreamChannel == null) {
-			this.upstreamChannel = null;
-		} else {
-			this.upstreamChannel = new WeakReference<IOSubchannel>(upstreamChannel);
+			throw new IllegalArgumentException();
 		}
+		this.upstreamChannel = upstreamChannel;
 		return this;
 	}
 
@@ -277,9 +289,8 @@ public class PortalSession extends DefaultSubchannel {
 	/**
 	 * @return the upstream channel
 	 */
-	public Optional<IOSubchannel> upstreamChannel() {
-		return Optional.ofNullable(upstreamChannel)
-				.flatMap(weakRef -> Optional.ofNullable(weakRef.get()));
+	public IOSubchannel upstreamChannel() {
+		return upstreamChannel;
 	}
 	
 	/**
@@ -313,7 +324,7 @@ public class PortalSession extends DefaultSubchannel {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(IOSubchannel.toString(this));
-		upstreamChannel().ifPresent(up -> builder.append(
+		Optional.ofNullable(upstreamChannel).ifPresent(up -> builder.append(
 				LinkedIOSubchannel.upstreamToString(up)));
 		builder.append(")");
 		return builder.toString();

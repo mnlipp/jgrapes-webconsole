@@ -601,7 +601,6 @@ public class PortalWeblet extends Component {
 				.orElse(PortalSession.lookupOrCreate(
 						portalSessionId, portal, portalSessionNetworkTimeout))
 				.setUpstreamChannel(channel)
-				.setEventPipeline(activeEventPipeline())
 				.setSession(browserSession);
 		channel.setAssociated(PortalSession.class, portalSession);
 		// Channel now used as JSON input
@@ -651,11 +650,8 @@ public class PortalWeblet extends Component {
 	@Handler
 	public void onClosed(Closed event, IOSubchannel wsChannel) {
 		wsChannel.associated(PortalSession.class).ifPresent(psc -> {
-			psc.upstreamChannel().ifPresent(upstream -> {
-				if (upstream.equals(wsChannel)) {
-					psc.setUpstreamChannel(null);
-				}
-			});
+			fire(new Closed(), psc);
+			psc.closed();
 		});
 	}
 	
@@ -732,14 +728,11 @@ public class PortalWeblet extends Component {
 	public void onPortalSessionCommand(
 			PortalCommand event, PortalSession channel)
 			throws InterruptedException, IOException {
-		Optional<IOSubchannel> optUpstream = channel.upstreamChannel();
-		if (optUpstream.isPresent()) {
-			IOSubchannel upstream = optUpstream.get();
-			@SuppressWarnings("resource")
-			CharBufferWriter out = new CharBufferWriter(upstream, 
-					upstream.responsePipeline()).suppressClose();
-			event.toJson(out);
-		}
+		IOSubchannel upstream = channel.upstreamChannel();
+		@SuppressWarnings("resource")
+		CharBufferWriter out = new CharBufferWriter(upstream, 
+				upstream.responsePipeline()).suppressClose();
+		event.toJson(out);
 	}
 	
 	private class WsInputReader {

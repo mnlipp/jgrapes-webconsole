@@ -251,8 +251,7 @@ public class Portal extends Component {
 			}
 
 			public String getChannel() {
-				return session.upstreamChannel().map(
-						ch -> ch.toString()).orElse("<unknown>");
+				return session.upstreamChannel().toString();
 			}
 			
 			public String getExpiresAt() {
