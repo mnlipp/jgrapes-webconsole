@@ -326,7 +326,6 @@ public class PortalSession extends DefaultSubchannel {
 		builder.append(IOSubchannel.toString(this));
 		Optional.ofNullable(upstreamChannel).ifPresent(up -> builder.append(
 				LinkedIOSubchannel.upstreamToString(up)));
-		builder.append(")");
 		return builder.toString();
 	}
 	
