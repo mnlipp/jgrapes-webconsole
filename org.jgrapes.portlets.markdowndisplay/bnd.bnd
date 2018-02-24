@@ -12,7 +12,8 @@ api_version = 0.1.0.${tstamp}
 -includeresource: resources
 
 Require-Capability: \
-    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
+    org.jgrapes.portal.page.resource;filter:="(name=markdown-it.github.io)"
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.portal.PortletComponentFactory; \
