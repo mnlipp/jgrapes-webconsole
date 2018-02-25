@@ -76,14 +76,17 @@ subprojects {
 			}
 		}
 
-		dependencies {
-			// Use gradle mechanims to get the artifact to baseline against.
-			// We baseline against the previous release 
-			// (latest excluding current)
-			baseline("${group}:${project.name}:(,${releaseVersion})") {
-				transitive false
-			}
-		}
+        if (project.name != "HttpPortalDemo") {
+        
+            dependencies {
+	   		    // Use gradle mechanims to get the artifact to baseline against.
+			    // We baseline against the previous release 
+			    // (latest excluding current)
+			    baseline("${group}:${project.name}:(,${releaseVersion})") {
+				    transitive false
+			    }
+    		}
+	    }
 	}
 	
     dependencies {
