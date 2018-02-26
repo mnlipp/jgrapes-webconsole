@@ -92,9 +92,9 @@ public class JsonInput extends Event<Void> {
 			builder.append("id=");
 			builder.append(id.get());
 		}
-		if (channels != null) {
+		if (channels() != null) {
 			builder.append("channels=");
-			builder.append(Channel.toString(channels));
+			builder.append(Channel.toString(channels()));
 		}
 		builder.append("]");
 		return builder.toString();

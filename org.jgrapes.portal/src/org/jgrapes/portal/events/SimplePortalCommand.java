@@ -76,9 +76,9 @@ public class SimplePortalCommand extends PortalCommand {
 		builder.append(" [");
 		builder.append("method=");
 		builder.append(method);
-		if (channels != null) {
+		if (channels() != null) {
 			builder.append(", channels=");
-			builder.append(Channel.toString(channels));
+			builder.append(Channel.toString(channels()));
 		}
 		builder.append("]");
 		return builder.toString();
