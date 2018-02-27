@@ -40,7 +40,7 @@ public class HelloWorldPortletFactory implements PortletComponentFactory {
 	 */
 	@Override
 	public Optional<ComponentType> create(
-			Channel componentChannel, Map<?, ?> properties) {
+			Channel componentChannel, Map<Object, Object> properties) {
 		return Optional.of(new HelloWorldPortlet(componentChannel));
 	}
 

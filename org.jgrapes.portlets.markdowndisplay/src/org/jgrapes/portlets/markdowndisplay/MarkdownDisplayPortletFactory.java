@@ -40,7 +40,7 @@ public class MarkdownDisplayPortletFactory implements PortletComponentFactory {
 	 */
 	@Override
 	public Optional<ComponentType> create(
-			Channel componentChannel, Map<?, ?> properties) {
+			Channel componentChannel, Map<Object, Object> properties) {
 		return Optional.of(new MarkdownDisplayPortlet(componentChannel));
 	}
 
