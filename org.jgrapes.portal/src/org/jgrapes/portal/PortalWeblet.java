@@ -76,6 +76,7 @@ import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.LanguageSelector.Selection;
+import org.jgrapes.http.ResourcePattern;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
 import org.jgrapes.http.annotation.RequestHandler;
@@ -113,20 +114,11 @@ public class PortalWeblet extends Component {
 
 	private static final String PORTAL_SESSION_IDS 
 		= PortalWeblet.class.getName() + ".portalSessionId";
-	
+	private static final Configuration fmConfig = createFmConfig();
+
 	private Portal portal;
+	private ResourcePattern requestPattern;
 	private ServiceLoader<ThemeProvider> themeLoader;
-	private static Configuration fmConfig = null;
-	
-	static {
-		fmConfig = new Configuration(Configuration.VERSION_2_3_26);
-		fmConfig.setClassLoaderForTemplateLoading(
-				PortalWeblet.class.getClassLoader(), "org/jgrapes/portal");
-		fmConfig.setDefaultEncoding("utf-8");
-		fmConfig.setTemplateExceptionHandler(
-				TemplateExceptionHandler.RETHROW_HANDLER);
-        fmConfig.setLogTemplateExceptions(false);
-	}
 	
 	private Function<Locale,ResourceBundle> resourceBundleSupplier;
 	private BiFunction<ThemeProvider,String,URL> fallbackResourceSupplier
@@ -141,6 +133,17 @@ public class PortalWeblet extends Component {
 	private long portalSessionRefreshInterval = 30000;
 	private long portalSessionInactivityTimeout = -1;
 
+	private static Configuration createFmConfig() {
+		Configuration fmConfig = new Configuration(Configuration.VERSION_2_3_26);
+		fmConfig.setClassLoaderForTemplateLoading(
+				PortalWeblet.class.getClassLoader(), "org/jgrapes/portal");
+		fmConfig.setDefaultEncoding("utf-8");
+		fmConfig.setTemplateExceptionHandler(
+				TemplateExceptionHandler.RETHROW_HANDLER);
+        fmConfig.setLogTemplateExceptions(false);
+        return fmConfig;
+	}
+
 	/**
 	 * Instantiates a new portal weblet.
 	 *
@@ -150,6 +153,17 @@ public class PortalWeblet extends Component {
 	public PortalWeblet(Channel webletChannel, Portal portal) {
 		super(webletChannel);
 		this.portal = portal;
+		String portalPath = portal.prefix().getPath();
+		if (portalPath.endsWith("/")) {
+			portalPath = portalPath.substring(0, portalPath.length() - 1);
+		}
+		portalPath = portalPath + "|**";
+		try {
+			requestPattern = new ResourcePattern(portalPath);
+		} catch (ParseException e) {
+			throw new IllegalArgumentException(e);
+		}
+		
 		baseTheme = new Provider();
 		
 		supportedLocales = new HashSet<>();
@@ -320,50 +334,36 @@ public class PortalWeblet extends Component {
 	public void onGet(GetRequest event, IOSubchannel channel) 
 			throws InterruptedException, IOException, ParseException {
 		URI requestUri = event.requestUri();
-		// Append trailing slash, if missing
-		if ((requestUri.getRawPath() + "/").equals(
-				portal.prefix().getRawPath())) {
-			requestUri = portal.prefix();
-		}
-		
+		int prefixSegs = requestPattern.matches(requestUri);
 		// Request for portal? (Only valid with session)
-		if (!requestUri.getRawPath().startsWith(portal.prefix().getRawPath())
-				|| !event.associated(Session.class).isPresent()) {
+		if (prefixSegs < 0 || !event.associated(Session.class).isPresent()) {
 			return;
 		}
 		
 		// Normalize and evaluate
-		requestUri = portal.prefix().relativize(
-				URI.create(requestUri.getRawPath()));
-		if (requestUri.getRawPath().isEmpty()) {
+		String requestPath = ResourcePattern.removeSegments(
+				requestUri.getPath(), prefixSegs + 1);
+		String[] requestParts = ResourcePattern.split(requestPath, 1);
+		switch (requestParts[0]) {
+		case "":
 			renderPortal(event, channel);
 			return;
-		}
-		URI subUri = uriFromPath("portal-resource/").relativize(requestUri);
-		if (!subUri.equals(requestUri)) {
-			final String resource = subUri.getPath();
+		case "portal-resource":
 			ResponseCreationSupport.sendStaticContent(event, channel, 
-					p -> PortalWeblet.this.getClass().getResource(resource), null);
+					p -> PortalWeblet.this.getClass().getResource(
+							requestParts[1]), null);
 			return;
-		}
-		subUri = uriFromPath("page-resource/").relativize(requestUri);
-		if (!subUri.equals(requestUri)) {
-			requestPageResource(event, channel, subUri);
+		case "page-resource":
+			requestPageResource(event, channel, requestParts[1]);
 			return;
-		}
-		subUri = uriFromPath("portal-session/").relativize(requestUri);
-		if (!subUri.equals(requestUri)) {
-			handleSessionRequest(event, channel, subUri);
+		case "portal-session":
+			handleSessionRequest(event, channel, requestParts[1]);
 			return;
-		}
-		subUri = uriFromPath("theme-resource/").relativize(requestUri);
-		if (!subUri.equals(requestUri)) {
-			sendThemeResource(event, channel, subUri.getPath());
+		case "theme-resource":
+			sendThemeResource(event, channel, requestParts[1]);
 			return;
-		}
-		subUri = uriFromPath("portlet-resource/").relativize(requestUri);
-		if (!subUri.equals(requestUri)) {
-			requestPortletResource(event, channel, subUri);
+		case "portlet-resource":
+			requestPortletResource(event, channel, URI.create(requestParts[1]));
 			return;
 		}
 	}
@@ -495,10 +495,10 @@ public class PortalWeblet extends Component {
 	}
 
 	private void requestPageResource(GetRequest event, IOSubchannel channel,
-			URI resource) throws InterruptedException {
+			String resource) throws InterruptedException {
 		// Send events to providers on portal's channel
 		PageResourceRequest pageResourceRequest = new PageResourceRequest(
-				uriFromPath(resource.getPath()),
+				uriFromPath(resource),
 				event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE, 
 						Converters.DATE_TIME).orElse(null),
 				event.httpRequest(), channel, renderSupport());
@@ -563,7 +563,7 @@ public class PortalWeblet extends Component {
 	}
 	
 	private void handleSessionRequest(
-			GetRequest event, IOSubchannel channel, URI subUri)
+			GetRequest event, IOSubchannel channel, String portalSessionId)
 					throws InterruptedException, IOException, ParseException {
 		// Must be WebSocket request.
 		if (!event.httpRequest().findField(
@@ -576,7 +576,6 @@ public class PortalWeblet extends Component {
 		// by loading the portal. (Prevents using a newly created
 		// browser session from being (re-)connected to after a 
 		// long disconnect or restart and, of course, CSF).
-		String portalSessionId = subUri.getPath();
 		final Session browserSession = event.associated(Session.class).get();
 		@SuppressWarnings("unchecked")
 		Map<URI,UUID> knownIds = (Map<URI,UUID>)browserSession.computeIfAbsent(
