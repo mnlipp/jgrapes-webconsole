@@ -394,8 +394,10 @@ public class PortalWeblet extends Component {
 		response.setStatus(HttpStatus.OK);
 		response.setHasPayload(true);
 		channel.respond(new Response(response));
-		try (Writer out = new OutputStreamWriter(new ByteBufferOutputStream(
-				channel, channel.responsePipeline()), "utf-8")) {
+		try (ByteBufferOutputStream bbos = new ByteBufferOutputStream(
+				channel, channel.responsePipeline());
+				Writer out = new OutputStreamWriter(bbos.suppressClose(), 
+						"utf-8")) {
 			Map<String,Object> portalModel = new HashMap<>(portalBaseModel);
 
 			// Portal Session UUID
