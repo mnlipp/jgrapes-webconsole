@@ -12,5 +12,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.buildship.core.classpathprovider"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.jgrapes.portal.demo.HttpPortalDemo"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="HttpPortalDemo"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.util.logging.config.file=jul-debug.properties"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.util.logging.config.file=jul-debug.properties -Xmx512m"/>
 </launchConfiguration>

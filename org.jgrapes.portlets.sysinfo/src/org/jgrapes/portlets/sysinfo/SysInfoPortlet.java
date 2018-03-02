@@ -174,7 +174,8 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		portalSession.respond(new NotifyPortletView(type(),
 				portletId, "updateMemorySizes", 
 				System.currentTimeMillis(), runtime.maxMemory(),
-				runtime.totalMemory(), runtime.freeMemory()));
+				runtime.totalMemory(), 
+				runtime.totalMemory() - runtime.freeMemory()));
 	}
 	
 	/* (non-Javadoc)

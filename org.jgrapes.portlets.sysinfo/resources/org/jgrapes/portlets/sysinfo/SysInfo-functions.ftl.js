@@ -26,7 +26,7 @@ var orgJGrapesPortletsSysInfo = {
     let timeData = [];
     let maxMemoryData = [];
     let totalMemoryData = [];
-    let freeMemoryData = [];
+    let usedMemoryData = [];
     
     JGPortal.registerPortletMethod(
             "org.jgrapes.portlets.sysinfo.SysInfoPortlet",
@@ -35,28 +35,28 @@ var orgJGrapesPortletsSysInfo = {
                     timeData.shift();
                     maxMemoryData.shift();
                     totalMemoryData.shift();
-                    freeMemoryData.shift();
+                    usedMemoryData.shift();
                 }
                 timeData.push(params[0]);
                 maxMemoryData.push(params[1]);
                 totalMemoryData.push(params[2]);
-                freeMemoryData.push(params[3]);
+                usedMemoryData.push(params[3]);
                 let maxFormatted = "";
                 let totalFormatted = "";
-                let freeFormatted = "";
+                let usedFormatted = "";
                 let portlet = JGPortal.findPortletPreview(portletId);
                 let lang = 'en';
                 if (portlet) {
                     lang = portlet.closest('[lang]').attr('lang') || 'en'
                     maxFormatted = JGPortal.formatMemorySize(params[1], 1, lang);
                     totalFormatted = JGPortal.formatMemorySize(params[2], 1, lang);
-                    freeFormatted = JGPortal.formatMemorySize(params[3], 1, lang);
+                    usedFormatted = JGPortal.formatMemorySize(params[3], 1, lang);
                     let col = portlet.find(".maxMemory");
                     col.html(maxFormatted);
                     col = portlet.find(".totalMemory");
                     col.html(totalFormatted);
-                    col = portlet.find(".freeMemory");
-                    col.html(freeFormatted);
+                    col = portlet.find(".usedMemory");
+                    col.html(usedFormatted);
                 }
                 portlet = JGPortal.findPortletView(portletId);
                 if (portlet) {
@@ -64,8 +64,8 @@ var orgJGrapesPortletsSysInfo = {
                     col.html(maxFormatted);
                     col = portlet.find(".totalMemory");
                     col.html(totalFormatted);
-                    col = portlet.find(".freeMemory");
-                    col.html(freeFormatted);
+                    col = portlet.find(".usedMemory");
+                    col.html(usedFormatted);
                     let chartCanvas = portlet.find(".memoryChart");
                     if (portlet.find(".memoryChart").parent(":hidden").length === 0) {
                         let chart = chartCanvas.data('chartjs-chart');
@@ -107,8 +107,8 @@ var orgJGrapesPortletsSysInfo = {
                     borderWidth: 2,
                     pointRadius: 1,
                     borderColor: "rgba(0,255,0,1)",
-                    label: "${_("freeMemory")}",
-                    data: freeMemoryData,
+                    label: "${_("usedMemory")}",
+                    data: usedMemoryData,
                 }]
             },
 
