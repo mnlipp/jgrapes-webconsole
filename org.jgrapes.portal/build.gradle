@@ -19,8 +19,8 @@ artifacts {
 
 dependencies {
     compile 'org.jdrupes.httpcodec:httpcodec:[1.0.4,)'
-	compile 'org.jgrapes:org.jgrapes.http:[0.14.0-SNAPSHOT,)'
-	compile 'org.jgrapes:org.jgrapes.util:[0.12.0,)'
+	compile 'org.jgrapes:org.jgrapes.http:[0.14.0,)'
+	compile 'org.jgrapes:org.jgrapes.util:[0.14.0,)'
 //  compile 'com.github.mnlipp:jgrapes:master-SNAPSHOT'
 	compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 	compile group: 'org.glassfish', name: 'javax.json', version: '1.1'
