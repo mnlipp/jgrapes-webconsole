@@ -21,6 +21,22 @@ if (project.name != "HttpPortalDemo") {
             transitive false
         }
     }
+
+    if (project.hasProperty('ignoreBaselineFailures')) {
+        baseline {
+            ignoreFailures true
+        }
+    }
+
+    model {
+        tasks.publishMavenJavaPublicationToSnapshotRepository {
+            dependsOn baseline
+        }
+        tasks.publishMavenJavaPublicationToReleaseRepository {
+            dependsOn baseline
+        }
+    }
+
 }
 
 afterEvaluate {
