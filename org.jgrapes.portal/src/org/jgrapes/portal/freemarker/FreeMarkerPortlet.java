@@ -30,9 +30,7 @@ import freemarker.template.TemplateModelException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.time.Instant;
 import java.util.Collections;
@@ -51,9 +49,11 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.AbstractPortlet;
 import org.jgrapes.portal.AbstractPortlet.PortletBaseModel;
 import org.jgrapes.portal.PortalSession;
+import org.jgrapes.portal.Portlet.RenderMode;
 import org.jgrapes.portal.RenderSupport;
 import org.jgrapes.portal.ResourceByGenerator;
 import org.jgrapes.portal.events.PortletResourceRequest;
+import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.events.RenderPortletRequestBase;
 
@@ -257,36 +257,30 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 		}
 	}
 
-	
-	/**
-	 * Creates a reader that delivers the result of processing the given
-	 * template with the given data.
-	 * 
-	 * @param template the template
-	 * @param dataModel the data
-	 * @return the stream with the resulting data
-	 */
-	public Reader templateProcessor(Template template, Object dataModel) {
-		try {
-			PipedReader reader = new PipedReader();
-			Writer writer = new PipedWriter(reader);
-			new Thread(new Runnable() {
+	public static class RenderPortletFromTemplate extends RenderPortlet {
 
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
-				@Override
-				public void run() {
-					try (Writer out = writer) {
-						template.process(dataModel, out);
-					} catch (TemplateException | IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
-			return reader;
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
+		private Template template;
+		private Object dataModel;
+		
+		public RenderPortletFromTemplate(Class<?> portletClass,
+		        String portletId, Template template, Object dataModel) {
+			super(portletClass, portletId, null);
+			this.template = template;
+			this.dataModel = dataModel;
+		}
+
+		@Override
+		public void toJson(Writer writer) {
+			StringWriter out = new StringWriter();
+			try {
+				template.process(dataModel, out);
+			} catch (TemplateException | IOException e) {
+				e.printStackTrace();
+			}
+			toJson(writer, "updatePortlet", portletId(), renderMode().name(),
+					supportedRenderModes().stream().map(RenderMode::name)
+					.toArray(size -> new String[size]),
+					out.toString(), isForeground());
 		}
 	}
 }

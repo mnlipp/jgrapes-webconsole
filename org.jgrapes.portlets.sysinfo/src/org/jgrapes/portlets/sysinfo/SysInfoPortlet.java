@@ -51,7 +51,6 @@ import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
 import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 
@@ -124,9 +123,9 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		SysInfoModel portletModel = putInSession(
 				portalSession.browserSession(), new SysInfoModel(portletId));
 		Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-		portalSession.respond(new RenderPortlet(
+		portalSession.respond(new RenderPortletFromTemplate(
 				SysInfoPortlet.class, portletModel.getPortletId(),
-				templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
+				tpl, fmModel(event, portalSession, portletModel))
 				.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
 				.setForeground(true));
 		updateView(portalSession, portletId, portalSession.locale());
@@ -146,9 +145,9 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-			portalSession.respond(new RenderPortlet(
+			portalSession.respond(new RenderPortletFromTemplate(
 					SysInfoPortlet.class, portletModel.getPortletId(), 
-					templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
+					tpl, fmModel(event, portalSession, portletModel))
 					.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
 					.setForeground(event.isForeground()));
 			updateView(portalSession, portletModel.getPortletId(), locale);
@@ -156,9 +155,9 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
-			portalSession.respond(new RenderPortlet(
+			portalSession.respond(new RenderPortletFromTemplate(
 					SysInfoPortlet.class, portletModel.getPortletId(), 
-					templateProcessor(tpl, fmModel(event, portalSession, portletModel)))
+					tpl, fmModel(event, portalSession, portletModel))
 					.setRenderMode(View).setSupportedModes(MODES)
 					.setForeground(event.isForeground()));
 			break;

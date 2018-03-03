@@ -55,7 +55,6 @@ import org.jgrapes.portal.events.DisplayNotification;
 import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 import org.jgrapes.util.events.KeyValueStoreData;
@@ -133,9 +132,9 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 				storagePath(channel.browserSession()) + portletModel.getPortletId(),
 				jsonState));
 		Template tpl = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
-		channel.respond(new RenderPortlet(
+		channel.respond(new RenderPortletFromTemplate(
 				HelloWorldPortlet.class, portletModel.getPortletId(),
-				templateProcessor(tpl, fmModel(event, channel, portletModel)))
+				tpl, fmModel(event, channel, portletModel))
 				.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
 				.setForeground(true));
 		return portletId;
@@ -166,9 +165,9 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
-			channel.respond(new RenderPortlet(
+			channel.respond(new RenderPortletFromTemplate(
 					HelloWorldPortlet.class, portletModel.getPortletId(), 
-					templateProcessor(tpl, fmModel(event, channel, portletModel)))
+					tpl, fmModel(event, channel, portletModel))
 					.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
 					.setForeground(event.isForeground()));
 ;
@@ -176,9 +175,9 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
-			channel.respond(new RenderPortlet(
+			channel.respond(new RenderPortletFromTemplate(
 					HelloWorldPortlet.class, portletModel.getPortletId(), 
-					templateProcessor(tpl, fmModel(event, channel, portletModel)))
+					tpl, fmModel(event, channel, portletModel))
 					.setRenderMode(View).setSupportedModes(MODES)
 					.setForeground(event.isForeground()));
 			channel.respond(new NotifyPortletView(type(),

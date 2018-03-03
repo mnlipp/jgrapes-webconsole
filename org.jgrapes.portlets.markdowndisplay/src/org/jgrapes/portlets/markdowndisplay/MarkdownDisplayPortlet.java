@@ -59,7 +59,6 @@ import org.jgrapes.portal.events.DeletePortletRequest;
 import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
 import org.jgrapes.portal.events.UpdatePortletModel;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
@@ -200,9 +199,9 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		Set<RenderMode> modes = renderModes(model);
 		Template tpl = freemarkerConfig().getTemplate(
 				"MarkdownDisplay-preview.ftl.html");
-		portalSession.respond(new RenderPortlet(
+		portalSession.respond(new RenderPortletFromTemplate(
 				MarkdownDisplayPortlet.class, model.getPortletId(),
-				templateProcessor(tpl, fmModel(event, portalSession, model)))
+				tpl, fmModel(event, portalSession, model))
 				.setRenderMode(DeleteablePreview).setSupportedModes(modes)
 				.setForeground(true));
 		
@@ -227,9 +226,9 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-preview.ftl.html");
-			portalSession.respond(new RenderPortlet(
+			portalSession.respond(new RenderPortletFromTemplate(
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
-					templateProcessor(tpl, fmModel(event, portalSession, model)))
+					tpl, fmModel(event, portalSession, model))
 					.setRenderMode(event.renderMode()).setSupportedModes(modes)
 					.setForeground(event.isForeground()));
 			updateView(portalSession, model, portalSession.locale());
@@ -237,9 +236,9 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-view.ftl.html");
-			portalSession.respond(new RenderPortlet(
+			portalSession.respond(new RenderPortletFromTemplate(
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
-					templateProcessor(tpl, fmModel(event, portalSession, model)))
+					tpl, fmModel(event, portalSession, model))
 					.setRenderMode(View).setSupportedModes(modes)
 					.setForeground(event.isForeground()));
 			updateView(portalSession, model, portalSession.locale());
@@ -247,9 +246,9 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		}
 		case Edit: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-edit.ftl.html");
-			portalSession.respond(new RenderPortlet(
+			portalSession.respond(new RenderPortletFromTemplate(
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
-					templateProcessor(tpl, fmModel(event, portalSession, model)))
+					tpl, fmModel(event, portalSession, model))
 					.setRenderMode(Edit).setSupportedModes(modes));
 			break;
 		}
