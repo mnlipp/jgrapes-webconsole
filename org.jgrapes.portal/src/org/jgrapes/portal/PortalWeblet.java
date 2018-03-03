@@ -196,7 +196,7 @@ public class PortalWeblet extends Component {
 		Handler.Evaluator.add(this, "onKeyValueStoreData", portal.channel());
 		Handler.Evaluator.add(this, "onResourceRequestCompleted", portal.channel());
 		Handler.Evaluator.add(this, "onOutput", portal.channel());
-		Handler.Evaluator.add(this, "onPortalSessionCommand", portal.channel());
+		Handler.Evaluator.add(this, "onPortalCommand", portal.channel());
 		Handler.Evaluator.add(this, "onSetLocale", portal.channel());
 		Handler.Evaluator.add(this, "onSetTheme", portal.channel());
 	}
@@ -726,7 +726,7 @@ public class PortalWeblet extends Component {
 	}
 	
 	@Handler(dynamic=true, priority=-1000)
-	public void onPortalSessionCommand(
+	public void onPortalCommand(
 			PortalCommand event, PortalSession channel)
 			throws InterruptedException, IOException {
 		IOSubchannel upstream = channel.upstreamChannel();
