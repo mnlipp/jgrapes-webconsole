@@ -19,8 +19,13 @@
 package org.jgrapes.portal;
 
 import java.beans.ConstructorProperties;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.net.URL;
+import java.nio.CharBuffer;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
@@ -790,6 +795,46 @@ public abstract class AbstractPortlet extends Component {
 				return false;
 			}
 			return true;
+		}
+	}
+	
+	/**
+	 * Send to the portal page for adding or updating a complete portlet
+	 * representation.
+	 */
+	public class RenderPortletFromReader extends RenderPortlet {
+
+		private Reader contentReader;
+
+		/**
+		 * Creates a new event.
+		 * 
+		 * @param portletClass the portlet class
+		 * @param portletId the id of the portlet
+		 */
+		public RenderPortletFromReader(Class<?> portletClass, String portletId, 
+				Reader contentReader) {
+			super(portletClass, portletId);
+			this.contentReader = contentReader;
+		}
+
+		@Override
+		public String content() {
+			StringWriter content = new StringWriter();
+			CharBuffer buffer = CharBuffer.allocate(8192);
+			try (Reader in = new BufferedReader(contentReader)) {
+				while (true) {
+					if (in.read(buffer) < 0) {
+						break;
+					}
+					buffer.flip();
+					content.append(buffer);
+					buffer.clear();
+				}
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+			return content.toString();
 		}
 	}
 }

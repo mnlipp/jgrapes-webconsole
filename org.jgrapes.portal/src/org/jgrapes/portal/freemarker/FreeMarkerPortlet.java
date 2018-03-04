@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +48,6 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.AbstractPortlet;
 import org.jgrapes.portal.AbstractPortlet.PortletBaseModel;
 import org.jgrapes.portal.PortalSession;
-import org.jgrapes.portal.Portlet.RenderMode;
 import org.jgrapes.portal.RenderSupport;
 import org.jgrapes.portal.ResourceByGenerator;
 import org.jgrapes.portal.events.PortletResourceRequest;
@@ -264,23 +262,20 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 		
 		public RenderPortletFromTemplate(Class<?> portletClass,
 		        String portletId, Template template, Object dataModel) {
-			super(portletClass, portletId, null);
+			super(portletClass, portletId);
 			this.template = template;
 			this.dataModel = dataModel;
 		}
 
 		@Override
-		public void toJson(Writer writer) {
+		public String content() {
 			StringWriter out = new StringWriter();
 			try {
 				template.process(dataModel, out);
 			} catch (TemplateException | IOException e) {
 				e.printStackTrace();
 			}
-			toJson(writer, "updatePortlet", portletId(), renderMode().name(),
-					supportedRenderModes().stream().map(RenderMode::name)
-					.toArray(size -> new String[size]),
-					out.toString(), isForeground());
+			return out.toString();
 		}
 	}
 }

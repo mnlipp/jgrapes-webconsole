@@ -18,12 +18,7 @@
 
 package org.jgrapes.portal.events;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.CharBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -32,10 +27,12 @@ import java.util.Set;
 import org.jgrapes.portal.Portlet.RenderMode;
 
 /**
- * Send to the portal page for adding or updating a complete portlet
- * representation.
+ * A base class for portal commands Sent to the portal page for 
+ * adding or updating a complete portlet representation. This class
+ * maintains all required information except the actual content
+ * (the HTML) which must be provided by the derived classes.
  */
-public class RenderPortlet extends PortalCommand {
+public abstract class RenderPortlet extends PortalCommand {
 
 	private static final Set<RenderMode> DEFAULT_SUPPORTED 
 		= Collections.unmodifiableSet(new HashSet<>(
@@ -46,7 +43,6 @@ public class RenderPortlet extends PortalCommand {
 	private RenderMode renderMode = RenderMode.Preview;
 	private Set<RenderMode> supportedModes = DEFAULT_SUPPORTED;
 	private boolean foreground;
-	private Reader contentReader;
 
 	/**
 	 * Creates a new event.
@@ -54,11 +50,27 @@ public class RenderPortlet extends PortalCommand {
 	 * @param portletClass the portlet class
 	 * @param portletId the id of the portlet
 	 */
-	public RenderPortlet(Class<?> portletClass, String portletId, 
-			Reader contentReader) {
+	public RenderPortlet(Class<?> portletClass, String portletId) {
 		this.portletClass = portletClass;
 		this.portletId = portletId;
-		this.contentReader = contentReader;
+	}
+
+	/**
+	 * Returns the portlet class as specified on creation.
+	 *
+	 * @return the class
+	 */
+	public Class<?> portletClass() {
+		return portletClass;
+	}
+	
+	/**
+	 * Returns the portlet id as specified on creation.
+	 * 
+	 * @return the portlet id
+	 */
+	public String portletId() {
+		return portletId;
 	}
 
 	/**
@@ -72,6 +84,15 @@ public class RenderPortlet extends PortalCommand {
 		return this;
 	}
 	
+	/**
+	 * Returns the render mode.
+	 * 
+	 * @return the render mode
+	 */
+	public RenderMode renderMode() {
+		return renderMode;
+	}
+
 	/**
 	 * Set the supported render modes. The default value is 
 	 * {@link RenderMode#Preview}.
@@ -99,6 +120,15 @@ public class RenderPortlet extends PortalCommand {
 	}
 	
 	/**
+	 * Returns the supported modes.
+	 * 
+	 * @return the supported modes
+	 */
+	public Set<RenderMode> supportedRenderModes() {
+		return supportedModes;
+	}
+
+	/**
 	 * Id set, the tab with the portlet is put in the foreground
 	 * when the portlet is rendered. The default value is `false`.
 	 * 
@@ -110,37 +140,6 @@ public class RenderPortlet extends PortalCommand {
 		return this;
 	}
 	
-	public Class<?> portletClass() {
-		return portletClass;
-	}
-	
-	/**
-	 * Returns the portlet id
-	 * 
-	 * @return the portlet id
-	 */
-	public String portletId() {
-		return portletId;
-	}
-
-	/**
-	 * Returns the render mode.
-	 * 
-	 * @return the render mode
-	 */
-	public RenderMode renderMode() {
-		return renderMode;
-	}
-
-	/**
-	 * Returns the supported modes.
-	 * 
-	 * @return the supported modes
-	 */
-	public Set<RenderMode> supportedRenderModes() {
-		return supportedModes;
-	}
-
 	/**
 	 * Indicates if portelt is to be put in foreground.
 	 * 
@@ -151,33 +150,23 @@ public class RenderPortlet extends PortalCommand {
 	}
 
 	/**
-	 * Returns the content reader.
+	 * Provides the HTML that displays the portlet 
+	 * on the page.
 	 * 
-	 * @return the content reader
+	 * @return the HTML
 	 */
-	public Reader contentReader() {
-		return contentReader;
-	}
+	public abstract String content();
 
+	/**
+	 * Writes the JSON notification to the given writer.
+	 *
+	 * @param writer the writer
+	 */
 	@Override
 	public void toJson(Writer writer) {
-		StringWriter content = new StringWriter();
-		CharBuffer buffer = CharBuffer.allocate(8192);
-		try (Reader in = new BufferedReader(contentReader())) {
-			while (true) {
-				if (in.read(buffer) < 0) {
-					break;
-				}
-				buffer.flip();
-				content.append(buffer);
-				buffer.clear();
-			}
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
 		toJson(writer, "updatePortlet", portletId(), renderMode().name(),
 				supportedRenderModes().stream().map(RenderMode::name)
 					.toArray(size -> new String[size]),
-				content.toString(), isForeground());
+					content(), isForeground());
 	}
 }
