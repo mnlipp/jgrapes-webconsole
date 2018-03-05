@@ -18,6 +18,7 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.IOException;
 import java.io.Writer;
 
 import javax.json.Json;
@@ -44,7 +45,8 @@ public abstract class PortalCommand extends Event<Void> {
 	 * 
 	 * @param writer the writer
 	 */
-	public abstract void toJson(Writer writer);
+	public abstract void toJson(Writer writer)
+			throws InterruptedException, IOException;
 	
 	/**
 	 * Creates a JSON notification from the given data.

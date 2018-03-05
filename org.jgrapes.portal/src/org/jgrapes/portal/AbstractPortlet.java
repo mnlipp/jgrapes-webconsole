@@ -40,6 +40,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
 import org.jgrapes.core.Channel;
@@ -61,6 +62,7 @@ import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.PortletResourceRequest;
 import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portal.events.RenderPortletRequest;
+import org.jgrapes.portal.events.RenderPortletRequestBase;
 
 /**
  * Provides a base class for implementing portlet components.
@@ -804,7 +806,7 @@ public abstract class AbstractPortlet extends Component {
 	 */
 	public class RenderPortletFromReader extends RenderPortlet {
 
-		private Reader contentReader;
+		private Future<String> content;
 
 		/**
 		 * Creates a new event.
@@ -812,29 +814,34 @@ public abstract class AbstractPortlet extends Component {
 		 * @param portletClass the portlet class
 		 * @param portletId the id of the portlet
 		 */
-		public RenderPortletFromReader(Class<?> portletClass, String portletId, 
-				Reader contentReader) {
+		public RenderPortletFromReader(RenderPortletRequestBase<?> request,
+				Class<?> portletClass, String portletId, Reader contentReader) {
 			super(portletClass, portletId);
-			this.contentReader = contentReader;
+			// Start to prepare the content immediately and concurrently.
+			content = request.processedBy().map(pb -> pb.executorService())
+					.orElse(Components.defaultExecutorService()).submit(() -> {
+					StringWriter content = new StringWriter();
+					CharBuffer buffer = CharBuffer.allocate(8192);
+					try (Reader in = new BufferedReader(contentReader)) {
+						while (true) {
+							if (in.read(buffer) < 0) {
+								break;
+							}
+							buffer.flip();
+							content.append(buffer);
+							buffer.clear();
+						}
+					} catch (IOException e) {
+						throw new IllegalStateException(e);
+					}
+					return content.toString();
+				});
+
 		}
 
 		@Override
-		public String content() {
-			StringWriter content = new StringWriter();
-			CharBuffer buffer = CharBuffer.allocate(8192);
-			try (Reader in = new BufferedReader(contentReader)) {
-				while (true) {
-					if (in.read(buffer) < 0) {
-						break;
-					}
-					buffer.flip();
-					content.append(buffer);
-					buffer.clear();
-				}
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
-			return content.toString();
+		public Future<String> content() {
+			return content;
 		}
 	}
 }

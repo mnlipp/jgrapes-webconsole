@@ -39,10 +39,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jgrapes.core.Channel;
+import org.jgrapes.core.Components;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.AbstractPortlet;
@@ -257,25 +259,30 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 
 	public static class RenderPortletFromTemplate extends RenderPortlet {
 
-		private Template template;
-		private Object dataModel;
+		private Future<String> content;
 		
-		public RenderPortletFromTemplate(Class<?> portletClass,
-		        String portletId, Template template, Object dataModel) {
+		public RenderPortletFromTemplate(RenderPortletRequestBase<?> request,
+				Class<?> portletClass, String portletId, Template template, 
+				Object dataModel) {
 			super(portletClass, portletId);
-			this.template = template;
-			this.dataModel = dataModel;
+			setRenderMode(request.renderMode());
+			// Start to prepare the content immediately and concurrently.
+			content = request.processedBy().map(pb -> pb.executorService())
+					.orElse(Components.defaultExecutorService()).submit(() -> {
+						StringWriter out = new StringWriter();
+						try {
+							template.process(dataModel, out);
+						} catch (TemplateException | IOException e) {
+							throw new IllegalArgumentException(e);
+						}
+						return out.toString();
+						
+					});
 		}
 
 		@Override
-		public String content() {
-			StringWriter out = new StringWriter();
-			try {
-				template.process(dataModel, out);
-			} catch (TemplateException | IOException e) {
-				e.printStackTrace();
-			}
-			return out.toString();
+		public Future<String> content() {
+			return content;
 		}
 	}
 }

@@ -199,7 +199,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		Set<RenderMode> modes = renderModes(model);
 		Template tpl = freemarkerConfig().getTemplate(
 				"MarkdownDisplay-preview.ftl.html");
-		portalSession.respond(new RenderPortletFromTemplate(
+		portalSession.respond(new RenderPortletFromTemplate(event,
 				MarkdownDisplayPortlet.class, model.getPortletId(),
 				tpl, fmModel(event, portalSession, model))
 				.setRenderMode(DeleteablePreview).setSupportedModes(modes)
@@ -226,7 +226,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-preview.ftl.html");
-			portalSession.respond(new RenderPortletFromTemplate(
+			portalSession.respond(new RenderPortletFromTemplate(event,
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
 					tpl, fmModel(event, portalSession, model))
 					.setRenderMode(event.renderMode()).setSupportedModes(modes)
@@ -236,7 +236,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-view.ftl.html");
-			portalSession.respond(new RenderPortletFromTemplate(
+			portalSession.respond(new RenderPortletFromTemplate(event,
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
 					tpl, fmModel(event, portalSession, model))
 					.setRenderMode(View).setSupportedModes(modes)
@@ -246,7 +246,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		}
 		case Edit: {
 			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-edit.ftl.html");
-			portalSession.respond(new RenderPortletFromTemplate(
+			portalSession.respond(new RenderPortletFromTemplate(event,
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
 					tpl, fmModel(event, portalSession, model))
 					.setRenderMode(Edit).setSupportedModes(modes));

@@ -123,7 +123,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		SysInfoModel portletModel = putInSession(
 				portalSession.browserSession(), new SysInfoModel(portletId));
 		Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-		portalSession.respond(new RenderPortletFromTemplate(
+		portalSession.respond(new RenderPortletFromTemplate(event,
 				SysInfoPortlet.class, portletModel.getPortletId(),
 				tpl, fmModel(event, portalSession, portletModel))
 				.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
@@ -145,7 +145,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		case Preview:
 		case DeleteablePreview: {
 			Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-			portalSession.respond(new RenderPortletFromTemplate(
+			portalSession.respond(new RenderPortletFromTemplate(event,
 					SysInfoPortlet.class, portletModel.getPortletId(), 
 					tpl, fmModel(event, portalSession, portletModel))
 					.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
@@ -155,7 +155,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		}
 		case View: {
 			Template tpl = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
-			portalSession.respond(new RenderPortletFromTemplate(
+			portalSession.respond(new RenderPortletFromTemplate(event,
 					SysInfoPortlet.class, portletModel.getPortletId(), 
 					tpl, fmModel(event, portalSession, portletModel))
 					.setRenderMode(View).setSupportedModes(MODES)

@@ -18,11 +18,14 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.jgrapes.portal.Portlet.RenderMode;
 
@@ -155,18 +158,25 @@ public abstract class RenderPortlet extends PortalCommand {
 	 * 
 	 * @return the HTML
 	 */
-	public abstract String content();
+	public abstract Future<String> content();
 
 	/**
 	 * Writes the JSON notification to the given writer.
 	 *
 	 * @param writer the writer
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
 	@Override
-	public void toJson(Writer writer) {
-		toJson(writer, "updatePortlet", portletId(), renderMode().name(),
-				supportedRenderModes().stream().map(RenderMode::name)
-					.toArray(size -> new String[size]),
-					content(), isForeground());
+	public void toJson(Writer writer) 
+			throws InterruptedException, IOException {
+		try {
+			toJson(writer, "updatePortlet", portletId(), renderMode().name(),
+					supportedRenderModes().stream().map(RenderMode::name)
+						.toArray(size -> new String[size]),
+						content().get(), isForeground());
+		} catch (ExecutionException e) {
+			throw new IOException(e);
+		}
 	}
 }
