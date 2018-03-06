@@ -34,6 +34,8 @@ import java.io.PipedWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -53,14 +55,12 @@ import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import javax.json.Json;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
@@ -605,7 +605,8 @@ public class PortalWeblet extends Component {
 				.setSession(browserSession);
 		channel.setAssociated(PortalSession.class, portalSession);
 		// Channel now used as JSON input
-		channel.setAssociated(this, new WsInputReader());
+		channel.setAssociated(this, new WsInputReader(
+				event.processedBy().get(), portalSession));
 		channel.respond(new WebSocketAccepted(event));
 		event.stop();
 	}
@@ -615,30 +616,8 @@ public class PortalWeblet extends Component {
 			throws IOException {
 		Optional<WsInputReader> optWsInputReader 
 			= wsChannel.associated(this, WsInputReader.class);
-		if (!optWsInputReader.isPresent()) {
-			return;
-		}
-		JsonObject json = optWsInputReader.get().toJsonObject(event);
-		if (json != null) {
-			// Fully decoded JSON available.
-			Optional<PortalSession> psc = wsChannel.associated(
-					PortalSession.class);
-			if (psc.isPresent()) {
-				// Portal session established, check for special disconnect
-				if ("disconnect".equals(json.getString("method"))
-						&& psc.get().portalSessionId().equals(
-								json.getJsonArray("params").getString(0))) {
-					psc.get().close();
-					return;
-				}
-				// Ordinary message from portal (view) to server.
-				psc.get().refresh();
-				if("keepAlive".equals(json.getString("method"))) {
-					return;
-				}
-				fire(new JsonInput(json), psc.get());
-				return;
-			}
+		if (optWsInputReader.isPresent()) {
+			optWsInputReader.get().write(event.buffer().backingBuffer());
 		}
 	}
 	
@@ -647,9 +626,17 @@ public class PortalWeblet extends Component {
 	 * 
 	 * @param event the event
 	 * @param wsChannel the WebSocket channel
+	 * @throws IOException 
 	 */
 	@Handler
-	public void onClosed(Closed event, IOSubchannel wsChannel) {
+	public void onClosed(
+			Closed event, IOSubchannel wsChannel) throws IOException {
+		Optional<WsInputReader> optWsInputReader 
+			= wsChannel.associated(this, WsInputReader.class);
+		if (optWsInputReader.isPresent()) {
+			wsChannel.setAssociated(this, null);
+			optWsInputReader.get().close();
+		}
 		wsChannel.associated(PortalSession.class).ifPresent(psc -> {
 			fire(new Closed(), psc);
 			psc.closed();
@@ -736,53 +723,104 @@ public class PortalWeblet extends Component {
 		event.toJson(out);
 	}
 	
-	private class WsInputReader {
+	private static class WsInputReader extends Thread {
 
-		private PipedWriter decodeWriter;
-		private Future<JsonObject> decodeResult;
-		
-		public JsonObject toJsonObject(Input<CharBuffer> event)
-						throws IOException {
-			CharBuffer buffer = event.buffer().backingBuffer();
-			if (decodeWriter == null) {
-				decodeWriter = new PipedWriter();
-				PipedReader reader = new PipedReader(
-						decodeWriter, buffer.capacity());
-				decodeResult = activeEventPipeline().executorService()
-					.submit(new DecodeTask(reader));
+		private static ReferenceQueue<Object> abandoned 
+			= new ReferenceQueue<>();
+
+		private static class RefWithThread<T> extends WeakReference<T> {
+			public Thread watched;
+
+			public RefWithThread(T referent, Thread thread) {
+				super(referent, abandoned);
+				watched = thread;
 			}
-			decodeWriter.append(buffer);
-			if (event.isEndOfRecord()) {
-				decodeWriter.close();
-				decodeWriter = null;
-				try {
-					return decodeResult.get();
-				} catch (ExecutionException e) {
-					if (e.getCause() instanceof IOException) {
-						throw (IOException)e.getCause();
+		}
+
+		static {
+			Thread watchdog = new Thread(() -> {
+				while (true) {
+					try {
+						@SuppressWarnings("unchecked")
+						RefWithThread<Object> ref 
+							= (RefWithThread<Object>)abandoned.remove();
+						ref.watched.interrupt();
+					} catch (InterruptedException e) {
+						// Nothing to do
 					}
-					throw new IOException(e);
-				} catch (InterruptedException e) {
-					throw new IOException(e);
 				}
-			}
-			return null;
+			});
+			watchdog.setDaemon(true);
+			watchdog.start();
 		}
 		
-		private class DecodeTask implements Callable<JsonObject> {
+		private WeakReference<EventPipeline> pipelineRef;
+		private WeakReference<PortalSession> channelRef;
+		private PipedWriter decodeIn;
+		private Reader jsonSource;
 
-			private Reader reader;
-			
-			public DecodeTask(Reader reader) {
-				this.reader = reader;
+		public WsInputReader(EventPipeline wsInPipeline,
+		        PortalSession portalChannel) {
+			this.pipelineRef = new RefWithThread<>(
+					wsInPipeline, WsInputReader.this);
+			this.channelRef = new RefWithThread<>(
+					portalChannel, WsInputReader.this);
+			setDaemon(true);
+		}
+
+		public void write(CharBuffer buffer) throws IOException {
+			// Delayed initialization, allows adaption to buffer size.
+			if (decodeIn == null) {
+				decodeIn = new PipedWriter();
+				jsonSource = new PipedReader(decodeIn, buffer.capacity());
+				start();
 			}
+			decodeIn.append(buffer);
+			decodeIn.flush();
+		}
 
-			@Override
-			public JsonObject call() throws IOException {
-				try (Reader in = reader) {
-					JsonReader reader = Json.createReader(in);
-					return reader.readObject();
+		public void close() throws IOException {
+			if (decodeIn == null) {
+				// Never started
+				return;
+			}
+			decodeIn.close();
+			try {
+				join(1000);
+			} catch (InterruptedException e) {
+				// Just in case
+				interrupt();
+			}
+		}
+
+		public void run() {
+			while (true) {
+				JsonReader jsonReader = Json.createReader(jsonSource);
+				JsonObject json;
+				try {
+					json = jsonReader.readObject();
+				} catch (JsonException e) {
+					break;
 				}
+				// Fully decoded JSON available.
+				PortalSession portalSession = channelRef.get();
+				EventPipeline eventPipeline = pipelineRef.get();
+				if (eventPipeline == null || portalSession == null) {
+					break;
+				}
+				// Portal session established, check for special disconnect
+				if ("disconnect".equals(json.getString("method"))
+							&& portalSession.portalSessionId().equals(
+									json.getJsonArray("params").getString(0))) {
+					portalSession.close();
+					return;
+				}
+				// Ordinary message from portal (view) to server.
+				portalSession.refresh();
+				if("keepAlive".equals(json.getString("method"))) {
+					continue;
+				}
+				eventPipeline.fire(new JsonInput(json), portalSession);
 			}
 		}
 	}
