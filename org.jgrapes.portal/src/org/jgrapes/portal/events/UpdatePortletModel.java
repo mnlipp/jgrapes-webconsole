@@ -22,8 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import javax.json.JsonArray;
-
+import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Event;
 
 /**

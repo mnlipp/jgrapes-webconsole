@@ -21,11 +21,8 @@ package org.jgrapes.portal.events;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.json.Json;
-import javax.json.JsonValue;
-import javax.json.stream.JsonGenerator;
-
 import org.jdrupes.json.JsonBeanEncoder;
+import org.jdrupes.json.JsonRpcObject;
 import org.jgrapes.core.Event;
 
 /**
@@ -53,29 +50,17 @@ public abstract class PortalCommand extends Event<Void> {
 	 * Closes the `writer`.
 	 * 
 	 * @param writer the writer
+	 * @throws IOException 
 	 */
-	protected void toJson(Writer writer, String method, Object... params) {
-		JsonGenerator generator = Json.createGenerator(writer);
-		generator.writeStartObject();
-		generator.write("jsonrpc", "2.0");
-		generator.write("method", method);
+	protected void toJson(Writer writer, String method, Object... params)
+			throws IOException {
+		JsonRpcObject rpc = new JsonRpcObject();
+		rpc.setMethod(method);
 		if (params.length > 0) {
-			generator.writeKey("params");
-			generator.writeStartArray();
 			for (Object obj: params) {
-				if (obj == null) {
-					generator.writeNull();
-					continue;
-				}
-				if (obj instanceof JsonValue) {
-					generator.write((JsonValue)obj);
-					continue;
-				}
-				JsonBeanEncoder.create(generator).writeObject(obj);
+				rpc.addParam(obj);
 			}
-			generator.writeEnd();
 		}
-		generator.writeEnd();
-		generator.close();
+		JsonBeanEncoder.create(writer).writeObject(rpc).flush();
 	}
 }

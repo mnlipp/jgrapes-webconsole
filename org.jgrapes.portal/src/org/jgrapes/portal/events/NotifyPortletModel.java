@@ -18,8 +18,7 @@
 
 package org.jgrapes.portal.events;
 
-import javax.json.JsonArray;
-
+import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Event;
 import org.jgrapes.portal.RenderSupport;
 

@@ -18,16 +18,15 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import org.jdrupes.json.JsonArray;
+import org.jdrupes.json.JsonObject;
 
 /**
  * Adds `<link .../>`, `<style>...</style>` or `<script ...></script>` nodes
@@ -149,14 +148,14 @@ public class AddPageResources extends PortalCommand {
 	}
 
 	@Override
-	public void toJson(Writer writer) {
-		JsonArrayBuilder paramBuilder = Json.createArrayBuilder();
+	public void toJson(Writer writer) throws IOException {
+		JsonArray scripts = new JsonArray();
 		for (ScriptResource scriptResource: scriptResources()) {
-			paramBuilder.add(scriptResource.toJsonValue());
+			scripts.add(scriptResource.toJsonValue());
 		}
 		toJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
 				uri -> uri.toString()).toArray(String[]::new), 
-				cssSource(), paramBuilder.build());
+				cssSource(), scripts);
 	}
 
 	/**
@@ -258,24 +257,24 @@ public class AddPageResources extends PortalCommand {
 		}
 		
 		public JsonObject toJsonValue() {
-			JsonObjectBuilder objBuilder = Json.createObjectBuilder();
+			JsonObject obj = new JsonObject();
 			if (scriptUri != null) {
-				objBuilder.add("uri", scriptUri.toString());
+				obj.put("uri", scriptUri.toString());
 			}
 			if (scriptSource != null) {
-				objBuilder.add("source", scriptSource);
+				obj.put("source", scriptSource);
 			}
-			JsonArrayBuilder strArrayBuilder = Json.createArrayBuilder();
+			JsonArray strArray = new JsonArray();
 			for (String req: requires) {
-				strArrayBuilder.add(req);
+				strArray.add(req);
 			}
-			objBuilder.add("requires", strArrayBuilder);
-			strArrayBuilder = Json.createArrayBuilder();
+			obj.put("requires", strArray);
+			strArray = new JsonArray();
 			for (String prov: provides) {
-				strArrayBuilder.add(prov);
+				strArray.add(prov);
 			}
-			objBuilder.add("provides", strArrayBuilder);
-			return objBuilder.build();
+			obj.put("provides", strArray);
+			return obj;
 		}
 	}
 }

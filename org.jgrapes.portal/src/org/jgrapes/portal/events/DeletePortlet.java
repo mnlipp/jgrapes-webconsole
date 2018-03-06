@@ -18,6 +18,7 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.IOException;
 import java.io.Writer;
 
 /**
@@ -47,7 +48,7 @@ public class DeletePortlet extends PortalCommand {
 	}
 
 	@Override
-	public void toJson(Writer writer) {
+	public void toJson(Writer writer) throws IOException {
 		toJson(writer, "deletePortlet", portletId());
 	}
 

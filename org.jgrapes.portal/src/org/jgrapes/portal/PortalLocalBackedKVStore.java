@@ -24,8 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.JsonArray;
-
+import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Event;
@@ -93,12 +92,11 @@ public class PortalLocalBackedKVStore extends Component {
 		channel.associated(PortalLocalBackedKVStore.class, PortalReady.class)
 			.ifPresent(origEvent -> {
 				JsonArray params = (JsonArray)event.params();
-				params.getJsonArray(0).forEach(item -> {
-					JsonArray kvPair = (JsonArray)item;
-					String key = kvPair.getString(0);
+				params.asArray(0).arrayStream().forEach(item -> {
+					String key = item.asString(0);
 					if (key.startsWith(keyStart)) {
-						data.put(kvPair.getString(0).substring(
-								keyStart.length() - 1), kvPair.getString(1));
+						data.put(key.substring(
+								keyStart.length() - 1), item.asString(1));
 					}
 				});
 				channel.setAssociated(PortalLocalBackedKVStore.class, null);

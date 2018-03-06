@@ -18,6 +18,7 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
@@ -96,7 +97,7 @@ public class DisplayNotification extends PortalCommand {
 	}
 
 	@Override
-	public void toJson(Writer writer) {
+	public void toJson(Writer writer) throws IOException {
 		Map<String,Object> options = options();
 		options.put("destroyOnClose", true);
 		toJson(writer, "displayNotification", content(), options);

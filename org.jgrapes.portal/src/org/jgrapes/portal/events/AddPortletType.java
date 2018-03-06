@@ -18,15 +18,14 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-
+import org.jdrupes.json.JsonArray;
 import org.jgrapes.portal.RenderSupport;
 import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 
@@ -187,14 +186,14 @@ public class AddPortletType extends PortalCommand {
 	}
 
 	@Override
-	public void toJson(Writer writer) {
-		JsonArrayBuilder paramBuilder = Json.createArrayBuilder();
+	public void toJson(Writer writer) throws IOException {
+		JsonArray strArray = new JsonArray();
 		for (ScriptResource scriptResource: scriptResources()) {
-			paramBuilder.add(scriptResource.toJsonValue());
+			strArray.add(scriptResource.toJsonValue());
 		}
 		toJson(writer, "addPortletType", portletType(), displayName(),
 				Arrays.stream(cssUris()).map(
 						uri ->	uri.toString()).toArray(String[]::new),
-				paramBuilder.build(), isInstantiable());
+				strArray, isInstantiable());
 	}
 }

@@ -32,9 +32,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.json.JsonArray;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -42,6 +39,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
+import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
@@ -175,54 +173,57 @@ public class Portal extends Component {
 	public void onJsonInput(JsonInput event, PortalSession channel) 
 			throws InterruptedException, IOException {
 		// Send events to portlets on portal's channel
-		JsonArray params = (JsonArray)event.params();
+		JsonArray params = event.params();
 		switch (event.method()) {
 		case "portalReady": {
 			fire(new PortalReady(view.renderSupport()), channel);
 			break;
 		}
 		case "addPortlet": {
-			fire(new AddPortletRequest(view.renderSupport(), params.getString(0),
-					RenderMode.valueOf(params.getString(1))), channel);
+			fire(new AddPortletRequest(view.renderSupport(), 
+					params.asString(0), RenderMode.valueOf(
+							params.asString(1))), channel);
 			break;
 		}
 		case "deletePortlet": {
 			fire(new DeletePortletRequest(
-					view.renderSupport(), params.getString(0)), channel);
+					view.renderSupport(), params.asString(0)), channel);
 			break;
 		}
 		case "portalLayout": {
-			List<List<String>> previewLayout = params.getJsonArray(0)
-					.getValuesAs(column -> ((JsonArray)column)
-							.getValuesAs(JsonString::getString)
-							.stream().collect(Collectors.toList()))
-					.stream().collect(Collectors.toList());
-			List<String> tabsLayout = params.getJsonArray(1)
-					.getValuesAs(JsonString::getString)
-					.stream().collect(Collectors.toList());
+			List<List<String>> previewLayout = params.asArray(0)
+					.arrayStream().map(
+							values -> values.stream().map(
+									value -> (String)value)
+							.collect(Collectors.toList()))
+					.collect(Collectors.toList());
+			List<String> tabsLayout = params.asArray(1).stream().map(
+					value -> (String)value).collect(Collectors.toList());
 			fire(new PortalLayoutChanged(
 					previewLayout, tabsLayout), channel);
 			break;
 		}
 		case "renderPortlet": {
-			fire(new RenderPortletRequest(view.renderSupport(), params.getString(0),
-					RenderMode.valueOf(params.getString(1)),
-					params.getBoolean(2)), channel);
+			fire(new RenderPortletRequest(view.renderSupport(), 
+					params.asString(0),
+					RenderMode.valueOf(params.asString(1)),
+					(Boolean)params.asBoolean(2)), channel);
 			break;
 		}
 		case "setLocale": {
-			fire(new SetLocale(Locale.forLanguageTag(params.getString(0))),
+			fire(new SetLocale(Locale.forLanguageTag(params.asString(0))),
 					channel);
 			break;
 		}
 		case "setTheme": {
-			fire(new SetTheme(params.getString(0)), channel);
+			fire(new SetTheme(params.asString(0)), channel);
 			break;
 		}
 		case "notifyPortletModel": {
-			fire(new NotifyPortletModel(view.renderSupport(), params.getString(0),
-					params.getString(1), params.size() <= 2
-					? JsonValue.EMPTY_JSON_ARRAY : params.getJsonArray(2)),
+			fire(new NotifyPortletModel(view.renderSupport(), 
+					params.asString(0), params.asString(1), 
+					params.size() <= 2
+					? JsonArray.EMPTY_ARRAY : params.asArray(2)),
 					channel);
 			break;
 		}

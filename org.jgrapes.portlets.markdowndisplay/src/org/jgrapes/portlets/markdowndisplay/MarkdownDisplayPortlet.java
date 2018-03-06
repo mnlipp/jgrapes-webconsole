@@ -298,14 +298,14 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	        throws Exception {
 		event.stop();
 		Map<Preferences, String> properties = new HashMap<>();
-		if (!event.params().isNull(0)) {
-			properties.put(Preferences.TITLE, event.params().getString(0));
+		if (event.params().get(0) != null) {
+			properties.put(Preferences.TITLE, event.params().asString(0));
 		}
-		if (!event.params().isNull(1)) {
-			properties.put(Preferences.PREVIEW_SOURCE, event.params().getString(1));
+		if (event.params().get(1) != null) {
+			properties.put(Preferences.PREVIEW_SOURCE, event.params().asString(1));
 		}
-		if (!event.params().isNull(2)) {
-			properties.put(Preferences.VIEW_SOURCE, event.params().getString(2));
+		if (event.params().get(2) != null) {
+			properties.put(Preferences.VIEW_SOURCE, event.params().asString(2));
 		}
 		fire(new UpdatePortletModel(event.portletId(), properties), portalSession);
 	}
@@ -328,12 +328,16 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 							(key, value) -> {
 								model.setEditableBy((Set<Principal>)value);
 							});
-					String jsonState = JsonBeanEncoder.create()
-							.writeObject(model).toJson();
-					portalSession.respond(new KeyValueStoreUpdate().update(
-							storagePath(portalSession.browserSession()) 
-							+ model.getPortletId(),	jsonState));
-					updateView(portalSession, model, portalSession.locale());
+					try {
+						String jsonState = JsonBeanEncoder.create()
+								.writeObject(model).toJson();
+						portalSession.respond(new KeyValueStoreUpdate().update(
+								storagePath(portalSession.browserSession()) 
+								+ model.getPortletId(),	jsonState));
+						updateView(portalSession, model, portalSession.locale());
+					} catch (IOException e) {
+						// Won't happen, uses internal writer
+					}
 				});
 	}
 	

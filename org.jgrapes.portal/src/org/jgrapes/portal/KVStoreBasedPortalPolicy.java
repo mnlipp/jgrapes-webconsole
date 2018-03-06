@@ -18,6 +18,7 @@
 
 package org.jgrapes.portal;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -157,9 +158,12 @@ public class KVStoreBasedPortalPolicy extends Component {
 
 	@Handler
 	public void onPortalLayoutChanged(PortalLayoutChanged event, 
-			PortalSession channel) {
-		channel.associated(PortalSessionDataStore.class).ifPresent(
-				ps -> ps.onPortalLayoutChanged(event, channel));
+			PortalSession channel) throws IOException {
+		Optional<PortalSessionDataStore>optDs = channel.associated(
+				PortalSessionDataStore.class);
+		if (optDs.isPresent()) {
+			optDs.get().onPortalLayoutChanged(event, channel);
+		}
 	}
 	
 	private class PortalSessionDataStore {
@@ -233,8 +237,8 @@ public class KVStoreBasedPortalPolicy extends Component {
 			}
 		}
 		
-		public void onPortalLayoutChanged(
-				PortalLayoutChanged event, IOSubchannel channel) {
+		public void onPortalLayoutChanged(PortalLayoutChanged event,
+				IOSubchannel channel) throws IOException {
 			persisted.put("previewLayout", event.previewLayout());
 			persisted.put("tabsLayout", event.tabsLayout());
 			

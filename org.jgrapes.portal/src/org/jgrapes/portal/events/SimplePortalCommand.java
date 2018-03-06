@@ -18,6 +18,7 @@
 
 package org.jgrapes.portal.events;
 
+import java.io.IOException;
 import java.io.Writer;
 
 import org.jgrapes.core.Channel;
@@ -62,7 +63,7 @@ public class SimplePortalCommand extends PortalCommand {
 	}
 	
 	@Override
-	public void toJson(Writer writer) {
+	public void toJson(Writer writer) throws IOException {
 		toJson(writer, method, params);
 	}
 

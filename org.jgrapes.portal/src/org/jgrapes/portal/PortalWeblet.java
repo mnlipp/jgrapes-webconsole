@@ -59,17 +59,14 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jdrupes.httpcodec.types.Converters;
 import org.jdrupes.httpcodec.types.MediaType;
+import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonDecodeException;
+import org.jdrupes.json.JsonRpcObject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.EventPipeline;
@@ -795,11 +792,14 @@ public class PortalWeblet extends Component {
 
 		public void run() {
 			while (true) {
-				JsonReader jsonReader = Json.createReader(jsonSource);
-				JsonObject json;
+				JsonBeanDecoder jsonDecoder = JsonBeanDecoder.create(jsonSource);
+				JsonRpcObject rpc;
 				try {
-					json = jsonReader.readObject();
-				} catch (JsonException e) {
+					rpc = jsonDecoder.readObject(JsonRpcObject.class);
+				} catch (JsonDecodeException e) {
+					break;
+				}
+				if (rpc == null) {
 					break;
 				}
 				// Fully decoded JSON available.
@@ -809,18 +809,18 @@ public class PortalWeblet extends Component {
 					break;
 				}
 				// Portal session established, check for special disconnect
-				if ("disconnect".equals(json.getString("method"))
+				if ("disconnect".equals(rpc.method())
 							&& portalSession.portalSessionId().equals(
-									json.getJsonArray("params").getString(0))) {
+									rpc.params().asString(0))) {
 					portalSession.close();
 					return;
 				}
 				// Ordinary message from portal (view) to server.
 				portalSession.refresh();
-				if("keepAlive".equals(json.getString("method"))) {
+				if("keepAlive".equals(rpc.method())) {
 					continue;
 				}
-				eventPipeline.fire(new JsonInput(json), portalSession);
+				eventPipeline.fire(new JsonInput(rpc), portalSession);
 			}
 		}
 	}

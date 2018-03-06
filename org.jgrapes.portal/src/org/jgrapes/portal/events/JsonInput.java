@@ -18,12 +18,12 @@
 
 package org.jgrapes.portal.events;
 
+import java.util.List;
 import java.util.Optional;
 
-import javax.json.JsonObject;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
-
+import org.jdrupes.json.JsonArray;
+import org.jdrupes.json.JsonObject;
+import org.jdrupes.json.JsonRpc;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
@@ -31,20 +31,21 @@ import org.jgrapes.core.Event;
 /**
  * A JSON notification from the portal view (browser) to the portal. 
  */
-public class JsonInput extends Event<Void> {
+public class JsonInput extends Event<Void> implements JsonRpc {
 
 	private String method;
-	private JsonStructure params;
-	private Optional<JsonValue> id;
+	private JsonArray params;
+	private Optional<Object> id;
 	
 	/**
 	 * Create a new request from the given data.
 	 * 
 	 * @param requestData a request as defined by the JSON RPC specification 
 	 */
+	@SuppressWarnings("unchecked")
 	public JsonInput(JsonObject requestData) {
-		method = requestData.getString("method");
-		params = (JsonStructure)requestData.get("params");
+		method = (String)requestData.get("method");
+		params = JsonArray.fromData((List<Object>)requestData.get("params"));
 		id = Optional.ofNullable(requestData.get("id"));
 	}
 
@@ -62,7 +63,7 @@ public class JsonInput extends Event<Void> {
 	 * 
 	 * @return the params
 	 */
-	public JsonStructure params() {
+	public JsonArray params() {
 		return params;
 	}
 
@@ -71,7 +72,7 @@ public class JsonInput extends Event<Void> {
 	 * 
 	 * @return the id
 	 */
-	public Optional<JsonValue> id() {
+	public Optional<Object> id() {
 		return id;
 	}
 
