@@ -158,8 +158,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 			portalSession.respond(new RenderPortletFromTemplate(event,
 					SysInfoPortlet.class, portletModel.getPortletId(), 
 					tpl, fmModel(event, portalSession, portletModel))
-					.setRenderMode(View).setSupportedModes(MODES)
-					.setForeground(event.isForeground()));
+					.setSupportedModes(MODES).setForeground(event.isForeground()));
 			break;
 		}
 		default:
