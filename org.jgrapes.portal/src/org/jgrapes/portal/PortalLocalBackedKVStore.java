@@ -80,7 +80,7 @@ public class PortalLocalBackedKVStore extends Component {
 	@Handler
 	public void onJsonInput(JsonInput event, PortalSession channel) 
 			throws InterruptedException, IOException {
-		if (!event.method().equals("retrievedLocalData")) {
+		if (!event.request().method().equals("retrievedLocalData")) {
 			return;
 		}
 		@SuppressWarnings("unchecked")
@@ -91,7 +91,7 @@ public class PortalLocalBackedKVStore extends Component {
 				+ PortalLocalBackedKVStore.class.getName() + "/";
 		channel.associated(PortalLocalBackedKVStore.class, PortalReady.class)
 			.ifPresent(origEvent -> {
-				JsonArray params = (JsonArray)event.params();
+				JsonArray params = (JsonArray)event.request().params();
 				params.asArray(0).arrayStream().forEach(item -> {
 					String key = item.asString(0);
 					if (key.startsWith(keyStart)) {

@@ -187,9 +187,9 @@ public class AddPortletType extends PortalCommand {
 
 	@Override
 	public void toJson(Writer writer) throws IOException {
-		JsonArray strArray = new JsonArray();
+		JsonArray strArray = JsonArray.create();
 		for (ScriptResource scriptResource: scriptResources()) {
-			strArray.add(scriptResource.toJsonValue());
+			strArray.append(scriptResource.toJsonValue());
 		}
 		toJson(writer, "addPortletType", portletType(), displayName(),
 				Arrays.stream(cssUris()).map(

@@ -66,7 +66,8 @@ import org.jdrupes.httpcodec.types.Converters;
 import org.jdrupes.httpcodec.types.MediaType;
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonDecodeException;
-import org.jdrupes.json.JsonRpcObject;
+import org.jdrupes.json.JsonRpc;
+import org.jdrupes.json.JsonRpc.DefaultJsonRpc;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.EventPipeline;
@@ -793,9 +794,9 @@ public class PortalWeblet extends Component {
 		public void run() {
 			while (true) {
 				JsonBeanDecoder jsonDecoder = JsonBeanDecoder.create(jsonSource);
-				JsonRpcObject rpc;
+				JsonRpc rpc;
 				try {
-					rpc = jsonDecoder.readObject(JsonRpcObject.class);
+					rpc = jsonDecoder.readObject(DefaultJsonRpc.class);
 				} catch (JsonDecodeException e) {
 					break;
 				}

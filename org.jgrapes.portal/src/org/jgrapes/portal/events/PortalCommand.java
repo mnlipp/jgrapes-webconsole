@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.jdrupes.json.JsonBeanEncoder;
-import org.jdrupes.json.JsonRpcObject;
+import org.jdrupes.json.JsonRpc;
 import org.jgrapes.core.Event;
 
 /**
@@ -54,7 +54,7 @@ public abstract class PortalCommand extends Event<Void> {
 	 */
 	protected void toJson(Writer writer, String method, Object... params)
 			throws IOException {
-		JsonRpcObject rpc = new JsonRpcObject();
+		JsonRpc rpc = JsonRpc.create();
 		rpc.setMethod(method);
 		if (params.length > 0) {
 			for (Object obj: params) {

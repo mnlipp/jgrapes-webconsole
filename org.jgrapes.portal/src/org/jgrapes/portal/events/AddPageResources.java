@@ -149,9 +149,9 @@ public class AddPageResources extends PortalCommand {
 
 	@Override
 	public void toJson(Writer writer) throws IOException {
-		JsonArray scripts = new JsonArray();
+		JsonArray scripts = JsonArray.create();
 		for (ScriptResource scriptResource: scriptResources()) {
-			scripts.add(scriptResource.toJsonValue());
+			scripts.append(scriptResource.toJsonValue());
 		}
 		toJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
 				uri -> uri.toString()).toArray(String[]::new), 
@@ -257,23 +257,23 @@ public class AddPageResources extends PortalCommand {
 		}
 		
 		public JsonObject toJsonValue() {
-			JsonObject obj = new JsonObject();
+			JsonObject obj = JsonObject.create();
 			if (scriptUri != null) {
-				obj.put("uri", scriptUri.toString());
+				obj.setField("uri", scriptUri.toString());
 			}
 			if (scriptSource != null) {
-				obj.put("source", scriptSource);
+				obj.setField("source", scriptSource);
 			}
-			JsonArray strArray = new JsonArray();
+			JsonArray strArray = JsonArray.create();
 			for (String req: requires) {
-				strArray.add(req);
+				strArray.append(req);
 			}
-			obj.put("requires", strArray);
-			strArray = new JsonArray();
+			obj.setField("requires", strArray);
+			strArray = JsonArray.create();
 			for (String prov: provides) {
-				strArray.add(prov);
+				strArray.append(prov);
 			}
-			obj.put("provides", strArray);
+			obj.setField("provides", strArray);
 			return obj;
 		}
 	}

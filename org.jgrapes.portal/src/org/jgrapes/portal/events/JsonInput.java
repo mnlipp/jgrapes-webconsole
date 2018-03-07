@@ -18,11 +18,6 @@
 
 package org.jgrapes.portal.events;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.jdrupes.json.JsonArray;
-import org.jdrupes.json.JsonObject;
 import org.jdrupes.json.JsonRpc;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
@@ -31,49 +26,21 @@ import org.jgrapes.core.Event;
 /**
  * A JSON notification from the portal view (browser) to the portal. 
  */
-public class JsonInput extends Event<Void> implements JsonRpc {
+public class JsonInput extends Event<Void> {
 
-	private String method;
-	private JsonArray params;
-	private Optional<Object> id;
+	private JsonRpc request;
 	
 	/**
 	 * Create a new request from the given data.
 	 * 
-	 * @param requestData a request as defined by the JSON RPC specification 
+	 * @param request a request as defined by the JSON RPC specification 
 	 */
-	@SuppressWarnings("unchecked")
-	public JsonInput(JsonObject requestData) {
-		method = (String)requestData.get("method");
-		params = JsonArray.fromData((List<Object>)requestData.get("params"));
-		id = Optional.ofNullable(requestData.get("id"));
+	public JsonInput(JsonRpc request) {
+		this.request = request;
 	}
 
-	/**
-	 * The invoked method.
-	 * 
-	 * @return the method
-	 */
-	public String method() {
-		return method;
-	}
-
-	/**
-	 * The parameters.
-	 * 
-	 * @return the params
-	 */
-	public JsonArray params() {
-		return params;
-	}
-
-	/**
-	 * An optional request id.
-	 * 
-	 * @return the id
-	 */
-	public Optional<Object> id() {
-		return id;
+	public JsonRpc request() {
+		return request;
 	}
 
 	/* (non-Javadoc)
@@ -84,14 +51,14 @@ public class JsonInput extends Event<Void> implements JsonRpc {
 		StringBuilder builder = new StringBuilder();
 		builder.append(Components.objectName(this));
 		builder.append(" [");
-		if (method != null) {
+		if (request().method() != null) {
 			builder.append("method=");
-			builder.append(method);
+			builder.append(request().method());
 			builder.append(", ");
 		}
-		if (id.isPresent()) {
+		if (request().id().isPresent()) {
 			builder.append("id=");
-			builder.append(id.get());
+			builder.append(request().id().get());
 		}
 		if (channels() != null) {
 			builder.append("channels=");

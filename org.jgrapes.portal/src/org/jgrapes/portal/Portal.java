@@ -173,8 +173,8 @@ public class Portal extends Component {
 	public void onJsonInput(JsonInput event, PortalSession channel) 
 			throws InterruptedException, IOException {
 		// Send events to portlets on portal's channel
-		JsonArray params = event.params();
-		switch (event.method()) {
+		JsonArray params = event.request().params();
+		switch (event.request().method()) {
 		case "portalReady": {
 			fire(new PortalReady(view.renderSupport()), channel);
 			break;
