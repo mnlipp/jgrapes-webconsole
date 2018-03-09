@@ -13,11 +13,13 @@ eclipse {
         // buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
         // buildCommand 'bndtools.core.bndbuilder'
         buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
+        buildCommand 'org.jdrupes.eclipse.minify.plugin.minifyBuilder'
         // 'org.eclipse.buildship.core.gradleprojectnature',
         natures 'org.eclipse.jdt.core.javanature', \
             'bndtools.core.bndnature', \
-            'net.sf.eclipsecs.core.CheckstyleNature'
-            'org.eclipse.jdt.groovy.core.groovyNature'
+            'net.sf.eclipsecs.core.CheckstyleNature', \
+            'org.eclipse.jdt.groovy.core.groovyNature', \
+            'org.jdrupes.eclipse.minify.plugin.minifyNature'
     }
 }
 tasks.eclipse.dependsOn(cleanEclipse)
