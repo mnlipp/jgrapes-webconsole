@@ -460,8 +460,25 @@ var JGPortal = {
     let unresolvedScriptRequests = []; // ScriptResource objects
     let loadingScripts = new Set(); // uris (src attribute)
     let unlockMessageQueueAfterLoad = false;
+    let scriptResourceSnippet = 0;
 
+    let debugLoading = false;
+    function loadingMsg(msg) {
+        if (debugLoading) {
+            log.debug(moment().format("HH:mm:ss.SSS") + ": " + msg());
+        }
+    }
+    
     function mayBeStartScriptLoad (scriptResource) {
+        if (debugLoading) {
+            if (scriptResource.provides.length > 0) {
+                scriptResource.id = scriptResource.provides.join("/");
+            } else if (scriptResource.uri) {
+                scriptResource.id = scriptResource.uri;
+            } else {
+                scriptResource.id = "Snippet_" + ++scriptResourceSnippet;
+            }
+        }
         let stillRequired = scriptResource.requires;
         scriptResource.requires = [];
         stillRequired.forEach(function(required) {
@@ -470,41 +487,66 @@ var JGPortal = {
             }
         });
         if (scriptResource.requires.length > 0) {
+            loadingMsg(function() { return "Not (yet) loading: " + scriptResource.id
+                        + ", missing: " + scriptResource.requires.join(", ") });
             unresolvedScriptRequests.push(scriptResource);
             return;
         }
+        startScriptLoad(scriptResource);
+    }
+    
+    function startScriptLoad(scriptResource) {
         let head = $("head").get()[0];
         let script = document.createElement("script");
         if (scriptResource.source) {
             script.text = scriptResource.source;
-            // Whatever it provides is now provided
-            scriptResource.provides.forEach(function(res) {
-                providedScriptResources.add(res);
-            });
-        } else {
-            script.src = scriptResource.uri;
-            script.addEventListener('load', function(event) {
-                // Remove this from loading
-                loadingScripts.delete(script.src);
-                // Whatever it provides is now provided
-                scriptResource.provides.forEach(function(res) {
-                    providedScriptResources.add(res);
-                });
-                // Re-evaluate
-                let stillUnresolved = unresolvedScriptRequests;
-                unresolvedScriptRequests = [];
-                stillUnresolved.forEach(function(req) {
-                    mayBeStartScriptLoad(req);
-                });
-                // All done?
-                if (loadingScripts.size == 0 && unlockMessageQueueAfterLoad) {
-                    JGPortal.unlockMessageQueue();
+            head.appendChild(script);
+            scriptResourceLoaded(scriptResource);
+            return;
+        }
+        script.src = scriptResource.uri;
+        script.addEventListener('load', function(event) {
+            // Remove this from loading
+            loadingScripts.delete(script.src);
+            // All done?
+            scriptResourceLoaded(scriptResource);
+            if (loadingScripts.size == 0 && unlockMessageQueueAfterLoad) {
+                JGPortal.unlockMessageQueue();
+            }
+        });
+        // Put on script load queue to indicate load in progress
+        loadingMsg(function() { return "Loading: " + scriptResource.id });
+        loadingScripts.add(script.src);
+        head.appendChild(script);
+    }
+
+    function scriptResourceLoaded(scriptResource) {
+        // Whatever it provides is now provided
+        loadingMsg(function() { return "Loaded: " + scriptResource.id });
+        scriptResource.provides.forEach(function(res) {
+            providedScriptResources.add(res);
+        });
+        // Re-evaluate
+        let nowProvided = new Set(scriptResource.provides);
+        let stillUnresolved = unresolvedScriptRequests;
+        unresolvedScriptRequests = [];
+        stillUnresolved.forEach(function(reqRes) {
+            // Still required by this unresolved resource
+            let stillRequired = reqRes.requires;
+            reqRes.requires = []; // Accumulates new value
+            stillRequired.forEach(function(required) {
+                if (!nowProvided.has(required)) {
+                    // Not in newly provided, still required
+                    reqRes.requires.push(required);
                 }
             });
-            // Put on script load queue to indicate load in progress
-            loadingScripts.add(script.src);
-        }
-        head.appendChild(script);
+            if (reqRes.requires.length == 0) {
+                startScriptLoad(reqRes);
+            } else {
+                // Still unresolved
+                unresolvedScriptRequests.push(reqRes);
+            }
+        });
     }
     
     function addPageResources(cssUris, cssSource, scriptResources) {

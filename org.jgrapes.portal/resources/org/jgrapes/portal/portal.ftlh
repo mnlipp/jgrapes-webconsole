@@ -47,7 +47,7 @@
   <script src="${resourceUrl('portal-resource/lib/moment-js-2.19.1/moment-with-locales' + minifiedExtension + '.js')}"></script>
 
   <!-- Portal -->
-  <script src="${resourceUrl('portal-resource/functions.js')}"></script>
+  <script src="${resourceUrl('portal-resource/functions' + minifiedExtension + '.js')}"></script>
 
   <script>
   $( function() {
