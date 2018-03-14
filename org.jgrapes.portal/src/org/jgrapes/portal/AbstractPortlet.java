@@ -49,6 +49,7 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.events.Closed;
@@ -273,7 +274,23 @@ public abstract class AbstractPortlet extends Component {
 	 * portal sessions and portlet ids
 	 */
 	public AbstractPortlet(Channel channel, boolean trackPortalSessions) {
-		super(channel);
+		this(channel, null, trackPortalSessions);
+	}
+
+	/**
+	 * Like {@link #AbstractPortlet(Channel, boolean)}, but supports
+	 * the specification of channel replacements.
+	 *
+	 * @param channel the channel to listen on
+	 * @param channelReplacements the channel replacements (see
+	 * {@link Component#Component(Channel, ChannelReplacements)})
+	 * @param trackPortalSessions if set, track the relationship between
+	 * portal sessions and portlet ids
+	 */
+	public AbstractPortlet(Channel channel, 
+			ChannelReplacements channelReplacements, 
+			boolean trackPortalSessions) {
+		super(channel, channelReplacements);
 		if (trackPortalSessions) {
 			portletIdsByPortalSession = Collections.synchronizedMap(
 					new WeakHashMap<>());

@@ -69,10 +69,12 @@ import org.jdrupes.json.JsonDecodeException;
 import org.jdrupes.json.JsonRpc;
 import org.jdrupes.json.JsonRpc.DefaultJsonRpc;
 import org.jgrapes.core.Channel;
+import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.LanguageSelector.Selection;
 import org.jgrapes.http.ResourcePattern;
 import org.jgrapes.http.ResponseCreationSupport;
@@ -114,6 +116,8 @@ public class PortalWeblet extends Component {
 		= PortalWeblet.class.getName() + ".portalSessionId";
 	private static final Configuration fmConfig = createFmConfig();
 
+	private class PortalChannel extends ClassChannel {}
+	
 	private Portal portal;
 	private ResourcePattern requestPattern;
 	private ServiceLoader<ThemeProvider> themeLoader;
@@ -149,7 +153,8 @@ public class PortalWeblet extends Component {
 	 * @param portal the portal
 	 */
 	public PortalWeblet(Channel webletChannel, Portal portal) {
-		super(webletChannel);
+		super(webletChannel, ChannelReplacements.create()
+				.add(PortalChannel.class, portal.channel()));
 		this.portal = portal;
 		String portalPath = portal.prefix().getPath();
 		if (portalPath.endsWith("/")) {
@@ -188,15 +193,6 @@ public class PortalWeblet extends Component {
 						0, portal.prefix().getPath().length() - 1));
 		
 		portalBaseModel = createPortalBaseModel();
-
-		// Handlers attached to the portal side channel
-		Handler.Evaluator.add(this, "onPortalReady", portal.channel());
-		Handler.Evaluator.add(this, "onKeyValueStoreData", portal.channel());
-		Handler.Evaluator.add(this, "onResourceRequestCompleted", portal.channel());
-		Handler.Evaluator.add(this, "onOutput", portal.channel());
-		Handler.Evaluator.add(this, "onPortalCommand", portal.channel());
-		Handler.Evaluator.add(this, "onSetLocale", portal.channel());
-		Handler.Evaluator.add(this, "onSetTheme", portal.channel());
 	}
 
 	private Map<String,Object> createPortalBaseModel() {
@@ -549,7 +545,7 @@ public class PortalWeblet extends Component {
 						portal, channel, activeEventPipeline()));
 	}
 
-	@Handler(dynamic=true)
+	@Handler(channels=PortalChannel.class)
 	public void onResourceRequestCompleted(
 			ResourceRequestCompleted event, PortalResourceChannel channel) 
 					throws IOException, InterruptedException {
@@ -641,7 +637,7 @@ public class PortalWeblet extends Component {
 		});
 	}
 	
-	@Handler(dynamic=true)
+	@Handler(channels=PortalChannel.class)
 	public void onPortalReady(PortalReady event, PortalSession channel) {
 		String principal = 	Utils.userFromSession(channel.browserSession())
 				.map(UserPrincipal::toString).orElse("");
@@ -650,7 +646,7 @@ public class PortalWeblet extends Component {
 		fire(query, channel);
 	}
 
-	@Handler(dynamic=true)
+	@Handler(channels=PortalChannel.class)
 	public void onKeyValueStoreData(
 			KeyValueStoreData event, PortalSession channel) 
 					throws JsonDecodeException {
@@ -675,12 +671,12 @@ public class PortalWeblet extends Component {
 		}
 	}
 	
-	@Handler(dynamic=true)
+	@Handler(channels=PortalChannel.class)
 	public void onOutput(Output<?> event, LinkedIOSubchannel channel) {
 		channel.upstreamChannel().respond(new Output<>(event));
 	}
 	
-	@Handler(dynamic=true)
+	@Handler(channels=PortalChannel.class)
 	public void onSetLocale(SetLocale event, PortalSession channel)
 			throws InterruptedException, IOException {
 		Session session = channel.browserSession();
@@ -695,7 +691,7 @@ public class PortalWeblet extends Component {
 		channel.respond(new SimplePortalCommand("reload"));
 	}
 	
-	@Handler(dynamic=true)
+	@Handler(channels=PortalChannel.class)
 	public void onSetTheme(SetTheme event, PortalSession channel)
 			throws InterruptedException, IOException {
 		ThemeProvider themeProvider = StreamSupport
@@ -710,7 +706,7 @@ public class PortalWeblet extends Component {
 		channel.respond(new SimplePortalCommand("reload"));
 	}
 	
-	@Handler(dynamic=true, priority=-1000)
+	@Handler(channels=PortalChannel.class, priority=-1000)
 	public void onPortalCommand(
 			PortalCommand event, PortalSession channel)
 			throws InterruptedException, IOException {

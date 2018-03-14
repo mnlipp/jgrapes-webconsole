@@ -44,7 +44,9 @@ import java.util.regex.Pattern;
 
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jgrapes.core.Channel;
+import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
+import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.AbstractPortlet;
@@ -79,6 +81,22 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 	public FreeMarkerPortlet(Channel componentChannel, 
 			boolean trackPortalSessions) {
 		super(componentChannel, trackPortalSessions);
+	}
+
+	/**
+	 * Like {@link #FreeMarkerPortlet(Channel, boolean)}, but supports
+	 * the specification of channel replacements.
+	 * 
+	 * @param componentChannel
+	 * @param channelReplacements the channel replacements (see
+	 * {@link Component#Component(Channel, ChannelReplacements)})
+	 * @param trackPortalSessions if set, track the relationship between
+	 * portal sessions and portelt ids
+	 */
+	public FreeMarkerPortlet(Channel componentChannel,
+			ChannelReplacements channelReplacements,
+			boolean trackPortalSessions) {
+		super(componentChannel, channelReplacements, trackPortalSessions);
 	}
 
 	protected Configuration freemarkerConfig() {
