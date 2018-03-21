@@ -136,7 +136,7 @@ public class PortalSession extends DefaultSubchannel {
 	 * @param portalSessionId the browserSession id
 	 * @return the channel
 	 */
-	public static Optional<PortalSession> lookup(String portalSessionId) {
+	static Optional<PortalSession> lookup(String portalSessionId) {
 		cleanUnused();
 		return Optional.ofNullable(portalSessions.get(portalSessionId))
 				.flatMap(wr -> Optional.ofNullable(wr.get()));
@@ -171,7 +171,7 @@ public class PortalSession extends DefaultSubchannel {
 	 * @param timeout the portal session timeout in milli seconds
 	 * @return the channel
 	 */
-	public static PortalSession lookupOrCreate(
+	static PortalSession lookupOrCreate(
 			String portalSessionId, Portal portal, long timeout) {
 		cleanUnused();
 		return portalSessions.computeIfAbsent(portalSessionId, 
@@ -187,7 +187,7 @@ public class PortalSession extends DefaultSubchannel {
 	 * @param newPortalSessionId the new portal session id
 	 * @return the portal session
 	 */
-	public PortalSession replaceId(String newPortalSessionId) {
+	PortalSession replaceId(String newPortalSessionId) {
 		portalSessions.remove(portalSessionId);
 		portalSessionId = newPortalSessionId;
 		portalSessions.put(portalSessionId, new WeakReference<>(
@@ -279,9 +279,14 @@ public class PortalSession extends DefaultSubchannel {
 	}
 	
 	/**
+	 * The portal session id is used in the communication between the
+	 * browser and the server. It is not guaranteed to remain the same
+	 * over time, even if the portal session is maintained. To prevent
+	 * wrong usage, its visibility is therefore set to package. 
+	 * 
 	 * @return the portalSessionId
 	 */
-	public String portalSessionId() {
+	String portalSessionId() {
 		return portalSessionId;
 	}
 
