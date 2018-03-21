@@ -36,7 +36,6 @@ import org.jgrapes.core.EventPipeline;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.IOSubchannel.DefaultSubchannel;
-import org.jgrapes.io.events.Close;
 import org.jgrapes.io.events.Closed;
 import org.jgrapes.io.util.LinkedIOSubchannel;
 
@@ -115,7 +114,6 @@ public class PortalSession extends DefaultSubchannel {
 	
 	private String portalSessionId;
 	private Portal portal;
-	private boolean closed = false;
 	private long timeout;
 	private Timer timeoutTimer;
 	private Session browserSession = null;
@@ -204,7 +202,7 @@ public class PortalSession extends DefaultSubchannel {
 		this.portalSessionId = portalSessionId;
 		this.timeout = timeout;
 		timeoutTimer = Components.schedule(
-				t -> close(), Duration.ofMillis(timeout));
+				t -> discard(), Duration.ofMillis(timeout));
 	}
 
 	/**
@@ -237,26 +235,13 @@ public class PortalSession extends DefaultSubchannel {
 	}
 
 	/**
-	 * Close the portal session.
+	 * Discards this session.
 	 */
-	public void close() {
-		if (!closed) {
-			closed = true;
-			Optional.ofNullable(upstreamChannel).ifPresent(
-					up -> up.respond(new Close()));
-			portalSessions.remove(portalSessionId);
-		}
+	public void discard() {
+		portalSessions.remove(portalSessionId);
+		portal.newEventPipeline().fire(new Closed(), this);
 	}
 
-	/**
-	 * Called by the initiator of this {@link IOSubchannel} when
-	 * it receives a {@link Closed} event. Releases any allocated
-	 * resources.
-	 */
-	public void closed() {
-		portalSessions.remove(portalSessionId);
-	}
-	
 	/**
 	 * Sets or updates the upstream channel. This method should only
 	 * be invoked by the creator of the {@link PortalSession}, by default

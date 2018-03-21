@@ -631,10 +631,6 @@ public class PortalWeblet extends Component {
 			wsChannel.setAssociated(this, null);
 			optWsInputReader.get().close();
 		}
-		wsChannel.associated(PortalSession.class).ifPresent(psc -> {
-			fire(new Closed(), psc);
-			psc.closed();
-		});
 	}
 	
 	@Handler(channels=PortalChannel.class)
@@ -809,7 +805,7 @@ public class PortalWeblet extends Component {
 				if ("disconnect".equals(rpc.method())
 							&& portalSession.portalSessionId().equals(
 									rpc.params().asString(0))) {
-					portalSession.close();
+					portalSession.discard();
 					return;
 				}
 				// Ordinary message from portal (view) to server.
