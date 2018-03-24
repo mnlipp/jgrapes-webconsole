@@ -60,6 +60,7 @@ import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.RenderPortletRequest;
+import org.jgrapes.portal.events.RenderPortletRequestBase;
 import org.jgrapes.portal.events.UpdatePortletModel;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 import org.jgrapes.util.events.KeyValueStoreData;
@@ -196,17 +197,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 				jsonState));
 		
 		// Send HTML
-		Set<RenderMode> modes = renderModes(model);
-		Template tpl = freemarkerConfig().getTemplate(
-				"MarkdownDisplay-preview.ftl.html");
-		portalSession.respond(new RenderPortletFromTemplate(event,
-				MarkdownDisplayPortlet.class, model.getPortletId(),
-				tpl, fmModel(event, portalSession, model))
-				.setRenderMode(DeleteablePreview).setSupportedModes(modes)
-				.setForeground(true));
-		
-		// Fill in data
-		updateView(portalSession, model, portalSession.locale());
+		renderPortlet(event, portalSession, model);
 		return portletId;
 	}
 	
@@ -218,6 +209,13 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	        PortalSession portalSession, String portletId, 
 	        Serializable retrievedState) throws Exception {
 		MarkdownDisplayModel model = (MarkdownDisplayModel)retrievedState;
+		renderPortlet(event, portalSession, model);
+	}
+
+	private void renderPortlet(RenderPortletRequestBase<?> event,
+	        PortalSession portalSession, MarkdownDisplayModel model)
+	        throws TemplateNotFoundException, MalformedTemplateNameException,
+	        ParseException, IOException {
 		Set<RenderMode> modes = renderModes(model);
 		if (model.getViewContent() != null && !model.getViewContent().isEmpty()) {
 			modes.add(View);

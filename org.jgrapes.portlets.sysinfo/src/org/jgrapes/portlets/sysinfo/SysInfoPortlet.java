@@ -52,6 +52,7 @@ import org.jgrapes.portal.events.DeletePortletRequest;
 import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.RenderPortletRequest;
+import org.jgrapes.portal.events.RenderPortletRequestBase;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 
 /**
@@ -122,13 +123,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		String portletId = generatePortletId();
 		SysInfoModel portletModel = putInSession(
 				portalSession.browserSession(), new SysInfoModel(portletId));
-		Template tpl = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-		portalSession.respond(new RenderPortletFromTemplate(event,
-				SysInfoPortlet.class, portletModel.getPortletId(),
-				tpl, fmModel(event, portalSession, portletModel))
-				.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
-				.setForeground(true));
-		updateView(portalSession, portletId, portalSession.locale());
+		renderPortlet(event, portalSession, portletModel);
 		return portletId;
 	}
 	
@@ -140,6 +135,13 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 	        PortalSession portalSession, String portletId, 
 	        Serializable retrievedState) throws Exception {
 		SysInfoModel portletModel = (SysInfoModel)retrievedState;
+		renderPortlet(event, portalSession, portletModel);
+	}
+
+	private void renderPortlet(RenderPortletRequestBase<?> event,
+	        PortalSession portalSession, SysInfoModel portletModel)
+	        throws TemplateNotFoundException, MalformedTemplateNameException,
+	        ParseException, IOException {
 		Locale locale = portalSession.locale();
 		switch (event.renderMode()) {
 		case Preview:
