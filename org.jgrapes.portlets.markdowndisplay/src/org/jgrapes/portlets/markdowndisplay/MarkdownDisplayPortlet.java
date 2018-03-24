@@ -76,9 +76,9 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
 public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 
 	/**
-	 * The supported preferences.
+	 * The supported properties.
 	 */
-	public enum Preferences { PORTLET_ID, TITLE, PREVIEW_SOURCE, 
+	public enum Properties { PORTLET_ID, TITLE, PREVIEW_SOURCE, 
 		VIEW_SOURCE, DELETABLE, EDITABLE_BY }
 	
 	/**
@@ -145,7 +145,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	/**
 	 * Adds the portlet to the portal. The portlet supports the 
 	 * following options (see {@link AddPortletRequest#properties()}
-	 * and {@link Preferences}):
+	 * and {@link Properties}):
 	 * 
 	 * * `PORTLET_ID` (String): The portlet id.
 	 * 
@@ -169,24 +169,24 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
 		
 		// Create new model
-		String portletId = (String)event.properties().get(Preferences.PORTLET_ID);
+		String portletId = (String)event.properties().get(Properties.PORTLET_ID);
 		if (portletId == null) {
 			portletId = generatePortletId();
 		}
 		MarkdownDisplayModel model = putInSession(
 				portalSession.browserSession(), 
 				new MarkdownDisplayModel(portletId));
-		model.setTitle((String)event.properties().getOrDefault(Preferences.TITLE, 
+		model.setTitle((String)event.properties().getOrDefault(Properties.TITLE, 
 				resourceBundle.getString("portletName")));
 		model.setPreviewContent((String)event.properties().getOrDefault(
-				Preferences.PREVIEW_SOURCE, ""));
+				Properties.PREVIEW_SOURCE, ""));
 		model.setViewContent((String)event.properties().getOrDefault(
-				Preferences.VIEW_SOURCE, ""));
+				Properties.VIEW_SOURCE, ""));
 		model.setDeletable((Boolean)event.properties().getOrDefault(
-				Preferences.DELETABLE,	Boolean.TRUE));
+				Properties.DELETABLE,	Boolean.TRUE));
 		@SuppressWarnings("unchecked")
 		Set<Principal> editableBy = (Set<Principal>)event.properties().get(
-				Preferences.EDITABLE_BY);
+				Properties.EDITABLE_BY);
 		model.setEditableBy(editableBy);
 		
 		// Save model
@@ -295,15 +295,15 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	        PortalSession portalSession, Serializable portletState)
 	        throws Exception {
 		event.stop();
-		Map<Preferences, String> properties = new HashMap<>();
+		Map<Properties, String> properties = new HashMap<>();
 		if (event.params().get(0) != null) {
-			properties.put(Preferences.TITLE, event.params().asString(0));
+			properties.put(Properties.TITLE, event.params().asString(0));
 		}
 		if (event.params().get(1) != null) {
-			properties.put(Preferences.PREVIEW_SOURCE, event.params().asString(1));
+			properties.put(Properties.PREVIEW_SOURCE, event.params().asString(1));
 		}
 		if (event.params().get(2) != null) {
-			properties.put(Preferences.VIEW_SOURCE, event.params().asString(2));
+			properties.put(Properties.VIEW_SOURCE, event.params().asString(2));
 		}
 		fire(new UpdatePortletModel(event.portletId(), properties), portalSession);
 	}
@@ -314,15 +314,15 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 			PortalSession portalSession) {
 		stateFromSession(portalSession.browserSession(), event.portletId(), 
 				MarkdownDisplayModel.class).ifPresent(model -> {
-					event.ifPresent(Preferences.TITLE, 
+					event.ifPresent(Properties.TITLE, 
 							(key, value) -> model.setTitle((String)value))
-					.ifPresent(Preferences.PREVIEW_SOURCE, 
+					.ifPresent(Properties.PREVIEW_SOURCE, 
 							(key, value) -> model.setPreviewContent((String)value))
-					.ifPresent(Preferences.VIEW_SOURCE, 
+					.ifPresent(Properties.VIEW_SOURCE, 
 							(key, value) -> model.setViewContent((String)value))
-					.ifPresent(Preferences.DELETABLE, 
+					.ifPresent(Properties.DELETABLE, 
 							(key, value) -> model.setDeletable((Boolean)value))
-					.ifPresent(Preferences.EDITABLE_BY, 
+					.ifPresent(Properties.EDITABLE_BY, 
 							(key, value) -> {
 								model.setEditableBy((Set<Principal>)value);
 							});

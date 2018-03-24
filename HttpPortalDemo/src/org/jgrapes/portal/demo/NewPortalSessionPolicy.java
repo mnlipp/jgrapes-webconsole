@@ -30,7 +30,7 @@ import org.jgrapes.portal.events.PortalConfigured;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.RenderPortlet;
 import org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet;
-import org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet.Preferences;
+import org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet.Properties;
 
 /**
  * 
@@ -75,9 +75,9 @@ public class NewPortalSessionPolicy extends Component {
 		fire(new AddPortletRequest(event.event().event().renderSupport(), 
 				MarkdownDisplayPortlet.class.getName(),
 				Portlet.RenderMode.Preview)
-				.addProperty(Preferences.TITLE, "Demo Portal")
-				.addProperty(Preferences.PREVIEW_SOURCE, "A Demo Portal")
-				.addProperty(Preferences.EDITABLE_BY,  Collections.EMPTY_SET),
+				.addProperty(Properties.TITLE, "Demo Portal")
+				.addProperty(Properties.PREVIEW_SOURCE, "A Demo Portal")
+				.addProperty(Properties.EDITABLE_BY,  Collections.EMPTY_SET),
 				portalSession);
 	}
 
