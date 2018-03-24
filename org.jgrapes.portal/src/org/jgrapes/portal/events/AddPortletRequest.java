@@ -33,7 +33,10 @@ import org.jgrapes.portal.RenderSupport;
  * HTML that displays the portlet on the portal page.
  * 
  * Properties may be passed with the event. The interpretation
- * of the properties is completely dependent on the handling portlet. 
+ * of the properties is completely dependent on the handling portlet.
+ * It is recommended to use {@link String}s as keys and JDK types
+ * as values. This avoids classpath dependencies on the portlet
+ * that is to be added. 
  * 
  * The event's result is the portlet id of the new portlet instance.
  * 

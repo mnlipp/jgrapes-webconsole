@@ -75,11 +75,19 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  */
 public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 
-	/**
-	 * The supported properties.
-	 */
-	public enum Properties { PORTLET_ID, TITLE, PREVIEW_SOURCE, 
-		VIEW_SOURCE, DELETABLE, EDITABLE_BY }
+	/** Property for forcing a portlet id (used for singleton instaces). */
+	public static final String PORTLET_ID = "PortletId";
+	/** Property for setting a title. */
+	public static final String TITLE = "Title";
+	/** Property for setting the preview source. */
+	public static final String PREVIEW_SOURCE = "PreviewSource";
+	/** Property for setting the view source. */
+	public static final String VIEW_SOURCE = "ViewSource";
+	/** Boolean property that controls if the preview is deletable. */
+	public static final String DELETABLE = "Deletable";
+	/** Property of type `Set<Principal>` for restricting who 
+	 * can edit the content. */ 
+	public static final String EDITABLE_BY = "EditableBy";
 	
 	/**
 	 * Creates a new component with its channel set to the given 
@@ -169,24 +177,24 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
 		
 		// Create new model
-		String portletId = (String)event.properties().get(Properties.PORTLET_ID);
+		String portletId = (String)event.properties().get(PORTLET_ID);
 		if (portletId == null) {
 			portletId = generatePortletId();
 		}
 		MarkdownDisplayModel model = putInSession(
 				portalSession.browserSession(), 
 				new MarkdownDisplayModel(portletId));
-		model.setTitle((String)event.properties().getOrDefault(Properties.TITLE, 
+		model.setTitle((String)event.properties().getOrDefault(TITLE, 
 				resourceBundle.getString("portletName")));
 		model.setPreviewContent((String)event.properties().getOrDefault(
-				Properties.PREVIEW_SOURCE, ""));
+				PREVIEW_SOURCE, ""));
 		model.setViewContent((String)event.properties().getOrDefault(
-				Properties.VIEW_SOURCE, ""));
+				VIEW_SOURCE, ""));
 		model.setDeletable((Boolean)event.properties().getOrDefault(
-				Properties.DELETABLE,	Boolean.TRUE));
+				DELETABLE, Boolean.TRUE));
 		@SuppressWarnings("unchecked")
 		Set<Principal> editableBy = (Set<Principal>)event.properties().get(
-				Properties.EDITABLE_BY);
+				EDITABLE_BY);
 		model.setEditableBy(editableBy);
 		
 		// Save model
@@ -295,15 +303,15 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	        PortalSession portalSession, Serializable portletState)
 	        throws Exception {
 		event.stop();
-		Map<Properties, String> properties = new HashMap<>();
+		Map<String, String> properties = new HashMap<>();
 		if (event.params().get(0) != null) {
-			properties.put(Properties.TITLE, event.params().asString(0));
+			properties.put(TITLE, event.params().asString(0));
 		}
 		if (event.params().get(1) != null) {
-			properties.put(Properties.PREVIEW_SOURCE, event.params().asString(1));
+			properties.put(PREVIEW_SOURCE, event.params().asString(1));
 		}
 		if (event.params().get(2) != null) {
-			properties.put(Properties.VIEW_SOURCE, event.params().asString(2));
+			properties.put(VIEW_SOURCE, event.params().asString(2));
 		}
 		fire(new UpdatePortletModel(event.portletId(), properties), portalSession);
 	}
@@ -314,15 +322,15 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 			PortalSession portalSession) {
 		stateFromSession(portalSession.browserSession(), event.portletId(), 
 				MarkdownDisplayModel.class).ifPresent(model -> {
-					event.ifPresent(Properties.TITLE, 
+					event.ifPresent(TITLE, 
 							(key, value) -> model.setTitle((String)value))
-					.ifPresent(Properties.PREVIEW_SOURCE, 
+					.ifPresent(PREVIEW_SOURCE, 
 							(key, value) -> model.setPreviewContent((String)value))
-					.ifPresent(Properties.VIEW_SOURCE, 
+					.ifPresent(VIEW_SOURCE, 
 							(key, value) -> model.setViewContent((String)value))
-					.ifPresent(Properties.DELETABLE, 
+					.ifPresent(DELETABLE, 
 							(key, value) -> model.setDeletable((Boolean)value))
-					.ifPresent(Properties.EDITABLE_BY, 
+					.ifPresent(EDITABLE_BY, 
 							(key, value) -> {
 								model.setEditableBy((Set<Principal>)value);
 							});
