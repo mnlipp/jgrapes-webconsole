@@ -587,11 +587,10 @@ public class PortalWeblet extends Component {
 			return;
 		}
 		// Reuse old portal session if still available
-		String oldPortalSessionId = Optional.ofNullable(
-				event.httpRequest().queryData().get("was")).map(l -> l.get(0))
-				.orElse(null);
-		PortalSession portalSession = Optional.ofNullable(
-				oldPortalSessionId).flatMap(opsId -> PortalSession.lookup(opsId))
+		Optional<String> oldPortalSessionId = Optional.ofNullable(
+				event.httpRequest().queryData().get("was")).map(l -> l.get(0));
+		PortalSession portalSession = oldPortalSessionId.flatMap(
+				opsId -> PortalSession.lookup(opsId))
 				.map(ps -> ps.replaceId(portalSessionId))
 				.orElse(PortalSession.lookupOrCreate(
 						portalSessionId, portal, portalSessionNetworkTimeout))
