@@ -59,6 +59,7 @@ import org.jgrapes.portal.RenderSupport;
 public class AddPortletRequest extends RenderPortletRequestBase<String> {
 
 	private String portletType;
+	private boolean foreground = true;
 	private Map<? extends Object, ? extends Object> properties = null;
 	
 	/**
@@ -91,6 +92,19 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
 		this.properties = props;
 	}
 
+	/**
+	 * Determines if the portlet will be put in the foreground.
+	 * Defaults to `true` for added portlets as they are most likely
+	 * supposed to be seen. 
+	 *
+	 * @param foreground the foreground
+	 * @return the event for easy chaining
+	 */
+	public AddPortletRequest setForeground(boolean foreground) {
+		this.foreground = foreground;
+		return this;
+	}
+	
 	/**
 	 * Returns the portlet type
 	 * 
@@ -143,7 +157,7 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
 
 	@Override
 	public boolean isForeground() {
-		return true;
+		return foreground;
 	}
 	
 }
