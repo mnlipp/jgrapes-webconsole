@@ -780,13 +780,15 @@ var JGPortal = {
         }
     }
     
+    let portletTemplate = $( '<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">'
+            + '<div class="portlet-header ui-widget-header"><span class="portlet-header-text"></span></div>'
+            + '<div class="portlet-content ui-widget-content"></div>'
+            + '</div>');
+    
 	function updatePreview(portletId, modes, content, foreground) {
 		let portlet = findPortletPreview(portletId);
 		if (!portlet) {
-			portlet = $( '<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">'
-			        + '<div class="portlet-header ui-widget-header"><span class="portlet-header-text"></span></div>'
-			        + '<div class="portlet-content ui-widget-content"></div>'
-			        + '</div>');
+			portlet = portletTemplate.clone();
 			portlet.attr("data-portlet-id", portletId);
 			let portletHeader = portlet.find( ".portlet-header" );
 			portletHeader.addClass( "ui-widget-header ui-corner-all" );
