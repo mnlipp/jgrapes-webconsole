@@ -75,9 +75,9 @@ public class NewPortalSessionPolicy extends Component {
 		fire(new AddPortletRequest(event.event().event().renderSupport(), 
 				MarkdownDisplayPortlet.class.getName(),
 				Portlet.RenderMode.Preview)
-				.addPreference(Preferences.TITLE, "Demo Portal")
-				.addPreference(Preferences.PREVIEW_SOURCE, "A Demo Portal")
-				.addPreference(Preferences.EDITABLE_BY,  Collections.EMPTY_SET),
+				.addProperty(Preferences.TITLE, "Demo Portal")
+				.addProperty(Preferences.PREVIEW_SOURCE, "A Demo Portal")
+				.addProperty(Preferences.EDITABLE_BY,  Collections.EMPTY_SET),
 				portalSession);
 	}
 
