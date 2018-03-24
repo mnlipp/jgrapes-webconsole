@@ -140,4 +140,10 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
 		}
 		return this;
 	}
+
+	@Override
+	public boolean isForeground() {
+		return true;
+	}
+	
 }

@@ -56,6 +56,7 @@ import org.jgrapes.portal.events.NotifyPortletModel;
 import org.jgrapes.portal.events.NotifyPortletView;
 import org.jgrapes.portal.events.PortalReady;
 import org.jgrapes.portal.events.RenderPortletRequest;
+import org.jgrapes.portal.events.RenderPortletRequestBase;
 import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
@@ -131,27 +132,9 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		channel.respond(new KeyValueStoreUpdate().update(
 				storagePath(channel.browserSession()) + portletModel.getPortletId(),
 				jsonState));
-		Template tpl = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
-		channel.respond(new RenderPortletFromTemplate(event,
-				HelloWorldPortlet.class, portletModel.getPortletId(),
-				tpl, fmModel(event, channel, portletModel))
-				.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
-				.setForeground(true));
+		renderPortlet(event, channel, portletModel);
 		return portletId;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
-	 */
-	@Override
-	protected void doDeletePortlet(DeletePortletRequest event,
-	        PortalSession channel, String portletId, 
-	        Serializable portletState) throws Exception {
-		channel.respond(new KeyValueStoreUpdate().delete(
-				storagePath(channel.browserSession()) + portletId));
-		channel.respond(new DeletePortlet(portletId));
-	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
@@ -161,6 +144,13 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 	        PortalSession channel, String portletId, 
 	        Serializable retrievedState) throws Exception {
 		HelloWorldModel portletModel = (HelloWorldModel)retrievedState;
+		renderPortlet(event, channel, portletModel);
+	}
+
+	private void renderPortlet(RenderPortletRequestBase<?> event,
+	        PortalSession channel, HelloWorldModel portletModel)
+	        throws TemplateNotFoundException, MalformedTemplateNameException,
+	        ParseException, IOException {
 		switch (event.renderMode()) {
 		case Preview:
 		case DeleteablePreview: {
@@ -169,7 +159,6 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 					HelloWorldPortlet.class, portletModel.getPortletId(), 
 					tpl, fmModel(event, channel, portletModel))
 					.setSupportedModes(MODES).setForeground(event.isForeground()));
-;
 			break;
 		}
 		case View: {
@@ -186,6 +175,18 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
 		default:
 			break;
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
+	 */
+	@Override
+	protected void doDeletePortlet(DeletePortletRequest event,
+	        PortalSession channel, String portletId, 
+	        Serializable portletState) throws Exception {
+		channel.respond(new KeyValueStoreUpdate().delete(
+				storagePath(channel.browserSession()) + portletId));
+		channel.respond(new DeletePortlet(portletId));
 	}
 	
 	/* (non-Javadoc)

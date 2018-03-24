@@ -59,4 +59,10 @@ public abstract class RenderPortletRequestBase<T> extends Event<T> {
 		return renderMode;
 	}
 
+	/**
+	 * Indicates if portlet is to be put in foreground.
+	 * 
+	 * @return the result
+	 */
+	public abstract boolean isForeground();
 }

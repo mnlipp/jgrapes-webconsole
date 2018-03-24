@@ -74,11 +74,7 @@ public class RenderPortletRequest extends RenderPortletRequestBase<Void> {
 		return portletId;
 	}
 
-	/**
-	 * Indicates if portelt is to be put in foreground.
-	 * 
-	 * @return the result
-	 */
+	@Override
 	public boolean isForeground() {
 		return foreground;
 	}
