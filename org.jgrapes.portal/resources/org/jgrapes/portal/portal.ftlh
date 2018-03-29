@@ -72,19 +72,9 @@
   </ul>
 
   <div id="portlet-tabs-1" class="overview-panel">
-    <div class="column">
+    <div class="preview-area">
     </div>
- 
-    <div class="column">
-    </div>
- 
-    <div class="column">
-    </div>
-
-    <div style="clear:both;"></div>
-    
   </div>
-  
 </div>
 
 <!-- (Initially invisible) --> 

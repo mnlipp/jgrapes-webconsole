@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import org.jdrupes.json.JsonObject;
+
 /**
  * Sent by the server to the browser in response to {@link PortalPrepared} 
  * (see this event's description for details). The provided information
@@ -29,23 +31,25 @@ import java.util.List;
  */
 public class LastPortalLayout extends PortalCommand {
 
-	private List<List<String>> previewLayout;
+	private List<String> previewLayout;
 	private List<String> tabsLayout;
+	private JsonObject xtraInfo;
 	
 	/**
 	 * @param previewLayout
 	 * @param tabsLayout
 	 */
-	public LastPortalLayout(
-			List<List<String>> previewLayout, List<String> tabsLayout) {
+	public LastPortalLayout(List<String> previewLayout, 
+			List<String> tabsLayout, JsonObject xtraInfo) {
 		this.previewLayout = previewLayout;
 		this.tabsLayout = tabsLayout;
+		this.xtraInfo = xtraInfo;
 	}
 
 	/**
 	 * @return the previewLayout
 	 */
-	public List<List<String>> previewLayout() {
+	public List<String> previewLayout() {
 		return previewLayout;
 	}
 
@@ -56,9 +60,17 @@ public class LastPortalLayout extends PortalCommand {
 		return tabsLayout;
 	}
 
+	/**
+	 * @return the extra information
+	 */
+	public JsonObject xtraInfo() {
+		return xtraInfo;
+	}
+	
 	@Override
 	public void toJson(Writer writer) throws IOException {
-		toJson(writer, "lastPortalLayout", previewLayout(), tabsLayout());
+		toJson(writer, "lastPortalLayout", previewLayout(), tabsLayout(),
+				xtraInfo());
 	}
 
 }

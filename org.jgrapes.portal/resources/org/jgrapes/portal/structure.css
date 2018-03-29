@@ -1,11 +1,33 @@
+body .fa-loading-modal {
+    z-index: 1000;	
+}
+
+@media (min-width: 620px) {
+  div .preview-area {
+    column-count: 2;
+    column-gap: 0px;
+  }
+  
+  div .portlet {
+    break-inside: avoid;
+  }
+}
+
+@media (min-width: 960px) {
+  div .preview-area {
+     column-count: 3;
+  }
+}
+
+div .portlet {
+  overflow: hidden;
+}
+
 .portlet-expand {
     float: right;
     cursor: pointer;
 }
 
-body .fa-loading-modal {
-    z-index: 1000;	
-}
 
 .ui-notification-container {
     position: fixed;

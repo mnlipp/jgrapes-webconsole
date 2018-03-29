@@ -20,6 +20,7 @@ package org.jgrapes.portal.events;
 
 import java.util.List;
 
+import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Event;
 
 /**
@@ -34,23 +35,25 @@ import org.jgrapes.core.Event;
  */
 public class PortalLayoutChanged extends Event<Void> {
 
-	private List<List<String>> previewLayout;
+	private List<String> previewLayout;
 	private List<String> tabsLayout;
+	private JsonObject xtraInfo;
 	
 	/**
 	 * @param previewLayout
 	 * @param tabsLayout
 	 */
-	public PortalLayoutChanged(List<List<String>> previewLayout, 
-			List<String> tabsLayout) {
+	public PortalLayoutChanged(List<String> previewLayout, 
+			List<String> tabsLayout, JsonObject xtraInfo) {
 		this.previewLayout = previewLayout;
 		this.tabsLayout = tabsLayout;
+		this.xtraInfo = xtraInfo;
 	}
 
 	/**
 	 * @return the previewLayout
 	 */
-	public List<List<String>> previewLayout() {
+	public List<String> previewLayout() {
 		return previewLayout;
 	}
 
@@ -61,6 +64,13 @@ public class PortalLayoutChanged extends Event<Void> {
 		return tabsLayout;
 	}
 	
-
+	/**
+	 * The extra information.
+	 *
+	 * @return the value
+	 */
+	public JsonObject xtraInfo() {
+		return xtraInfo;
+	}
 
 }

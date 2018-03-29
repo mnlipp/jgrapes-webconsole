@@ -44,6 +44,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
 import org.jdrupes.json.JsonArray;
+import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
@@ -185,16 +186,13 @@ public class Portal extends Component {
 			break;
 		}
 		case "portalLayout": {
-			List<List<String>> previewLayout = params.asArray(0)
-					.arrayStream().map(
-							values -> values.stream().map(
-									value -> (String)value)
-							.collect(Collectors.toList()))
-					.collect(Collectors.toList());
+			List<String> previewLayout = params.asArray(0).stream().map(
+					value -> (String)value).collect(Collectors.toList());
 			List<String> tabsLayout = params.asArray(1).stream().map(
 					value -> (String)value).collect(Collectors.toList());
+			JsonObject xtraInfo = (JsonObject)params.get(2);
 			fire(new PortalLayoutChanged(
-					previewLayout, tabsLayout), channel);
+					previewLayout, tabsLayout, xtraInfo), channel);
 			break;
 		}
 		case "renderPortlet": {

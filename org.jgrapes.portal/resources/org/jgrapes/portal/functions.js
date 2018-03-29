@@ -444,8 +444,7 @@ var JGPortal = {
         //
         
         // Prepare columns
-        $( ".column" ).sortable({
-          connectWith: ".column",
+        $( ".preview-area" ).sortable({
           handle: ".portlet-header",
           cancel: ".portlet-toggle",
           placeholder: "portlet-placeholder ui-corner-all",
@@ -585,16 +584,18 @@ var JGPortal = {
             $("#addon-menu-list").append(item);
         });
 
-    var lastPreviewLayout = [[], [], []];
+    var lastPreviewLayout = [];
     var lastTabsLayout = [];
+    var lastXtraInfo = {};
     
     var portalIsConfigured = false;
     var portletFunctionRegistry = {};
     
     webSocketConnection.addMessageHandler('lastPortalLayout',
-        function(previewLayout, tabsLayout) {
+        function(previewLayout, tabsLayout, xtraInfo) {
             lastPreviewLayout = previewLayout;
             lastTabsLayout = tabsLayout;
+            lastXtraInfo = xtraInfo;
             // Should we wait with further actions?
             if (loadingScripts.size > 0) {
                 JGPortal.lockMessageQueue();
@@ -793,32 +794,26 @@ var JGPortal = {
 			let portletHeader = portlet.find( ".portlet-header" );
 			portletHeader.addClass( "ui-widget-header ui-corner-all" );
 			setModeIcons(portlet, modes);
+			let previewArea = $( ".preview-area" );
 			let inserted = false;
-			$( ".column" ).each(function(colIndex) {
-			    if (colIndex >= lastPreviewLayout.length) {
-			        return false;
+			// Hack to check if portletId is in lastPreviewLayout
+			if (isBefore(lastPreviewLayout, portletId, portletId)) {
+			    previewArea.find(".portlet").each(function(portletIndex) {
+			        let item = $( this );
+			        let itemId = item.attr("data-portlet-id");
+			        if (!isBefore(lastPreviewLayout, itemId, portletId)) {
+			            item.before(portlet);
+			            inserted = true;
+			            return false;
+			        }
+			    });
+			    if (!inserted) {
+			        previewArea.append(portlet);
 			    }
-			    let colData = lastPreviewLayout[colIndex];
-                // Hack to check if portletId is in colData
-                if (isBefore(colData, portletId, portletId)) {
-                    $( this ).find(".portlet").each(function(rowIndex) {
-                        let item = $( this );
-                        let itemId = item.attr("data-portlet-id");
-                        if (!isBefore(colData, itemId, portletId)) {
-                            item.before(portlet);
-                            inserted = true;
-                            return false;
-                        }
-                    });
-                    if (!inserted) {
-                        $( this ).append(portlet);
-                    }
-                    inserted = true;
-                    return false;
-                }
-			});
+			    inserted = true;
+			}
 			if (!inserted) {
-			    $( ".column" ).first().prepend(portlet);
+			    previewArea.first().prepend(portlet);
 			}
 			layoutChanged();
 		}
@@ -854,12 +849,9 @@ var JGPortal = {
 	        return;
 	    }
 	    let previewLayout = [];
-	    $(".overview-panel").find(".column").each(function(column) {
-	        let colData = [];
-	        previewLayout.push(colData);
-	        $(this).find("div.portlet[data-portlet-id]").each(function(row) {
-	            colData.push($(this).attr("data-portlet-id"));
-	        });
+	    $(".overview-panel").find(".preview-area")
+	            .find("div.portlet[data-portlet-id]").each(function() {
+	        previewLayout.push($(this).attr("data-portlet-id"));
 	    });
 	    let tabsLayout = [];
         let tabs = $( "#portlet-tabs" ).tabs();
@@ -870,8 +862,9 @@ var JGPortal = {
                 tabsLayout.push(portletId);
             }
         });
+        let xtraInfo = {};
 
-	    JGPortal.sendLayout(previewLayout, tabsLayout);
+	    JGPortal.sendLayout(previewLayout, tabsLayout, xtraInfo);
 	};
 	
     var tabTemplate = "<li><a href='@{href}'>@{label}</a> " +
@@ -1073,9 +1066,9 @@ var JGPortal = {
         }
     };
     
-    JGPortal.sendLayout = function(previewLayout, tabLayout) {
+    JGPortal.sendLayout = function(previewLayout, tabLayout, xtraInfo) {
         webSocketConnection.send({"jsonrpc": "2.0", "method": "portalLayout",
-            "params": [ previewLayout, tabLayout ]});
+            "params": [ previewLayout, tabLayout, xtraInfo ]});
     };
     
     JGPortal.sendLocalData = function(data) {

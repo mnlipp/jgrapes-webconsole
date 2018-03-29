@@ -28,6 +28,7 @@ import java.util.Optional;
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jdrupes.json.JsonDecodeException;
+import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
@@ -212,15 +213,18 @@ public class KVStoreBasedPortalPolicy extends Component {
 			}
 			// Make sure data is consistent
 			@SuppressWarnings("unchecked")
-			List<List<String>> previewLayout = (List<List<String>>)persisted
+			List<String> previewLayout = (List<String>)persisted
 				.computeIfAbsent(
 					"previewLayout", k -> { return Collections.emptyList(); });
 			@SuppressWarnings("unchecked")
 			List<String> tabsLayout = (List<String>)persisted.computeIfAbsent(
 					"tabsLayout", k -> { return Collections.emptyList(); });
+			JsonObject xtraInfo = (JsonObject)persisted.computeIfAbsent(
+					"xtraInfo", k -> { return JsonObject.create(); });
 
 			// Update layout
-			channel.respond(new LastPortalLayout(previewLayout, tabsLayout));
+			channel.respond(new LastPortalLayout(
+					previewLayout, tabsLayout, xtraInfo));
 			
 			// Restore portlets
 			for (String portletId: tabsLayout) {
@@ -228,12 +232,10 @@ public class KVStoreBasedPortalPolicy extends Component {
 						event.event().renderSupport(), portletId,
 						Portlet.RenderMode.View, false), channel);
 			}
-			for (List<String> column: previewLayout) {
-				for (String portletId: column) {
-					fire(new RenderPortletRequest(
-							event.event().renderSupport(), portletId,
-							Portlet.RenderMode.Preview, true), channel);
-				}
+			for (String portletId: previewLayout) {
+				fire(new RenderPortletRequest(
+						event.event().renderSupport(), portletId,
+						Portlet.RenderMode.Preview, true), channel);
 			}
 		}
 		
@@ -241,6 +243,7 @@ public class KVStoreBasedPortalPolicy extends Component {
 				IOSubchannel channel) throws IOException {
 			persisted.put("previewLayout", event.previewLayout());
 			persisted.put("tabsLayout", event.tabsLayout());
+			persisted.put("xtraInfo", event.xtraInfo());
 			
 			// Now store.
 			JsonBeanEncoder encoder = JsonBeanEncoder.create();
