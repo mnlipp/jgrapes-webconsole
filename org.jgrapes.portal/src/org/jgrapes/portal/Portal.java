@@ -20,12 +20,16 @@ package org.jgrapes.portal;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URL;
 import java.time.ZoneId;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
@@ -62,8 +66,6 @@ import org.jgrapes.portal.events.SimplePortalCommand;
  */
 public class Portal extends Component {
 
-	static MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-	
 	private URI prefix;
 	private PortalWeblet view;
 	
@@ -89,15 +91,7 @@ public class Portal extends Component {
 		this.prefix = URI.create(prefix.getPath().endsWith("/") 
 				? prefix.getPath() : (prefix.getPath() + "/"));
 		view = attach(new PortalWeblet(webletChannel, this));
-		try {
-			ObjectName mxbeanName = new ObjectName("org.jgrapes.portal:type="
-					+ Portal.class.getSimpleName() + "#" + Components.objectId(this)
-					+ " (" + prefix.toString() + ")");
-			mbeanServer.registerMBean(new MBeanView(), mxbeanName);
-		} catch (InstanceAlreadyExistsException | MBeanRegistrationException
-		        | NotCompliantMBeanException | MalformedObjectNameException e) {
-			// Won't happen.
-		}
+		MBeanView.addPortal(this);
 	}
 
 	/**
@@ -237,12 +231,9 @@ public class Portal extends Component {
 		channel.respond(new SimplePortalCommand("portalConfigured"));
 	}
 	
-	/**
-	 * An MBean interface for the portal component.
-	 */
-	public static interface ManagedPortalMXBean {
+	public interface PortalMXBean {
 
-		public static class PortalSessionInfo {
+		public class PortalSessionInfo {
 			
 			private PortalSession session;
 
@@ -261,55 +252,134 @@ public class Portal extends Component {
 			}
 		}
 		
-		String getPrefix();
-		
-		/**
-		 * Indicates if minified resources are sent to the browser.
-		 * 
-		 * @return the result
-		 */
-		boolean getUseMinifiedResources();
-		
-		/**
-		 * Determines if minified resources are sent to the browser.
-		 * 
-		 * @param useMinified
-		 */
-		void setUseMinifiedResources(boolean useMinified);
+		public String getPrefix();
+
+		public boolean getUseMinifiedResources();
+
+		public void setUseMinifiedResources(boolean useMinifiedResources);
 		
 		public SortedMap<String,PortalSessionInfo> getPortalSessions();
 	}
 	
-	private class MBeanView implements ManagedPortalMXBean {
+	public static class PortalInfo implements PortalMXBean {
+		
+		private static MBeanServer mbs 
+			= ManagementFactory.getPlatformMBeanServer(); 
 
-		@Override
+		private ObjectName mbeanName;
+		private WeakReference<Portal> portalRef;
+		
+		public PortalInfo(Portal portal) {
+			try {
+				mbeanName = new ObjectName("org.jgrapes.portal:type=" 
+						+ Portal.class.getSimpleName() + ",name="
+						+ ObjectName.quote(Components.simpleObjectName(portal)
+								+ " (" + portal.prefix.toString() + ")"));
+			} catch (MalformedObjectNameException e) {
+				// Won't happen
+			}
+			portalRef = new WeakReference<>(portal);
+			try {
+				mbs.unregisterMBean(mbeanName);
+			} catch (Exception e) {
+				// Just in case, should not work
+			}
+			try {
+				mbs.registerMBean(this, mbeanName);
+			} catch (InstanceAlreadyExistsException | MBeanRegistrationException
+			        | NotCompliantMBeanException e) {
+				e.printStackTrace();
+			}
+		}
+
+		public Optional<Portal> portal() {
+			Portal portal = portalRef.get();
+			if (portal == null) {
+				try {
+					mbs.unregisterMBean(mbeanName);
+				} catch (Exception e) {
+					// Should work.
+				}
+			}
+			return Optional.ofNullable(portal);
+		}
+		
 		public String getPrefix() {
-			return prefix.toString();
+			return portal().map(
+					portal -> portal.prefix().toString()).orElse("<unknown>");
 		}
 
-		/* (non-Javadoc)
-		 * @see org.jgrapes.portal.Portal.ManagedPortalMXBean#getUseMinifiedResources()
-		 */
-		@Override
 		public boolean getUseMinifiedResources() {
-			return view.useMinifiedResources();
+			return portal().map(
+					portal -> portal.view.useMinifiedResources())
+					.orElse(false);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.jgrapes.portal.Portal.ManagedPortalMXBean#setUseMinifiedResources(boolean)
-		 */
-		@Override
 		public void setUseMinifiedResources(boolean useMinifiedResources) {
-			view.setUseMinifiedResources(useMinifiedResources);
+			portal().ifPresent(portal -> portal.view.setUseMinifiedResources(
+					useMinifiedResources));
 		}
 		
 		public SortedMap<String,PortalSessionInfo> getPortalSessions() {
 			SortedMap<String,PortalSessionInfo> result = new TreeMap<>();
-			for (PortalSession ps: PortalSession.byPortal(Portal.this)) {
-				result.put(Components.simpleObjectName(ps), 
-						new PortalSessionInfo(ps));
-			}
+			portal().ifPresent(portal -> {
+				for (PortalSession ps: PortalSession.byPortal(portal)) {
+					result.put(Components.simpleObjectName(ps), 
+							new PortalSessionInfo(ps));
+				}
+			});
 			return result;
 		}
+	}
+
+	/**
+	 * An MBean interface for getting information about all portals.
+	 * 
+	 * There is currently no summary information. However, the (periodic)
+	 * invocation of {@link PortalSummaryMXBean#getPortals()} ensures
+	 * that entries for removed {@link Portal}s are unregistered.
+	 */
+	public static interface PortalSummaryMXBean {
+		
+		public Set<PortalMXBean> getPortals();
+		
+	}
+	
+	private static class MBeanView implements PortalSummaryMXBean {
+
+		private static Set<PortalInfo> portalInfos = new HashSet<>();
+		
+		public static void addPortal(Portal portal) {
+			synchronized (portalInfos) {
+				portalInfos.add(new PortalInfo(portal));
+			}
+		}
+		
+		public Set<PortalMXBean> getPortals() {
+			Set<PortalInfo> expired = new HashSet<>();
+			synchronized (portalInfos) {
+				for (PortalInfo portalInfo: portalInfos) {
+					if (!portalInfo.portal().isPresent()) {
+						expired.add(portalInfo);
+					}
+				}
+				portalInfos.removeAll(expired);
+			}
+			@SuppressWarnings("unchecked")
+			Set<PortalMXBean> result = (Set<PortalMXBean>)(Object)portalInfos;
+			return result;
+		}
+	}
+
+	static {
+		try {
+			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
+			ObjectName mxbeanName = new ObjectName("org.jgrapes.portal:type="
+					+ Portal.class.getSimpleName() + "s");
+			mbs.registerMBean(new MBeanView(), mxbeanName);
+		} catch (MalformedObjectNameException | InstanceAlreadyExistsException
+				| MBeanRegistrationException | NotCompliantMBeanException e) {
+			// Does not happen
+		}		
 	}
 }
