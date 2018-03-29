@@ -71,6 +71,14 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * No other event pipeline may be used for this purpose, else
  * messages will interleave.
  * 
+ * Because a portal session (channel) remains conceptually open
+ * even if the connection to the browser is lost (until the
+ * timeout occurs) {@link Closed} events from upstream are not
+ * forwarded immediately. Rather, a {@link Closed} event is
+ * fired on the channel when the timeout occurs. Method
+ * {@link #isConnected()} can be used to check the connection 
+ * state.
+ *   
  * As a convenience, the {@link PortalSession} provides
  * direct access to the browser session, which can 
  * usually only be obtained from the HTTP event or WebSocket
@@ -116,6 +124,8 @@ public class PortalSession extends DefaultSubchannel {
 	private Portal portal;
 	private long timeout;
 	private Timer timeoutTimer;
+	private boolean active = true;
+	private boolean connected = true;
 	private Session browserSession = null;
 	private IOSubchannel upstreamChannel = null;
 	
@@ -130,10 +140,10 @@ public class PortalSession extends DefaultSubchannel {
 	}
 	
 	/**
-	 * Lookup the portal browserSession channel
-	 * for the given portal browserSession id.
+	 * Lookup the portal session (the channel)
+	 * for the given portal session id.
 	 * 
-	 * @param portalSessionId the browserSession id
+	 * @param portalSessionId the portal session id
 	 * @return the channel
 	 */
 	static Optional<PortalSession> lookup(String portalSessionId) {
@@ -192,6 +202,7 @@ public class PortalSession extends DefaultSubchannel {
 		portalSessionId = newPortalSessionId;
 		portalSessions.put(portalSessionId, new WeakReference<>(
 				this, unusedSessions));
+		connected = true;
 		return this;
 	}
 	
@@ -239,9 +250,33 @@ public class PortalSession extends DefaultSubchannel {
 	 */
 	public void discard() {
 		portalSessions.remove(portalSessionId);
+		connected = false;
+		active = false;
 		portal.newEventPipeline().fire(new Closed(), this);
 	}
 
+	/**
+	 * Checks if the portal session has become stale (inactive).
+	 *
+	 * @return true, if is stale
+	 */
+	public boolean isStale() {
+		return !active;
+	}
+	
+	void disconnected() {
+		connected = false;
+	}
+	
+	/**
+	 * Checks if a network connection with the browser exists.
+	 *
+	 * @return true, if is connected
+	 */
+	public boolean isConnected() {
+		return connected;
+	}
+	
 	/**
 	 * Sets or updates the upstream channel. This method should only
 	 * be invoked by the creator of the {@link PortalSession}, by default

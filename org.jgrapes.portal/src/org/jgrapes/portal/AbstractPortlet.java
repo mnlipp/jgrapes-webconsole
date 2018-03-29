@@ -435,10 +435,12 @@ public abstract class AbstractPortlet extends Component {
 	 * @return the portal sessions
 	 */
 	protected PortalSession[] trackedSessions() {
+		if (portletIdsByPortalSession == null) {
+			return new PortalSession[0];
+		}
 		Set<PortalSession> sessions = new HashSet<>(
 				portletIdsByPortalSession.keySet());
 		return sessions.toArray(new PortalSession[sessions.size()]);
-		
 	}
 	
 	/**

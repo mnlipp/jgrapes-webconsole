@@ -630,6 +630,8 @@ public class PortalWeblet extends Component {
 			wsChannel.setAssociated(this, null);
 			optWsInputReader.get().close();
 		}
+		wsChannel.associated(PortalSession.class).ifPresent(
+				ps -> ps.disconnected());
 	}
 	
 	@Handler(channels=PortalChannel.class)
