@@ -152,8 +152,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 
 	/**
 	 * Adds the portlet to the portal. The portlet supports the 
-	 * following options (see {@link AddPortletRequest#properties()}
-	 * and {@link Properties}):
+	 * following options (see {@link AddPortletRequest#properties()}:
 	 * 
 	 * * `PORTLET_ID` (String): The portlet id.
 	 * 
