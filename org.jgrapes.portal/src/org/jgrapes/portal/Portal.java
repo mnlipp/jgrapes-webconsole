@@ -252,6 +252,8 @@ public class Portal extends Component {
 			}
 		}
 		
+		public String getComponentPath();
+		
 		public String getPrefix();
 
 		public boolean getUseMinifiedResources();
@@ -304,22 +306,31 @@ public class Portal extends Component {
 			return Optional.ofNullable(portal);
 		}
 		
+		@Override
+		public String getComponentPath() {
+			return portal().map(mgr -> mgr.componentPath()).orElse("<removed>");
+		}
+		
+		@Override
 		public String getPrefix() {
 			return portal().map(
 					portal -> portal.prefix().toString()).orElse("<unknown>");
 		}
 
+		@Override
 		public boolean getUseMinifiedResources() {
 			return portal().map(
 					portal -> portal.view.useMinifiedResources())
 					.orElse(false);
 		}
 
+		@Override
 		public void setUseMinifiedResources(boolean useMinifiedResources) {
 			portal().ifPresent(portal -> portal.view.setUseMinifiedResources(
 					useMinifiedResources));
 		}
 		
+		@Override
 		public SortedMap<String,PortalSessionInfo> getPortalSessions() {
 			SortedMap<String,PortalSessionInfo> result = new TreeMap<>();
 			portal().ifPresent(portal -> {
@@ -355,6 +366,7 @@ public class Portal extends Component {
 			}
 		}
 		
+		@Override
 		public Set<PortalMXBean> getPortals() {
 			Set<PortalInfo> expired = new HashSet<>();
 			synchronized (portalInfos) {
