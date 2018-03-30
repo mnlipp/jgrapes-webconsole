@@ -635,12 +635,16 @@ public class PortalWeblet extends Component {
 	}
 	
 	@Handler(channels=PortalChannel.class)
-	public void onPortalReady(PortalReady event, PortalSession channel) {
-		String principal = 	Utils.userFromSession(channel.browserSession())
+	public void onPortalReady(PortalReady event, PortalSession portalSession) {
+		// From now on, only portalSession.respond may be used to send on the 
+		// upstream channel.
+		portalSession.upstreamChannel().responsePipeline()
+			.restrictEventSource(portalSession.responsePipeline());
+		String principal = 	Utils.userFromSession(portalSession.browserSession())
 				.map(UserPrincipal::toString).orElse("");
 		KeyValueStoreQuery query = new KeyValueStoreQuery(
-				"/" + principal + "/themeProvider", channel);
-		fire(query, channel);
+				"/" + principal + "/themeProvider", portalSession);
+		fire(query, portalSession);
 	}
 
 	@Handler(channels=PortalChannel.class)

@@ -128,8 +128,8 @@ public class PortalLocalBackedKVStore extends Component {
 				data.remove(action.key());
 			}
 		}
-		fire(new SimplePortalCommand("storeLocalData", 
-				new Object[] { actions.toArray() }), channel);
+		channel.respond(new SimplePortalCommand("storeLocalData", 
+				new Object[] { actions.toArray() }));
 	}
 
 	@Handler
