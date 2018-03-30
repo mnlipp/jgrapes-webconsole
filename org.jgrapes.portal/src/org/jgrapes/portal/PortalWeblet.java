@@ -313,6 +313,8 @@ public class PortalWeblet extends Component {
 		response.setStatus(HttpStatus.MOVED_PERMANENTLY)
 			.setContentType("text", "plain", "utf-8")
 			.setField(HttpField.LOCATION, portal.prefix());
+		// Restore channel to normal mode, see onPortalReady
+		channel.responsePipeline().restrictEventSource(null);
 		channel.respond(new Response(response));
 		try {
 			channel.respond(Output.from(portal.prefix().toString()
@@ -333,6 +335,8 @@ public class PortalWeblet extends Component {
 		if (prefixSegs < 0 || !event.associated(Session.class).isPresent()) {
 			return;
 		}
+		// Restore channel to normal mode, see onPortalReady
+		channel.responsePipeline().restrictEventSource(null);
 		
 		// Normalize and evaluate
 		String requestPath = ResourcePattern.removeSegments(
