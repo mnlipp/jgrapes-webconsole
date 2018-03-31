@@ -81,9 +81,9 @@ import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
 import org.jgrapes.http.annotation.RequestHandler;
 import org.jgrapes.http.events.GetRequest;
+import org.jgrapes.http.events.ProtocolSwitchAccepted;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
-import org.jgrapes.http.events.WebSocketAccepted;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.events.Closed;
 import org.jgrapes.io.events.Input;
@@ -313,8 +313,6 @@ public class PortalWeblet extends Component {
 		response.setStatus(HttpStatus.MOVED_PERMANENTLY)
 			.setContentType("text", "plain", "utf-8")
 			.setField(HttpField.LOCATION, portal.prefix());
-		// Restore channel to normal mode, see onPortalReady
-		channel.responsePipeline().restrictEventSource(null);
 		channel.respond(new Response(response));
 		try {
 			channel.respond(Output.from(portal.prefix().toString()
@@ -335,8 +333,6 @@ public class PortalWeblet extends Component {
 		if (prefixSegs < 0 || !event.associated(Session.class).isPresent()) {
 			return;
 		}
-		// Restore channel to normal mode, see onPortalReady
-		channel.responsePipeline().restrictEventSource(null);
 		
 		// Normalize and evaluate
 		String requestPath = ResourcePattern.removeSegments(
@@ -581,7 +577,7 @@ public class PortalWeblet extends Component {
 		Map<URI,UUID> knownIds = (Map<URI,UUID>)browserSession.computeIfAbsent(
 				PORTAL_SESSION_IDS, k -> new HashMap<URI,UUID>());
 		if (!UUID.fromString(portalSessionId).equals(knownIds.get(portal.prefix()))) {
-			channel.respond(new WebSocketAccepted(event)).get();
+			channel.respond(new ProtocolSwitchAccepted(event, "websocket")).get();
 			@SuppressWarnings("resource")
 			CharBufferWriter out = new CharBufferWriter(channel, 
 					channel.responsePipeline()).suppressClose();
@@ -604,7 +600,7 @@ public class PortalWeblet extends Component {
 		// Channel now used as JSON input
 		channel.setAssociated(this, new WsInputReader(
 				event.processedBy().get(), portalSession));
-		channel.respond(new WebSocketAccepted(event));
+		channel.respond(new ProtocolSwitchAccepted(event, "websocket"));
 		event.stop();
 	}
 
@@ -634,16 +630,15 @@ public class PortalWeblet extends Component {
 			wsChannel.setAssociated(this, null);
 			optWsInputReader.get().close();
 		}
-		wsChannel.associated(PortalSession.class).ifPresent(
-				ps -> ps.disconnected());
+		wsChannel.associated(PortalSession.class).ifPresent(ps -> {
+			// Restore channel to normal mode, see onPortalReady
+			ps.responsePipeline().restrictEventSource(null);
+			ps.disconnected();
+		});
 	}
 	
 	@Handler(channels=PortalChannel.class)
 	public void onPortalReady(PortalReady event, PortalSession portalSession) {
-		// From now on, only portalSession.respond may be used to send on the 
-		// upstream channel.
-		portalSession.upstreamChannel().responsePipeline()
-			.restrictEventSource(portalSession.responsePipeline());
 		String principal = 	Utils.userFromSession(portalSession.browserSession())
 				.map(UserPrincipal::toString).orElse("");
 		KeyValueStoreQuery query = new KeyValueStoreQuery(
