@@ -84,6 +84,7 @@ import org.jgrapes.http.events.GetRequest;
 import org.jgrapes.http.events.ProtocolSwitchAccepted;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
+import org.jgrapes.http.events.Upgraded;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.events.Closed;
 import org.jgrapes.io.events.Input;
@@ -612,6 +613,16 @@ public class PortalWeblet extends Component {
 		if (optWsInputReader.isPresent()) {
 			optWsInputReader.get().write(event.buffer().backingBuffer());
 		}
+	}
+	
+	@Handler
+	public void onUpgraded(Upgraded event, IOSubchannel wsChannel) {
+		wsChannel.associated(PortalSession.class).ifPresent(ps -> {
+			// From now on, only portalSession.respond may be used to send on the 
+			// upstream channel.
+			ps.upstreamChannel().responsePipeline()
+				.restrictEventSource(ps.responsePipeline());
+		});
 	}
 	
 	/**
