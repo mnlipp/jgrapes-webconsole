@@ -176,8 +176,8 @@ var JGPortal = {
                 });
             }
             self._drainSendQueue();
-            if (this._initialConnect) {
-                this._initialConnect = false;
+            if (self._initialConnect) {
+                self._initialConnect = false;
             } else {
                 // Make sure to get any lost updates
                 findPreviewIds().forEach(function(id) {
