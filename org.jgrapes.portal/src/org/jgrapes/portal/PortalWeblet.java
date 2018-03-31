@@ -569,6 +569,7 @@ public class PortalWeblet extends Component {
 				.orElse(false)) {
 			return;
 		}
+
 		// Can only connect to sessions that have been prepared
 		// by loading the portal. (Prevents using a newly created
 		// browser session from being (re-)connected to after a 
@@ -577,34 +578,61 @@ public class PortalWeblet extends Component {
 		@SuppressWarnings("unchecked")
 		Map<URI,UUID> knownIds = (Map<URI,UUID>)browserSession.computeIfAbsent(
 				PORTAL_SESSION_IDS, k -> new HashMap<URI,UUID>());
-		if (!UUID.fromString(portalSessionId).equals(knownIds.get(portal.prefix()))) {
-			channel.respond(new ProtocolSwitchAccepted(event, "websocket")).get();
+		if(!UUID.fromString(portalSessionId)
+				.equals(knownIds.get(portal.prefix()))) {
+			channel.setAssociated(this, new String[2]);
+		} else {
+			channel.setAssociated(this, new String[] {
+					portalSessionId, 
+					Optional.ofNullable(event.httpRequest().queryData()
+							.get("was")).map(l -> l.get(0)).orElse(null)
+			});
+		}
+		channel.respond(new ProtocolSwitchAccepted(event, "websocket"));
+		event.stop();
+		return;
+	}
+
+	@Handler
+	public void onUpgraded(Upgraded event, IOSubchannel wsChannel)
+			throws IOException {
+		Optional<String[]> passedIn = wsChannel.associated(this, String[].class);
+		if (!passedIn.isPresent()) {
+			return;
+		}
+		
+		// Check if reload required
+		String[] portalSessionIds = passedIn.get();
+		if (portalSessionIds[0] == null) {
 			@SuppressWarnings("resource")
-			CharBufferWriter out = new CharBufferWriter(channel, 
-					channel.responsePipeline()).suppressClose();
+			CharBufferWriter out = new CharBufferWriter(wsChannel, 
+					wsChannel.responsePipeline()).suppressClose();
 			new SimplePortalCommand("reload").toJson(out);
 			out.close();
 			event.stop();
 			return;
 		}
-		// Reuse old portal session if still available
-		Optional<String> oldPortalSessionId = Optional.ofNullable(
-				event.httpRequest().queryData().get("was")).map(l -> l.get(0));
-		PortalSession portalSession = oldPortalSessionId.flatMap(
-				opsId -> PortalSession.lookup(opsId))
-				.map(ps -> ps.replaceId(portalSessionId))
-				.orElse(PortalSession.lookupOrCreate(
-						portalSessionId, portal, portalSessionNetworkTimeout))
-				.setUpstreamChannel(channel)
-				.setSession(browserSession);
-		channel.setAssociated(PortalSession.class, portalSession);
-		// Channel now used as JSON input
-		channel.setAssociated(this, new WsInputReader(
-				event.processedBy().get(), portalSession));
-		channel.respond(new ProtocolSwitchAccepted(event, "websocket"));
-		event.stop();
-	}
 
+		// Get portal session
+		final Session browserSession = wsChannel.associated(Session.class).get();
+		// Reuse old portal session if still available
+		PortalSession portalSession = Optional.ofNullable(portalSessionIds[1])
+				.flatMap(opsId -> PortalSession.lookup(opsId))
+				.map(ps -> ps.replaceId(portalSessionIds[0]))
+				.orElse(PortalSession.lookupOrCreate(portalSessionIds[0],
+						portal, portalSessionNetworkTimeout))
+				.setUpstreamChannel(wsChannel)
+				.setSession(browserSession);
+		wsChannel.setAssociated(PortalSession.class, portalSession);
+		// Channel now used as JSON input
+		wsChannel.setAssociated(this, new WsInputReader(
+				event.processedBy().get(), portalSession));
+		// From now on, only portalSession.respond may be used to send on the 
+		// upstream channel.
+		portalSession.upstreamChannel().responsePipeline()
+			.restrictEventSource(portalSession.responsePipeline());
+	}
+	
 	@Handler
 	public void onInput(Input<CharBuffer> event, IOSubchannel wsChannel)
 			throws IOException {
@@ -613,16 +641,6 @@ public class PortalWeblet extends Component {
 		if (optWsInputReader.isPresent()) {
 			optWsInputReader.get().write(event.buffer().backingBuffer());
 		}
-	}
-	
-	@Handler
-	public void onUpgraded(Upgraded event, IOSubchannel wsChannel) {
-		wsChannel.associated(PortalSession.class).ifPresent(ps -> {
-			// From now on, only portalSession.respond may be used to send on the 
-			// upstream channel.
-			ps.upstreamChannel().responsePipeline()
-				.restrictEventSource(ps.responsePipeline());
-		});
 	}
 	
 	/**
