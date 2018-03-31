@@ -627,10 +627,10 @@ public class PortalWeblet extends Component {
 		// Channel now used as JSON input
 		wsChannel.setAssociated(this, new WsInputReader(
 				event.processedBy().get(), portalSession));
-		// From now on, only portalSession.respond may be used to send on the 
-		// upstream channel.
-		portalSession.upstreamChannel().responsePipeline()
-			.restrictEventSource(portalSession.responsePipeline());
+//		// From now on, only portalSession.respond may be used to send on the 
+//		// upstream channel.
+//		portalSession.upstreamChannel().responsePipeline()
+//			.restrictEventSource(portalSession.responsePipeline());
 	}
 	
 	@Handler
