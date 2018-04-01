@@ -23,6 +23,7 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -153,7 +154,8 @@ public class PortalSession extends DefaultSubchannel {
 	}
 	
 	/**
-	 * Return all sessions that belong to the given portal.
+	 * Return all sessions that belong to the given portal as a new
+	 * unmodifiable set.
 	 *
 	 * @param portal the portal
 	 * @return the sets the
@@ -167,7 +169,7 @@ public class PortalSession extends DefaultSubchannel {
 				result.add(ps);
 			}
 		}
-		return result;
+		return Collections.unmodifiableSet(result);
 	}
 	
 	/**
