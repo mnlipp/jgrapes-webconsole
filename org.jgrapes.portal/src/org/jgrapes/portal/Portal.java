@@ -49,6 +49,7 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.core.events.Stop;
 import org.jgrapes.portal.Portlet.RenderMode;
 import org.jgrapes.portal.events.AddPortletRequest;
 import org.jgrapes.portal.events.DeletePortletRequest;
@@ -227,6 +228,13 @@ public class Portal extends Component {
 			PortalConfigured event, PortalSession channel) 
 					throws InterruptedException, IOException {
 		channel.respond(new SimplePortalCommand("portalConfigured"));
+	}
+	
+	@Handler
+	public void onStop(Stop event) {
+		for (PortalSession ps: PortalSession.byPortal(this)) {
+			ps.discard();
+		}
 	}
 	
 	public interface PortalMXBean {
