@@ -170,6 +170,9 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 
 	private void updateView(PortalSession portalSession, String portletId,
 	        Locale locale) {
+		if (!portalSession.isConnected()) {
+			return;
+		}
 		Runtime runtime = Runtime.getRuntime();
 		portalSession.respond(new NotifyPortletView(type(),
 				portletId, "updateMemorySizes", 
