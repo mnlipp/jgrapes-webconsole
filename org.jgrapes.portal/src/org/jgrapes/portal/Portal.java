@@ -52,6 +52,7 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.events.Stop;
 import org.jgrapes.portal.Portlet.RenderMode;
 import org.jgrapes.portal.events.AddPortletRequest;
+import org.jgrapes.portal.events.DeletePortlet;
 import org.jgrapes.portal.events.DeletePortletRequest;
 import org.jgrapes.portal.events.JsonInput;
 import org.jgrapes.portal.events.NotifyPortletModel;
@@ -228,6 +229,22 @@ public class Portal extends Component {
 			PortalConfigured event, PortalSession channel) 
 					throws InterruptedException, IOException {
 		channel.respond(new SimplePortalCommand("portalConfigured"));
+	}
+	
+	/**
+	 * Fallback handler that sends a {@link DeletePortlet} event 
+	 * if the {@link RenderPortletRequest} event has not been handled
+	 * successfully.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 */
+	@Handler(priority=-1000000)
+	public void onRenderPortlet(
+			RenderPortletRequest event, PortalSession channel) {
+		if (!event.hasBeenRendered()) {
+			channel.respond(new DeletePortlet(event.portletId()));
+		}
 	}
 	
 	@Handler

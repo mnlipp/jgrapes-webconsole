@@ -30,6 +30,8 @@ import org.jgrapes.portal.RenderSupport;
  * 
  * ![Event Sequence](RenderPortletRequestSeq.svg)
  * 
+ * The event's result must be set to `true` by the rendering portlet.
+ * 
  * @startuml RenderPortletRequestSeq.svg
  * hide footbox
  * 
@@ -46,7 +48,7 @@ import org.jgrapes.portal.RenderSupport;
  * 
  * @enduml
  */
-public class RenderPortletRequest extends RenderPortletRequestBase<Void> {
+public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
 
 	private String portletId;
 	private boolean foreground;
@@ -77,5 +79,9 @@ public class RenderPortletRequest extends RenderPortletRequestBase<Void> {
 	@Override
 	public boolean isForeground() {
 		return foreground;
+	}
+	
+	public boolean hasBeenRendered() {
+		return currentResults() != null && currentResults().get(0);
 	}
 }

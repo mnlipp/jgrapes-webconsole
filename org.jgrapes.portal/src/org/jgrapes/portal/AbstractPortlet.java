@@ -643,8 +643,8 @@ public abstract class AbstractPortlet extends Component {
 	/**
 	 * Checks if the request applies to this component by calling
 	 * {@link #stateFromSession(Session, String, Class)}. If a model
-	 * is found, stops the event, and calls 
-	 * {@link #doRenderPortlet} with the state information. 
+	 * is found, sets the event's result to `true`, stops the event, and 
+	 * calls {@link #doRenderPortlet} with the state information. 
 	 * 
 	 * Some portlets that do not persist their models between sessions
 	 * (e.g. because the model only references data maintained elsewhere)
@@ -664,6 +664,7 @@ public abstract class AbstractPortlet extends Component {
 		if (!optPortletState.isPresent()) {
 			return;
 		}
+		event.setResult(true);
 		event.stop();
 		portletIds(portalSession).add(event.portletId());
 		updateRefresh();
