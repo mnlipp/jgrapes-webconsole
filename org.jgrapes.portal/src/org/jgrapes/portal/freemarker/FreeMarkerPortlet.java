@@ -89,7 +89,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 	 * 
 	 * @param componentChannel
 	 * @param channelReplacements the channel replacements (see
-	 * {@link Component#Component(Channel, ChannelReplacements)})
+	 * {@link Component})
 	 * @param trackPortalSessions if set, track the relationship between
 	 * portal sessions and portelt ids
 	 */

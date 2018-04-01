@@ -283,7 +283,7 @@ public abstract class AbstractPortlet extends Component {
 	 *
 	 * @param channel the channel to listen on
 	 * @param channelReplacements the channel replacements (see
-	 * {@link Component#Component(Channel, ChannelReplacements)})
+	 * {@link Component})
 	 * @param trackPortalSessions if set, track the relationship between
 	 * portal sessions and portlet ids
 	 */
