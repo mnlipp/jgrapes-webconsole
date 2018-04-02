@@ -86,6 +86,8 @@ public class DatatablesProvider extends PageResourceProvider {
 		portalSession.respond(new AddPageResources()
 				.addCss(event.renderSupport().pageResource(
 						"datatables/datatables" + minExt + ".css"))
+				.addCss(event.renderSupport().pageResource(
+						"datatables/overrides-1.0.0.css"))
 				.addScriptResource(new ScriptResource()
 						.setProvides(new String[] {"datatables.net"})
 						.setScriptUri(event.renderSupport().pageResource(
