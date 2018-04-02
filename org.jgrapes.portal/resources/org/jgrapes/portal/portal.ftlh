@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="${resourceUrl('theme-resource/jquery-ui' + minifiedExtension + '.css')}">
   <link rel="stylesheet" href="${resourceUrl('portal-resource/lib/jquery-ui-iconfont-2.3.2/jquery-ui-1.12.icon-font' + minifiedExtension + '.css')}">
   <link rel="stylesheet" href="${resourceUrl('portal-resource/lib/jquery-dropdown-2.0.3/jquery.dropdown' + minifiedExtension + '.css')}">
+  <link rel="stylesheet" href="${resourceUrl('portal-resource/lib/jquery-dropdown-2.0.3/overrides-1.0.0.css')}">
   <link rel="stylesheet" href="${resourceUrl('portal-resource/lib/font-awesome-4.7.0/css/font-awesome' + minifiedExtension + '.css')}"/>
   <link rel="stylesheet" href="${resourceUrl('portal-resource/lib/jquery-fa-loading-0.3/jquery.faloading' + minifiedExtension + '.css')}">
 
@@ -80,7 +81,7 @@
 <!-- (Initially invisible) --> 
 
 <!-- The settings panel and its sub-structures -->
-<div id="settings-panel" class="jq-dropdown jq-dropdown-anchor-right">
+<div id="settings-panel" class="jq-dropdown jq-dropdown-anchor-right ui-widget ui-widget-content ui-corner-all">
   <ul class="jq-dropdown-panel ui-widget ui-widget-content">
     <li class="ui-menu-item" data-jq-dropdown="#language-menu">
       <div class="ui-menu-item-wrapper">${_("Language")}</div>
@@ -91,7 +92,7 @@
   </ul>
 </div>
 
-<div id="language-menu" class="jq-dropdown jq-dropdown-tip jq-dropdown-scroll">
+<div id="language-menu" class="jq-dropdown jq-dropdown-tip jq-dropdown-scroll ui-widget ui-widget-content ui-corner-all">
   <ul class="jq-dropdown-menu ui-menu ui-widget ui-menu-item">
   <#list supportedLanguages as l>
     <li class="ui-menu-item">
@@ -101,7 +102,7 @@
   </ul>
 </div>
 
-<div id="theme-menu" class="jq-dropdown jq-dropdown-tip">
+<div id="theme-menu" class="jq-dropdown jq-dropdown-tip ui-widget ui-widget-content ui-corner-all">
   <ul class="jq-dropdown-menu ui-menu ui-widget ui-menu-item">
   <#list themeInfos as t>
     <li class="ui-menu-item">
@@ -111,7 +112,7 @@
   </ul>
 </div>
 
-<div id="addon-menu" class="jq-dropdown jq-dropdown-tip jq-dropdown-anchor-right">
+<div id="addon-menu" class="jq-dropdown jq-dropdown-tip jq-dropdown-anchor-right ui-widget ui-widget-content ui-corner-all">
   <ul id="addon-menu-list" class="jq-dropdown-menu ui-menu ui-widget ui-menu-item">
   </ul>
 </div>

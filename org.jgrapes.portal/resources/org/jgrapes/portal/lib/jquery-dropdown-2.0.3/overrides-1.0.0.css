@@ -1,0 +1,4 @@
+.jq-dropdown .jq-dropdown-menu,
+.jq-dropdown .jq-dropdown-panel {
+  background-color: rgba(0,0,0,0) !important;
+}
