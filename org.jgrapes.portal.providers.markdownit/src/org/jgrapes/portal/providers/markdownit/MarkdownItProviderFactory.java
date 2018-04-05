@@ -25,6 +25,9 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.portal.PageResourceProviderFactory;
 
+/**
+ * A factory for creating {@link MarkdownItProvider}s.
+ */
 public class MarkdownItProviderFactory implements PageResourceProviderFactory {
 
 	/* (non-Javadoc)

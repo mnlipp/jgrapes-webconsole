@@ -29,7 +29,6 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -46,8 +45,7 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.PortalSession;
 import org.jgrapes.portal.PortalWeblet;
 
-import static org.jgrapes.portal.Portlet.*;
-import static org.jgrapes.portal.Portlet.RenderMode.*;
+import static org.jgrapes.portal.Portlet.RenderMode;
 
 import org.jgrapes.portal.UserPrincipal;
 import org.jgrapes.portal.Utils;
@@ -73,6 +71,7 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  * a user himself. A typical use case, however, is to create
  * an instance during startup by a portal policy.
  */
+@SuppressWarnings("PMD.DataClass")
 public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 
 	/** Property for forcing a portlet id (used for singleton instaces). */
@@ -107,6 +106,16 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 			+ "/portlets/" + MarkdownDisplayPortlet.class.getName()	+ "/";
 	}
 	
+	/**
+	 * On {@link PortalReady}, fire the {@link AddPortletType}.
+	 *
+	 * @param event the event
+	 * @param portalSession the portal session
+	 * @throws TemplateNotFoundException the template not found exception
+	 * @throws MalformedTemplateNameException the malformed template name exception
+	 * @throws ParseException the parse exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
 	public void onPortalReady(PortalReady event, PortalSession portalSession) 
 			throws TemplateNotFoundException, MalformedTemplateNameException, 
@@ -136,6 +145,13 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		fire(query, portalSession);
 	}
 
+	/**
+	 * Restore portlet information, if contained in the event.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws JsonDecodeException the json decode exception
+	 */
 	@Handler
 	public void onKeyValueStoreData(
 			KeyValueStoreData event, PortalSession channel) 
@@ -219,13 +235,14 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		renderPortlet(event, portalSession, model);
 	}
 
+	@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 	private void renderPortlet(RenderPortletRequestBase<?> event,
 	        PortalSession portalSession, MarkdownDisplayModel model)
 	        throws TemplateNotFoundException, MalformedTemplateNameException,
 	        ParseException, IOException {
 		Set<RenderMode> modes = renderModes(model);
 		if (model.getViewContent() != null && !model.getViewContent().isEmpty()) {
-			modes.add(View);
+			modes.add(RenderMode.View);
 		}
 		switch (event.renderMode()) {
 		case Preview:
@@ -236,7 +253,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 					tpl, fmModel(event, portalSession, model))
 					.setRenderMode(event.renderMode()).setSupportedModes(modes)
 					.setForeground(event.isForeground()));
-			updateView(portalSession, model, portalSession.locale());
+			updateView(portalSession, model);
 			break;
 		}
 		case View: {
@@ -244,9 +261,9 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 			portalSession.respond(new RenderPortletFromTemplate(event,
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
 					tpl, fmModel(event, portalSession, model))
-					.setRenderMode(View).setSupportedModes(modes)
+					.setRenderMode(RenderMode.View).setSupportedModes(modes)
 					.setForeground(event.isForeground()));
-			updateView(portalSession, model, portalSession.locale());
+			updateView(portalSession, model);
 			break;
 		}
 		case Edit: {
@@ -254,7 +271,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 			portalSession.respond(new RenderPortletFromTemplate(event,
 					MarkdownDisplayPortlet.class, model.getPortletId(), 
 					tpl, fmModel(event, portalSession, model))
-					.setRenderMode(Edit).setSupportedModes(modes));
+					.setRenderMode(RenderMode.Edit).setSupportedModes(modes));
 			break;
 		}
 		default:
@@ -264,18 +281,19 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 
 	private Set<RenderMode> renderModes(MarkdownDisplayModel model) {
 		Set<RenderMode> modes = new HashSet<>();
-		modes.add(model.isDeletable() ? DeleteablePreview : Preview);
+		modes.add(model.isDeletable() ? RenderMode.DeleteablePreview 
+				: RenderMode.Preview);
 		if (model.getViewContent() != null && !model.getViewContent().isEmpty()) {
-			modes.add(View);
+			modes.add(RenderMode.View);
 		}
 		if (model.getEditableBy() == null) {
-			modes.add(Edit);
+			modes.add(RenderMode.Edit);
 		}
 		return modes;
 	}
 	
-	private void updateView(IOSubchannel channel, MarkdownDisplayModel model,
-	        Locale locale) {
+	
+	private void updateView(IOSubchannel channel, MarkdownDisplayModel model) {
 		channel.respond(new NotifyPortletView(type(),
 				model.getPortletId(), "updateAll", model.getTitle(), 
 				model.getPreviewContent(), model.getViewContent(),
@@ -302,6 +320,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 	        PortalSession portalSession, Serializable portletState)
 	        throws Exception {
 		event.stop();
+		@SuppressWarnings("PMD.UseConcurrentHashMap")
 		Map<String, String> properties = new HashMap<>();
 		if (event.params().get(0) != null) {
 			properties.put(TITLE, event.params().asString(0));
@@ -315,6 +334,13 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		fire(new UpdatePortletModel(event.portletId(), properties), portalSession);
 	}
 
+	/**
+	 * Stores the modified properties using a {@link KeyValueStoreUpdate}
+	 * event and updates the view with a {@link NotifyPortletView}. 
+	 *
+	 * @param event the event
+	 * @param portalSession the portal session
+	 */
 	@SuppressWarnings("unchecked")
 	@Handler
 	public void onUpdatePortletModel(UpdatePortletModel event, 
@@ -339,13 +365,16 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 						portalSession.respond(new KeyValueStoreUpdate().update(
 								storagePath(portalSession.browserSession()) 
 								+ model.getPortletId(),	jsonState));
-						updateView(portalSession, model, portalSession.locale());
-					} catch (IOException e) {
+						updateView(portalSession, model);
+					} catch (IOException e) { // NOPMD
 						// Won't happen, uses internal writer
 					}
 				});
 	}
 	
+	/**
+	 * The portlet's model.
+	 */
 	@SuppressWarnings("serial")
 	public static class MarkdownDisplayModel extends PortletBaseModel {
 
@@ -353,7 +382,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 		private String previewContent = "";
 		private String viewContent = "";
 		private boolean deletable = true;
-		private Set<Principal> editableBy = null;
+		private Set<Principal> editableBy;
 		
 		/**
 		 * Creates a new model with the given type and id.

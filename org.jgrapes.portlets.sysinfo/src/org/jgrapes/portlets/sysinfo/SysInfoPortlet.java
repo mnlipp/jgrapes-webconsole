@@ -27,7 +27,6 @@ import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.Duration;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -41,8 +40,7 @@ import org.jgrapes.http.Session;
 import org.jgrapes.portal.PortalSession;
 import org.jgrapes.portal.PortalWeblet;
 
-import static org.jgrapes.portal.Portlet.*;
-import static org.jgrapes.portal.Portlet.RenderMode.*;
+import static org.jgrapes.portal.Portlet.RenderMode;
 
 import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.AddPortletRequest;
@@ -61,8 +59,11 @@ import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 public class SysInfoPortlet extends FreeMarkerPortlet {
 
 	private static final Set<RenderMode> MODES = RenderMode.asSet(
-			DeleteablePreview, View);
+			RenderMode.DeleteablePreview, RenderMode.View);
 	
+	/**
+	 * The periodically generated update event.
+	 */
 	public static class Update extends Event<Void> {
 	}
 	
@@ -79,6 +80,16 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		setPeriodicRefresh(Duration.ofSeconds(1), () -> new Update());
 	}
 
+	/**
+	 * On {@link PortalReady}, fire the {@link AddPortletType}.
+	 *
+	 * @param event the event
+	 * @param portalSession the portal session
+	 * @throws TemplateNotFoundException the template not found exception
+	 * @throws MalformedTemplateNameException the malformed template name exception
+	 * @throws ParseException the parse exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
 	public void onPortalReady(PortalReady event, PortalSession portalSession) 
 			throws TemplateNotFoundException, MalformedTemplateNameException, 
@@ -138,11 +149,11 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		renderPortlet(event, portalSession, portletModel);
 	}
 
+	@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 	private void renderPortlet(RenderPortletRequestBase<?> event,
 	        PortalSession portalSession, SysInfoModel portletModel)
 	        throws TemplateNotFoundException, MalformedTemplateNameException,
 	        ParseException, IOException {
-		Locale locale = portalSession.locale();
 		switch (event.renderMode()) {
 		case Preview:
 		case DeleteablePreview: {
@@ -150,9 +161,10 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 			portalSession.respond(new RenderPortletFromTemplate(event,
 					SysInfoPortlet.class, portletModel.getPortletId(), 
 					tpl, fmModel(event, portalSession, portletModel))
-					.setRenderMode(DeleteablePreview).setSupportedModes(MODES)
+					.setRenderMode(RenderMode.DeleteablePreview)
+					.setSupportedModes(MODES)
 					.setForeground(event.isForeground()));
-			updateView(portalSession, portletModel.getPortletId(), locale);
+			updateView(portalSession, portletModel.getPortletId());
 			break;
 		}
 		case View: {
@@ -168,8 +180,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		}
 	}
 
-	private void updateView(PortalSession portalSession, String portletId,
-	        Locale locale) {
+	private void updateView(PortalSession portalSession, String portletId) {
 		if (!portalSession.isConnected()) {
 			return;
 		}
@@ -191,15 +202,24 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 		portalSession.respond(new DeletePortlet(portletId));
 	}
 
+	/**
+	 * Handle the periodic update event by sending {@link NotifyPortletView}
+	 * events.
+	 *
+	 * @param event the event
+	 * @param portalSession the portal session
+	 */
 	@Handler
 	public void onUpdate(Update event, PortalSession portalSession) {
 		Set<String> portletIds = portletIdsByPortalSession().get(portalSession);
-		Locale locale = portalSession.locale();
 		for (String portletId: portletIds) {
-			updateView(portalSession, portletId, locale);			
+			updateView(portalSession, portletId);			
 		}
 	}
 	
+	/**
+	 * The portlet's model.
+	 */
 	@SuppressWarnings("serial")
 	public static class SysInfoModel extends PortletBaseModel {
 
@@ -213,10 +233,20 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
 			super(portletId);
 		}
 
+		/**
+		 * Return the system properties.
+		 *
+		 * @return the properties
+		 */
 		public Properties systemProperties() {
 			return System.getProperties();
 		}
 		
+		/**
+		 * Return the {@link Runtime}.
+		 *
+		 * @return the runtime
+		 */
 		public Runtime runtime() {
 			return Runtime.getRuntime();
 		}

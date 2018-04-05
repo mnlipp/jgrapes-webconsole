@@ -25,6 +25,9 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.portal.PortletComponentFactory;
 
+/**
+ * A factory for creating {@link SysInfoPortlet}s.
+ */
 public class SysInfoPortletFactory implements PortletComponentFactory {
 
 	/* (non-Javadoc)

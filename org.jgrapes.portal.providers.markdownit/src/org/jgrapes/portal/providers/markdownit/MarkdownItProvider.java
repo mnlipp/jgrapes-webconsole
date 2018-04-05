@@ -35,7 +35,8 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.PortalReady;
 
 /**
- * 
+ * A provider for the [Markdownit](https://github.com/markdown-it/markdown-it)
+ * library.
  */
 public class MarkdownItProvider extends PageResourceProvider {
 
@@ -51,7 +52,18 @@ public class MarkdownItProvider extends PageResourceProvider {
 		super(componentChannel);
 	}
 
+	/**
+	 * On {@link PortalReady}, fire the appropriate {@link AddPageResources}.
+	 *
+	 * @param event the event
+	 * @param portalSession the portal session
+	 * @throws TemplateNotFoundException the template not found exception
+	 * @throws MalformedTemplateNameException the malformed template name exception
+	 * @throws ParseException the parse exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler(priority=100)
+	@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 	public void onPortalReady(PortalReady event, PortalSession portalSession) 
 			throws TemplateNotFoundException, MalformedTemplateNameException, 
 			ParseException, IOException {

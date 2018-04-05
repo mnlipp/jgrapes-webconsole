@@ -37,7 +37,7 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.events.PortalReady;
 
 /**
- * 
+ * Provider for the [Datatables](https://datatables.net/) library.
  */
 public class DatatablesProvider extends PageResourceProvider {
 
@@ -68,13 +68,23 @@ public class DatatablesProvider extends PageResourceProvider {
 						ResourceBundle.Control.FORMAT_DEFAULT));
 	}
 	
+	/**
+	 * On {@link PortalReady}, fire the appropriate {@link AddPageResources}.
+	 *
+	 * @param event the event
+	 * @param portalSession the portal session
+	 * @throws TemplateNotFoundException the template not found exception
+	 * @throws MalformedTemplateNameException the malformed template name exception
+	 * @throws ParseException the parse exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler(priority=100)
 	public void onPortalReady(PortalReady event, PortalSession portalSession) 
 			throws TemplateNotFoundException, MalformedTemplateNameException, 
 			ParseException, IOException {
 		String minExt = event.renderSupport()
 				.useMinifiedResources() ? ".min" : "";
-		ResourceBundle rb = resourceBundle(portalSession.locale()); 
+		ResourceBundle bundle = resourceBundle(portalSession.locale()); 
 		String script = 
 				"$.fn.dataTable.defaults.oLanguage._hungarianMap"
 				+ "[\"lengthAll\"] = \"sLengthAll\";\n"
@@ -82,7 +92,7 @@ public class DatatablesProvider extends PageResourceProvider {
 				+ "	'sLengthAll': 'all',\n"
 				+ "} );\n"
 				+ "$.extend( $.fn.dataTable.defaults.oLanguage, "
-				+ rb.getString("DataTablesL10n") +  ");\n";
+				+ bundle.getString("DataTablesL10n") +  ");\n";
 		portalSession.respond(new AddPageResources()
 				.addCss(event.renderSupport().pageResource(
 						"datatables/datatables" + minExt + ".css"))

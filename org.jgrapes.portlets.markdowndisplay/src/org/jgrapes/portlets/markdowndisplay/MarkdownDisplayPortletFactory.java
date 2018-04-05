@@ -25,6 +25,9 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.portal.PortletComponentFactory;
 
+/**
+ * A factory for creating {@link MarkdownDisplayPortlet}s.
+ */
 public class MarkdownDisplayPortletFactory implements PortletComponentFactory {
 
 	/* (non-Javadoc)
