@@ -37,10 +37,10 @@ import org.jgrapes.portal.events.ResourceRequest;
  */
 public class ResourceByInputStream extends ResourceResult {
 
-	private InputStream stream;
-	private MediaType mediaType;
-	private Instant lastModifiedAt;
-	private int maxAge;
+	private final InputStream stream;
+	private final MediaType mediaType;
+	private final Instant lastModifiedAt;
+	private final int maxAge;
 
 	/**
 	 * Instantiates a result that is provided by an {@link OutputStream}.
@@ -72,7 +72,7 @@ public class ResourceByInputStream extends ResourceResult {
 			response.setField(HttpField.LAST_MODIFIED, lastModifiedAt);
 		}
 		response.setContentType(mediaType);
-		ResponseCreationSupport.setMaxAge(response, (rq, mt) -> maxAge,
+		ResponseCreationSupport.setMaxAge(response, (req, mtype) -> maxAge,
 				request().httpRequest(), mediaType);
 		response.setStatus(HttpStatus.OK);
 		request().httpChannel().respond(new Response(response));

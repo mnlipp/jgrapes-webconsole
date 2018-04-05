@@ -31,9 +31,9 @@ import org.jdrupes.json.JsonObject;
  */
 public class LastPortalLayout extends PortalCommand {
 
-	private List<String> previewLayout;
-	private List<String> tabsLayout;
-	private JsonObject xtraInfo;
+	private final List<String> previewLayout;
+	private final List<String> tabsLayout;
+	private final JsonObject xtraInfo;
 	
 	/**
 	 * @param previewLayout

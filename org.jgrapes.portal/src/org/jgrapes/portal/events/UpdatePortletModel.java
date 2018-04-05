@@ -47,7 +47,7 @@ import org.jgrapes.core.Event;
 public class UpdatePortletModel extends Event<Void> {
 
 	private String portletId;
-	private Map<Object,Object> properties = null;
+	private Map<Object,Object> properties;
 	
 	/**
 	 * Creates a new event.

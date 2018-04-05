@@ -35,9 +35,9 @@ import org.jgrapes.core.Event;
  */
 public class PortalLayoutChanged extends Event<Void> {
 
-	private List<String> previewLayout;
-	private List<String> tabsLayout;
-	private JsonObject xtraInfo;
+	private final List<String> previewLayout;
+	private final List<String> tabsLayout;
+	private final JsonObject xtraInfo;
 	
 	/**
 	 * @param previewLayout

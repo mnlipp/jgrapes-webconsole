@@ -28,8 +28,13 @@ import org.jgrapes.portal.events.ResourceRequest;
  */
 public abstract class ResourceResult {
 	
-	private ResourceRequest request;
+	private final ResourceRequest request;
 	
+	/**
+	 * Instantiates a new resource result.
+	 *
+	 * @param request the request
+	 */
 	public ResourceResult(ResourceRequest request) {
 		this.request = request;
 	}
@@ -38,6 +43,11 @@ public abstract class ResourceResult {
 		return request;
 	}
 
-	public void process() throws IOException, InterruptedException {
-	}
+	/**
+	 * Specifies hoe the provided resource is processed.
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public abstract void process() throws IOException, InterruptedException;
 }

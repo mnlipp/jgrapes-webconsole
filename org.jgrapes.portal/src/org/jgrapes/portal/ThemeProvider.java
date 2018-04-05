@@ -21,7 +21,7 @@ package org.jgrapes.portal;
 import java.net.URL;
 
 /**
- * 
+ * Represents a theme provider.
  */
 public abstract class ThemeProvider {
 
@@ -39,6 +39,7 @@ public abstract class ThemeProvider {
 	 * 
 	 * @return the result
 	 */
+	@SuppressWarnings("PMD.UselessParentheses")
 	public String themeName() {
 		return (Character.toUpperCase(themeId().charAt(0))
 				+ themeId().substring(1)).replace('_', ' ');

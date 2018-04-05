@@ -61,9 +61,9 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class AddPortletRequest extends RenderPortletRequestBase<String> {
 
-	private String portletType;
+	private final String portletType;
 	private boolean foreground = true;
-	private Map<? extends Object, ? extends Object> properties = null;
+	private Map<? extends Object, ? extends Object> properties;
 	
 	/**
 	 * Creates a new event.

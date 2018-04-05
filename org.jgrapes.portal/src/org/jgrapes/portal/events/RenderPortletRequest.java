@@ -18,7 +18,7 @@
 
 package org.jgrapes.portal.events;
 
-import static org.jgrapes.portal.Portlet.*;
+import static org.jgrapes.portal.Portlet.RenderMode;
 
 import org.jgrapes.portal.RenderSupport;
 
@@ -50,8 +50,8 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
 
-	private String portletId;
-	private boolean foreground;
+	private final String portletId;
+	private final boolean foreground;
 
 	/**
 	 * Creates a new request.
@@ -81,6 +81,12 @@ public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
 		return foreground;
 	}
 	
+	/**
+	 * Checks if the portlet has been rendered (i.e. the event has been
+	 * handled).
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasBeenRendered() {
 		return currentResults() != null && currentResults().get(0);
 	}

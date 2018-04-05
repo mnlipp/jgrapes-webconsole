@@ -64,11 +64,12 @@ import org.jgrapes.portal.events.RenderPortletRequestBase;
  */
 public abstract class FreeMarkerPortlet extends AbstractPortlet {
 
-	static final Pattern templatePattern 
+	@SuppressWarnings("PMD.VariableNamingConventions")
+	private static final Pattern templatePattern 
 		= Pattern.compile(".*\\.ftl\\.[a-z]+$");
 	
-	private Configuration fmConfig = null;
-	private Map<String,Object> fmModel = null;
+	private Configuration fmConfig;
+	private Map<String,Object> fmModel;
 	
 	/**
 	 * Creates a new component that listens for new events
@@ -99,6 +100,11 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 		super(componentChannel, channelReplacements, trackPortalSessions);
 	}
 
+	/**
+	 * Create the base freemarker configuration.
+	 *
+	 * @return the configuration
+	 */
 	protected Configuration freemarkerConfig() {
 		if (fmConfig == null) {
 			fmConfig = new Configuration(Configuration.VERSION_2_3_26);
@@ -166,6 +172,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 	 * @return the model
 	 */
 	protected Map<String,Object> fmSessionModel(Session session) {
+		@SuppressWarnings("PMD.UseConcurrentHashMap")
 		final Map<String,Object> model = new HashMap<>();
 		Locale locale = session.locale();
 		model.put("locale", locale);
@@ -183,7 +190,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 				String key = ((SimpleScalar)args.get(0)).getAsString();
 				try {
 					return resourceBundle.getString(key);
-				} catch (MissingResourceException e) {
+				} catch (MissingResourceException e) { // NOPMD
 					// no luck
 				}
 				return key;
@@ -206,6 +213,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 	 */
 	protected Map<String,Object> fmPortletModel(RenderPortletRequestBase<?> event, 
 			IOSubchannel channel, PortletBaseModel portletModel) {
+		@SuppressWarnings("PMD.UseConcurrentHashMap")
 		final Map<String,Object> model = new HashMap<>();
 		model.put("event", event);
 		model.put("portlet", portletModel);
@@ -258,10 +266,10 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 			event.setResult(new ResourceByGenerator(event, 
 					new ResourceByGenerator.Generator() {
 						@Override
-						public void write(OutputStream out) throws IOException {
+						public void write(OutputStream stream) throws IOException {
 							try {
 								tpl.process(model, new OutputStreamWriter(
-										out, "utf-8"));
+										stream, "utf-8"));
 							} catch (TemplateException e) {
 								throw new IOException(e);
 							}
@@ -270,22 +278,34 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
 					HttpResponse.contentType(event.resourceUri()),
 					Instant.now(), 0));
 			event.stop();
-		} catch (IOException e) {
+		} catch (IOException e) { // NOPMD
 			throw new IllegalArgumentException(e);
 		}
 	}
 
+	/**
+	 * Specifies how to render portlet content using a template.
+	 */
 	public static class RenderPortletFromTemplate extends RenderPortlet {
 
-		private Future<String> content;
+		private final Future<String> content;
 		
+		/**
+		 * Instantiates a new event.
+		 *
+		 * @param request the request
+		 * @param portletClass the portlet class
+		 * @param portletId the portlet id
+		 * @param template the template
+		 * @param dataModel the data model
+		 */
 		public RenderPortletFromTemplate(RenderPortletRequestBase<?> request,
 				Class<?> portletClass, String portletId, Template template, 
 				Object dataModel) {
 			super(portletClass, portletId);
 			setRenderMode(request.renderMode());
 			// Start to prepare the content immediately and concurrently.
-			content = request.processedBy().map(pb -> pb.executorService())
+			content = request.processedBy().map(procBy -> procBy.executorService())
 					.orElse(Components.defaultExecutorService()).submit(() -> {
 						StringWriter out = new StringWriter();
 						try {

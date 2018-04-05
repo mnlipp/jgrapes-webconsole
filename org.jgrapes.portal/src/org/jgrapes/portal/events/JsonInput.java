@@ -28,7 +28,7 @@ import org.jgrapes.core.Event;
  */
 public class JsonInput extends Event<Void> {
 
-	private JsonRpc request;
+	private final JsonRpc request;
 	
 	/**
 	 * Create a new request from the given data.
@@ -49,22 +49,22 @@ public class JsonInput extends Event<Void> {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(Components.objectName(this));
-		builder.append(" [");
+		builder.append(Components.objectName(this))
+			.append(" [");
 		if (request().method() != null) {
-			builder.append("method=");
-			builder.append(request().method());
-			builder.append(", ");
+			builder.append("method=")
+				.append(request().method())
+				.append(", ");
 		}
 		if (request().id().isPresent()) {
-			builder.append("id=");
-			builder.append(request().id().get());
+			builder.append("id=")
+				.append(request().id().get());
 		}
 		if (channels() != null) {
-			builder.append("channels=");
-			builder.append(Channel.toString(channels()));
+			builder.append("channels=")
+				.append(Channel.toString(channels()));
 		}
-		builder.append("]");
+		builder.append(']');
 		return builder.toString();
 	}
 }

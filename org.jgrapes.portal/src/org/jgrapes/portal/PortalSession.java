@@ -114,7 +114,7 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * PortalSession "*" -up-> "1" Session: browser session
  * @enduml
  */
-public class PortalSession extends DefaultSubchannel {
+public final class PortalSession extends DefaultSubchannel {
 
 	private static Map<String,WeakReference<PortalSession>> portalSessions
 		= new ConcurrentHashMap<>();
@@ -122,13 +122,13 @@ public class PortalSession extends DefaultSubchannel {
 		= new ReferenceQueue<>();
 	
 	private String portalSessionId;
-	private Portal portal;
+	private final Portal portal;
 	private long timeout;
-	private Timer timeoutTimer;
+	private final Timer timeoutTimer;
 	private boolean active = true;
 	private boolean connected = true;
-	private Session browserSession = null;
-	private IOSubchannel upstreamChannel = null;
+	private Session browserSession;
+	private IOSubchannel upstreamChannel;
 	
 	private static void cleanUnused() {
 		while(true) {
@@ -147,10 +147,10 @@ public class PortalSession extends DefaultSubchannel {
 	 * @param portalSessionId the portal session id
 	 * @return the channel
 	 */
-	static Optional<PortalSession> lookup(String portalSessionId) {
+	/* default */ static Optional<PortalSession> lookup(String portalSessionId) {
 		cleanUnused();
 		return Optional.ofNullable(portalSessions.get(portalSessionId))
-				.flatMap(wr -> Optional.ofNullable(wr.get()));
+				.flatMap(ref -> Optional.ofNullable(ref.get()));
 	}
 	
 	/**
@@ -164,9 +164,9 @@ public class PortalSession extends DefaultSubchannel {
 		cleanUnused();
 		Set<PortalSession> result  = new HashSet<>();
 		for (WeakReference<PortalSession> psr: portalSessions.values()) {
-			PortalSession ps = psr.get();
-			if (ps.portal.equals(portal)) {
-				result.add(ps);
+			PortalSession psess = psr.get();
+			if (psess.portal.equals(portal)) {
+				result.add(psess);
 			}
 		}
 		return Collections.unmodifiableSet(result);
@@ -183,7 +183,7 @@ public class PortalSession extends DefaultSubchannel {
 	 * @param timeout the portal session timeout in milli seconds
 	 * @return the channel
 	 */
-	static PortalSession lookupOrCreate(
+	/* default */ static PortalSession lookupOrCreate(
 			String portalSessionId, Portal portal, long timeout) {
 		cleanUnused();
 		return portalSessions.computeIfAbsent(portalSessionId, 
@@ -199,7 +199,7 @@ public class PortalSession extends DefaultSubchannel {
 	 * @param newPortalSessionId the new portal session id
 	 * @return the portal session
 	 */
-	PortalSession replaceId(String newPortalSessionId) {
+	/* default */ PortalSession replaceId(String newPortalSessionId) {
 		portalSessions.remove(portalSessionId);
 		portalSessionId = newPortalSessionId;
 		portalSessions.put(portalSessionId, new WeakReference<>(
@@ -215,7 +215,7 @@ public class PortalSession extends DefaultSubchannel {
 		this.portalSessionId = portalSessionId;
 		this.timeout = timeout;
 		timeoutTimer = Components.schedule(
-				t -> discard(), Duration.ofMillis(timeout));
+				tmr -> discard(), Duration.ofMillis(timeout));
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class PortalSession extends DefaultSubchannel {
 		return !active;
 	}
 	
-	void disconnected() {
+	/* default */ void disconnected() {
 		connected = false;
 	}
 	
@@ -323,7 +323,7 @@ public class PortalSession extends DefaultSubchannel {
 	 * 
 	 * @return the portalSessionId
 	 */
-	String portalSessionId() {
+	/* default */ String portalSessionId() {
 		return portalSessionId;
 	}
 
@@ -348,11 +348,12 @@ public class PortalSession extends DefaultSubchannel {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(IOSubchannel.toString(this));
-		Optional.ofNullable(upstreamChannel).ifPresent(up -> builder.append(
-				LinkedIOSubchannel.upstreamToString(up)));
+		Optional.ofNullable(upstreamChannel).ifPresent(upstr -> builder.append(
+				LinkedIOSubchannel.upstreamToString(upstr)));
 		return builder.toString();
 	}
 	

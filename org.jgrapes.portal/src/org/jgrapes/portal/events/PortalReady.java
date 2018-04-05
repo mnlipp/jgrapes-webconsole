@@ -33,7 +33,7 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class PortalReady extends Event<Void> {
 
-	private RenderSupport renderSupport;
+	private final RenderSupport renderSupport;
 
 	/**
 	 * Creates a new event.

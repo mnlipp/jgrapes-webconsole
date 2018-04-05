@@ -80,15 +80,9 @@ import org.jdrupes.json.JsonObject;
  */
 public class AddPageResources extends PortalCommand {
 
-	private List<ScriptResource> scriptResources = new ArrayList<>();
-	private List<URI> cssUris = new ArrayList<>();
+	private final List<ScriptResource> scriptResources = new ArrayList<>();
+	private final List<URI> cssUris = new ArrayList<>();
 	private String cssSource;
-	
-	/**
-	 * Create a new event.
-	 */
-	public AddPageResources() {
-	}
 	
 	/**
 	 * Add the URI of a JavaScript resource that is to be added to the
@@ -108,7 +102,7 @@ public class AddPageResources extends PortalCommand {
 	 * @return the result
 	 */
 	public ScriptResource[] scriptResources() {
-		return scriptResources.toArray(new ScriptResource[scriptResources.size()]);
+		return scriptResources.toArray(new ScriptResource[0]);
 	}
 
 	/**
@@ -129,7 +123,7 @@ public class AddPageResources extends PortalCommand {
 	 * @return the result
 	 */
 	public URI[] cssUris() {
-		return cssUris.toArray(new URI[cssUris.size()]);
+		return cssUris.toArray(new URI[0]);
 	}
 	
 	/**
@@ -216,7 +210,7 @@ public class AddPageResources extends PortalCommand {
 		 * @return the list of features
 		 */
 		public String[] provides() {
-			return provides;
+			return Arrays.copyOf(provides, provides.length);
 		}
 		
 		/**
@@ -229,8 +223,8 @@ public class AddPageResources extends PortalCommand {
 		 * @param provides the list of features
 		 * @return this object for easy chaining
 		 */
-		public ScriptResource setProvides(String[] provides) {
-			this.provides = provides;
+		public ScriptResource setProvides(String... provides) {
+			this.provides = Arrays.copyOf(provides, provides.length);
 			return this;
 		}
 		
@@ -241,7 +235,7 @@ public class AddPageResources extends PortalCommand {
 		 * @return the list of features
 		 */
 		public String[] requires() {
-			return requires;
+			return Arrays.copyOf(requires, requires.length);
 		}
 		
 		/**
@@ -251,11 +245,17 @@ public class AddPageResources extends PortalCommand {
 		 * @param requires the list of features
 		 * @return this object for easy chaining
 		 */
-		public ScriptResource setRequires(String[] requires) {
-			this.requires = requires;
+		public ScriptResource setRequires(String... requires) {
+			this.requires = Arrays.copyOf(requires, requires.length);
 			return this;
 		}
 		
+		
+		/**
+		 * Provides the JSON representation of the information.
+		 *
+		 * @return the json object
+		 */
 		public JsonObject toJsonValue() {
 			JsonObject obj = JsonObject.create();
 			if (scriptUri != null) {

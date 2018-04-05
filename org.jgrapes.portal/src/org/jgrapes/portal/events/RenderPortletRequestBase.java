@@ -26,8 +26,8 @@ import org.jgrapes.portal.RenderSupport;
  * The base class for events that result in a portlet being rendered.
  */
 public abstract class RenderPortletRequestBase<T> extends Event<T> {
-	private RenderSupport renderSupport;
-	private RenderMode renderMode;
+	private final RenderSupport renderSupport;
+	private final RenderMode renderMode;
 
 	/**
 	 * Creates a new event.

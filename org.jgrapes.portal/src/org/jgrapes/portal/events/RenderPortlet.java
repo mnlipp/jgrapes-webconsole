@@ -41,8 +41,8 @@ public abstract class RenderPortlet extends PortalCommand {
 		= Collections.unmodifiableSet(new HashSet<>(
 				Arrays.asList(new RenderMode[] { RenderMode.Preview })));
 
-	private Class<?> portletClass;
-	private String portletId;
+	private final Class<?> portletClass;
+	private final String portletId;
 	private RenderMode renderMode = RenderMode.Preview;
 	private Set<RenderMode> supportedModes = DEFAULT_SUPPORTED;
 	private boolean foreground;
@@ -115,7 +115,7 @@ public abstract class RenderPortlet extends PortalCommand {
 	 * @return the event for easy chaining
 	 */
 	public RenderPortlet addSupportedMode(RenderMode supportedMode) {
-		if (supportedModes == DEFAULT_SUPPORTED) {
+		if (supportedModes == DEFAULT_SUPPORTED) { // NOPMD, check identity
 			supportedModes = new HashSet<>(DEFAULT_SUPPORTED);
 		}
 		supportedModes.add(supportedMode);

@@ -20,6 +20,7 @@ package org.jgrapes.portal.events;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
@@ -41,7 +42,7 @@ public class SimplePortalCommand extends PortalCommand {
 	 */
 	public SimplePortalCommand(String method, Object... parameters) {
 		this.method = method;
-		this.params = parameters;
+		this.params = Arrays.copyOf(parameters, parameters.length);
 	}
 	
 	/**
@@ -58,8 +59,8 @@ public class SimplePortalCommand extends PortalCommand {
 	 *
 	 * @param parameters the new parameters
 	 */
-	public void setParameters(Object[] parameters) {
-		this.params = parameters;
+	public void setParameters(Object... parameters) {
+		this.params = Arrays.copyOf(parameters, parameters.length);
 	}
 	
 	@Override
@@ -73,15 +74,14 @@ public class SimplePortalCommand extends PortalCommand {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(Components.objectName(this));
-		builder.append(" [");
-		builder.append("method=");
-		builder.append(method);
+		builder.append(Components.objectName(this))
+			.append(" [method=")
+			.append(method);
 		if (channels() != null) {
-			builder.append(", channels=");
-			builder.append(Channel.toString(channels()));
+			builder.append(", channels=")
+				.append(Channel.toString(channels()));
 		}
-		builder.append("]");
+		builder.append(']');
 		return builder.toString();
 	}
 	

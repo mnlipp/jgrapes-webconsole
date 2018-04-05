@@ -111,13 +111,14 @@ import org.jgrapes.portal.ResourceResult;
  * 
  * @enduml
  */
+@SuppressWarnings("PMD.DataClass")
 public class ResourceRequest extends Event<ResourceResult> {
 	
-	private URI resourceUri;
-	private Instant ifModifiedSince;
-	private HttpRequest httpRequest;
-	private IOSubchannel httpChannel;
-	private RenderSupport renderSupport;
+	private final URI resourceUri;
+	private final Instant ifModifiedSince;
+	private final HttpRequest httpRequest;
+	private final IOSubchannel httpChannel;
+	private final RenderSupport renderSupport;
 
 	/**
 	 * Creates a new request, including the associated 

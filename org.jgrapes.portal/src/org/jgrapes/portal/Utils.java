@@ -27,7 +27,7 @@ import org.jgrapes.http.Session;
 /**
  * 
  */
-public class Utils {
+public final class Utils {
 
 	private Utils() {
 	}

@@ -34,6 +34,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.management.InstanceAlreadyExistsException;
@@ -65,10 +67,13 @@ import org.jgrapes.portal.events.SetTheme;
 import org.jgrapes.portal.events.SimplePortalCommand;
 
 /**
- * 
+ * Provides the portlet related part of the portal.
  */
 public class Portal extends Component {
 
+	private static final Logger logger
+		= Logger.getLogger(Portal.class.getName());
+	
 	private URI prefix;
 	private PortalWeblet view;
 	
@@ -89,6 +94,7 @@ public class Portal extends Component {
 	/**
 	 * @param componentChannel
 	 */
+	@SuppressWarnings("PMD.UselessParentheses")
 	public Portal(Channel componentChannel, Channel webletChannel, URI prefix) {
 		super(componentChannel);
 		this.prefix = URI.create(prefix.getPath().endsWith("/") 
@@ -166,7 +172,16 @@ public class Portal extends Component {
 		return this;
 	}
 	
+	/**
+	 * Handle JSON input.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
+	@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 	public void onJsonInput(JsonInput event, PortalSession channel) 
 			throws InterruptedException, IOException {
 		// Send events to portlets on portal's channel
@@ -221,9 +236,20 @@ public class Portal extends Component {
 					channel);
 			break;
 		}
+		default:
+			// Ignore unknown
+			break;
 		}		
 	}
 	
+	/**
+	 * Handle network configured condition.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
 	public void onPortalConfigured(
 			PortalConfigured event, PortalSession channel) 
@@ -247,6 +273,11 @@ public class Portal extends Component {
 		}
 	}
 	
+	/**
+	 * Discard all portal sessions on stop.
+	 *
+	 * @param event the event
+	 */
 	@Handler
 	public void onStop(Stop event) {
 		for (PortalSession ps: PortalSession.byPortal(this)) {
@@ -254,11 +285,16 @@ public class Portal extends Component {
 		}
 	}
 	
+	/**
+	 * The MBeans view of a portal.
+	 */
+	@SuppressWarnings({ "PMD.CommentRequired", "PMD.AvoidDuplicateLiterals" })
 	public interface PortalMXBean {
 
-		public class PortalSessionInfo {
+		@SuppressWarnings("PMD.CommentRequired")
+		class PortalSessionInfo {
 			
-			private PortalSession session;
+			private final PortalSession session;
 
 			public PortalSessionInfo(PortalSession session) {
 				super();
@@ -275,24 +311,25 @@ public class Portal extends Component {
 			}
 		}
 		
-		public String getComponentPath();
+		String getComponentPath();
 		
-		public String getPrefix();
+		String getPrefix();
 
-		public boolean getUseMinifiedResources();
+		boolean isUseMinifiedResources();
 
-		public void setUseMinifiedResources(boolean useMinifiedResources);
+		void setUseMinifiedResources(boolean useMinifiedResources);
 		
-		public SortedMap<String,PortalSessionInfo> getPortalSessions();
+		SortedMap<String,PortalSessionInfo> getPortalSessions();
 	}
 	
+	@SuppressWarnings("PMD.CommentRequired")
 	public static class PortalInfo implements PortalMXBean {
 		
 		private static MBeanServer mbs 
 			= ManagementFactory.getPlatformMBeanServer(); 
 
 		private ObjectName mbeanName;
-		private WeakReference<Portal> portalRef;
+		private final WeakReference<Portal> portalRef;
 		
 		public PortalInfo(Portal portal) {
 			try {
@@ -301,19 +338,21 @@ public class Portal extends Component {
 						+ ObjectName.quote(Components.simpleObjectName(portal)
 								+ " (" + portal.prefix.toString() + ")"));
 			} catch (MalformedObjectNameException e) {
-				// Won't happen
+				// Should not happen
+				logger.log(Level.WARNING, e.getMessage(), e);
 			}
 			portalRef = new WeakReference<>(portal);
 			try {
 				mbs.unregisterMBean(mbeanName);
-			} catch (Exception e) {
+			} catch (Exception e) { // NOPMD
 				// Just in case, should not work
 			}
 			try {
 				mbs.registerMBean(this, mbeanName);
 			} catch (InstanceAlreadyExistsException | MBeanRegistrationException
 			        | NotCompliantMBeanException e) {
-				e.printStackTrace();
+				// Should not happen
+				logger.log(Level.WARNING, e.getMessage(), e);
 			}
 		}
 
@@ -322,7 +361,7 @@ public class Portal extends Component {
 			if (portal == null) {
 				try {
 					mbs.unregisterMBean(mbeanName);
-				} catch (Exception e) {
+				} catch (Exception e) { // NOPMD
 					// Should work.
 				}
 			}
@@ -341,7 +380,7 @@ public class Portal extends Component {
 		}
 
 		@Override
-		public boolean getUseMinifiedResources() {
+		public boolean isUseMinifiedResources() {
 			return portal().map(
 					portal -> portal.view.useMinifiedResources())
 					.orElse(false);
@@ -354,6 +393,7 @@ public class Portal extends Component {
 		}
 		
 		@Override
+		@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 		public SortedMap<String,PortalSessionInfo> getPortalSessions() {
 			SortedMap<String,PortalSessionInfo> result = new TreeMap<>();
 			portal().ifPresent(portal -> {
@@ -373,12 +413,17 @@ public class Portal extends Component {
 	 * invocation of {@link PortalSummaryMXBean#getPortals()} ensures
 	 * that entries for removed {@link Portal}s are unregistered.
 	 */
-	public static interface PortalSummaryMXBean {
+	@SuppressWarnings("PMD.CommentRequired")
+	public interface PortalSummaryMXBean {
 		
-		public Set<PortalMXBean> getPortals();
+		Set<PortalMXBean> getPortals();
 		
 	}
 	
+	/**
+	 * Provides an MBean view of the portal.
+	 */
+	@SuppressWarnings("PMD.CommentRequired")
 	private static class MBeanView implements PortalSummaryMXBean {
 
 		private static Set<PortalInfo> portalInfos = new HashSet<>();
@@ -414,7 +459,8 @@ public class Portal extends Component {
 			mbs.registerMBean(new MBeanView(), mxbeanName);
 		} catch (MalformedObjectNameException | InstanceAlreadyExistsException
 				| MBeanRegistrationException | NotCompliantMBeanException e) {
-			// Does not happen
+			// Should not happen
+			logger.log(Level.WARNING, e.getMessage(), e);
 		}		
 	}
 }

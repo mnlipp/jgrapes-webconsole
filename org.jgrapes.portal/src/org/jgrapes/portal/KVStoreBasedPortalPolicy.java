@@ -111,6 +111,7 @@ public class KVStoreBasedPortalPolicy extends Component {
 	 * itself.
 	 */
 	public KVStoreBasedPortalPolicy() {
+		// Everything done by super.
 	}
 
 	/**
@@ -139,6 +140,13 @@ public class KVStoreBasedPortalPolicy extends Component {
 		sessionDs.onPortalReady(event, channel);
 	}
 
+	/**
+	 * Handle returned data.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws JsonDecodeException the json decode exception
+	 */
 	@Handler
 	public void onKeyValueStoreData(
 			KeyValueStoreData event, PortalSession channel) 
@@ -150,13 +158,26 @@ public class KVStoreBasedPortalPolicy extends Component {
 		}
 	}
 
+	/**
+	 * Handle portal page loaded.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 */
 	@Handler
 	public void onPortalPrepared(
 			PortalPrepared event, PortalSession channel) {
 		channel.associated(PortalSessionDataStore.class).ifPresent(
-				ps -> ps.onPortalPrepared(event, channel));
+				psess -> psess.onPortalPrepared(event, channel));
 	}
 
+	/**
+	 * Handle changed layout.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
 	public void onPortalLayoutChanged(PortalLayoutChanged event, 
 			PortalSession channel) throws IOException {
@@ -167,10 +188,14 @@ public class KVStoreBasedPortalPolicy extends Component {
 		}
 	}
 	
+	/**
+	 * Stores the data for the portal session.
+	 */
+	@SuppressWarnings("PMD.CommentRequired")
 	private class PortalSessionDataStore {
 
-		private String storagePath;
-		private Map<String,Object> persisted = null;
+		private final String storagePath;
+		private Map<String,Object> persisted;
 		
 		public PortalSessionDataStore(Session session) {
 			storagePath = "/" 
@@ -198,13 +223,15 @@ public class KVStoreBasedPortalPolicy extends Component {
 			String data = event.data().get(storagePath);
 			if (data != null) {
 				JsonBeanDecoder decoder = JsonBeanDecoder.create(data);
-				@SuppressWarnings("unchecked")
+				@SuppressWarnings({ "unchecked", "PMD.LooseCoupling" })
 				Class<Map<String,Object>> cls 
 					= (Class<Map<String,Object>>)(Class<?>)HashMap.class;
 				persisted = decoder.readObject(cls);
 			}
 		}
 		
+		@SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
+		        "PMD.AvoidInstantiatingObjectsInLoops" })
 		public void onPortalPrepared(
 				PortalPrepared event, IOSubchannel channel) {
 			if (persisted == null) {
@@ -214,13 +241,13 @@ public class KVStoreBasedPortalPolicy extends Component {
 			// Make sure data is consistent
 			@SuppressWarnings("unchecked")
 			List<String> previewLayout = (List<String>)persisted
-				.computeIfAbsent(
-					"previewLayout", k -> { return Collections.emptyList(); });
+				.computeIfAbsent("previewLayout", 
+						newKey -> { return Collections.emptyList(); });
 			@SuppressWarnings("unchecked")
 			List<String> tabsLayout = (List<String>)persisted.computeIfAbsent(
-					"tabsLayout", k -> { return Collections.emptyList(); });
+					"tabsLayout", newKey -> { return Collections.emptyList(); });
 			JsonObject xtraInfo = (JsonObject)persisted.computeIfAbsent(
-					"xtraInfo", k -> { return JsonObject.create(); });
+					"xtraInfo", newKey -> { return JsonObject.create(); });
 
 			// Update layout
 			channel.respond(new LastPortalLayout(

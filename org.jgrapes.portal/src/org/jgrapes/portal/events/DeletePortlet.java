@@ -27,7 +27,7 @@ import java.io.Writer;
  */
 public class DeletePortlet extends PortalCommand {
 
-	private String portletId;
+	private final String portletId;
 	
 	/**
 	 * Creates a new event.

@@ -29,12 +29,12 @@ public interface UserPrincipal extends Principal {
 	 * @see java.security.Principal#getName()
 	 */
 	@Override
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the authentication realm.
 	 * 
 	 * @return the value
 	 */
-	public String getRealm();
+	String getRealm();
 }

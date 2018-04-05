@@ -33,7 +33,7 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class PortletResourceRequest extends ResourceRequest {
 
-	private String portletType;
+	private final String portletType;
 
 	/**
 	 * Creates a new request.

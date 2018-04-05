@@ -44,7 +44,7 @@ import org.jgrapes.util.events.KeyValueStoreUpdate.Update;
  */
 public class PortalLocalBackedKVStore extends Component {
 
-	private String portalPrefix;
+	private final String portalPrefix;
 	
 	/**
 	 * Create a new key/value store that uses the browser's local storage
@@ -62,6 +62,13 @@ public class PortalLocalBackedKVStore extends Component {
 		this.portalPrefix = portalPrefix;
 	}
 
+	/**
+	 * Intercept {@link PortalReady} event to first get data.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 */
 	@Handler(priority=1000)
 	public void onPortalReady(PortalReady event, PortalSession channel) 
 			throws InterruptedException {
@@ -77,16 +84,27 @@ public class PortalLocalBackedKVStore extends Component {
 		channel.respond(new SimplePortalCommand("retrieveLocalData", keyStart));
 	}
 	
+	@SuppressWarnings({ "unchecked", "PMD.AvoidDuplicateLiterals" })
+	private Map<String,String> getStore(PortalSession channel) {
+		return (Map<String,String>)channel
+				.browserSession().computeIfAbsent(
+						PortalLocalBackedKVStore.class, newKey -> new HashMap<>());
+	}
+	
+	/**
+	 * Evaluate "retrievedLocalData" response.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
 	public void onJsonInput(JsonInput event, PortalSession channel) 
 			throws InterruptedException, IOException {
 		if (!event.request().method().equals("retrievedLocalData")) {
 			return;
 		}
-		@SuppressWarnings("unchecked")
-		Map<String,String> data = (Map<String,String>)channel
-			.browserSession().computeIfAbsent(
-					PortalLocalBackedKVStore.class, k -> new HashMap<>());
 		final String keyStart = portalPrefix 
 				+ PortalLocalBackedKVStore.class.getName() + "/";
 		channel.associated(PortalLocalBackedKVStore.class, PortalReady.class)
@@ -95,6 +113,7 @@ public class PortalLocalBackedKVStore extends Component {
 				params.asArray(0).arrayStream().forEach(item -> {
 					String key = item.asString(0);
 					if (key.startsWith(keyStart)) {
+						Map<String,String> data = getStore(channel);
 						data.put(key.substring(
 								keyStart.length() - 1), item.asString(1));
 					}
@@ -105,18 +124,26 @@ public class PortalLocalBackedKVStore extends Component {
 			});
 	}
 		
+	/**
+	 * Handle data update events.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
+	@SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
+	        "PMD.AvoidInstantiatingObjectsInLoops" })
 	public void onKeyValueStoreUpdate(
 			KeyValueStoreUpdate event, PortalSession channel) 
 					throws InterruptedException, IOException {
-		@SuppressWarnings("unchecked")
-		Map<String,String> data = (Map<String,String>)channel
-			.browserSession().computeIfAbsent(
-					PortalLocalBackedKVStore.class,	k -> new HashMap<>());
+		Map<String,String> data = getStore(channel);
 		List<String[]> actions = new ArrayList<>();
 		String keyStart = portalPrefix 
 				+ PortalLocalBackedKVStore.class.getName();
 		for (Action action: event.actions()) {
+			@SuppressWarnings("PMD.UselessParentheses")
 			String key = keyStart + (action.key().startsWith("/")
 					? action.key() : ("/" + action.key()));
 			if (action instanceof Update) {
@@ -132,9 +159,17 @@ public class PortalLocalBackedKVStore extends Component {
 				new Object[] { actions.toArray() }));
 	}
 
+	/**
+	 * Handle data query..
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 */
 	@Handler
+	@SuppressWarnings("PMD.ConfusingTernary")
 	public void onKeyValueStoreQuery(
 			KeyValueStoreQuery event, PortalSession channel) {
+		@SuppressWarnings("PMD.UseConcurrentHashMap")
 		Map<String,String> result = new HashMap<>();
 		@SuppressWarnings("unchecked")
 		Map<String,String> data = (Map<String,String>)channel

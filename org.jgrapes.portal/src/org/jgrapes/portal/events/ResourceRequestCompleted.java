@@ -27,6 +27,12 @@ import org.jgrapes.core.CompletionEvent;
 public class ResourceRequestCompleted 
 	extends CompletionEvent<ResourceRequest> {
 
+	/**
+	 * Instantiates a new event.
+	 *
+	 * @param monitoredEvent the monitored event
+	 * @param channels the channels
+	 */
 	public ResourceRequestCompleted(ResourceRequest monitoredEvent,
 	        Channel... channels) {
 		super(monitoredEvent, channels);

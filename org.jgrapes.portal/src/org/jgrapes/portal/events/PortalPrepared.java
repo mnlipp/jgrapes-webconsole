@@ -30,6 +30,12 @@ import org.jgrapes.core.CompletionEvent;
  */
 public class PortalPrepared extends CompletionEvent<PortalReady> {
 
+	/**
+	 * Instantiates a new event.
+	 *
+	 * @param monitoredEvent the monitored event
+	 * @param channels the channels
+	 */
 	public PortalPrepared(PortalReady monitoredEvent, Channel... channels) {
 		super(monitoredEvent, channels);
 		new PortalConfigured(this, channels);

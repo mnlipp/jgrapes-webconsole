@@ -18,6 +18,8 @@
 
 package org.jgrapes.portal;
 
+import java.io.IOException;
+
 import org.jgrapes.portal.events.ResourceRequest;
 
 /**
@@ -26,8 +28,21 @@ import org.jgrapes.portal.events.ResourceRequest;
  */
 public class ResourceNotModified extends ResourceResult {
 
+	/**
+	 * Creates a new instance.
+	 *
+	 * @param request the request
+	 */
 	public ResourceNotModified(ResourceRequest request) {
 		super(request);
+	}
+
+	/** 
+	 * Does nothing, because the resource does not have to be sent.
+	 */
+	@Override
+	public void process() throws IOException, InterruptedException {
+		// Do nothing.
 	}
 	
 }

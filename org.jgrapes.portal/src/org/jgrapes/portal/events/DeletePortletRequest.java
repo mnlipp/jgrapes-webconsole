@@ -26,8 +26,8 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class DeletePortletRequest extends Event<Void> {
 
-	private RenderSupport renderSupport;
-	private String portletId;
+	private final RenderSupport renderSupport;
+	private final String portletId;
 	
 	/**
 	 * Creates a new event.

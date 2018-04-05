@@ -45,7 +45,7 @@ import org.jgrapes.portal.PortalWeblet;
  */
 public class SetLocale extends Event<Void> {
 
-	private Locale locale;
+	private final Locale locale;
 
 	/**
 	 * Creates a new event.

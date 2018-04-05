@@ -31,7 +31,7 @@ import org.jgrapes.portal.events.ResourceRequest;
  * sending it.
  */
 public class ResourceByUrl extends ResourceResult {
-	private URL resourceUrl;
+	private final URL resourceUrl;
 
 	/**
 	 * Instantiates a new result represented by a {@link URL}.

@@ -31,18 +31,29 @@ import org.jgrapes.http.events.Response;
 import org.jgrapes.io.util.ByteBufferOutputStream;
 import org.jgrapes.portal.events.ResourceRequest;
 
+// TODO: Auto-generated Javadoc
 /**
  * Returns a {@link Runnable} that writes to an {@link OutputStream} as result.
  */
 public class ResourceByGenerator extends ResourceResult {
 
-	private Generator generator;
-	private MediaType mediaType;
-	private Instant lastModifiedAt;
-	private int maxAge;
+	private final Generator generator;
+	private final MediaType mediaType;
+	private final Instant lastModifiedAt;
+	private final int maxAge;
 
+	/**
+	 * The interface that must be implemented by the content provider.
+	 */
 	public interface Generator {
-		void write(OutputStream out) throws IOException;
+		
+		/**
+		 * Write the generated output to the given stream.
+		 *
+		 * @param stream the output stream
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 */
+		void write(OutputStream stream) throws IOException;
 	}
 	
 	/**
@@ -64,6 +75,9 @@ public class ResourceByGenerator extends ResourceResult {
 		this.maxAge = maxAge;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jgrapes.portal.ResourceResult#process()
+	 */
 	@Override
 	public void process() throws IOException, InterruptedException {
 		if (generator == null) {
@@ -77,7 +91,7 @@ public class ResourceByGenerator extends ResourceResult {
 			response.setField(HttpField.LAST_MODIFIED, lastModifiedAt);
 		}
 		response.setContentType(mediaType);
-		ResponseCreationSupport.setMaxAge(response, (rq, mt) -> maxAge,
+		ResponseCreationSupport.setMaxAge(response, (req, mtype) -> maxAge,
 				request().httpRequest(), mediaType);
 		response.setStatus(HttpStatus.OK);
 		request().httpChannel().respond(new Response(response));

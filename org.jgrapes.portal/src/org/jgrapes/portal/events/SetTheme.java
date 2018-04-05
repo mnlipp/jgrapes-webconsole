@@ -43,7 +43,7 @@ import org.jgrapes.portal.PortalWeblet;
  */
 public class SetTheme extends Event<Void> {
 
-	private String theme;
+	private final String theme;
 
 	/**
 	 * Creates a new event.

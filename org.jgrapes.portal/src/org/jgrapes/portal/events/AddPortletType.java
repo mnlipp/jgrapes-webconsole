@@ -79,11 +79,11 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
  */
 public class AddPortletType extends PortalCommand {
 
-	private String portletType;
+	private final String portletType;
 	private String displayName = "";
-	private boolean instantiable = false;
-	private List<URI> cssUris = new ArrayList<>();
-	private List<ScriptResource> scriptResources = new ArrayList<>();
+	private boolean instantiable;
+	private final List<URI> cssUris = new ArrayList<>();
+	private final List<ScriptResource> scriptResources = new ArrayList<>();
 	
 	/**
 	 * Create a new event for the given portlet type.
@@ -173,7 +173,7 @@ public class AddPortletType extends PortalCommand {
 	 * @return the result
 	 */
 	public ScriptResource[] scriptResources() {
-		return scriptResources.toArray(new ScriptResource[scriptResources.size()]);
+		return scriptResources.toArray(new ScriptResource[0]);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class AddPortletType extends PortalCommand {
 	 * @return the result
 	 */
 	public URI[] cssUris() {
-		return cssUris.toArray(new URI[cssUris.size()]);
+		return cssUris.toArray(new URI[0]);
 	}
 
 	@Override

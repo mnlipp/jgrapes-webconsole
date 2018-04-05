@@ -258,12 +258,14 @@ import org.jgrapes.portal.events.RenderPortletRequestBase;
  * deactivate Portal
  * @enduml
  */
+@SuppressWarnings({"PMD.TooManyMethods", 
+	"PMD.EmptyMethodInAbstractClassShouldBeAbstract"})
 public abstract class AbstractPortlet extends Component {	
 
-	private Map<PortalSession,Set<String>> portletIdsByPortalSession = null;
-	private Duration refreshInterval = null;
+	private Map<PortalSession,Set<String>> portletIdsByPortalSession;
+	private Duration refreshInterval;
 	private Supplier<Event<?>> refreshEventSupplier;
-	private Timer refreshTimer = null;
+	private Timer refreshTimer;
 
 	/**
 	 * Creates a new component that listens for new events
@@ -319,7 +321,7 @@ public abstract class AbstractPortlet extends Component {
 	
 	private void updateRefresh() {
 		if (refreshInterval == null || portletIdsByPortalSession == null
-				|| portletIdsByPortalSession.size() == 0) {
+				|| portletIdsByPortalSession.isEmpty()) {
 			// At least one of the prerequisits is missing, terminate
 			if (refreshTimer != null) {
 				refreshTimer.cancel();
@@ -331,8 +333,8 @@ public abstract class AbstractPortlet extends Component {
 			// Already running.
 			return;
 		}
-		refreshTimer = Components.schedule(t -> {
-			t.reschedule(t.scheduledFor().plus(refreshInterval));
+		refreshTimer = Components.schedule(tmr -> {
+			tmr.reschedule(tmr.scheduledFor().plus(refreshInterval));
 			fire(refreshEventSupplier.get(), trackedSessions());
 		}, Instant.now().plus(refreshInterval));
 	}
@@ -440,7 +442,7 @@ public abstract class AbstractPortlet extends Component {
 		}
 		Set<PortalSession> sessions = new HashSet<>(
 				portletIdsByPortalSession.keySet());
-		return sessions.toArray(new PortalSession[sessions.size()]);
+		return sessions.toArray(new PortalSession[0]);
 	}
 	
 	/**
@@ -455,7 +457,7 @@ public abstract class AbstractPortlet extends Component {
 	protected Set<String> portletIds(PortalSession portalSession) {
 		if (portletIdsByPortalSession != null) {
 			return portletIdsByPortalSession.computeIfAbsent(
-					portalSession, ps -> new HashSet<>());
+					portalSession, newKey -> new HashSet<>());
 		}
 		return new HashSet<>();
 	}
@@ -469,13 +471,13 @@ public abstract class AbstractPortlet extends Component {
 	 * @param portletState the portlet state
 	 * @return the portlet state
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "PMD.AvoidDuplicateLiterals" })
 	protected <T extends Serializable> T putInSession(
 			Session session, String portletId, T portletState) {
 		((Map<Serializable,Map<Serializable,Map<String,Serializable>>>)
 				(Map<Serializable,?>)session)
-			.computeIfAbsent(AbstractPortlet.class, ac -> new HashMap<>())
-			.computeIfAbsent(type(), t -> new HashMap<>())
+			.computeIfAbsent(AbstractPortlet.class, newKey -> new HashMap<>())
+			.computeIfAbsent(type(), newKey -> new HashMap<>())
 			.put(portletId, portletState);
 		return portletState;
 	}
@@ -509,8 +511,8 @@ public abstract class AbstractPortlet extends Component {
 		return Optional.ofNullable(
 				((Map<Serializable,Map<Serializable,Map<String,T>>>)
 						(Map<Serializable,?>)session)
-				.computeIfAbsent(AbstractPortlet.class, ac -> new HashMap<>())
-				.computeIfAbsent(type(), t -> new HashMap<>())
+				.computeIfAbsent(AbstractPortlet.class, newKey -> new HashMap<>())
+				.computeIfAbsent(type(), newKey -> new HashMap<>())
 				.get(portletId));
 	}
 
@@ -528,8 +530,8 @@ public abstract class AbstractPortlet extends Component {
 		return channel.associated(Session.class).map(session ->
 				((Map<Serializable,Map<Serializable,Map<String,T>>>)
 						(Map<Serializable,?>)session)
-				.computeIfAbsent(AbstractPortlet.class, ac -> new HashMap<>())
-				.computeIfAbsent(type(), t -> new HashMap<>()).values())
+				.computeIfAbsent(AbstractPortlet.class, newKey -> new HashMap<>())
+				.computeIfAbsent(type(), newKey -> new HashMap<>()).values())
 			.orElseThrow(() -> new IllegalStateException("Session is missing."));
 	}
 	
@@ -546,8 +548,8 @@ public abstract class AbstractPortlet extends Component {
 			Session session, String portletId) {
 		Serializable state = ((Map<Serializable,Map<Serializable,Map<String,Serializable>>>)
 				(Map<Serializable,?>)session)
-			.computeIfAbsent(AbstractPortlet.class, ac -> new HashMap<>())
-			.computeIfAbsent(type(), t -> new HashMap<>())
+			.computeIfAbsent(AbstractPortlet.class, newKey -> new HashMap<>())
+			.computeIfAbsent(type(), newKey -> new HashMap<>())
 			.remove(portletId);
 		return Optional.ofNullable(state);
 	}
@@ -560,6 +562,8 @@ public abstract class AbstractPortlet extends Component {
 	 * @param portalSession the channel
 	 */
 	@Handler
+	@SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
+	        "PMD.AvoidDuplicateLiterals" })
 	public final void onAddPortletRequest(AddPortletRequest event,
 			PortalSession portalSession) throws Exception {
 		if (!event.portletType().equals(type())) {
@@ -582,6 +586,7 @@ public abstract class AbstractPortlet extends Component {
 	 * @param portalSession the channel
 	 * @return the id of the created portlet
 	 */
+	@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 	protected abstract String doAddPortlet(AddPortletRequest event, 
 			PortalSession portalSession) throws Exception;
 	
@@ -598,15 +603,16 @@ public abstract class AbstractPortlet extends Component {
 	 * @param portalSession the portal session
 	 */
 	@Handler
+	@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 	public final void onDeletePortletRequest(DeletePortletRequest event, 
 			PortalSession portalSession) throws Exception {
-		String portletId = event.portletId();
 		Optional<? extends Serializable> optPortletState 
 			= stateFromSession(portalSession.browserSession(), 
 					event.portletId(), Serializable.class);
 		if (!optPortletState.isPresent()) {
 			return;
 		}
+		String portletId = event.portletId();
 		removeState(portalSession.browserSession(), portletId);
 		if (portletIdsByPortalSession != null) {
 			for (Iterator<PortalSession> psi = portletIdsByPortalSession
@@ -636,6 +642,7 @@ public abstract class AbstractPortlet extends Component {
 	 * @param portletId the portlet id
 	 * @param portletState the portlet state
 	 */
+	@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 	protected abstract void doDeletePortlet(DeletePortletRequest event, 
 			PortalSession channel, String portletId, 
 			Serializable portletState) throws Exception;
@@ -656,6 +663,7 @@ public abstract class AbstractPortlet extends Component {
 	 * @param portalSession the portal session
 	 */
 	@Handler
+	@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 	public final void onRenderPortlet(RenderPortletRequest event,
 			PortalSession portalSession) throws Exception {
 		Optional<? extends Serializable> optPortletState 
@@ -681,6 +689,7 @@ public abstract class AbstractPortlet extends Component {
 	 * @param portletId the portlet id
 	 * @param portletState the portletState
 	 */
+	@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 	protected abstract void doRenderPortlet(RenderPortletRequest event, 
 			PortalSession channel, String portletId, 
 			Serializable portletState) throws Exception;
@@ -695,6 +704,7 @@ public abstract class AbstractPortlet extends Component {
 	 * @param channel the channel
 	 */
 	@Handler
+	@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 	public final void onNotifyPortletModel(NotifyPortletModel event,
 			PortalSession channel) throws Exception {
 		Optional<? extends Serializable> optPortletState 
@@ -713,9 +723,11 @@ public abstract class AbstractPortlet extends Component {
 	 * @param channel the channel
 	 * @param portletState the portletState
 	 */
+	@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 	protected void doNotifyPortletModel(NotifyPortletModel event, 
 			PortalSession channel, Serializable portletState)
 					throws Exception {
+		// Default is to do nothing.
 	}
 	
 	/**
@@ -746,6 +758,7 @@ public abstract class AbstractPortlet extends Component {
 	 * @param portalSession the portal session
 	 */
 	protected void afterOnClosed(Closed event, PortalSession portalSession) {
+		// Default is to do nothing.
 	}
 	
 	/**
@@ -783,7 +796,9 @@ public abstract class AbstractPortlet extends Component {
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
+		@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 		public int hashCode() {
+			@SuppressWarnings("PMD.AvoidFinalLocalVariable")
 			final int prime = 31;
 			int result = 1;
 			result = prime * result
@@ -826,7 +841,7 @@ public abstract class AbstractPortlet extends Component {
 	 */
 	public class RenderPortletFromReader extends RenderPortlet {
 
-		private Future<String> content;
+		private final Future<String> content;
 
 		/**
 		 * Creates a new event.
@@ -838,13 +853,13 @@ public abstract class AbstractPortlet extends Component {
 				Class<?> portletClass, String portletId, Reader contentReader) {
 			super(portletClass, portletId);
 			// Start to prepare the content immediately and concurrently.
-			content = request.processedBy().map(pb -> pb.executorService())
+			content = request.processedBy().map(pby -> pby.executorService())
 					.orElse(Components.defaultExecutorService()).submit(() -> {
 					StringWriter content = new StringWriter();
 					CharBuffer buffer = CharBuffer.allocate(8192);
-					try (Reader in = new BufferedReader(contentReader)) {
+					try (Reader rdr = new BufferedReader(contentReader)) {
 						while (true) {
-							if (in.read(buffer) < 0) {
+							if (rdr.read(buffer) < 0) {
 								break;
 							}
 							buffer.flip();

@@ -29,13 +29,8 @@ import freemarker.template.TemplateModelException;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -55,6 +50,7 @@ import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
@@ -64,10 +60,7 @@ import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jdrupes.httpcodec.types.Converters;
 import org.jdrupes.httpcodec.types.MediaType;
-import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonDecodeException;
-import org.jdrupes.json.JsonRpc;
-import org.jdrupes.json.JsonRpc.DefaultJsonRpc;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
@@ -92,7 +85,6 @@ import org.jgrapes.io.events.Output;
 import org.jgrapes.io.util.ByteBufferOutputStream;
 import org.jgrapes.io.util.CharBufferWriter;
 import org.jgrapes.io.util.LinkedIOSubchannel;
-import org.jgrapes.portal.events.JsonInput;
 import org.jgrapes.portal.events.PageResourceRequest;
 import org.jgrapes.portal.events.PortalCommand;
 import org.jgrapes.portal.events.PortalReady;
@@ -111,36 +103,44 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  * events. Some resource requests (page resource, portlet resource)
  * are forwarded via the {@link Portal} component to the portlets.
  */
+@SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
+        "PMD.TooManyMethods" })
 public class PortalWeblet extends Component {
 
 	private static final String PORTAL_SESSION_IDS 
 		= PortalWeblet.class.getName() + ".portalSessionId";
+	private static final String UTF_8 = "utf-8";
+	@SuppressWarnings("PMD.VariableNamingConventions")
 	private static final Configuration fmConfig = createFmConfig();
 
-	private class PortalChannel extends ClassChannel {}
-	
-	private Portal portal;
+	private final Portal portal;
 	private ResourcePattern requestPattern;
 	private ServiceLoader<ThemeProvider> themeLoader;
 	
 	private Function<Locale,ResourceBundle> resourceBundleSupplier;
 	private BiFunction<ThemeProvider,String,URL> fallbackResourceSupplier
 		= (themeProvider, resource) -> { return null; };
-	private Set<Locale> supportedLocales;
+	private final Set<Locale> supportedLocales;
 	
-	private ThemeProvider baseTheme;
+	private final ThemeProvider baseTheme;
 	private Map<String,Object> portalBaseModel;
-	private RenderSupport renderSupport = new RenderSupportImpl();
+	private final RenderSupport renderSupport = new RenderSupportImpl();
 	private boolean useMinifiedResources = true;
-	private long portalSessionNetworkTimeout = 45000;
-	private long portalSessionRefreshInterval = 30000;
-	private long portalSessionInactivityTimeout = -1;
+	private long psNetworkTimeout = 45000;
+	private long psRefreshInterval = 30000;
+	private long psInactivityTimeout = -1;
 
+	/**
+	 * The class used in handler annotations to represent the 
+	 * portal channel.
+	 */
+	private class PortalChannel extends ClassChannel {}
+	
 	private static Configuration createFmConfig() {
 		Configuration fmConfig = new Configuration(Configuration.VERSION_2_3_26);
 		fmConfig.setClassLoaderForTemplateLoading(
 				PortalWeblet.class.getClassLoader(), "org/jgrapes/portal");
-		fmConfig.setDefaultEncoding("utf-8");
+		fmConfig.setDefaultEncoding(UTF_8);
 		fmConfig.setTemplateExceptionHandler(
 				TemplateExceptionHandler.RETHROW_HANDLER);
         fmConfig.setLogTemplateExceptions(false);
@@ -153,6 +153,7 @@ public class PortalWeblet extends Component {
 	 * @param webletChannel the weblet channel
 	 * @param portal the portal
 	 */
+	@SuppressWarnings("PMD.UseStringBufferForStringAppends")
 	public PortalWeblet(Channel webletChannel, Portal portal) {
 		super(webletChannel, ChannelReplacements.create()
 				.add(PortalChannel.class, portal.channel()));
@@ -176,14 +177,14 @@ public class PortalWeblet extends Component {
 				continue;
 			}
 			if (resourceBundleSupplier != null) {
-				ResourceBundle rb = resourceBundleSupplier.apply(locale);
-				if (rb.getLocale().equals(locale)) {
+				ResourceBundle bundle = resourceBundleSupplier.apply(locale);
+				if (bundle.getLocale().equals(locale)) {
 					supportedLocales.add(locale);
 				}
 			}
-			ResourceBundle rb = ResourceBundle.getBundle(getClass()
+			ResourceBundle bundle = ResourceBundle.getBundle(getClass()
 					.getPackage().getName()	+ ".l10n", locale);
-			if (rb.getLocale().equals(locale)) {
+			if (bundle.getLocale().equals(locale)) {
 				supportedLocales.add(locale);
 			}
 		}
@@ -203,7 +204,7 @@ public class PortalWeblet extends Component {
 			@Override
 			public Object exec(@SuppressWarnings("rawtypes") List arguments)
 					throws TemplateModelException {
-				@SuppressWarnings("unchecked")
+				@SuppressWarnings({ "unchecked", "PMD.AvoidDuplicateLiterals" })
 				List<TemplateModel> args = (List<TemplateModel>)arguments;
 				if (!(args.get(0) instanceof SimpleScalar)) {
 					throw new TemplateModelException("Not a string.");
@@ -216,9 +217,9 @@ public class PortalWeblet extends Component {
 		portalBaseModel.put("minifiedExtension", 
 				useMinifiedResources ? ".min" : "");
 		portalBaseModel.put(
-				"portalSessionRefreshInterval", portalSessionRefreshInterval);
+				"portalSessionRefreshInterval", psRefreshInterval);
 		portalBaseModel.put(
-				"portalSessionInactivityTimeout", portalSessionInactivityTimeout);
+				"portalSessionInactivityTimeout", psInactivityTimeout);
 		return Collections.unmodifiableMap(portalBaseModel);
 	}
 
@@ -231,7 +232,7 @@ public class PortalWeblet extends Component {
 	 * @return the portal view for easy chaining
 	 */
 	public PortalWeblet setPortalSessionNetworkTimeout(long timeout) {
-		portalSessionNetworkTimeout = timeout;
+		psNetworkTimeout = timeout;
 		return this;
 	}
 
@@ -245,7 +246,7 @@ public class PortalWeblet extends Component {
 	 * @return the portal view for easy chaining
 	 */
 	public PortalWeblet setPortalSessionRefreshInterval(long interval) {
-		portalSessionRefreshInterval = interval;
+		psRefreshInterval = interval;
 		portalBaseModel = createPortalBaseModel();
 		return this;
 	}
@@ -260,12 +261,14 @@ public class PortalWeblet extends Component {
 	 * @return the portal view for easy chaining
 	 */
 	public PortalWeblet setPortalSessionInactivityTimeout(long timeout) {
-		portalSessionInactivityTimeout = timeout;
+		psInactivityTimeout = timeout;
 		portalBaseModel = createPortalBaseModel();
 		return this;
 	}
 
 	/**
+	 * Returns whether resources are minified.
+	 *
 	 * @return the useMinifiedResources
 	 */
 	public boolean useMinifiedResources() {
@@ -273,6 +276,8 @@ public class PortalWeblet extends Component {
 	}
 
 	/**
+	 * Determines if resources are minified.
+	 *
 	 * @param useMinifiedResources the useMinifiedResources to set
 	 */
 	public void setUseMinifiedResources(boolean useMinifiedResources) {
@@ -293,31 +298,41 @@ public class PortalWeblet extends Component {
 		return themeLoader = ServiceLoader.load(ThemeProvider.class);
 	}
 	
-	void setResourceBundleSupplier(
+	/* default */ void setResourceBundleSupplier(
 			Function<Locale,ResourceBundle> supplier) {
 		this.resourceBundleSupplier = supplier;
 	}
 	
-	void setFallbackResourceSupplier(
+	/* default */ void setFallbackResourceSupplier(
 			BiFunction<ThemeProvider,String,URL> supplier) {
 		this.fallbackResourceSupplier = supplier;
 	}
 	
-	RenderSupport renderSupport() {
+	/* default */ RenderSupport renderSupport() {
 		return renderSupport;
 	}
 	
+	/**
+	 * Redirects `GET` requests without trailing slash.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParseException the parse exception
+	 */
 	@RequestHandler(dynamic=true)
+	@SuppressWarnings("PMD.EmptyCatchBlock")
 	public void onGetRedirect(GetRequest event, IOSubchannel channel) 
 			throws InterruptedException, IOException, ParseException {
 		HttpResponse response = event.httpRequest().response().get();
 		response.setStatus(HttpStatus.MOVED_PERMANENTLY)
-			.setContentType("text", "plain", "utf-8")
+			.setContentType("text", "plain", UTF_8)
 			.setField(HttpField.LOCATION, portal.prefix());
 		channel.respond(new Response(response));
 		try {
 			channel.respond(Output.from(portal.prefix().toString()
-					.getBytes("utf-8"), true));
+					.getBytes(UTF_8), true));
 		} catch (UnsupportedEncodingException e) {
 			// Supported by definition
 		}
@@ -325,6 +340,15 @@ public class PortalWeblet extends Component {
 		event.stop();
 	}
 	
+	/**
+	 * Handle the `GET` requests for the various resources.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParseException the parse exception
+	 */
 	@RequestHandler(dynamic=true)
 	public void onGet(GetRequest event, IOSubchannel channel) 
 			throws InterruptedException, IOException, ParseException {
@@ -345,7 +369,7 @@ public class PortalWeblet extends Component {
 			return;
 		case "portal-resource":
 			ResponseCreationSupport.sendStaticContent(event, channel, 
-					p -> PortalWeblet.this.getClass().getResource(
+					path -> getClass().getResource(
 							requestParts[1]), null);
 			return;
 		case "page-resource":
@@ -360,9 +384,13 @@ public class PortalWeblet extends Component {
 		case "portlet-resource":
 			requestPortletResource(event, channel, URI.create(requestParts[1]));
 			return;
+		default:
+			break;
 		}
 	}
 
+	@SuppressWarnings({ "PMD.ExcessiveMethodLength", 
+		"PMD.DataflowAnomalyAnalysis" })
 	private void renderPortal(GetRequest event, IOSubchannel channel)
 		throws IOException, InterruptedException {
 		event.setResult(true);
@@ -371,14 +399,15 @@ public class PortalWeblet extends Component {
 		// Because language is changed via websocket, locale cookie 
 		// may be out-dated
 		event.associated(Selection.class)
-			.ifPresent(s ->	s.prefer(s.get()[0]));
+			.ifPresent(selection ->	selection.prefer(selection.get()[0]));
 
 		// This is a portal session now (can be connected to)
 		Session session = event.associated(Session.class).get();
 		UUID portalSessionId = UUID.randomUUID();
 		@SuppressWarnings("unchecked")
 		Map<URI,UUID> knownIds = (Map<URI,UUID>)session.computeIfAbsent(
-				PORTAL_SESSION_IDS, k -> new HashMap<URI,UUID>());
+				PORTAL_SESSION_IDS, 
+				newKey -> new ConcurrentHashMap<URI,UUID>());
 		knownIds.put(portal.prefix(), portalSessionId);
 		
 		// Prepare response
@@ -393,6 +422,7 @@ public class PortalWeblet extends Component {
 				channel, channel.responsePipeline());
 				Writer out = new OutputStreamWriter(bbos.suppressClose(), 
 						"utf-8")) {
+			@SuppressWarnings("PMD.UseConcurrentHashMap")
 			Map<String,Object> portalModel = new HashMap<>(portalBaseModel);
 
 			// Portal Session UUID
@@ -400,7 +430,7 @@ public class PortalWeblet extends Component {
 			
 			// Add locale
 			final Locale locale = event.associated(Selection.class).map(
-					s -> s.get()[0]).orElse(Locale.getDefault());
+					sel -> sel.get()[0]).orElse(Locale.getDefault());
 			portalModel.put("locale", locale);
 
 			// Add supported locales
@@ -413,7 +443,7 @@ public class PortalWeblet extends Component {
 				}
 			};
 			LanguageInfo[] languages = supportedLocales.stream()
-					.map(l -> new LanguageInfo(l))
+					.map(lang -> new LanguageInfo(lang))
 					.sorted(comp).toArray(size -> new LanguageInfo[size]);
 			portalModel.put("supportedLanguages", languages);
 
@@ -436,12 +466,12 @@ public class PortalWeblet extends Component {
 					String key = ((SimpleScalar)args.get(0)).getAsString();
 					try {
 						return additionalResources.getString(key);
-					} catch (MissingResourceException e) {
+					} catch (MissingResourceException e) { // NOPMD
 						// try base resources
 					}
 					try {
 						return baseResources.getString(key);
-					} catch (MissingResourceException e) {
+					} catch (MissingResourceException e) { // NOPMD
 						// no luck
 					}
 					return key;
@@ -454,7 +484,7 @@ public class PortalWeblet extends Component {
 			themeLoader = ServiceLoader.load(ThemeProvider.class);
 			portalModel.put("themeInfos", 
 					StreamSupport.stream(themeLoader().spliterator(), false)
-					.map(t -> new ThemeInfo(t.themeId(), t.themeName()))
+					.map(thi -> new ThemeInfo(thi.themeId(), thi.themeName()))
 					.sorted().toArray(size -> new ThemeInfo[size]));
 			
 			Template tpl = fmConfig.getTemplate("portal.ftlh");
@@ -464,6 +494,7 @@ public class PortalWeblet extends Component {
 		}
 	}
 
+	@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 	private void sendThemeResource(GetRequest event, IOSubchannel channel,
 			String resource) throws ParseException {
 		// Get resource
@@ -471,7 +502,8 @@ public class PortalWeblet extends Component {
 				session -> Optional.ofNullable(session.get("themeProvider")).flatMap(
 						themeId -> StreamSupport
 						.stream(themeLoader().spliterator(), false)
-						.filter(t -> t.themeId().equals(themeId)).findFirst()
+						.filter(thi -> thi.themeId().equals(themeId))
+						.findFirst()
 				)).orElse(baseTheme);
 		URL resourceUrl;
 		try {
@@ -488,7 +520,7 @@ public class PortalWeblet extends Component {
 		}
 		final URL resUrl = resourceUrl;
 		ResponseCreationSupport.sendStaticContent(event, channel, 
-				p -> resUrl, null);
+				path -> resUrl, null);
 	}
 
 	private void requestPageResource(GetRequest event, IOSubchannel channel,
@@ -546,6 +578,14 @@ public class PortalWeblet extends Component {
 						portal, channel, activeEventPipeline()));
 	}
 
+	/**
+	 * Handles the {@link ResourceRequestCompleted} event.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws InterruptedException the interrupted exception
+	 */
 	@Handler(channels=PortalChannel.class)
 	public void onResourceRequestCompleted(
 			ResourceRequestCompleted event, PortalResourceChannel channel) 
@@ -565,7 +605,7 @@ public class PortalWeblet extends Component {
 		// Must be WebSocket request.
 		if (!event.httpRequest().findField(
 				HttpField.UPGRADE, Converters.STRING_LIST)
-				.map(f -> f.value().containsIgnoreCase("websocket"))
+				.map(fld -> fld.value().containsIgnoreCase("websocket"))
 				.orElse(false)) {
 			return;
 		}
@@ -577,22 +617,28 @@ public class PortalWeblet extends Component {
 		final Session browserSession = event.associated(Session.class).get();
 		@SuppressWarnings("unchecked")
 		Map<URI,UUID> knownIds = (Map<URI,UUID>)browserSession.computeIfAbsent(
-				PORTAL_SESSION_IDS, k -> new HashMap<URI,UUID>());
-		if(!UUID.fromString(portalSessionId)
+				PORTAL_SESSION_IDS, newKey -> new ConcurrentHashMap<URI,UUID>());
+		if(!UUID.fromString(portalSessionId) // NOPMD, note negation
 				.equals(knownIds.get(portal.prefix()))) {
 			channel.setAssociated(this, new String[2]);
 		} else {
 			channel.setAssociated(this, new String[] {
 					portalSessionId, 
 					Optional.ofNullable(event.httpRequest().queryData()
-							.get("was")).map(l -> l.get(0)).orElse(null)
+							.get("was")).map(vals -> vals.get(0)).orElse(null)
 			});
 		}
 		channel.respond(new ProtocolSwitchAccepted(event, "websocket"));
 		event.stop();
-		return;
 	}
 
+	/**
+	 * Called when the connection has been upgraded.
+	 *
+	 * @param event the event
+	 * @param wsChannel the ws channel
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
 	public void onUpgraded(Upgraded event, IOSubchannel wsChannel)
 			throws IOException {
@@ -618,14 +664,14 @@ public class PortalWeblet extends Component {
 		// Reuse old portal session if still available
 		PortalSession portalSession = Optional.ofNullable(portalSessionIds[1])
 				.flatMap(opsId -> PortalSession.lookup(opsId))
-				.map(ps -> ps.replaceId(portalSessionIds[0]))
+				.map(session -> session.replaceId(portalSessionIds[0]))
 				.orElse(PortalSession.lookupOrCreate(portalSessionIds[0],
-						portal, portalSessionNetworkTimeout))
+						portal, psNetworkTimeout))
 				.setUpstreamChannel(wsChannel)
 				.setSession(browserSession);
 		wsChannel.setAssociated(PortalSession.class, portalSession);
 		// Channel now used as JSON input
-		wsChannel.setAssociated(this, new WsInputReader(
+		wsChannel.setAssociated(this, new WebSocketInputReader(
 				event.processedBy().get(), portalSession));
 		// From now on, only portalSession.respond may be used to send on the 
 		// upstream channel.
@@ -633,11 +679,18 @@ public class PortalWeblet extends Component {
 			.restrictEventSource(portalSession.responsePipeline());
 	}
 	
+	/**
+	 * Handles network input (JSON data).
+	 *
+	 * @param event the event
+	 * @param wsChannel the ws channel
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler
 	public void onInput(Input<CharBuffer> event, IOSubchannel wsChannel)
 			throws IOException {
-		Optional<WsInputReader> optWsInputReader 
-			= wsChannel.associated(this, WsInputReader.class);
+		Optional<WebSocketInputReader> optWsInputReader 
+			= wsChannel.associated(this, WebSocketInputReader.class);
 		if (optWsInputReader.isPresent()) {
 			optWsInputReader.get().write(event.buffer().backingBuffer());
 		}
@@ -645,27 +698,33 @@ public class PortalWeblet extends Component {
 	
 	/**
 	 * Handles the closed event from the web socket.
-	 * 
+	 *
 	 * @param event the event
 	 * @param wsChannel the WebSocket channel
-	 * @throws IOException 
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	@Handler
 	public void onClosed(
 			Closed event, IOSubchannel wsChannel) throws IOException {
-		Optional<WsInputReader> optWsInputReader 
-			= wsChannel.associated(this, WsInputReader.class);
+		Optional<WebSocketInputReader> optWsInputReader 
+			= wsChannel.associated(this, WebSocketInputReader.class);
 		if (optWsInputReader.isPresent()) {
 			wsChannel.setAssociated(this, null);
 			optWsInputReader.get().close();
 		}
-		wsChannel.associated(PortalSession.class).ifPresent(ps -> {
+		wsChannel.associated(PortalSession.class).ifPresent(session -> {
 			// Restore channel to normal mode, see onPortalReady
-			ps.responsePipeline().restrictEventSource(null);
-			ps.disconnected();
+			session.responsePipeline().restrictEventSource(null);
+			session.disconnected();
 		});
 	}
 	
+	/**
+	 * Handles the {@link PortalReady} event.
+	 *
+	 * @param event the event
+	 * @param portalSession the portal session
+	 */
 	@Handler(channels=PortalChannel.class)
 	public void onPortalReady(PortalReady event, PortalSession portalSession) {
 		String principal = 	Utils.userFromSession(portalSession.browserSession())
@@ -675,6 +734,13 @@ public class PortalWeblet extends Component {
 		fire(query, portalSession);
 	}
 
+	/**
+	 * Handles the data retrieved from storage.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws JsonDecodeException the json decode exception
+	 */
 	@Handler(channels=PortalChannel.class)
 	public void onKeyValueStoreData(
 			KeyValueStoreData event, PortalSession channel) 
@@ -693,13 +759,21 @@ public class PortalWeblet extends Component {
 				session.get("themeProvider")).flatMap(
 						themeId -> StreamSupport
 						.stream(themeLoader().spliterator(), false)
-						.filter(t -> t.themeId().equals(themeId)).findFirst()
+						.filter(thi -> thi.themeId().equals(themeId)).findFirst()
 				).orElse(baseTheme);
 		if (!themeProvider.themeId().equals(requestedThemeId)) {
 			fire(new SetTheme(requestedThemeId), channel);
 		}
 	}
 	
+	/**
+	 * Handles a change of Locale.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler(channels=PortalChannel.class)
 	public void onSetLocale(SetLocale event, PortalSession channel)
 			throws InterruptedException, IOException {
@@ -708,19 +782,27 @@ public class PortalWeblet extends Component {
 			Selection selection = (Selection)session.get(Selection.class);
 			if (selection != null) {
 				supportedLocales.stream()
-				.filter(l -> l.equals(event.locale())).findFirst()
-				.ifPresent(l -> selection.prefer(l));
+				.filter(lang -> lang.equals(event.locale())).findFirst()
+				.ifPresent(lang -> selection.prefer(lang));
 			}
 		}
 		channel.respond(new SimplePortalCommand("reload"));
 	}
 	
+	/**
+	 * Handles a change of theme.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler(channels=PortalChannel.class)
 	public void onSetTheme(SetTheme event, PortalSession channel)
 			throws InterruptedException, IOException {
 		ThemeProvider themeProvider = StreamSupport
 			.stream(themeLoader().spliterator(), false)
-			.filter(t -> t.themeId().equals(event.theme())).findFirst()
+			.filter(thi -> thi.themeId().equals(event.theme())).findFirst()
 			.orElse(baseTheme);
 		channel.browserSession().put("themeProvider", themeProvider.themeId());
 		channel.respond(new KeyValueStoreUpdate().update(
@@ -730,6 +812,14 @@ public class PortalWeblet extends Component {
 		channel.respond(new SimplePortalCommand("reload"));
 	}
 	
+	/**
+	 * Sends a command to the portal.
+	 *
+	 * @param event the event
+	 * @param channel the channel
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Handler(channels=PortalChannel.class, priority=-1000)
 	public void onPortalCommand(
 			PortalCommand event, PortalSession channel)
@@ -741,141 +831,53 @@ public class PortalWeblet extends Component {
 		event.toJson(out);
 	}
 	
-	private static class WsInputReader extends Thread {
-
-		private static ReferenceQueue<Object> abandoned 
-			= new ReferenceQueue<>();
-
-		private static class RefWithThread<T> extends WeakReference<T> {
-			public Thread watched;
-
-			public RefWithThread(T referent, Thread thread) {
-				super(referent, abandoned);
-				watched = thread;
-			}
-		}
-
-		static {
-			Thread watchdog = new Thread(() -> {
-				while (true) {
-					try {
-						@SuppressWarnings("unchecked")
-						RefWithThread<Object> ref 
-							= (RefWithThread<Object>)abandoned.remove();
-						ref.watched.interrupt();
-					} catch (InterruptedException e) {
-						// Nothing to do
-					}
-				}
-			});
-			watchdog.setDaemon(true);
-			watchdog.start();
-		}
-		
-		private WeakReference<EventPipeline> pipelineRef;
-		private WeakReference<PortalSession> channelRef;
-		private PipedWriter decodeIn;
-		private Reader jsonSource;
-
-		public WsInputReader(EventPipeline wsInPipeline,
-		        PortalSession portalChannel) {
-			this.pipelineRef = new RefWithThread<>(
-					wsInPipeline, WsInputReader.this);
-			this.channelRef = new RefWithThread<>(
-					portalChannel, WsInputReader.this);
-			setDaemon(true);
-		}
-
-		public void write(CharBuffer buffer) throws IOException {
-			// Delayed initialization, allows adaption to buffer size.
-			if (decodeIn == null) {
-				decodeIn = new PipedWriter();
-				jsonSource = new PipedReader(decodeIn, buffer.capacity());
-				start();
-			}
-			decodeIn.append(buffer);
-			decodeIn.flush();
-		}
-
-		public void close() throws IOException {
-			if (decodeIn == null) {
-				// Never started
-				return;
-			}
-			decodeIn.close();
-			try {
-				join(1000);
-			} catch (InterruptedException e) {
-				// Just in case
-				interrupt();
-			}
-		}
-
-		public void run() {
-			while (true) {
-				JsonBeanDecoder jsonDecoder = JsonBeanDecoder.create(jsonSource);
-				JsonRpc rpc;
-				try {
-					rpc = jsonDecoder.readObject(DefaultJsonRpc.class);
-				} catch (JsonDecodeException e) {
-					break;
-				}
-				if (rpc == null) {
-					break;
-				}
-				// Fully decoded JSON available.
-				PortalSession portalSession = channelRef.get();
-				EventPipeline eventPipeline = pipelineRef.get();
-				if (eventPipeline == null || portalSession == null) {
-					break;
-				}
-				// Portal session established, check for special disconnect
-				if ("disconnect".equals(rpc.method())
-							&& portalSession.portalSessionId().equals(
-									rpc.params().asString(0))) {
-					portalSession.discard();
-					return;
-				}
-				// Ordinary message from portal (view) to server.
-				portalSession.refresh();
-				if("keepAlive".equals(rpc.method())) {
-					continue;
-				}
-				eventPipeline.fire(new JsonInput(rpc), portalSession);
-			}
-		}
-	}
-
+	/**
+	 * Holds the information about the selected language.
+	 */
 	public static class LanguageInfo {
-		private Locale locale;
+		private final Locale locale;
 
 		/**
-		 * @param locale
+		 * Instantiates a new language info.
+		 *
+		 * @param locale the locale
 		 */
 		public LanguageInfo(Locale locale) {
 			this.locale = locale;
 		}
 
 		/**
+		 * Gets the locale.
+		 *
 		 * @return the locale
 		 */
 		public Locale getLocale() {
 			return locale;
 		}
 		
+		/**
+		 * Gets the label.
+		 *
+		 * @return the label
+		 */
 		public String getLabel() {
 			String str = locale.getDisplayName(locale);
 			return Character.toUpperCase(str.charAt(0)) + str.substring(1);
 		}
 	}
 	
+	/**
+	 * Holds the information about a theme.
+	 */
 	public static class ThemeInfo implements Comparable<ThemeInfo> {
-		private String id;
-		private String name;
+		private final String id;
+		private final String name;
 		
 		/**
-		 * @param id
-		 * @param name
+		 * Instantiates a new theme info.
+		 *
+		 * @param id the id
+		 * @param name the name
 		 */
 		public ThemeInfo(String id, String name) {
 			super();
@@ -884,13 +886,18 @@ public class PortalWeblet extends Component {
 		}
 		
 		/**
+		 * Returns the id.
+		 *
 		 * @return the id
 		 */
+		@SuppressWarnings("PMD.ShortMethodName")
 		public String id() {
 			return id;
 		}
 		
 		/**
+		 * Returns the name.
+		 *
 		 * @return the name
 		 */
 		public String name() {
@@ -931,12 +938,22 @@ public class PortalWeblet extends Component {
 	 */
 	public class PortalResourceChannel extends LinkedIOSubchannel {
 
+		/**
+		 * Instantiates a new portal resource channel.
+		 *
+		 * @param hub the hub
+		 * @param upstreamChannel the upstream channel
+		 * @param responsePipeline the response pipeline
+		 */
 		public PortalResourceChannel(Manager hub,
 		        IOSubchannel upstreamChannel, EventPipeline responsePipeline) {
 			super(hub, hub.channel(), upstreamChannel, responsePipeline);
 		}
 	}
 	
+	/**
+	 * The implementation of {@link RenderSupport} used by this class.
+	 */
 	private class RenderSupportImpl implements RenderSupport {
 
 		/* (non-Javadoc)

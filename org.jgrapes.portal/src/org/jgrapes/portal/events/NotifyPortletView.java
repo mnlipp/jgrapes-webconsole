@@ -20,17 +20,19 @@ package org.jgrapes.portal.events;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 
 /**
  * A notification (as defined by the JSON RPC specification) to be sent to
  * the portlet view (the browser).
  */
+@SuppressWarnings("PMD.DataClass")
 public class NotifyPortletView extends PortalCommand {
 
-	private String portletType;
-	private String portletId;
-	private String method;
-	private Object[] params;
+	private final String portletType;
+	private final String portletId;
+	private final String method;
+	private final Object[] params;
 	
 	/**
 	 * Creates a new event.
@@ -48,7 +50,7 @@ public class NotifyPortletView extends PortalCommand {
 		this.portletType = portletType;
 		this.portletId = portletId;
 		this.method = method;
-		this.params = params;
+		this.params = Arrays.copyOf(params, params.length);
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class NotifyPortletView extends PortalCommand {
 	 * @return the parameters
 	 */
 	public Object[] params() {
-		return params;
+		return Arrays.copyOf(params, params.length);
 	}
 
 	@Override

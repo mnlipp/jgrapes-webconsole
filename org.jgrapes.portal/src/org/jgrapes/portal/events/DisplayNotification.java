@@ -33,7 +33,7 @@ import java.util.Map;
 public class DisplayNotification extends PortalCommand {
 
 	private String content;
-	private Map<String,Object> options = null;
+	private Map<String,Object> options;
 	
 	/**
 	 * Creates a new event. The content must be valid HTML, i.e. it

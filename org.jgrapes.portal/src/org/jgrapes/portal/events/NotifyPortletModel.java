@@ -46,12 +46,13 @@ import org.jgrapes.portal.RenderSupport;
  * 
  * @enduml
  */
+@SuppressWarnings("PMD.DataClass")
 public class NotifyPortletModel extends Event<Void> {
 
-	private RenderSupport renderSupport;
-	private String portletId;
-	private String method;
-	private JsonArray params;
+	private final RenderSupport renderSupport;
+	private final String portletId;
+	private final String method;
+	private final JsonArray params;
 	
 	/**
 	 * Creates a new event.
