@@ -88,6 +88,6 @@ public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
 	 * @return true, if successful
 	 */
 	public boolean hasBeenRendered() {
-		return currentResults() != null && currentResults().get(0);
+		return !currentResults().isEmpty() && currentResults().get(0);
 	}
 }
