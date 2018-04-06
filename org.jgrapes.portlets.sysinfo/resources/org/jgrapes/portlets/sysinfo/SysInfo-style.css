@@ -4,4 +4,8 @@
  .jgrapes-portlets-sysinfo-view .memoryChart-wrapper {
     height: 50vh;
     width: 100%;
- }
+}
+ 
+.jgrapes-portlets-sysinfo-view .GarbageCollection-action {
+	float: right;
+}

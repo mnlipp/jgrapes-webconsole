@@ -23,6 +23,12 @@ var orgJGrapesPortletsSysInfo = {
 
 (function() {
 
+    $("body").on("click", ".jgrapes-portlets-sysinfo-view .GarbageCollection-action",
+            function(event) {
+        let portletId = $(this).closest("[data-portlet-id]").attr("data-portlet-id");
+        JGPortal.notifyPortletModel(portletId, "garbageCollection");
+    })
+
     let timeData = [];
     let maxMemoryData = [];
     let totalMemoryData = [];
