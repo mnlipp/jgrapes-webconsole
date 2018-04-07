@@ -29,18 +29,18 @@ import org.jgrapes.http.Session;
  */
 public final class Utils {
 
-	private Utils() {
-	}
+    private Utils() {
+    }
 
-	/**
-	 * Convenience method for retrieving the user from
-	 * a {@link Subject} associated with the session.
-	 * 
-	 * @return the user principal
-	 */
-	public static Optional<UserPrincipal> userFromSession(Session session) {
-		return Optional.ofNullable((Subject)session.get(Subject.class))
-				.flatMap(subject -> subject.getPrincipals(UserPrincipal.class)
-						.stream().findFirst());
-	}
+    /**
+     * Convenience method for retrieving the user from
+     * a {@link Subject} associated with the session.
+     * 
+     * @return the user principal
+     */
+    public static Optional<UserPrincipal> userFromSession(Session session) {
+        return Optional.ofNullable((Subject) session.get(Subject.class))
+            .flatMap(subject -> subject.getPrincipals(UserPrincipal.class)
+                .stream().findFirst());
+    }
 }

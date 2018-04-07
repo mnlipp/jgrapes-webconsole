@@ -32,75 +32,75 @@ import java.util.Map;
  */
 public class DisplayNotification extends PortalCommand {
 
-	private String content;
-	private Map<String,Object> options;
-	
-	/**
-	 * Creates a new event. The content must be valid HTML, i.e. it
-	 * must start with a tag (usually a "`<span>`"). See the JavaScript 
-	 * documentation of the
-	 * <a href="../../../../jsdoc/index.html#notificationplugin">
-	 * notification plugin</a> for details about the available options.
-	 * 
-	 * @param content the content (valid HTML)
-	 * @param options the options (must be serializable as JSON)
-	 */
-	public DisplayNotification(String content, Map<String,Object> options) {
-		this.content = content;
-		this.options = options;
-	}
+    private String content;
+    private Map<String, Object> options;
 
-	/**
-	 * Creates a new event without any options.
-	 * The content must be valid HTML, i.e. it
-	 * must start with a tag (usually a "`<span>`").
-	 * 
-	 * @param content the content (valid HTML)
-	 */
-	public DisplayNotification(String content) {
-		this(content, null);
-	}
+    /**
+     * Creates a new event. The content must be valid HTML, i.e. it
+     * must start with a tag (usually a "`<span>`"). See the JavaScript 
+     * documentation of the
+     * <a href="../../../../jsdoc/index.html#notificationplugin">
+     * notification plugin</a> for details about the available options.
+     * 
+     * @param content the content (valid HTML)
+     * @param options the options (must be serializable as JSON)
+     */
+    public DisplayNotification(String content, Map<String, Object> options) {
+        this.content = content;
+        this.options = options;
+    }
 
-	/**
-	 * Adds an option to the event. See the JavaScript documentation of the
-	 * <a href="../../../../jsdoc/index.html#notificationplugin">
-	 * notification plugin</a> for details about the available options.
-	 * 
-	 * @param name the option name
-	 * @param value the option value (must be serializable as JSON)
-	 * @return the event for easy chaining
-	 */
-	public DisplayNotification addOption(String name, Object value) {
-		if (options == null) {
-			options = new HashMap<String, Object>();
-		}
-		options.put(name, value);
-		return this;
-	}
-	
-	/**
-	 * Returns the content.
-	 * 
-	 * @return the content
-	 */
-	public String content() {
-		return content;
-	}
+    /**
+     * Creates a new event without any options.
+     * The content must be valid HTML, i.e. it
+     * must start with a tag (usually a "`<span>`").
+     * 
+     * @param content the content (valid HTML)
+     */
+    public DisplayNotification(String content) {
+        this(content, null);
+    }
 
-	/**
-	 * Return the options.
-	 * 
-	 * @return the options
-	 */
-	public Map<String,Object> options() {
-		return options == null ? Collections.emptyMap() : options;
-	}
+    /**
+     * Adds an option to the event. See the JavaScript documentation of the
+     * <a href="../../../../jsdoc/index.html#notificationplugin">
+     * notification plugin</a> for details about the available options.
+     * 
+     * @param name the option name
+     * @param value the option value (must be serializable as JSON)
+     * @return the event for easy chaining
+     */
+    public DisplayNotification addOption(String name, Object value) {
+        if (options == null) {
+            options = new HashMap<String, Object>();
+        }
+        options.put(name, value);
+        return this;
+    }
 
-	@Override
-	public void toJson(Writer writer) throws IOException {
-		Map<String,Object> options = options();
-		options.put("destroyOnClose", true);
-		toJson(writer, "displayNotification", content(), options);
-	}
-	
+    /**
+     * Returns the content.
+     * 
+     * @return the content
+     */
+    public String content() {
+        return content;
+    }
+
+    /**
+     * Return the options.
+     * 
+     * @return the options
+     */
+    public Map<String, Object> options() {
+        return options == null ? Collections.emptyMap() : options;
+    }
+
+    @Override
+    public void toJson(Writer writer) throws IOException {
+        Map<String, Object> options = options();
+        options.put("destroyOnClose", true);
+        toJson(writer, "displayNotification", content(), options);
+    }
+
 }

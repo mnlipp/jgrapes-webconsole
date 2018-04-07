@@ -79,121 +79,121 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
  */
 public class AddPortletType extends PortalCommand {
 
-	private final String portletType;
-	private String displayName = "";
-	private boolean instantiable;
-	private final List<URI> cssUris = new ArrayList<>();
-	private final List<ScriptResource> scriptResources = new ArrayList<>();
-	
-	/**
-	 * Create a new event for the given portlet type.
-	 * 
-	 * @param portletType a unique id for the portklet type (usually
-	 * the class name)
-	 */
-	public AddPortletType(String portletType) {
-		this.portletType = portletType;
-	}
-	
-	/**
-	 * Return the portlet type.
-	 * 
-	 * @return the portlet type
-	 */
-	public String portletType() {
-		return portletType;
-	}
+    private final String portletType;
+    private String displayName = "";
+    private boolean instantiable;
+    private final List<URI> cssUris = new ArrayList<>();
+    private final List<ScriptResource> scriptResources = new ArrayList<>();
 
-	/**
-	 * Sets the display name.
-	 * 
-	 * @param displayName the display name
-	 * @return the event for easy chaining
-	 */
-	public AddPortletType setDisplayName(String displayName) {
-		this.displayName = displayName;
-		return this;
-	}
-	
-	/**
-	 * Return the display name.
-	 * 
-	 * @return the displayName
-	 */
-	public String displayName() {
-		return displayName;
-	}
+    /**
+     * Create a new event for the given portlet type.
+     * 
+     * @param portletType a unique id for the portklet type (usually
+     * the class name)
+     */
+    public AddPortletType(String portletType) {
+        this.portletType = portletType;
+    }
 
-	/**
-	 * Mark the portlet type as instantiable.
-	 * 
-	 * @return the event for easy chaining
-	 */
-	public AddPortletType setInstantiable() {
-		instantiable = true;
-		return this;
-	}
-	
-	/**
-	 * Return if the portelt is instantiable.
-	 * 
-	 * @return the result
-	 */
-	public boolean isInstantiable() {
-		return instantiable;
-	}
+    /**
+     * Return the portlet type.
+     * 
+     * @return the portlet type
+     */
+    public String portletType() {
+        return portletType;
+    }
 
-	/**
-	 * Add a script resource to be requested by the browser.
-	 * 
-	 * @param scriptResource the script resource
-	 * @return the event for easy chaining
-	 */
-	public AddPortletType addScript(ScriptResource scriptResource) {
-		scriptResources.add(scriptResource);
-		return this;
-	}
+    /**
+     * Sets the display name.
+     * 
+     * @param displayName the display name
+     * @return the event for easy chaining
+     */
+    public AddPortletType setDisplayName(String displayName) {
+        this.displayName = displayName;
+        return this;
+    }
 
-	/**
-	 * Add the URI of a CSS resource that is to be added to the
-	 * header section of the portal page.
-	 *
-	 * @param renderSupport the render support for mapping the `uri`
-	 * @param uri the URI
-	 * @return the event for easy chaining
-	 */
-	public AddPortletType addCss(RenderSupport renderSupport, URI uri) {
-		cssUris.add(renderSupport.portletResource(portletType(), uri));
-		return this;
-	}
+    /**
+     * Return the display name.
+     * 
+     * @return the displayName
+     */
+    public String displayName() {
+        return displayName;
+    }
 
-	/**
-	 * Return all script resources.
-	 * 
-	 * @return the result
-	 */
-	public ScriptResource[] scriptResources() {
-		return scriptResources.toArray(new ScriptResource[0]);
-	}
+    /**
+     * Mark the portlet type as instantiable.
+     * 
+     * @return the event for easy chaining
+     */
+    public AddPortletType setInstantiable() {
+        instantiable = true;
+        return this;
+    }
 
-	/**
-	 * Return all CSS URIs.
-	 * 
-	 * @return the result
-	 */
-	public URI[] cssUris() {
-		return cssUris.toArray(new URI[0]);
-	}
+    /**
+     * Return if the portelt is instantiable.
+     * 
+     * @return the result
+     */
+    public boolean isInstantiable() {
+        return instantiable;
+    }
 
-	@Override
-	public void toJson(Writer writer) throws IOException {
-		JsonArray strArray = JsonArray.create();
-		for (ScriptResource scriptResource: scriptResources()) {
-			strArray.append(scriptResource.toJsonValue());
-		}
-		toJson(writer, "addPortletType", portletType(), displayName(),
-				Arrays.stream(cssUris()).map(
-						uri ->	uri.toString()).toArray(String[]::new),
-				strArray, isInstantiable());
-	}
+    /**
+     * Add a script resource to be requested by the browser.
+     * 
+     * @param scriptResource the script resource
+     * @return the event for easy chaining
+     */
+    public AddPortletType addScript(ScriptResource scriptResource) {
+        scriptResources.add(scriptResource);
+        return this;
+    }
+
+    /**
+     * Add the URI of a CSS resource that is to be added to the
+     * header section of the portal page.
+     *
+     * @param renderSupport the render support for mapping the `uri`
+     * @param uri the URI
+     * @return the event for easy chaining
+     */
+    public AddPortletType addCss(RenderSupport renderSupport, URI uri) {
+        cssUris.add(renderSupport.portletResource(portletType(), uri));
+        return this;
+    }
+
+    /**
+     * Return all script resources.
+     * 
+     * @return the result
+     */
+    public ScriptResource[] scriptResources() {
+        return scriptResources.toArray(new ScriptResource[0]);
+    }
+
+    /**
+     * Return all CSS URIs.
+     * 
+     * @return the result
+     */
+    public URI[] cssUris() {
+        return cssUris.toArray(new URI[0]);
+    }
+
+    @Override
+    public void toJson(Writer writer) throws IOException {
+        JsonArray strArray = JsonArray.create();
+        for (ScriptResource scriptResource : scriptResources()) {
+            strArray.append(scriptResource.toJsonValue());
+        }
+        toJson(writer, "addPortletType", portletType(), displayName(),
+            Arrays.stream(cssUris()).map(
+                uri -> uri.toString()).toArray(String[]::new),
+            strArray, isInstantiable());
+    }
 }

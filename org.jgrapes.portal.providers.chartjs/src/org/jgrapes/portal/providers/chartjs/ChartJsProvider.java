@@ -39,38 +39,38 @@ import org.jgrapes.portal.events.PortalReady;
  */
 public class ChartJsProvider extends PageResourceProvider {
 
-	/**
-	 * Creates a new component with its channel set to the given 
-	 * channel.
-	 * 
-	 * @param componentChannel the channel that the component's 
-	 * handlers listen on by default and that 
-	 * {@link Manager#fire(Event, Channel...)} sends the event to 
-	 */
-	public ChartJsProvider(Channel componentChannel) {
-		super(componentChannel);
-	}
+    /**
+     * Creates a new component with its channel set to the given 
+     * channel.
+     * 
+     * @param componentChannel the channel that the component's 
+     * handlers listen on by default and that 
+     * {@link Manager#fire(Event, Channel...)} sends the event to 
+     */
+    public ChartJsProvider(Channel componentChannel) {
+        super(componentChannel);
+    }
 
-	/**
-	 * On {@link PortalReady}, fire the appropriate {@link AddPageResources}.
-	 *
-	 * @param event the event
-	 * @param portalSession the portal session
-	 * @throws TemplateNotFoundException the template not found exception
-	 * @throws MalformedTemplateNameException the malformed template name exception
-	 * @throws ParseException the parse exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	@Handler(priority=100)
-	public void onPortalReady(PortalReady event, PortalSession portalSession) 
-			throws TemplateNotFoundException, MalformedTemplateNameException, 
-			ParseException, IOException {
-		String minExt = event.renderSupport()
-				.useMinifiedResources() ? ".min" : "";
-		portalSession.respond(new AddPageResources()
-				.addScriptResource(new ScriptResource()
-						.setProvides(new String[] {"chartjs.org"})
-						.setScriptUri(event.renderSupport().pageResource(
-								"chart-js-2.7.0/Chart" + minExt + ".js"))));
-	}
+    /**
+     * On {@link PortalReady}, fire the appropriate {@link AddPageResources}.
+     *
+     * @param event the event
+     * @param portalSession the portal session
+     * @throws TemplateNotFoundException the template not found exception
+     * @throws MalformedTemplateNameException the malformed template name exception
+     * @throws ParseException the parse exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Handler(priority = 100)
+    public void onPortalReady(PortalReady event, PortalSession portalSession)
+            throws TemplateNotFoundException, MalformedTemplateNameException,
+            ParseException, IOException {
+        String minExt = event.renderSupport()
+            .useMinifiedResources() ? ".min" : "";
+        portalSession.respond(new AddPageResources()
+            .addScriptResource(new ScriptResource()
+                .setProvides(new String[] { "chartjs.org" })
+                .setScriptUri(event.renderSupport().pageResource(
+                    "chart-js-2.7.0/Chart" + minExt + ".js"))));
+    }
 }

@@ -36,48 +36,52 @@ import org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet;
  */
 public class NewPortalSessionPolicy extends Component {
 
-	private final String renderedFlagName = getClass().getName() + ".rendered";
-	
-	/**
-	 * Creates a new component with its channel set to
-	 * itself.
-	 */
-	public NewPortalSessionPolicy() {
-	}
+    private final String renderedFlagName = getClass().getName() + ".rendered";
 
-	/**
-	 * Creates a new component with its channel set to the given channel.
-	 * 
-	 * @param componentChannel
-	 */
-	public NewPortalSessionPolicy(Channel componentChannel) {
-		super(componentChannel);
-	}
+    /**
+     * Creates a new component with its channel set to
+     * itself.
+     */
+    public NewPortalSessionPolicy() {
+    }
 
-	@Handler
-	public void onPortalReady(PortalReady event, PortalSession portalsession) {
-		portalsession.browserSession().put(renderedFlagName, false);
-	}
-	
-	@Handler
-	public void onRenderPortlet(RenderPortlet event, PortalSession portalsession) {
-		portalsession.browserSession().put(renderedFlagName, true);
-	}
-	
-	@Handler
-	public void onPortalConfigured(PortalConfigured event, PortalSession portalSession) 
-			throws InterruptedException {
-		if ((Boolean)portalSession.browserSession().getOrDefault(
-					renderedFlagName, false)) {
-			return;
-		}
-		fire(new AddPortletRequest(event.event().event().renderSupport(), 
-				MarkdownDisplayPortlet.class.getName(),
-				Portlet.RenderMode.Preview)
-				.addProperty(MarkdownDisplayPortlet.TITLE, "Demo Portal")
-				.addProperty(MarkdownDisplayPortlet.PREVIEW_SOURCE, "A Demo Portal")
-				.addProperty(MarkdownDisplayPortlet.EDITABLE_BY,  Collections.EMPTY_SET),
-				portalSession);
-	}
+    /**
+     * Creates a new component with its channel set to the given channel.
+     * 
+     * @param componentChannel
+     */
+    public NewPortalSessionPolicy(Channel componentChannel) {
+        super(componentChannel);
+    }
+
+    @Handler
+    public void onPortalReady(PortalReady event, PortalSession portalsession) {
+        portalsession.browserSession().put(renderedFlagName, false);
+    }
+
+    @Handler
+    public void onRenderPortlet(RenderPortlet event,
+            PortalSession portalsession) {
+        portalsession.browserSession().put(renderedFlagName, true);
+    }
+
+    @Handler
+    public void onPortalConfigured(PortalConfigured event,
+            PortalSession portalSession)
+            throws InterruptedException {
+        if ((Boolean) portalSession.browserSession().getOrDefault(
+            renderedFlagName, false)) {
+            return;
+        }
+        fire(new AddPortletRequest(event.event().event().renderSupport(),
+            MarkdownDisplayPortlet.class.getName(),
+            Portlet.RenderMode.Preview)
+                .addProperty(MarkdownDisplayPortlet.TITLE, "Demo Portal")
+                .addProperty(MarkdownDisplayPortlet.PREVIEW_SOURCE,
+                    "A Demo Portal")
+                .addProperty(MarkdownDisplayPortlet.EDITABLE_BY,
+                    Collections.EMPTY_SET),
+            portalSession);
+    }
 
 }

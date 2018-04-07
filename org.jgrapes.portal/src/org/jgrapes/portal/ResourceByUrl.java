@@ -31,30 +31,30 @@ import org.jgrapes.portal.events.ResourceRequest;
  * sending it.
  */
 public class ResourceByUrl extends ResourceResult {
-	private final URL resourceUrl;
+    private final URL resourceUrl;
 
-	/**
-	 * Instantiates a new result represented by a {@link URL}.
-	 *
-	 * @param request the request
-	 * @param resourceUrl the resource url
-	 */
-	public ResourceByUrl(ResourceRequest request, URL resourceUrl) {
-		super(request);
-		this.resourceUrl = resourceUrl;
-	}
+    /**
+     * Instantiates a new result represented by a {@link URL}.
+     *
+     * @param request the request
+     * @param resourceUrl the resource url
+     */
+    public ResourceByUrl(ResourceRequest request, URL resourceUrl) {
+        super(request);
+        this.resourceUrl = resourceUrl;
+    }
 
-	@Override
-	public void process() throws IOException, InterruptedException {
-		if (resourceUrl == null) {
-			ResponseCreationSupport.sendResponse(request().httpRequest(), 
-					request().httpChannel(), HttpStatus.NOT_FOUND);
-			return;
-		}
-		
-		// Send resource
-		ResponseCreationSupport.sendStaticContent(request().httpRequest(),
-				request().httpChannel(), path -> resourceUrl, null);
-	}
-	
+    @Override
+    public void process() throws IOException, InterruptedException {
+        if (resourceUrl == null) {
+            ResponseCreationSupport.sendResponse(request().httpRequest(),
+                request().httpChannel(), HttpStatus.NOT_FOUND);
+            return;
+        }
+
+        // Send resource
+        ResponseCreationSupport.sendStaticContent(request().httpRequest(),
+            request().httpChannel(), path -> resourceUrl, null);
+    }
+
 }

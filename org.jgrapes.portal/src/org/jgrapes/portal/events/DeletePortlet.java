@@ -27,29 +27,29 @@ import java.io.Writer;
  */
 public class DeletePortlet extends PortalCommand {
 
-	private final String portletId;
-	
-	/**
-	 * Creates a new event.
-	 *  
-	 * @param portletId the portlet (view) that should be deleted
-	 */
-	public DeletePortlet(String portletId) {
-		this.portletId = portletId;
-	}
+    private final String portletId;
 
-	/**
-	 * Returns the portlet id.
-	 * 
-	 * @return the portlet id
-	 */
-	public String portletId() {
-		return portletId;
-	}
+    /**
+     * Creates a new event.
+     *  
+     * @param portletId the portlet (view) that should be deleted
+     */
+    public DeletePortlet(String portletId) {
+        this.portletId = portletId;
+    }
 
-	@Override
-	public void toJson(Writer writer) throws IOException {
-		toJson(writer, "deletePortlet", portletId());
-	}
+    /**
+     * Returns the portlet id.
+     * 
+     * @return the portlet id
+     */
+    public String portletId() {
+        return portletId;
+    }
+
+    @Override
+    public void toJson(Writer writer) throws IOException {
+        toJson(writer, "deletePortlet", portletId());
+    }
 
 }

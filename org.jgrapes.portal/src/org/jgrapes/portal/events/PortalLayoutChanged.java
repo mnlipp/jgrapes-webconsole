@@ -35,42 +35,42 @@ import org.jgrapes.core.Event;
  */
 public class PortalLayoutChanged extends Event<Void> {
 
-	private final List<String> previewLayout;
-	private final List<String> tabsLayout;
-	private final JsonObject xtraInfo;
-	
-	/**
-	 * @param previewLayout
-	 * @param tabsLayout
-	 */
-	public PortalLayoutChanged(List<String> previewLayout, 
-			List<String> tabsLayout, JsonObject xtraInfo) {
-		this.previewLayout = previewLayout;
-		this.tabsLayout = tabsLayout;
-		this.xtraInfo = xtraInfo;
-	}
+    private final List<String> previewLayout;
+    private final List<String> tabsLayout;
+    private final JsonObject xtraInfo;
 
-	/**
-	 * @return the previewLayout
-	 */
-	public List<String> previewLayout() {
-		return previewLayout;
-	}
+    /**
+     * @param previewLayout
+     * @param tabsLayout
+     */
+    public PortalLayoutChanged(List<String> previewLayout,
+            List<String> tabsLayout, JsonObject xtraInfo) {
+        this.previewLayout = previewLayout;
+        this.tabsLayout = tabsLayout;
+        this.xtraInfo = xtraInfo;
+    }
 
-	/**
-	 * @return the tabsLayout
-	 */
-	public List<String> tabsLayout() {
-		return tabsLayout;
-	}
-	
-	/**
-	 * The extra information.
-	 *
-	 * @return the value
-	 */
-	public JsonObject xtraInfo() {
-		return xtraInfo;
-	}
+    /**
+     * @return the previewLayout
+     */
+    public List<String> previewLayout() {
+        return previewLayout;
+    }
+
+    /**
+     * @return the tabsLayout
+     */
+    public List<String> tabsLayout() {
+        return tabsLayout;
+    }
+
+    /**
+     * The extra information.
+     *
+     * @return the value
+     */
+    public JsonObject xtraInfo() {
+        return xtraInfo;
+    }
 
 }

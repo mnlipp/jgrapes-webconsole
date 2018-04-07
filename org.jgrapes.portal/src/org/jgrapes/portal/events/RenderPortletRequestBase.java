@@ -26,43 +26,43 @@ import org.jgrapes.portal.RenderSupport;
  * The base class for events that result in a portlet being rendered.
  */
 public abstract class RenderPortletRequestBase<T> extends Event<T> {
-	private final RenderSupport renderSupport;
-	private final RenderMode renderMode;
+    private final RenderSupport renderSupport;
+    private final RenderMode renderMode;
 
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param renderSupport the render support
-	 * @param mode the view mode that is requested
-	 */
-	public RenderPortletRequestBase(
-			RenderSupport renderSupport, RenderMode mode) {
-		this.renderSupport = renderSupport;
-		this.renderMode = mode;
-	}
+    /**
+     * Creates a new event.
+     * 
+     * @param renderSupport the render support
+     * @param mode the view mode that is requested
+     */
+    public RenderPortletRequestBase(
+            RenderSupport renderSupport, RenderMode mode) {
+        this.renderSupport = renderSupport;
+        this.renderMode = mode;
+    }
 
-	/**
-	 * Returns the render support.
-	 * 
-	 * @return the render support
-	 */
-	public RenderSupport renderSupport() {
-		return renderSupport;
-	}
-	
-	/**
-	 * Returns the render mode.
-	 * 
-	 * @return the render mode
-	 */
-	public RenderMode renderMode() {
-		return renderMode;
-	}
+    /**
+     * Returns the render support.
+     * 
+     * @return the render support
+     */
+    public RenderSupport renderSupport() {
+        return renderSupport;
+    }
 
-	/**
-	 * Indicates if portlet is to be put in foreground.
-	 * 
-	 * @return the result
-	 */
-	public abstract boolean isForeground();
+    /**
+     * Returns the render mode.
+     * 
+     * @return the render mode
+     */
+    public RenderMode renderMode() {
+        return renderMode;
+    }
+
+    /**
+     * Indicates if portlet is to be put in foreground.
+     * 
+     * @return the result
+     */
+    public abstract boolean isForeground();
 }

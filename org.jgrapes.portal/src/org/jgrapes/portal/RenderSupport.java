@@ -29,56 +29,56 @@ import org.jgrapes.portal.events.PortletResourceRequest;
  */
 public interface RenderSupport {
 
-	/**
-	 * Create a reference to a resource provided by a page resource
-	 * provider. Requesting the resulting URI results in a 
-	 * {@link PageResourceRequest}.
-	 * 
-	 * @param uri the URI made available as
-	 * {@link PageResourceRequest#resourceUri()}  
-	 * @return the resulting URI
-	 */
-	URI pageResource(URI uri);
-	
-	/**
-	 * Convenience method that converts the path to an URI
-	 * before calling {@link #pageResource(URI)}.
-	 * 
-	 * @param path the path 
-	 * @return the resulting URI
-	 */
-	default URI pageResource(String path) {
-		return pageResource(PortalWeblet.uriFromPath(path));
-	}
-	
-	/**
-	 * Create a reference to a resource provided by a portlet
-	 * of the given type. Requesting the resulting URI results
-	 * in a {@link PortletResourceRequest}.
-	 * 
-	 * @param portletType the portlet type
-	 * @param uri the URI made available as 
-	 * {@link PortletResourceRequest#resourceUri()}
-	 * @return the resulting URI
-	 */
-	URI portletResource(String portletType, URI uri);
+    /**
+     * Create a reference to a resource provided by a page resource
+     * provider. Requesting the resulting URI results in a 
+     * {@link PageResourceRequest}.
+     * 
+     * @param uri the URI made available as
+     * {@link PageResourceRequest#resourceUri()}  
+     * @return the resulting URI
+     */
+    URI pageResource(URI uri);
 
-	/**
-	 * Convenience method that converts the path to an URI
-	 * before calling {@link #portletResource(String, URI)}.
-	 * 
-	 * @param portletType the portlet type
-	 * @param path the path 
-	 * @return the resulting URI
-	 */
-	default URI portletResource(String portletType, String path) {
-		return portletResource(portletType, PortalWeblet.uriFromPath(path));
-	}
-	
-	/**
-	 * Indicates if minified resources should be used.
-	 * 
-	 * @return the setting
-	 */
-	boolean useMinifiedResources();
+    /**
+     * Convenience method that converts the path to an URI
+     * before calling {@link #pageResource(URI)}.
+     * 
+     * @param path the path 
+     * @return the resulting URI
+     */
+    default URI pageResource(String path) {
+        return pageResource(PortalWeblet.uriFromPath(path));
+    }
+
+    /**
+     * Create a reference to a resource provided by a portlet
+     * of the given type. Requesting the resulting URI results
+     * in a {@link PortletResourceRequest}.
+     * 
+     * @param portletType the portlet type
+     * @param uri the URI made available as 
+     * {@link PortletResourceRequest#resourceUri()}
+     * @return the resulting URI
+     */
+    URI portletResource(String portletType, URI uri);
+
+    /**
+     * Convenience method that converts the path to an URI
+     * before calling {@link #portletResource(String, URI)}.
+     * 
+     * @param portletType the portlet type
+     * @param path the path 
+     * @return the resulting URI
+     */
+    default URI portletResource(String portletType, String path) {
+        return portletResource(portletType, PortalWeblet.uriFromPath(path));
+    }
+
+    /**
+     * Indicates if minified resources should be used.
+     * 
+     * @return the setting
+     */
+    boolean useMinifiedResources();
 }

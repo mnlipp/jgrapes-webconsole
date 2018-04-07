@@ -27,21 +27,26 @@ import org.jgrapes.portal.PortletComponentFactory;
 
 public class HelloWorldPortletFactory implements PortletComponentFactory {
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.core.ComponentFactory#componentType()
-	 */
-	@Override
-	public Class<? extends ComponentType> componentType() {
-		return HelloWorldPortlet.class;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.core.ComponentFactory#componentType()
+     */
+    @Override
+    public Class<? extends ComponentType> componentType() {
+        return HelloWorldPortlet.class;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel, java.util.Map)
-	 */
-	@Override
-	public Optional<ComponentType> create(
-			Channel componentChannel, Map<Object, Object> properties) {
-		return Optional.of(new HelloWorldPortlet(componentChannel));
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel,
+     * java.util.Map)
+     */
+    @Override
+    public Optional<ComponentType> create(
+            Channel componentChannel, Map<Object, Object> properties) {
+        return Optional.of(new HelloWorldPortlet(componentChannel));
+    }
 
 }

@@ -116,245 +116,247 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  */
 public final class PortalSession extends DefaultSubchannel {
 
-	private static Map<String,WeakReference<PortalSession>> portalSessions
-		= new ConcurrentHashMap<>();
-	private static ReferenceQueue<PortalSession> unusedSessions
-		= new ReferenceQueue<>();
-	
-	private String portalSessionId;
-	private final Portal portal;
-	private long timeout;
-	private final Timer timeoutTimer;
-	private boolean active = true;
-	private boolean connected = true;
-	private Session browserSession;
-	private IOSubchannel upstreamChannel;
-	
-	private static void cleanUnused() {
-		while(true) {
-			Reference<? extends PortalSession> unused = unusedSessions.poll();
-			if (unused == null) {
-				break;
-			}
-			portalSessions.remove(unused.get().portalSessionId());
-		}
-	}
-	
-	/**
-	 * Lookup the portal session (the channel)
-	 * for the given portal session id.
-	 * 
-	 * @param portalSessionId the portal session id
-	 * @return the channel
-	 */
-	/* default */ static Optional<PortalSession> lookup(String portalSessionId) {
-		cleanUnused();
-		return Optional.ofNullable(portalSessions.get(portalSessionId))
-				.flatMap(ref -> Optional.ofNullable(ref.get()));
-	}
-	
-	/**
-	 * Return all sessions that belong to the given portal as a new
-	 * unmodifiable set.
-	 *
-	 * @param portal the portal
-	 * @return the sets the
-	 */
-	public static Set<PortalSession> byPortal(Portal portal) {
-		cleanUnused();
-		Set<PortalSession> result  = new HashSet<>();
-		for (WeakReference<PortalSession> psr: portalSessions.values()) {
-			PortalSession psess = psr.get();
-			if (psess.portal.equals(portal)) {
-				result.add(psess);
-			}
-		}
-		return Collections.unmodifiableSet(result);
-	}
-	
-	/**
-	 * Lookup (and create if not found) the portal browserSession channel
-	 * for the given portal browserSession id.
-	 * 
-	 * @param portalSessionId the browserSession id
-	 * @param portal the portal that this session belongs to 
-	 * class' constructor if a new channel is created, usually 
-	 * the portal
-	 * @param timeout the portal session timeout in milli seconds
-	 * @return the channel
-	 */
-	/* default */ static PortalSession lookupOrCreate(
-			String portalSessionId, Portal portal, long timeout) {
-		cleanUnused();
-		return portalSessions.computeIfAbsent(portalSessionId, 
-				psi -> new WeakReference<>(new PortalSession(
-						portal, portalSessionId, timeout), unusedSessions))
-				.get();
-	}
-	
-	
-	/**
-	 * Replace the id of the portal session with the new id.
-	 *
-	 * @param newPortalSessionId the new portal session id
-	 * @return the portal session
-	 */
-	/* default */ PortalSession replaceId(String newPortalSessionId) {
-		portalSessions.remove(portalSessionId);
-		portalSessionId = newPortalSessionId;
-		portalSessions.put(portalSessionId, new WeakReference<>(
-				this, unusedSessions));
-		connected = true;
-		return this;
-	}
-	
-	private PortalSession(Portal portal, String portalSessionId,
-			long timeout) {
-		super(portal.channel(), portal.newEventPipeline());
-		this.portal = portal;
-		this.portalSessionId = portalSessionId;
-		this.timeout = timeout;
-		timeoutTimer = Components.schedule(
-				tmr -> discard(), Duration.ofMillis(timeout));
-	}
+    private static Map<String, WeakReference<PortalSession>> portalSessions
+        = new ConcurrentHashMap<>();
+    private static ReferenceQueue<PortalSession> unusedSessions
+        = new ReferenceQueue<>();
 
-	/**
-	 * Changes the timeout for this {@link PortalSession} to the
-	 * given value.
-	 * 
-	 * @param timeout the timeout in milli seconds
-	 * @return the portal session for easy chaining
-	 */
-	public PortalSession setTimeout(long timeout) {
-		this.timeout = timeout;
-		timeoutTimer.reschedule(Duration.ofMillis(timeout));
-		return this;
-	}
-	
-	/**
-	 * Returns the time when this session will expire.
-	 *
-	 * @return the instant
-	 */
-	public Instant expiresAt() {
-		return timeoutTimer.scheduledFor();
-	}
-	
-	/**
-	 * Resets the {@link PortalSession}'s timeout.
-	 */
-	public void refresh() {
-		timeoutTimer.reschedule(Duration.ofMillis(timeout));
-	}
+    private String portalSessionId;
+    private final Portal portal;
+    private long timeout;
+    private final Timer timeoutTimer;
+    private boolean active = true;
+    private boolean connected = true;
+    private Session browserSession;
+    private IOSubchannel upstreamChannel;
 
-	/**
-	 * Discards this session.
-	 */
-	public void discard() {
-		portalSessions.remove(portalSessionId);
-		connected = false;
-		active = false;
-		portal.newEventPipeline().fire(new Closed(), this);
-	}
+    private static void cleanUnused() {
+        while (true) {
+            Reference<? extends PortalSession> unused = unusedSessions.poll();
+            if (unused == null) {
+                break;
+            }
+            portalSessions.remove(unused.get().portalSessionId());
+        }
+    }
 
-	/**
-	 * Checks if the portal session has become stale (inactive).
-	 *
-	 * @return true, if is stale
-	 */
-	public boolean isStale() {
-		return !active;
-	}
-	
-	/* default */ void disconnected() {
-		connected = false;
-	}
-	
-	/**
-	 * Checks if a network connection with the browser exists.
-	 *
-	 * @return true, if is connected
-	 */
-	public boolean isConnected() {
-		return connected;
-	}
-	
-	/**
-	 * Sets or updates the upstream channel. This method should only
-	 * be invoked by the creator of the {@link PortalSession}, by default
-	 * the {@link PortalWeblet}.
-	 * 
-	 * @param upstreamChannel the upstream channel (WebSocket connection)
-	 * @return the portal session for easy chaining
-	 */
-	public PortalSession setUpstreamChannel(IOSubchannel upstreamChannel) {
-		if (upstreamChannel == null) {
-			throw new IllegalArgumentException();
-		}
-		this.upstreamChannel = upstreamChannel;
-		return this;
-	}
+    /**
+     * Lookup the portal session (the channel)
+     * for the given portal session id.
+     * 
+     * @param portalSessionId the portal session id
+     * @return the channel
+     */
+    /* default */ static Optional<PortalSession>
+            lookup(String portalSessionId) {
+        cleanUnused();
+        return Optional.ofNullable(portalSessions.get(portalSessionId))
+            .flatMap(ref -> Optional.ofNullable(ref.get()));
+    }
 
-	/**
-	 * Sets or updates associated browser session. This method should only
-	 * be invoked by the creator of the {@link PortalSession}, by default
-	 * the {@link PortalWeblet}.
-	 * 
-	 * @param browserSession the browser session
-	 * @return the portal session for easy chaining
-	 */
-	public PortalSession setSession(Session browserSession) {
-		this.browserSession = browserSession;
-		return this;
-	}
+    /**
+     * Return all sessions that belong to the given portal as a new
+     * unmodifiable set.
+     *
+     * @param portal the portal
+     * @return the sets the
+     */
+    public static Set<PortalSession> byPortal(Portal portal) {
+        cleanUnused();
+        Set<PortalSession> result = new HashSet<>();
+        for (WeakReference<PortalSession> psr : portalSessions.values()) {
+            PortalSession psess = psr.get();
+            if (psess.portal.equals(portal)) {
+                result.add(psess);
+            }
+        }
+        return Collections.unmodifiableSet(result);
+    }
 
-	/**
-	 * @return the upstream channel
-	 */
-	public IOSubchannel upstreamChannel() {
-		return upstreamChannel;
-	}
-	
-	/**
-	 * The portal session id is used in the communication between the
-	 * browser and the server. It is not guaranteed to remain the same
-	 * over time, even if the portal session is maintained. To prevent
-	 * wrong usage, its visibility is therefore set to package. 
-	 * 
-	 * @return the portalSessionId
-	 */
-	/* default */ String portalSessionId() {
-		return portalSessionId;
-	}
+    /**
+     * Lookup (and create if not found) the portal browserSession channel
+     * for the given portal browserSession id.
+     * 
+     * @param portalSessionId the browserSession id
+     * @param portal the portal that this session belongs to 
+     * class' constructor if a new channel is created, usually 
+     * the portal
+     * @param timeout the portal session timeout in milli seconds
+     * @return the channel
+     */
+    /* default */ static PortalSession lookupOrCreate(
+            String portalSessionId, Portal portal, long timeout) {
+        cleanUnused();
+        return portalSessions.computeIfAbsent(portalSessionId,
+            psi -> new WeakReference<>(new PortalSession(
+                portal, portalSessionId, timeout), unusedSessions))
+            .get();
+    }
 
-	/**
-	 * @return the browserSession
-	 */
-	public Session browserSession() {
-		return browserSession;
-	}
+    /**
+     * Replace the id of the portal session with the new id.
+     *
+     * @param newPortalSessionId the new portal session id
+     * @return the portal session
+     */
+    /* default */ PortalSession replaceId(String newPortalSessionId) {
+        portalSessions.remove(portalSessionId);
+        portalSessionId = newPortalSessionId;
+        portalSessions.put(portalSessionId, new WeakReference<>(
+            this, unusedSessions));
+        connected = true;
+        return this;
+    }
 
-	/**
-	 * Return the portal session's locale. The locale is obtained
-	 * from the browser session.
-	 * 
-	 * @return the locale
-	 */
-	public Locale locale() {
-		return browserSession == null ? Locale.getDefault() 
-				: browserSession.locale();
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(IOSubchannel.toString(this));
-		Optional.ofNullable(upstreamChannel).ifPresent(upstr -> builder.append(
-				LinkedIOSubchannel.upstreamToString(upstr)));
-		return builder.toString();
-	}
-	
+    private PortalSession(Portal portal, String portalSessionId,
+            long timeout) {
+        super(portal.channel(), portal.newEventPipeline());
+        this.portal = portal;
+        this.portalSessionId = portalSessionId;
+        this.timeout = timeout;
+        timeoutTimer = Components.schedule(
+            tmr -> discard(), Duration.ofMillis(timeout));
+    }
+
+    /**
+     * Changes the timeout for this {@link PortalSession} to the
+     * given value.
+     * 
+     * @param timeout the timeout in milli seconds
+     * @return the portal session for easy chaining
+     */
+    public PortalSession setTimeout(long timeout) {
+        this.timeout = timeout;
+        timeoutTimer.reschedule(Duration.ofMillis(timeout));
+        return this;
+    }
+
+    /**
+     * Returns the time when this session will expire.
+     *
+     * @return the instant
+     */
+    public Instant expiresAt() {
+        return timeoutTimer.scheduledFor();
+    }
+
+    /**
+     * Resets the {@link PortalSession}'s timeout.
+     */
+    public void refresh() {
+        timeoutTimer.reschedule(Duration.ofMillis(timeout));
+    }
+
+    /**
+     * Discards this session.
+     */
+    public void discard() {
+        portalSessions.remove(portalSessionId);
+        connected = false;
+        active = false;
+        portal.newEventPipeline().fire(new Closed(), this);
+    }
+
+    /**
+     * Checks if the portal session has become stale (inactive).
+     *
+     * @return true, if is stale
+     */
+    public boolean isStale() {
+        return !active;
+    }
+
+    /* default */ void disconnected() {
+        connected = false;
+    }
+
+    /**
+     * Checks if a network connection with the browser exists.
+     *
+     * @return true, if is connected
+     */
+    public boolean isConnected() {
+        return connected;
+    }
+
+    /**
+     * Sets or updates the upstream channel. This method should only
+     * be invoked by the creator of the {@link PortalSession}, by default
+     * the {@link PortalWeblet}.
+     * 
+     * @param upstreamChannel the upstream channel (WebSocket connection)
+     * @return the portal session for easy chaining
+     */
+    public PortalSession setUpstreamChannel(IOSubchannel upstreamChannel) {
+        if (upstreamChannel == null) {
+            throw new IllegalArgumentException();
+        }
+        this.upstreamChannel = upstreamChannel;
+        return this;
+    }
+
+    /**
+     * Sets or updates associated browser session. This method should only
+     * be invoked by the creator of the {@link PortalSession}, by default
+     * the {@link PortalWeblet}.
+     * 
+     * @param browserSession the browser session
+     * @return the portal session for easy chaining
+     */
+    public PortalSession setSession(Session browserSession) {
+        this.browserSession = browserSession;
+        return this;
+    }
+
+    /**
+     * @return the upstream channel
+     */
+    public IOSubchannel upstreamChannel() {
+        return upstreamChannel;
+    }
+
+    /**
+     * The portal session id is used in the communication between the
+     * browser and the server. It is not guaranteed to remain the same
+     * over time, even if the portal session is maintained. To prevent
+     * wrong usage, its visibility is therefore set to package. 
+     * 
+     * @return the portalSessionId
+     */
+    /* default */ String portalSessionId() {
+        return portalSessionId;
+    }
+
+    /**
+     * @return the browserSession
+     */
+    public Session browserSession() {
+        return browserSession;
+    }
+
+    /**
+     * Return the portal session's locale. The locale is obtained
+     * from the browser session.
+     * 
+     * @return the locale
+     */
+    public Locale locale() {
+        return browserSession == null ? Locale.getDefault()
+            : browserSession.locale();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(IOSubchannel.toString(this));
+        Optional.ofNullable(upstreamChannel).ifPresent(upstr -> builder.append(
+            LinkedIOSubchannel.upstreamToString(upstr)));
+        return builder.toString();
+    }
+
 }

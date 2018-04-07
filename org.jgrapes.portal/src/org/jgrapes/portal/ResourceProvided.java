@@ -28,20 +28,20 @@ import org.jgrapes.portal.events.ResourceRequest;
  */
 public class ResourceProvided extends ResourceResult {
 
-	/**
-	 * Creates a new instance.
-	 *
-	 * @param request the request
-	 */
-	public ResourceProvided(ResourceRequest request) {
-		super(request);
-	}
-	
-	/** 
-	 * Does nothing, because the resource has already been sent.
-	 */
-	@Override
-	public void process() throws IOException, InterruptedException {
-		// Do nothing.
-	}
+    /**
+     * Creates a new instance.
+     *
+     * @param request the request
+     */
+    public ResourceProvided(ResourceRequest request) {
+        super(request);
+    }
+
+    /** 
+     * Does nothing, because the resource has already been sent.
+     */
+    @Override
+    public void process() throws IOException, InterruptedException {
+        // Do nothing.
+    }
 }

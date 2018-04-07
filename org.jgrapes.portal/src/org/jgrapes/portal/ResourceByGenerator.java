@@ -37,70 +37,72 @@ import org.jgrapes.portal.events.ResourceRequest;
  */
 public class ResourceByGenerator extends ResourceResult {
 
-	private final Generator generator;
-	private final MediaType mediaType;
-	private final Instant lastModifiedAt;
-	private final int maxAge;
+    private final Generator generator;
+    private final MediaType mediaType;
+    private final Instant lastModifiedAt;
+    private final int maxAge;
 
-	/**
-	 * The interface that must be implemented by the content provider.
-	 */
-	public interface Generator {
-		
-		/**
-		 * Write the generated output to the given stream.
-		 *
-		 * @param stream the output stream
-		 * @throws IOException Signals that an I/O exception has occurred.
-		 */
-		void write(OutputStream stream) throws IOException;
-	}
-	
-	/**
-	 * Instantiates a result that is provided by an {@link OutputStream}.
-	 *
-	 * @param request the request
-	 * @param generator the generator
-	 * @param mediaType the media type
-	 * @param lastModifiedAt the last modified at
-	 * @param maxAge the max age
-	 */
-	public ResourceByGenerator(ResourceRequest request, 
-			Generator generator, MediaType mediaType, 
-			Instant lastModifiedAt, int maxAge) {
-		super(request);
-		this.generator = generator;
-		this.mediaType = mediaType;
-		this.lastModifiedAt = lastModifiedAt;
-		this.maxAge = maxAge;
-	}
+    /**
+     * The interface that must be implemented by the content provider.
+     */
+    public interface Generator {
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.ResourceResult#process()
-	 */
-	@Override
-	public void process() throws IOException, InterruptedException {
-		if (generator == null) {
-			ResponseCreationSupport.sendResponse(request().httpRequest(), 
-					request().httpChannel(), HttpStatus.NOT_FOUND);
-			return;
-		}
-		
-		HttpResponse response = request().httpRequest().response().get();
-		if (lastModifiedAt != null) {
-			response.setField(HttpField.LAST_MODIFIED, lastModifiedAt);
-		}
-		response.setContentType(mediaType);
-		ResponseCreationSupport.setMaxAge(response, (req, mtype) -> maxAge,
-				request().httpRequest(), mediaType);
-		response.setStatus(HttpStatus.OK);
-		request().httpChannel().respond(new Response(response));
-		// Start sending content
-		try (@SuppressWarnings("resource")
-		OutputStream out = new ByteBufferOutputStream(
-				request().httpChannel()).suppressClose()) {
-			generator.write(out);
-		}
-	}
-	
+        /**
+         * Write the generated output to the given stream.
+         *
+         * @param stream the output stream
+         * @throws IOException Signals that an I/O exception has occurred.
+         */
+        void write(OutputStream stream) throws IOException;
+    }
+
+    /**
+     * Instantiates a result that is provided by an {@link OutputStream}.
+     *
+     * @param request the request
+     * @param generator the generator
+     * @param mediaType the media type
+     * @param lastModifiedAt the last modified at
+     * @param maxAge the max age
+     */
+    public ResourceByGenerator(ResourceRequest request,
+            Generator generator, MediaType mediaType,
+            Instant lastModifiedAt, int maxAge) {
+        super(request);
+        this.generator = generator;
+        this.mediaType = mediaType;
+        this.lastModifiedAt = lastModifiedAt;
+        this.maxAge = maxAge;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.portal.ResourceResult#process()
+     */
+    @Override
+    public void process() throws IOException, InterruptedException {
+        if (generator == null) {
+            ResponseCreationSupport.sendResponse(request().httpRequest(),
+                request().httpChannel(), HttpStatus.NOT_FOUND);
+            return;
+        }
+
+        HttpResponse response = request().httpRequest().response().get();
+        if (lastModifiedAt != null) {
+            response.setField(HttpField.LAST_MODIFIED, lastModifiedAt);
+        }
+        response.setContentType(mediaType);
+        ResponseCreationSupport.setMaxAge(response, (req, mtype) -> maxAge,
+            request().httpRequest(), mediaType);
+        response.setStatus(HttpStatus.OK);
+        request().httpChannel().respond(new Response(response));
+        // Start sending content
+        try (@SuppressWarnings("resource")
+        OutputStream out = new ByteBufferOutputStream(
+            request().httpChannel()).suppressClose()) {
+            generator.write(out);
+        }
+    }
+
 }

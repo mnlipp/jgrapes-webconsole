@@ -33,31 +33,31 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class PortletResourceRequest extends ResourceRequest {
 
-	private final String portletType;
+    private final String portletType;
 
-	/**
-	 * Creates a new request.
-	 * 
-	 * @param portletType the portlet type
-	 * @param resourceUri the requested resource
-	 * @param httpRequest the original HTTP request
-	 * @param httpChannel the channel that the HTTP request was received on
-	 * @param renderSupport the render support
-	 */
-	public PortletResourceRequest(String portletType, URI resourceUri,
-			Instant ifModifiedSince,
-			HttpRequest httpRequest, IOSubchannel httpChannel,
-			RenderSupport renderSupport) {
-		super(resourceUri, ifModifiedSince,
-				httpRequest, httpChannel, renderSupport);
-		this.portletType = portletType;
-	}
+    /**
+     * Creates a new request.
+     * 
+     * @param portletType the portlet type
+     * @param resourceUri the requested resource
+     * @param httpRequest the original HTTP request
+     * @param httpChannel the channel that the HTTP request was received on
+     * @param renderSupport the render support
+     */
+    public PortletResourceRequest(String portletType, URI resourceUri,
+            Instant ifModifiedSince,
+            HttpRequest httpRequest, IOSubchannel httpChannel,
+            RenderSupport renderSupport) {
+        super(resourceUri, ifModifiedSince,
+            httpRequest, httpChannel, renderSupport);
+        this.portletType = portletType;
+    }
 
-	/**
-	 * @return the portletId
-	 */
-	public String portletClass() {
-		return portletType;
-	}
+    /**
+     * @return the portletId
+     */
+    public String portletClass() {
+        return portletType;
+    }
 
 }

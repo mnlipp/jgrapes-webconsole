@@ -43,23 +43,23 @@ import org.jgrapes.portal.PortalWeblet;
  */
 public class SetTheme extends Event<Void> {
 
-	private final String theme;
+    private final String theme;
 
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param theme the theme to set
-	 */
-	public SetTheme(String theme) {
-		this.theme = theme;
-	}
+    /**
+     * Creates a new event.
+     * 
+     * @param theme the theme to set
+     */
+    public SetTheme(String theme) {
+        this.theme = theme;
+    }
 
-	/**
-	 * Returns the theme to set.
-	 * 
-	 * @return the theme
-	 */
-	public String theme() {
-		return theme;
-	}
+    /**
+     * Returns the theme to set.
+     * 
+     * @return the theme
+     */
+    public String theme() {
+        return theme;
+    }
 }

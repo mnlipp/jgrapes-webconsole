@@ -30,21 +30,26 @@ import org.jgrapes.portal.PortletComponentFactory;
  */
 public class MarkdownDisplayPortletFactory implements PortletComponentFactory {
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.core.ComponentFactory#componentType()
-	 */
-	@Override
-	public Class<? extends ComponentType> componentType() {
-		return MarkdownDisplayPortlet.class;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.core.ComponentFactory#componentType()
+     */
+    @Override
+    public Class<? extends ComponentType> componentType() {
+        return MarkdownDisplayPortlet.class;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel, java.util.Map)
-	 */
-	@Override
-	public Optional<ComponentType> create(
-			Channel componentChannel, Map<Object, Object> properties) {
-		return Optional.of(new MarkdownDisplayPortlet(componentChannel));
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel,
+     * java.util.Map)
+     */
+    @Override
+    public Optional<ComponentType> create(
+            Channel componentChannel, Map<Object, Object> properties) {
+        return Optional.of(new MarkdownDisplayPortlet(componentChannel));
+    }
 
 }

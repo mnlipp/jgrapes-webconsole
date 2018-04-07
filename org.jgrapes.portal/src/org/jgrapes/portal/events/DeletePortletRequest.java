@@ -26,39 +26,39 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class DeletePortletRequest extends Event<Void> {
 
-	private final RenderSupport renderSupport;
-	private final String portletId;
-	
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param renderSupport the render support from the portal in case
-	 * the response requires it
-	 * @param portletId the portlet model that the notification is 
-	 * directed at 
-	 */
-	public DeletePortletRequest(RenderSupport renderSupport, 
-			String portletId) {
-		this.renderSupport = renderSupport;
-		this.portletId = portletId;
-	}
+    private final RenderSupport renderSupport;
+    private final String portletId;
 
-	/**
-	 * Returns the render support.
-	 * 
-	 * @return the render support
-	 */
-	public RenderSupport renderSupport() {
-		return renderSupport;
-	}
+    /**
+     * Creates a new event.
+     * 
+     * @param renderSupport the render support from the portal in case
+     * the response requires it
+     * @param portletId the portlet model that the notification is 
+     * directed at 
+     */
+    public DeletePortletRequest(RenderSupport renderSupport,
+            String portletId) {
+        this.renderSupport = renderSupport;
+        this.portletId = portletId;
+    }
 
-	/**
-	 * Returns the portlet id.
-	 * 
-	 * @return the portlet id
-	 */
-	public String portletId() {
-		return portletId;
-	}
+    /**
+     * Returns the render support.
+     * 
+     * @return the render support
+     */
+    public RenderSupport renderSupport() {
+        return renderSupport;
+    }
+
+    /**
+     * Returns the portlet id.
+     * 
+     * @return the portlet id
+     */
+    public String portletId() {
+        return portletId;
+    }
 
 }

@@ -25,12 +25,14 @@ import org.jgrapes.portal.ThemeProvider;
  */
 public class Provider extends ThemeProvider {
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.ThemeProvider#name()
-	 */
-	@Override
-	public String themeId() {
-		return "base";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.portal.ThemeProvider#name()
+     */
+    @Override
+    public String themeId() {
+        return "base";
+    }
 
 }

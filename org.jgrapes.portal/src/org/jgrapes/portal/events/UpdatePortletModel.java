@@ -46,78 +46,78 @@ import org.jgrapes.core.Event;
  */
 public class UpdatePortletModel extends Event<Void> {
 
-	private String portletId;
-	private Map<Object,Object> properties;
-	
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param portletId the id of the portlet
-	 * @param properties the properties to update
-	 */
-	public UpdatePortletModel(String portletId, Map<?,?> properties) {
-		this.portletId = portletId;
-		@SuppressWarnings("unchecked")
-		Map<Object, Object> props = (Map<Object,Object>)properties;
-		this.properties = props;
-	}
+    private String portletId;
+    private Map<Object, Object> properties;
 
-	/**
-	 * Creates a new event. This constructor creates an empty map of
-	 * properties and is therefore intended to be used together with
-	 * {@link #addPreference(Object, Object)}.
-	 *
-	 * @param portletId the portlet id
-	 */
-	public UpdatePortletModel(String portletId) {
-		this(portletId, new HashMap<>());
-	}
-	
-	/**
-	 * Returns the portlet id.
-	 * 
-	 * @return the portlet id
-	 */
-	public String portletId() {
-		return portletId;
-	}
+    /**
+     * Creates a new event.
+     * 
+     * @param portletId the id of the portlet
+     * @param properties the properties to update
+     */
+    public UpdatePortletModel(String portletId, Map<?, ?> properties) {
+        this.portletId = portletId;
+        @SuppressWarnings("unchecked")
+        Map<Object, Object> props = (Map<Object, Object>) properties;
+        this.properties = props;
+    }
 
-	/**
-	 * Returns the properties. Every event returns a mutable map,
-	 * thus allowing event handlers to modify the map even if
-	 * none was passed to the constructor.
-	 */
-	public Map<Object,Object> properties() {
-		if (properties == null) {
-			properties = new HashMap<>();
-		}
-		return properties;
-	}
-	
-	/**
-	 * Convenience method for adding properties one-by-one.
-	 * 
-	 * @param key the property key
-	 * @param value the property value
-	 * @return the event for easy chaining
-	 */
-	public UpdatePortletModel addPreference(Object key, Object value) {
-		properties().put(key, value);
-		return this;
-	}
-	
-	/**
-	 * Convenience method that performs the given action if a property
-	 * with the given key exists.
-	 * 
-	 * @param key the property key
-	 * @param action the action to perform
-	 */
-	public UpdatePortletModel ifPresent(
-			Object key, BiConsumer<Object,Object> action) {
-		if (properties().containsKey(key)) {
-			action.accept(key, properties().get(key));
-		}
-		return this;
-	}
+    /**
+     * Creates a new event. This constructor creates an empty map of
+     * properties and is therefore intended to be used together with
+     * {@link #addPreference(Object, Object)}.
+     *
+     * @param portletId the portlet id
+     */
+    public UpdatePortletModel(String portletId) {
+        this(portletId, new HashMap<>());
+    }
+
+    /**
+     * Returns the portlet id.
+     * 
+     * @return the portlet id
+     */
+    public String portletId() {
+        return portletId;
+    }
+
+    /**
+     * Returns the properties. Every event returns a mutable map,
+     * thus allowing event handlers to modify the map even if
+     * none was passed to the constructor.
+     */
+    public Map<Object, Object> properties() {
+        if (properties == null) {
+            properties = new HashMap<>();
+        }
+        return properties;
+    }
+
+    /**
+     * Convenience method for adding properties one-by-one.
+     * 
+     * @param key the property key
+     * @param value the property value
+     * @return the event for easy chaining
+     */
+    public UpdatePortletModel addPreference(Object key, Object value) {
+        properties().put(key, value);
+        return this;
+    }
+
+    /**
+     * Convenience method that performs the given action if a property
+     * with the given key exists.
+     * 
+     * @param key the property key
+     * @param action the action to perform
+     */
+    public UpdatePortletModel ifPresent(
+            Object key, BiConsumer<Object, Object> action) {
+        if (properties().containsKey(key)) {
+            action.accept(key, properties().get(key));
+        }
+        return this;
+    }
 }

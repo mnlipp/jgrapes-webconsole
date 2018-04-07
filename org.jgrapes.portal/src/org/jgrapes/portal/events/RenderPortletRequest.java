@@ -50,44 +50,44 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
 
-	private final String portletId;
-	private final boolean foreground;
+    private final String portletId;
+    private final boolean foreground;
 
-	/**
-	 * Creates a new request.
-	 * 
-	 * @param renderSupport the render support for generating the response
-	 * @param portletId the portlet to be updated
-	 * @param renderMode the requested mode
-	 */
-	public RenderPortletRequest(RenderSupport renderSupport, 
-			String portletId, RenderMode renderMode, boolean foreground) {
-		super(renderSupport, renderMode);
-		this.portletId = portletId;
-		this.foreground = foreground;
-	}
+    /**
+     * Creates a new request.
+     * 
+     * @param renderSupport the render support for generating the response
+     * @param portletId the portlet to be updated
+     * @param renderMode the requested mode
+     */
+    public RenderPortletRequest(RenderSupport renderSupport,
+            String portletId, RenderMode renderMode, boolean foreground) {
+        super(renderSupport, renderMode);
+        this.portletId = portletId;
+        this.foreground = foreground;
+    }
 
-	/**
-	 * Returns the portlet id.
-	 * 
-	 * @return the portlet id
-	 */
-	public String portletId() {
-		return portletId;
-	}
+    /**
+     * Returns the portlet id.
+     * 
+     * @return the portlet id
+     */
+    public String portletId() {
+        return portletId;
+    }
 
-	@Override
-	public boolean isForeground() {
-		return foreground;
-	}
-	
-	/**
-	 * Checks if the portlet has been rendered (i.e. the event has been
-	 * handled).
-	 *
-	 * @return true, if successful
-	 */
-	public boolean hasBeenRendered() {
-		return !currentResults().isEmpty() && currentResults().get(0);
-	}
+    @Override
+    public boolean isForeground() {
+        return foreground;
+    }
+
+    /**
+     * Checks if the portlet has been rendered (i.e. the event has been
+     * handled).
+     *
+     * @return true, if successful
+     */
+    public boolean hasBeenRendered() {
+        return !currentResults().isEmpty() && currentResults().get(0);
+    }
 }

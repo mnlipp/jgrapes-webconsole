@@ -106,178 +106,184 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  */
 public class KVStoreBasedPortalPolicy extends Component {
 
-	/**
-	 * Creates a new component with its channel set to
-	 * itself.
-	 */
-	public KVStoreBasedPortalPolicy() {
-		// Everything done by super.
-	}
+    /**
+     * Creates a new component with its channel set to
+     * itself.
+     */
+    public KVStoreBasedPortalPolicy() {
+        // Everything done by super.
+    }
 
-	/**
-	 * Creates a new component with its channel set to the given channel.
-	 * 
-	 * @param componentChannel
-	 */
-	public KVStoreBasedPortalPolicy(Channel componentChannel) {
-		super(componentChannel);
-	}
+    /**
+     * Creates a new component with its channel set to the given channel.
+     * 
+     * @param componentChannel
+     */
+    public KVStoreBasedPortalPolicy(Channel componentChannel) {
+        super(componentChannel);
+    }
 
-	/**
-	 * Intercept the {@link PortalReady} event. Request the 
-	 * session data from the key/value store and resume.
-	 * 
-	 * @param event
-	 * @param channel
-	 * @throws InterruptedException
-	 */
-	@Handler
-	public void onPortalReady(PortalReady event, PortalSession channel) 
-			throws InterruptedException {
-		PortalSessionDataStore sessionDs = channel.associated(
-				PortalSessionDataStore.class, 
-				() -> new PortalSessionDataStore(channel.browserSession()));
-		sessionDs.onPortalReady(event, channel);
-	}
+    /**
+     * Intercept the {@link PortalReady} event. Request the 
+     * session data from the key/value store and resume.
+     * 
+     * @param event
+     * @param channel
+     * @throws InterruptedException
+     */
+    @Handler
+    public void onPortalReady(PortalReady event, PortalSession channel)
+            throws InterruptedException {
+        PortalSessionDataStore sessionDs = channel.associated(
+            PortalSessionDataStore.class,
+            () -> new PortalSessionDataStore(channel.browserSession()));
+        sessionDs.onPortalReady(event, channel);
+    }
 
-	/**
-	 * Handle returned data.
-	 *
-	 * @param event the event
-	 * @param channel the channel
-	 * @throws JsonDecodeException the json decode exception
-	 */
-	@Handler
-	public void onKeyValueStoreData(
-			KeyValueStoreData event, PortalSession channel) 
-					throws JsonDecodeException {
-		Optional<PortalSessionDataStore> optSessionDs 
-			= channel.associated(PortalSessionDataStore.class);
-		if (optSessionDs.isPresent()) {
-			optSessionDs.get().onKeyValueStoreData(event, channel);
-		}
-	}
+    /**
+     * Handle returned data.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws JsonDecodeException the json decode exception
+     */
+    @Handler
+    public void onKeyValueStoreData(
+            KeyValueStoreData event, PortalSession channel)
+            throws JsonDecodeException {
+        Optional<PortalSessionDataStore> optSessionDs
+            = channel.associated(PortalSessionDataStore.class);
+        if (optSessionDs.isPresent()) {
+            optSessionDs.get().onKeyValueStoreData(event, channel);
+        }
+    }
 
-	/**
-	 * Handle portal page loaded.
-	 *
-	 * @param event the event
-	 * @param channel the channel
-	 */
-	@Handler
-	public void onPortalPrepared(
-			PortalPrepared event, PortalSession channel) {
-		channel.associated(PortalSessionDataStore.class).ifPresent(
-				psess -> psess.onPortalPrepared(event, channel));
-	}
+    /**
+     * Handle portal page loaded.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
+    @Handler
+    public void onPortalPrepared(
+            PortalPrepared event, PortalSession channel) {
+        channel.associated(PortalSessionDataStore.class).ifPresent(
+            psess -> psess.onPortalPrepared(event, channel));
+    }
 
-	/**
-	 * Handle changed layout.
-	 *
-	 * @param event the event
-	 * @param channel the channel
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	@Handler
-	public void onPortalLayoutChanged(PortalLayoutChanged event, 
-			PortalSession channel) throws IOException {
-		Optional<PortalSessionDataStore>optDs = channel.associated(
-				PortalSessionDataStore.class);
-		if (optDs.isPresent()) {
-			optDs.get().onPortalLayoutChanged(event, channel);
-		}
-	}
-	
-	/**
-	 * Stores the data for the portal session.
-	 */
-	@SuppressWarnings("PMD.CommentRequired")
-	private class PortalSessionDataStore {
+    /**
+     * Handle changed layout.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Handler
+    public void onPortalLayoutChanged(PortalLayoutChanged event,
+            PortalSession channel) throws IOException {
+        Optional<PortalSessionDataStore> optDs = channel.associated(
+            PortalSessionDataStore.class);
+        if (optDs.isPresent()) {
+            optDs.get().onPortalLayoutChanged(event, channel);
+        }
+    }
 
-		private final String storagePath;
-		private Map<String,Object> persisted;
-		
-		public PortalSessionDataStore(Session session) {
-			storagePath = "/" 
-					+ Utils.userFromSession(session)
-					.map(UserPrincipal::toString).orElse("")
-					+ "/" + KVStoreBasedPortalPolicy.class.getName();
-		}
-		
-		public void onPortalReady(PortalReady event, IOSubchannel channel) 
-				throws InterruptedException {
-			if (persisted != null) {
-				return;
-			}
-			KeyValueStoreQuery query = new KeyValueStoreQuery(
-					storagePath, channel);
-			fire(query, channel);
-		}
+    /**
+     * Stores the data for the portal session.
+     */
+    @SuppressWarnings("PMD.CommentRequired")
+    private class PortalSessionDataStore {
 
-		public void onKeyValueStoreData(
-				KeyValueStoreData event, IOSubchannel channel) 
-						throws JsonDecodeException {
-			if (!event.event().query().equals(storagePath)) {
-				return;
-			}
-			String data = event.data().get(storagePath);
-			if (data != null) {
-				JsonBeanDecoder decoder = JsonBeanDecoder.create(data);
-				@SuppressWarnings({ "unchecked", "PMD.LooseCoupling" })
-				Class<Map<String,Object>> cls 
-					= (Class<Map<String,Object>>)(Class<?>)HashMap.class;
-				persisted = decoder.readObject(cls);
-			}
-		}
-		
-		@SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
-		        "PMD.AvoidInstantiatingObjectsInLoops" })
-		public void onPortalPrepared(
-				PortalPrepared event, IOSubchannel channel) {
-			if (persisted == null) {
-				// Retrieval was not successful
-				persisted = new HashMap<>();
-			}
-			// Make sure data is consistent
-			@SuppressWarnings("unchecked")
-			List<String> previewLayout = (List<String>)persisted
-				.computeIfAbsent("previewLayout", 
-						newKey -> { return Collections.emptyList(); });
-			@SuppressWarnings("unchecked")
-			List<String> tabsLayout = (List<String>)persisted.computeIfAbsent(
-					"tabsLayout", newKey -> { return Collections.emptyList(); });
-			JsonObject xtraInfo = (JsonObject)persisted.computeIfAbsent(
-					"xtraInfo", newKey -> { return JsonObject.create(); });
+        private final String storagePath;
+        private Map<String, Object> persisted;
 
-			// Update layout
-			channel.respond(new LastPortalLayout(
-					previewLayout, tabsLayout, xtraInfo));
-			
-			// Restore portlets
-			for (String portletId: tabsLayout) {
-				fire(new RenderPortletRequest(
-						event.event().renderSupport(), portletId,
-						Portlet.RenderMode.View, false), channel);
-			}
-			for (String portletId: previewLayout) {
-				fire(new RenderPortletRequest(
-						event.event().renderSupport(), portletId,
-						Portlet.RenderMode.Preview, true), channel);
-			}
-		}
-		
-		public void onPortalLayoutChanged(PortalLayoutChanged event,
-				IOSubchannel channel) throws IOException {
-			persisted.put("previewLayout", event.previewLayout());
-			persisted.put("tabsLayout", event.tabsLayout());
-			persisted.put("xtraInfo", event.xtraInfo());
-			
-			// Now store.
-			JsonBeanEncoder encoder = JsonBeanEncoder.create();
-			encoder.writeObject(persisted);
-			fire(new KeyValueStoreUpdate()
-					.update(storagePath, encoder.toJson()), channel);
-		}
+        public PortalSessionDataStore(Session session) {
+            storagePath = "/"
+                + Utils.userFromSession(session)
+                    .map(UserPrincipal::toString).orElse("")
+                + "/" + KVStoreBasedPortalPolicy.class.getName();
+        }
 
-	}
+        public void onPortalReady(PortalReady event, IOSubchannel channel)
+                throws InterruptedException {
+            if (persisted != null) {
+                return;
+            }
+            KeyValueStoreQuery query = new KeyValueStoreQuery(
+                storagePath, channel);
+            fire(query, channel);
+        }
+
+        public void onKeyValueStoreData(
+                KeyValueStoreData event, IOSubchannel channel)
+                throws JsonDecodeException {
+            if (!event.event().query().equals(storagePath)) {
+                return;
+            }
+            String data = event.data().get(storagePath);
+            if (data != null) {
+                JsonBeanDecoder decoder = JsonBeanDecoder.create(data);
+                @SuppressWarnings({ "unchecked", "PMD.LooseCoupling" })
+                Class<Map<String, Object>> cls
+                    = (Class<Map<String, Object>>) (Class<?>) HashMap.class;
+                persisted = decoder.readObject(cls);
+            }
+        }
+
+        @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
+            "PMD.AvoidInstantiatingObjectsInLoops" })
+        public void onPortalPrepared(
+                PortalPrepared event, IOSubchannel channel) {
+            if (persisted == null) {
+                // Retrieval was not successful
+                persisted = new HashMap<>();
+            }
+            // Make sure data is consistent
+            @SuppressWarnings("unchecked")
+            List<String> previewLayout = (List<String>) persisted
+                .computeIfAbsent("previewLayout",
+                    newKey -> {
+                        return Collections.emptyList();
+                    });
+            @SuppressWarnings("unchecked")
+            List<String> tabsLayout = (List<String>) persisted.computeIfAbsent(
+                "tabsLayout", newKey -> {
+                    return Collections.emptyList();
+                });
+            JsonObject xtraInfo = (JsonObject) persisted.computeIfAbsent(
+                "xtraInfo", newKey -> {
+                    return JsonObject.create();
+                });
+
+            // Update layout
+            channel.respond(new LastPortalLayout(
+                previewLayout, tabsLayout, xtraInfo));
+
+            // Restore portlets
+            for (String portletId : tabsLayout) {
+                fire(new RenderPortletRequest(
+                    event.event().renderSupport(), portletId,
+                    Portlet.RenderMode.View, false), channel);
+            }
+            for (String portletId : previewLayout) {
+                fire(new RenderPortletRequest(
+                    event.event().renderSupport(), portletId,
+                    Portlet.RenderMode.Preview, true), channel);
+            }
+        }
+
+        public void onPortalLayoutChanged(PortalLayoutChanged event,
+                IOSubchannel channel) throws IOException {
+            persisted.put("previewLayout", event.previewLayout());
+            persisted.put("tabsLayout", event.tabsLayout());
+            persisted.put("xtraInfo", event.xtraInfo());
+
+            // Now store.
+            JsonBeanEncoder encoder = JsonBeanEncoder.create();
+            encoder.writeObject(persisted);
+            fire(new KeyValueStoreUpdate()
+                .update(storagePath, encoder.toJson()), channel);
+        }
+
+    }
 }

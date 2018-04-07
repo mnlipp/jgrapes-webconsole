@@ -28,43 +28,45 @@ import org.jgrapes.core.Event;
  */
 public class JsonInput extends Event<Void> {
 
-	private final JsonRpc request;
-	
-	/**
-	 * Create a new request from the given data.
-	 * 
-	 * @param request a request as defined by the JSON RPC specification 
-	 */
-	public JsonInput(JsonRpc request) {
-		this.request = request;
-	}
+    private final JsonRpc request;
 
-	public JsonRpc request() {
-		return request;
-	}
+    /**
+     * Create a new request from the given data.
+     * 
+     * @param request a request as defined by the JSON RPC specification 
+     */
+    public JsonInput(JsonRpc request) {
+        this.request = request;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(Components.objectName(this))
-			.append(" [");
-		if (request().method() != null) {
-			builder.append("method=")
-				.append(request().method())
-				.append(", ");
-		}
-		if (request().id().isPresent()) {
-			builder.append("id=")
-				.append(request().id().get());
-		}
-		if (channels() != null) {
-			builder.append("channels=")
-				.append(Channel.toString(channels()));
-		}
-		builder.append(']');
-		return builder.toString();
-	}
+    public JsonRpc request() {
+        return request;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(Components.objectName(this))
+            .append(" [");
+        if (request().method() != null) {
+            builder.append("method=")
+                .append(request().method())
+                .append(", ");
+        }
+        if (request().id().isPresent()) {
+            builder.append("id=")
+                .append(request().id().get());
+        }
+        if (channels() != null) {
+            builder.append("channels=")
+                .append(Channel.toString(channels()));
+        }
+        builder.append(']');
+        return builder.toString();
+    }
 }

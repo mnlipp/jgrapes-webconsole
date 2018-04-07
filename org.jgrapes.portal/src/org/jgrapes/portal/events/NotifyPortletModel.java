@@ -49,62 +49,62 @@ import org.jgrapes.portal.RenderSupport;
 @SuppressWarnings("PMD.DataClass")
 public class NotifyPortletModel extends Event<Void> {
 
-	private final RenderSupport renderSupport;
-	private final String portletId;
-	private final String method;
-	private final JsonArray params;
-	
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param renderSupport the render support from the portal in case
-	 * the response requires it
-	 * @param portletId the portlet model that the notification is 
-	 * directed at 
-	 * @param method the method to be executed
-	 * @param params parameters
-	 */
-	public NotifyPortletModel(RenderSupport renderSupport, 
-			String portletId, String method, JsonArray params) {
-		this.renderSupport = renderSupport;
-		this.portletId = portletId;
-		this.method = method;
-		this.params = params;
-	}
+    private final RenderSupport renderSupport;
+    private final String portletId;
+    private final String method;
+    private final JsonArray params;
 
-	/**
-	 * Returns the render support.
-	 * 
-	 * @return the render support
-	 */
-	public RenderSupport renderSupport() {
-		return renderSupport;
-	}
+    /**
+     * Creates a new event.
+     * 
+     * @param renderSupport the render support from the portal in case
+     * the response requires it
+     * @param portletId the portlet model that the notification is 
+     * directed at 
+     * @param method the method to be executed
+     * @param params parameters
+     */
+    public NotifyPortletModel(RenderSupport renderSupport,
+            String portletId, String method, JsonArray params) {
+        this.renderSupport = renderSupport;
+        this.portletId = portletId;
+        this.method = method;
+        this.params = params;
+    }
 
-	/**
-	 * Returns the portlet id.
-	 * 
-	 * @return the portlet id
-	 */
-	public String portletId() {
-		return portletId;
-	}
+    /**
+     * Returns the render support.
+     * 
+     * @return the render support
+     */
+    public RenderSupport renderSupport() {
+        return renderSupport;
+    }
 
-	/**
-	 * Returns the method.
-	 * 
-	 * @return the method
-	 */
-	public String method() {
-		return method;
-	}
+    /**
+     * Returns the portlet id.
+     * 
+     * @return the portlet id
+     */
+    public String portletId() {
+        return portletId;
+    }
 
-	/**
-	 * Returns the parameters.
-	 * 
-	 * @return the parameters
-	 */
-	public JsonArray params() {
-		return params;
-	}
+    /**
+     * Returns the method.
+     * 
+     * @return the method
+     */
+    public String method() {
+        return method;
+    }
+
+    /**
+     * Returns the parameters.
+     * 
+     * @return the parameters
+     */
+    public JsonArray params() {
+        return params;
+    }
 }

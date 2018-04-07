@@ -33,24 +33,24 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class PortalReady extends Event<Void> {
 
-	private final RenderSupport renderSupport;
+    private final RenderSupport renderSupport;
 
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param renderSupport the render support for generating responses
-	 */
-	public PortalReady(RenderSupport renderSupport) {
-		new PortalPrepared(this);
-		this.renderSupport = renderSupport;
-	}
+    /**
+     * Creates a new event.
+     * 
+     * @param renderSupport the render support for generating responses
+     */
+    public PortalReady(RenderSupport renderSupport) {
+        new PortalPrepared(this);
+        this.renderSupport = renderSupport;
+    }
 
-	/**
-	 * Returns the render support.
-	 * 
-	 * @return the render support
-	 */
-	public RenderSupport renderSupport() {
-		return renderSupport;
-	}
+    /**
+     * Returns the render support.
+     * 
+     * @return the render support
+     */
+    public RenderSupport renderSupport() {
+        return renderSupport;
+    }
 }

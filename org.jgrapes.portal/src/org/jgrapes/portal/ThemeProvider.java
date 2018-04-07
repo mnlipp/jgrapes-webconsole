@@ -25,38 +25,38 @@ import java.net.URL;
  */
 public abstract class ThemeProvider {
 
-	/**
-	 * Return the id of the theme.
-	 * 
-	 * @return the result
-	 */
-	public abstract String themeId();
+    /**
+     * Return the id of the theme.
+     * 
+     * @return the result
+     */
+    public abstract String themeId();
 
-	/**
-	 * Return the name of the theme. The default implementation 
-	 * uses the theme id, replaces underscores with spaces and
-	 * capitalizes the first character.
-	 * 
-	 * @return the result
-	 */
-	@SuppressWarnings("PMD.UselessParentheses")
-	public String themeName() {
-		return (Character.toUpperCase(themeId().charAt(0))
-				+ themeId().substring(1)).replace('_', ' ');
-	}
+    /**
+     * Return the name of the theme. The default implementation 
+     * uses the theme id, replaces underscores with spaces and
+     * capitalizes the first character.
+     * 
+     * @return the result
+     */
+    @SuppressWarnings("PMD.UselessParentheses")
+    public String themeName() {
+        return (Character.toUpperCase(themeId().charAt(0))
+            + themeId().substring(1)).replace('_', ' ');
+    }
 
-	/**
-	 * Find the requested resource.
-	 * 
-	 * @param name the resource name
-	 * @return the data as input stream
-	 */
-	public URL getResource(String name)
-	        throws ResourceNotFoundException {
-		URL resource = getClass().getResource(name);
-		if (resource == null) {
-			throw new ResourceNotFoundException();
-		}
-		return resource;
-	}
+    /**
+     * Find the requested resource.
+     * 
+     * @param name the resource name
+     * @return the data as input stream
+     */
+    public URL getResource(String name)
+            throws ResourceNotFoundException {
+        URL resource = getClass().getResource(name);
+        if (resource == null) {
+            throw new ResourceNotFoundException();
+        }
+        return resource;
+    }
 }

@@ -30,21 +30,26 @@ import org.jgrapes.portal.PortletComponentFactory;
  */
 public class SysInfoPortletFactory implements PortletComponentFactory {
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.core.ComponentFactory#componentType()
-	 */
-	@Override
-	public Class<? extends ComponentType> componentType() {
-		return SysInfoPortlet.class;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.core.ComponentFactory#componentType()
+     */
+    @Override
+    public Class<? extends ComponentType> componentType() {
+        return SysInfoPortlet.class;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel, java.util.Map)
-	 */
-	@Override
-	public Optional<ComponentType> create(
-			Channel componentChannel, Map<Object, Object> properties) {
-		return Optional.of(new SysInfoPortlet(componentChannel));
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel,
+     * java.util.Map)
+     */
+    @Override
+    public Optional<ComponentType> create(
+            Channel componentChannel, Map<Object, Object> properties) {
+        return Optional.of(new SysInfoPortlet(componentChannel));
+    }
 
 }

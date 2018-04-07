@@ -30,21 +30,26 @@ import org.jgrapes.portal.PageResourceProviderFactory;
  */
 public class ChartJsProviderFactory implements PageResourceProviderFactory {
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.core.ComponentFactory#componentType()
-	 */
-	@Override
-	public Class<? extends ComponentType> componentType() {
-		return ChartJsProvider.class;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.core.ComponentFactory#componentType()
+     */
+    @Override
+    public Class<? extends ComponentType> componentType() {
+        return ChartJsProvider.class;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel, java.util.Map)
-	 */
-	@Override
-	public Optional<ComponentType> create(
-			Channel componentChannel, Map<Object, Object> properties) {
-		return Optional.of(new ChartJsProvider(componentChannel));
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel,
+     * java.util.Map)
+     */
+    @Override
+    public Optional<ComponentType> create(
+            Channel componentChannel, Map<Object, Object> properties) {
+        return Optional.of(new ChartJsProvider(componentChannel));
+    }
 
 }

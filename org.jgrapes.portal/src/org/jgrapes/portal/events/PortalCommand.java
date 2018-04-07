@@ -34,33 +34,33 @@ import org.jgrapes.core.Event;
  */
 public abstract class PortalCommand extends Event<Void> {
 
-	/**
-	 * Writes the event as JSON notification to the given writer.
-	 * Derived classes usually simply call 
-	 * {@link #toJson(Writer, String, Object...)} with the method
-	 * name and parameters.
-	 * 
-	 * @param writer the writer
-	 */
-	public abstract void toJson(Writer writer)
-			throws InterruptedException, IOException;
-	
-	/**
-	 * Creates a JSON notification from the given data.
-	 * Closes the `writer`.
-	 * 
-	 * @param writer the writer
-	 * @throws IOException 
-	 */
-	protected void toJson(Writer writer, String method, Object... params)
-			throws IOException {
-		JsonRpc rpc = JsonRpc.create();
-		rpc.setMethod(method);
-		if (params.length > 0) {
-			for (Object obj: params) {
-				rpc.addParam(obj);
-			}
-		}
-		JsonBeanEncoder.create(writer).writeObject(rpc).flush();
-	}
+    /**
+     * Writes the event as JSON notification to the given writer.
+     * Derived classes usually simply call 
+     * {@link #toJson(Writer, String, Object...)} with the method
+     * name and parameters.
+     * 
+     * @param writer the writer
+     */
+    public abstract void toJson(Writer writer)
+            throws InterruptedException, IOException;
+
+    /**
+     * Creates a JSON notification from the given data.
+     * Closes the `writer`.
+     * 
+     * @param writer the writer
+     * @throws IOException 
+     */
+    protected void toJson(Writer writer, String method, Object... params)
+            throws IOException {
+        JsonRpc rpc = JsonRpc.create();
+        rpc.setMethod(method);
+        if (params.length > 0) {
+            for (Object obj : params) {
+                rpc.addParam(obj);
+            }
+        }
+        JsonBeanEncoder.create(writer).writeObject(rpc).flush();
+    }
 }

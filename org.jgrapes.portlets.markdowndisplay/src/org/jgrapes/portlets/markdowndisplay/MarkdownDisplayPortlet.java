@@ -74,396 +74,409 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
 @SuppressWarnings("PMD.DataClass")
 public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
 
-	/** Property for forcing a portlet id (used for singleton instaces). */
-	public static final String PORTLET_ID = "PortletId";
-	/** Property for setting a title. */
-	public static final String TITLE = "Title";
-	/** Property for setting the preview source. */
-	public static final String PREVIEW_SOURCE = "PreviewSource";
-	/** Property for setting the view source. */
-	public static final String VIEW_SOURCE = "ViewSource";
-	/** Boolean property that controls if the preview is deletable. */
-	public static final String DELETABLE = "Deletable";
-	/** Property of type `Set<Principal>` for restricting who 
-	 * can edit the content. */ 
-	public static final String EDITABLE_BY = "EditableBy";
-	
-	/**
-	 * Creates a new component with its channel set to the given 
-	 * channel.
-	 * 
-	 * @param componentChannel the channel that the component's 
-	 * handlers listen on by default and that 
-	 * {@link Manager#fire(Event, Channel...)} sends the event to 
-	 */
-	public MarkdownDisplayPortlet(Channel componentChannel) {
-		super(componentChannel, false);
-	}
+    /** Property for forcing a portlet id (used for singleton instaces). */
+    public static final String PORTLET_ID = "PortletId";
+    /** Property for setting a title. */
+    public static final String TITLE = "Title";
+    /** Property for setting the preview source. */
+    public static final String PREVIEW_SOURCE = "PreviewSource";
+    /** Property for setting the view source. */
+    public static final String VIEW_SOURCE = "ViewSource";
+    /** Boolean property that controls if the preview is deletable. */
+    public static final String DELETABLE = "Deletable";
+    /** Property of type `Set<Principal>` for restricting who 
+     * can edit the content. */
+    public static final String EDITABLE_BY = "EditableBy";
 
-	private String storagePath(Session session) {
-		return "/" + Utils.userFromSession(session)
-			.map(UserPrincipal::toString).orElse("")
-			+ "/portlets/" + MarkdownDisplayPortlet.class.getName()	+ "/";
-	}
-	
-	/**
-	 * On {@link PortalReady}, fire the {@link AddPortletType}.
-	 *
-	 * @param event the event
-	 * @param portalSession the portal session
-	 * @throws TemplateNotFoundException the template not found exception
-	 * @throws MalformedTemplateNameException the malformed template name exception
-	 * @throws ParseException the parse exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	@Handler
-	public void onPortalReady(PortalReady event, PortalSession portalSession) 
-			throws TemplateNotFoundException, MalformedTemplateNameException, 
-			ParseException, IOException {
-		ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
-		// Add MarkdownDisplayPortlet resources to page
-		portalSession.respond(new AddPortletType(type())
-				.setDisplayName(resourceBundle.getString("portletName"))
-				.addScript(new ScriptResource()
-						.setRequires(new String[] {"markdown-it.github.io",
-								"github.com/markdown-it/markdown-it-abbr",
-								"github.com/markdown-it/markdown-it-container",
-								"github.com/markdown-it/markdown-it-deflist",
-								"github.com/markdown-it/markdown-it-emoji",
-								"github.com/markdown-it/markdown-it-footnote",
-								"github.com/markdown-it/markdown-it-ins",
-								"github.com/markdown-it/markdown-it-mark",
-								"github.com/markdown-it/markdown-it-sub",
-								"github.com/markdown-it/markdown-it-sup"})
-						.setScriptUri(event.renderSupport().portletResource(
-								type(), "MarkdownDisplay-functions.ftl.js")))
-				.addCss(event.renderSupport(), PortalWeblet.uriFromPath(
-						"MarkdownDisplay-style.css"))
-				.setInstantiable());
-		KeyValueStoreQuery query = new KeyValueStoreQuery(
-				storagePath(portalSession.browserSession()), portalSession);
-		fire(query, portalSession);
-	}
+    /**
+     * Creates a new component with its channel set to the given 
+     * channel.
+     * 
+     * @param componentChannel the channel that the component's 
+     * handlers listen on by default and that 
+     * {@link Manager#fire(Event, Channel...)} sends the event to 
+     */
+    public MarkdownDisplayPortlet(Channel componentChannel) {
+        super(componentChannel, false);
+    }
 
-	/**
-	 * Restore portlet information, if contained in the event.
-	 *
-	 * @param event the event
-	 * @param channel the channel
-	 * @throws JsonDecodeException the json decode exception
-	 */
-	@Handler
-	public void onKeyValueStoreData(
-			KeyValueStoreData event, PortalSession channel) 
-					throws JsonDecodeException {
-		if (!event.event().query().equals(storagePath(channel.browserSession()))) {
-			return;
-		}
-		for (String json: event.data().values()) {
-			MarkdownDisplayModel model = JsonBeanDecoder.create(json)
-					.readObject(MarkdownDisplayModel.class);
-			putInSession(channel.browserSession(), model);
-		}
-	}
+    private String storagePath(Session session) {
+        return "/" + Utils.userFromSession(session)
+            .map(UserPrincipal::toString).orElse("")
+            + "/portlets/" + MarkdownDisplayPortlet.class.getName() + "/";
+    }
 
-	/**
-	 * Adds the portlet to the portal. The portlet supports the 
-	 * following options (see {@link AddPortletRequest#properties()}:
-	 * 
-	 * * `PORTLET_ID` (String): The portlet id.
-	 * 
-	 * * `TITLE` (String): The portlet title.
-	 * 
-	 * * `PREVIEW_SOURCE` (String): The markdown source that is rendered 
-	 * in the portlet preview.
-	 * 
-	 * * `VIEW_SOURCE` (String): The markdown source that is rendered 
-	 * in the portlet view.
-	 * 
-	 * * `DELETABLE` (Boolean): Indicates that the portlet may be 
-	 * deleted from the overview page.
-	 * 
-	 * * `EDITABLE_BY` (Set&lt;Principal&gt;): The principals that may edit 
-	 * the portlet instance.
-	 */
-	@Override
-	public String doAddPortlet(AddPortletRequest event,
-			PortalSession portalSession) throws Exception {
-		ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
-		
-		// Create new model
-		String portletId = (String)event.properties().get(PORTLET_ID);
-		if (portletId == null) {
-			portletId = generatePortletId();
-		}
-		MarkdownDisplayModel model = putInSession(
-				portalSession.browserSession(), 
-				new MarkdownDisplayModel(portletId));
-		model.setTitle((String)event.properties().getOrDefault(TITLE, 
-				resourceBundle.getString("portletName")));
-		model.setPreviewContent((String)event.properties().getOrDefault(
-				PREVIEW_SOURCE, ""));
-		model.setViewContent((String)event.properties().getOrDefault(
-				VIEW_SOURCE, ""));
-		model.setDeletable((Boolean)event.properties().getOrDefault(
-				DELETABLE, Boolean.TRUE));
-		@SuppressWarnings("unchecked")
-		Set<Principal> editableBy = (Set<Principal>)event.properties().get(
-				EDITABLE_BY);
-		model.setEditableBy(editableBy);
-		
-		// Save model
-		String jsonState = JsonBeanEncoder.create()
-				.writeObject(model).toJson();
-		portalSession.respond(new KeyValueStoreUpdate().update(
-				storagePath(portalSession.browserSession()) + model.getPortletId(),
-				jsonState));
-		
-		// Send HTML
-		renderPortlet(event, portalSession, model);
-		return portletId;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
-	 */
-	@Override
-	protected void doRenderPortlet(RenderPortletRequest event,
-	        PortalSession portalSession, String portletId, 
-	        Serializable retrievedState) throws Exception {
-		MarkdownDisplayModel model = (MarkdownDisplayModel)retrievedState;
-		renderPortlet(event, portalSession, model);
-	}
+    /**
+     * On {@link PortalReady}, fire the {@link AddPortletType}.
+     *
+     * @param event the event
+     * @param portalSession the portal session
+     * @throws TemplateNotFoundException the template not found exception
+     * @throws MalformedTemplateNameException the malformed template name exception
+     * @throws ParseException the parse exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Handler
+    public void onPortalReady(PortalReady event, PortalSession portalSession)
+            throws TemplateNotFoundException, MalformedTemplateNameException,
+            ParseException, IOException {
+        ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
+        // Add MarkdownDisplayPortlet resources to page
+        portalSession.respond(new AddPortletType(type())
+            .setDisplayName(resourceBundle.getString("portletName"))
+            .addScript(new ScriptResource()
+                .setRequires(new String[] { "markdown-it.github.io",
+                    "github.com/markdown-it/markdown-it-abbr",
+                    "github.com/markdown-it/markdown-it-container",
+                    "github.com/markdown-it/markdown-it-deflist",
+                    "github.com/markdown-it/markdown-it-emoji",
+                    "github.com/markdown-it/markdown-it-footnote",
+                    "github.com/markdown-it/markdown-it-ins",
+                    "github.com/markdown-it/markdown-it-mark",
+                    "github.com/markdown-it/markdown-it-sub",
+                    "github.com/markdown-it/markdown-it-sup" })
+                .setScriptUri(event.renderSupport().portletResource(
+                    type(), "MarkdownDisplay-functions.ftl.js")))
+            .addCss(event.renderSupport(), PortalWeblet.uriFromPath(
+                "MarkdownDisplay-style.css"))
+            .setInstantiable());
+        KeyValueStoreQuery query = new KeyValueStoreQuery(
+            storagePath(portalSession.browserSession()), portalSession);
+        fire(query, portalSession);
+    }
 
-	@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-	private void renderPortlet(RenderPortletRequestBase<?> event,
-	        PortalSession portalSession, MarkdownDisplayModel model)
-	        throws TemplateNotFoundException, MalformedTemplateNameException,
-	        ParseException, IOException {
-		Set<RenderMode> modes = renderModes(model);
-		if (model.getViewContent() != null && !model.getViewContent().isEmpty()) {
-			modes.add(RenderMode.View);
-		}
-		switch (event.renderMode()) {
-		case Preview:
-		case DeleteablePreview: {
-			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-preview.ftl.html");
-			portalSession.respond(new RenderPortletFromTemplate(event,
-					MarkdownDisplayPortlet.class, model.getPortletId(), 
-					tpl, fmModel(event, portalSession, model))
-					.setRenderMode(event.renderMode()).setSupportedModes(modes)
-					.setForeground(event.isForeground()));
-			updateView(portalSession, model);
-			break;
-		}
-		case View: {
-			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-view.ftl.html");
-			portalSession.respond(new RenderPortletFromTemplate(event,
-					MarkdownDisplayPortlet.class, model.getPortletId(), 
-					tpl, fmModel(event, portalSession, model))
-					.setRenderMode(RenderMode.View).setSupportedModes(modes)
-					.setForeground(event.isForeground()));
-			updateView(portalSession, model);
-			break;
-		}
-		case Edit: {
-			Template tpl = freemarkerConfig().getTemplate("MarkdownDisplay-edit.ftl.html");
-			portalSession.respond(new RenderPortletFromTemplate(event,
-					MarkdownDisplayPortlet.class, model.getPortletId(), 
-					tpl, fmModel(event, portalSession, model))
-					.setRenderMode(RenderMode.Edit).setSupportedModes(modes));
-			break;
-		}
-		default:
-			break;
-		}
-	}
+    /**
+     * Restore portlet information, if contained in the event.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws JsonDecodeException the json decode exception
+     */
+    @Handler
+    public void onKeyValueStoreData(
+            KeyValueStoreData event, PortalSession channel)
+            throws JsonDecodeException {
+        if (!event.event().query()
+            .equals(storagePath(channel.browserSession()))) {
+            return;
+        }
+        for (String json : event.data().values()) {
+            MarkdownDisplayModel model = JsonBeanDecoder.create(json)
+                .readObject(MarkdownDisplayModel.class);
+            putInSession(channel.browserSession(), model);
+        }
+    }
 
-	private Set<RenderMode> renderModes(MarkdownDisplayModel model) {
-		Set<RenderMode> modes = new HashSet<>();
-		modes.add(model.isDeletable() ? RenderMode.DeleteablePreview 
-				: RenderMode.Preview);
-		if (model.getViewContent() != null && !model.getViewContent().isEmpty()) {
-			modes.add(RenderMode.View);
-		}
-		if (model.getEditableBy() == null) {
-			modes.add(RenderMode.Edit);
-		}
-		return modes;
-	}
-	
-	
-	private void updateView(IOSubchannel channel, MarkdownDisplayModel model) {
-		channel.respond(new NotifyPortletView(type(),
-				model.getPortletId(), "updateAll", model.getTitle(), 
-				model.getPreviewContent(), model.getViewContent(),
-				renderModes(model)));
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
-	 */
-	@Override
-	protected void doDeletePortlet(DeletePortletRequest event,
-	        PortalSession channel, String portletId, 
-	        Serializable retrievedState) throws Exception {
-		channel.respond(new KeyValueStoreUpdate().delete(
-				storagePath(channel.browserSession()) + portletId));
-		channel.respond(new DeletePortlet(portletId));
-	}
+    /**
+     * Adds the portlet to the portal. The portlet supports the 
+     * following options (see {@link AddPortletRequest#properties()}:
+     * 
+     * * `PORTLET_ID` (String): The portlet id.
+     * 
+     * * `TITLE` (String): The portlet title.
+     * 
+     * * `PREVIEW_SOURCE` (String): The markdown source that is rendered 
+     *   in the portlet preview.
+     * 
+     * * `VIEW_SOURCE` (String): The markdown source that is rendered 
+     *   in the portlet view.
+     * 
+     * * `DELETABLE` (Boolean): Indicates that the portlet may be 
+     *   deleted from the overview page.
+     * 
+     * * `EDITABLE_BY` (Set&lt;Principal&gt;): The principals that may edit 
+     *   the portlet instance.
+     */
+    @Override
+    public String doAddPortlet(AddPortletRequest event,
+            PortalSession portalSession) throws Exception {
+        ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
 
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
-	 */
-	@Override
-	protected void doNotifyPortletModel(NotifyPortletModel event,
-	        PortalSession portalSession, Serializable portletState)
-	        throws Exception {
-		event.stop();
-		@SuppressWarnings("PMD.UseConcurrentHashMap")
-		Map<String, String> properties = new HashMap<>();
-		if (event.params().get(0) != null) {
-			properties.put(TITLE, event.params().asString(0));
-		}
-		if (event.params().get(1) != null) {
-			properties.put(PREVIEW_SOURCE, event.params().asString(1));
-		}
-		if (event.params().get(2) != null) {
-			properties.put(VIEW_SOURCE, event.params().asString(2));
-		}
-		fire(new UpdatePortletModel(event.portletId(), properties), portalSession);
-	}
+        // Create new model
+        String portletId = (String) event.properties().get(PORTLET_ID);
+        if (portletId == null) {
+            portletId = generatePortletId();
+        }
+        MarkdownDisplayModel model = putInSession(
+            portalSession.browserSession(),
+            new MarkdownDisplayModel(portletId));
+        model.setTitle((String) event.properties().getOrDefault(TITLE,
+            resourceBundle.getString("portletName")));
+        model.setPreviewContent((String) event.properties().getOrDefault(
+            PREVIEW_SOURCE, ""));
+        model.setViewContent((String) event.properties().getOrDefault(
+            VIEW_SOURCE, ""));
+        model.setDeletable((Boolean) event.properties().getOrDefault(
+            DELETABLE, Boolean.TRUE));
+        @SuppressWarnings("unchecked")
+        Set<Principal> editableBy = (Set<Principal>) event.properties().get(
+            EDITABLE_BY);
+        model.setEditableBy(editableBy);
 
-	/**
-	 * Stores the modified properties using a {@link KeyValueStoreUpdate}
-	 * event and updates the view with a {@link NotifyPortletView}. 
-	 *
-	 * @param event the event
-	 * @param portalSession the portal session
-	 */
-	@SuppressWarnings("unchecked")
-	@Handler
-	public void onUpdatePortletModel(UpdatePortletModel event, 
-			PortalSession portalSession) {
-		stateFromSession(portalSession.browserSession(), event.portletId(), 
-				MarkdownDisplayModel.class).ifPresent(model -> {
-					event.ifPresent(TITLE, 
-							(key, value) -> model.setTitle((String)value))
-					.ifPresent(PREVIEW_SOURCE, 
-							(key, value) -> model.setPreviewContent((String)value))
-					.ifPresent(VIEW_SOURCE, 
-							(key, value) -> model.setViewContent((String)value))
-					.ifPresent(DELETABLE, 
-							(key, value) -> model.setDeletable((Boolean)value))
-					.ifPresent(EDITABLE_BY, 
-							(key, value) -> {
-								model.setEditableBy((Set<Principal>)value);
-							});
-					try {
-						String jsonState = JsonBeanEncoder.create()
-								.writeObject(model).toJson();
-						portalSession.respond(new KeyValueStoreUpdate().update(
-								storagePath(portalSession.browserSession()) 
-								+ model.getPortletId(),	jsonState));
-						updateView(portalSession, model);
-					} catch (IOException e) { // NOPMD
-						// Won't happen, uses internal writer
-					}
-				});
-	}
-	
-	/**
-	 * The portlet's model.
-	 */
-	@SuppressWarnings("serial")
-	public static class MarkdownDisplayModel extends PortletBaseModel {
+        // Save model
+        String jsonState = JsonBeanEncoder.create()
+            .writeObject(model).toJson();
+        portalSession.respond(new KeyValueStoreUpdate().update(
+            storagePath(portalSession.browserSession()) + model.getPortletId(),
+            jsonState));
 
-		private String title = "";
-		private String previewContent = "";
-		private String viewContent = "";
-		private boolean deletable = true;
-		private Set<Principal> editableBy;
-		
-		/**
-		 * Creates a new model with the given type and id.
-		 * 
-		 * @param portletId the portlet id
-		 */
-		@ConstructorProperties({"portletId"})
-		public MarkdownDisplayModel(String portletId) {
-			super(portletId);
-		}
+        // Send HTML
+        renderPortlet(event, portalSession, model);
+        return portletId;
+    }
 
-		/**
-		 * @return the title
-		 */
-		public String getTitle() {
-			return title;
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
+     */
+    @Override
+    protected void doRenderPortlet(RenderPortletRequest event,
+            PortalSession portalSession, String portletId,
+            Serializable retrievedState) throws Exception {
+        MarkdownDisplayModel model = (MarkdownDisplayModel) retrievedState;
+        renderPortlet(event, portalSession, model);
+    }
 
-		/**
-		 * @param title the title to set
-		 */
-		public void setTitle(String title) {
-			this.title = title;
-		}
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    private void renderPortlet(RenderPortletRequestBase<?> event,
+            PortalSession portalSession, MarkdownDisplayModel model)
+            throws TemplateNotFoundException, MalformedTemplateNameException,
+            ParseException, IOException {
+        Set<RenderMode> modes = renderModes(model);
+        if (model.getViewContent() != null
+            && !model.getViewContent().isEmpty()) {
+            modes.add(RenderMode.View);
+        }
+        switch (event.renderMode()) {
+        case Preview:
+        case DeleteablePreview: {
+            Template tpl = freemarkerConfig()
+                .getTemplate("MarkdownDisplay-preview.ftl.html");
+            portalSession.respond(new RenderPortletFromTemplate(event,
+                MarkdownDisplayPortlet.class, model.getPortletId(),
+                tpl, fmModel(event, portalSession, model))
+                    .setRenderMode(event.renderMode()).setSupportedModes(modes)
+                    .setForeground(event.isForeground()));
+            updateView(portalSession, model);
+            break;
+        }
+        case View: {
+            Template tpl = freemarkerConfig()
+                .getTemplate("MarkdownDisplay-view.ftl.html");
+            portalSession.respond(new RenderPortletFromTemplate(event,
+                MarkdownDisplayPortlet.class, model.getPortletId(),
+                tpl, fmModel(event, portalSession, model))
+                    .setRenderMode(RenderMode.View).setSupportedModes(modes)
+                    .setForeground(event.isForeground()));
+            updateView(portalSession, model);
+            break;
+        }
+        case Edit: {
+            Template tpl = freemarkerConfig()
+                .getTemplate("MarkdownDisplay-edit.ftl.html");
+            portalSession.respond(new RenderPortletFromTemplate(event,
+                MarkdownDisplayPortlet.class, model.getPortletId(),
+                tpl, fmModel(event, portalSession, model))
+                    .setRenderMode(RenderMode.Edit).setSupportedModes(modes));
+            break;
+        }
+        default:
+            break;
+        }
+    }
 
-		/**
-		 * @return the previewContent
-		 */
-		public String getPreviewContent() {
-			return previewContent;
-		}
+    private Set<RenderMode> renderModes(MarkdownDisplayModel model) {
+        Set<RenderMode> modes = new HashSet<>();
+        modes.add(model.isDeletable() ? RenderMode.DeleteablePreview
+            : RenderMode.Preview);
+        if (model.getViewContent() != null
+            && !model.getViewContent().isEmpty()) {
+            modes.add(RenderMode.View);
+        }
+        if (model.getEditableBy() == null) {
+            modes.add(RenderMode.Edit);
+        }
+        return modes;
+    }
 
-		/**
-		 * @param previewContent the previewContent to set
-		 */
-		public void setPreviewContent(String previewContent) {
-			this.previewContent = previewContent;
-		}
+    private void updateView(IOSubchannel channel, MarkdownDisplayModel model) {
+        channel.respond(new NotifyPortletView(type(),
+            model.getPortletId(), "updateAll", model.getTitle(),
+            model.getPreviewContent(), model.getViewContent(),
+            renderModes(model)));
+    }
 
-		/**
-		 * @return the viewContent
-		 */
-		public String getViewContent() {
-			return viewContent;
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
+     */
+    @Override
+    protected void doDeletePortlet(DeletePortletRequest event,
+            PortalSession channel, String portletId,
+            Serializable retrievedState) throws Exception {
+        channel.respond(new KeyValueStoreUpdate().delete(
+            storagePath(channel.browserSession()) + portletId));
+        channel.respond(new DeletePortlet(portletId));
+    }
 
-		/**
-		 * @param viewContent the viewContent to set
-		 */
-		public void setViewContent(String viewContent) {
-			this.viewContent = viewContent;
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
+     */
+    @Override
+    protected void doNotifyPortletModel(NotifyPortletModel event,
+            PortalSession portalSession, Serializable portletState)
+            throws Exception {
+        event.stop();
+        @SuppressWarnings("PMD.UseConcurrentHashMap")
+        Map<String, String> properties = new HashMap<>();
+        if (event.params().get(0) != null) {
+            properties.put(TITLE, event.params().asString(0));
+        }
+        if (event.params().get(1) != null) {
+            properties.put(PREVIEW_SOURCE, event.params().asString(1));
+        }
+        if (event.params().get(2) != null) {
+            properties.put(VIEW_SOURCE, event.params().asString(2));
+        }
+        fire(new UpdatePortletModel(event.portletId(), properties),
+            portalSession);
+    }
 
-		/**
-		 * @return the deletable
-		 */
-		public boolean isDeletable() {
-			return deletable;
-		}
+    /**
+     * Stores the modified properties using a {@link KeyValueStoreUpdate}
+     * event and updates the view with a {@link NotifyPortletView}. 
+     *
+     * @param event the event
+     * @param portalSession the portal session
+     */
+    @SuppressWarnings("unchecked")
+    @Handler
+    public void onUpdatePortletModel(UpdatePortletModel event,
+            PortalSession portalSession) {
+        stateFromSession(portalSession.browserSession(), event.portletId(),
+            MarkdownDisplayModel.class).ifPresent(model -> {
+                event.ifPresent(TITLE,
+                    (key, value) -> model.setTitle((String) value))
+                    .ifPresent(PREVIEW_SOURCE,
+                        (key, value) -> model.setPreviewContent((String) value))
+                    .ifPresent(VIEW_SOURCE,
+                        (key, value) -> model.setViewContent((String) value))
+                    .ifPresent(DELETABLE,
+                        (key, value) -> model.setDeletable((Boolean) value))
+                    .ifPresent(EDITABLE_BY,
+                        (key, value) -> {
+                            model.setEditableBy((Set<Principal>) value);
+                        });
+                try {
+                    String jsonState = JsonBeanEncoder.create()
+                        .writeObject(model).toJson();
+                    portalSession.respond(new KeyValueStoreUpdate().update(
+                        storagePath(portalSession.browserSession())
+                            + model.getPortletId(),
+                        jsonState));
+                    updateView(portalSession, model);
+                } catch (IOException e) { // NOPMD
+                    // Won't happen, uses internal writer
+                }
+            });
+    }
 
-		/**
-		 * @param deletable the deletable to set
-		 */
-		public void setDeletable(boolean deletable) {
-			this.deletable = deletable;
-		}
+    /**
+     * The portlet's model.
+     */
+    @SuppressWarnings("serial")
+    public static class MarkdownDisplayModel extends PortletBaseModel {
 
-		/**
-		 * @return the editableBy
-		 */
-		public Set<Principal> getEditableBy() {
-			return editableBy;
-		}
+        private String title = "";
+        private String previewContent = "";
+        private String viewContent = "";
+        private boolean deletable = true;
+        private Set<Principal> editableBy;
 
-		/**
-		 * @param editableBy the editableBy to set
-		 */
-		public void setEditableBy(Set<Principal> editableBy) {
-			this.editableBy = editableBy;
-		}
-		
-	}
-	
+        /**
+         * Creates a new model with the given type and id.
+         * 
+         * @param portletId the portlet id
+         */
+        @ConstructorProperties({ "portletId" })
+        public MarkdownDisplayModel(String portletId) {
+            super(portletId);
+        }
+
+        /**
+         * @return the title
+         */
+        public String getTitle() {
+            return title;
+        }
+
+        /**
+         * @param title the title to set
+         */
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        /**
+         * @return the previewContent
+         */
+        public String getPreviewContent() {
+            return previewContent;
+        }
+
+        /**
+         * @param previewContent the previewContent to set
+         */
+        public void setPreviewContent(String previewContent) {
+            this.previewContent = previewContent;
+        }
+
+        /**
+         * @return the viewContent
+         */
+        public String getViewContent() {
+            return viewContent;
+        }
+
+        /**
+         * @param viewContent the viewContent to set
+         */
+        public void setViewContent(String viewContent) {
+            this.viewContent = viewContent;
+        }
+
+        /**
+         * @return the deletable
+         */
+        public boolean isDeletable() {
+            return deletable;
+        }
+
+        /**
+         * @param deletable the deletable to set
+         */
+        public void setDeletable(boolean deletable) {
+            this.deletable = deletable;
+        }
+
+        /**
+         * @return the editableBy
+         */
+        public Set<Principal> getEditableBy() {
+            return editableBy;
+        }
+
+        /**
+         * @param editableBy the editableBy to set
+         */
+        public void setEditableBy(Set<Principal> editableBy) {
+            this.editableBy = editableBy;
+        }
+
+    }
+
 }

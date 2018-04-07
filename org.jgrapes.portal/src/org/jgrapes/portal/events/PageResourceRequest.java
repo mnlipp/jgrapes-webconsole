@@ -35,19 +35,19 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class PageResourceRequest extends ResourceRequest {
 
-	/**
-	 * Creates a new request.
-	 * 
-	 * @param resourceUri the requested resource
-	 * @param httpRequest the original HTTP request
-	 * @param httpChannel the channel that the HTTP request was received on
-	 * @param renderSupport the render support
-	 */
-	public PageResourceRequest(URI resourceUri, Instant ifModifiedSince,
-			HttpRequest httpRequest, IOSubchannel httpChannel,
-			RenderSupport renderSupport) {
-		super(resourceUri, ifModifiedSince, 
-				httpRequest, httpChannel, renderSupport);
-	}
+    /**
+     * Creates a new request.
+     * 
+     * @param resourceUri the requested resource
+     * @param httpRequest the original HTTP request
+     * @param httpChannel the channel that the HTTP request was received on
+     * @param renderSupport the render support
+     */
+    public PageResourceRequest(URI resourceUri, Instant ifModifiedSince,
+            HttpRequest httpRequest, IOSubchannel httpChannel,
+            RenderSupport renderSupport) {
+        super(resourceUri, ifModifiedSince,
+            httpRequest, httpChannel, renderSupport);
+    }
 
 }

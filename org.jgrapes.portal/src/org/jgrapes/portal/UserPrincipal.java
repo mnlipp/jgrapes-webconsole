@@ -25,16 +25,18 @@ import java.security.Principal;
  */
 public interface UserPrincipal extends Principal {
 
-	/* (non-Javadoc)
-	 * @see java.security.Principal#getName()
-	 */
-	@Override
-	String getName();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.security.Principal#getName()
+     */
+    @Override
+    String getName();
 
-	/**
-	 * Returns the authentication realm.
-	 * 
-	 * @return the value
-	 */
-	String getRealm();
+    /**
+     * Returns the authentication realm.
+     * 
+     * @return the value
+     */
+    String getRealm();
 }

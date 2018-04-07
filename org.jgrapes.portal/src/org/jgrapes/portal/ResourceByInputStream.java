@@ -37,47 +37,47 @@ import org.jgrapes.portal.events.ResourceRequest;
  */
 public class ResourceByInputStream extends ResourceResult {
 
-	private final InputStream stream;
-	private final MediaType mediaType;
-	private final Instant lastModifiedAt;
-	private final int maxAge;
+    private final InputStream stream;
+    private final MediaType mediaType;
+    private final Instant lastModifiedAt;
+    private final int maxAge;
 
-	/**
-	 * Instantiates a result that is provided by an {@link OutputStream}.
-	 *
-	 * @param request the request
-	 * @param stream the stream
-	 * @param maxAge
-	 */
-	public ResourceByInputStream(ResourceRequest request, 
-			InputStream stream, MediaType mediaType, 
-			Instant lastModifiedAt, int maxAge) {
-		super(request);
-		this.stream = stream;
-		this.mediaType = mediaType;
-		this.lastModifiedAt = lastModifiedAt;
-		this.maxAge = maxAge;
-	}
+    /**
+     * Instantiates a result that is provided by an {@link OutputStream}.
+     *
+     * @param request the request
+     * @param stream the stream
+     * @param maxAge
+     */
+    public ResourceByInputStream(ResourceRequest request,
+            InputStream stream, MediaType mediaType,
+            Instant lastModifiedAt, int maxAge) {
+        super(request);
+        this.stream = stream;
+        this.mediaType = mediaType;
+        this.lastModifiedAt = lastModifiedAt;
+        this.maxAge = maxAge;
+    }
 
-	@Override
-	public void process() throws IOException, InterruptedException {
-		if (stream == null) {
-			ResponseCreationSupport.sendResponse(request().httpRequest(), 
-					request().httpChannel(), HttpStatus.NOT_FOUND);
-			return;
-		}
-		
-		HttpResponse response = request().httpRequest().response().get();
-		if (lastModifiedAt != null) {
-			response.setField(HttpField.LAST_MODIFIED, lastModifiedAt);
-		}
-		response.setContentType(mediaType);
-		ResponseCreationSupport.setMaxAge(response, (req, mtype) -> maxAge,
-				request().httpRequest(), mediaType);
-		response.setStatus(HttpStatus.OK);
-		request().httpChannel().respond(new Response(response));
-		// Start sending content
-		new InputStreamPipeline(stream, request().httpChannel()).run();
-	}
-	
+    @Override
+    public void process() throws IOException, InterruptedException {
+        if (stream == null) {
+            ResponseCreationSupport.sendResponse(request().httpRequest(),
+                request().httpChannel(), HttpStatus.NOT_FOUND);
+            return;
+        }
+
+        HttpResponse response = request().httpRequest().response().get();
+        if (lastModifiedAt != null) {
+            response.setField(HttpField.LAST_MODIFIED, lastModifiedAt);
+        }
+        response.setContentType(mediaType);
+        ResponseCreationSupport.setMaxAge(response, (req, mtype) -> maxAge,
+            request().httpRequest(), mediaType);
+        response.setStatus(HttpStatus.OK);
+        request().httpChannel().respond(new Response(response));
+        // Start sending content
+        new InputStreamPipeline(stream, request().httpChannel()).run();
+    }
+
 }

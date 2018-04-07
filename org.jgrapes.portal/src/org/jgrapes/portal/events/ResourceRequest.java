@@ -113,76 +113,73 @@ import org.jgrapes.portal.ResourceResult;
  */
 @SuppressWarnings("PMD.DataClass")
 public class ResourceRequest extends Event<ResourceResult> {
-	
-	private final URI resourceUri;
-	private final Instant ifModifiedSince;
-	private final HttpRequest httpRequest;
-	private final IOSubchannel httpChannel;
-	private final RenderSupport renderSupport;
 
-	/**
-	 * Creates a new request, including the associated 
-	 * {@link ResourceRequestCompleted} event.
-	 * 
-	 * @param resourceUri the requested resource
-	 * @param httpRequest the original HTTP request
-	 * @param httpChannel the channel that the HTTP request was received on
-	 * @param renderSupport the render support
-	 */
-	public ResourceRequest(URI resourceUri, Instant ifModifiedSince,
-			HttpRequest httpRequest, IOSubchannel httpChannel, 
-			RenderSupport renderSupport) {
-		this.resourceUri = resourceUri;
-		this.ifModifiedSince = ifModifiedSince;
-		this.httpRequest = httpRequest;
-		this.httpChannel = httpChannel;
-		this.renderSupport = renderSupport;
-		new ResourceRequestCompleted(this);
-	}
+    private final URI resourceUri;
+    private final Instant ifModifiedSince;
+    private final HttpRequest httpRequest;
+    private final IOSubchannel httpChannel;
+    private final RenderSupport renderSupport;
 
+    /**
+     * Creates a new request, including the associated 
+     * {@link ResourceRequestCompleted} event.
+     * 
+     * @param resourceUri the requested resource
+     * @param httpRequest the original HTTP request
+     * @param httpChannel the channel that the HTTP request was received on
+     * @param renderSupport the render support
+     */
+    public ResourceRequest(URI resourceUri, Instant ifModifiedSince,
+            HttpRequest httpRequest, IOSubchannel httpChannel,
+            RenderSupport renderSupport) {
+        this.resourceUri = resourceUri;
+        this.ifModifiedSince = ifModifiedSince;
+        this.httpRequest = httpRequest;
+        this.httpChannel = httpChannel;
+        this.renderSupport = renderSupport;
+        new ResourceRequestCompleted(this);
+    }
 
-	/**
-	 * @return the resourceUri
-	 */
-	public URI resourceUri() {
-		return resourceUri;
-	}
+    /**
+     * @return the resourceUri
+     */
+    public URI resourceUri() {
+        return resourceUri;
+    }
 
-	
-	/**
-	 * If not null, this value may be used to decide if the
-	 * resource must be refreshed.
-	 *
-	 * @return the instant
-	 */
-	public Optional<Instant> ifModifiedSince() {
-		return Optional.ofNullable(ifModifiedSince);
-	}
+    /**
+     * If not null, this value may be used to decide if the
+     * resource must be refreshed.
+     *
+     * @return the instant
+     */
+    public Optional<Instant> ifModifiedSince() {
+        return Optional.ofNullable(ifModifiedSince);
+    }
 
+    /**
+     * Returns the "raw" request as provided by the HTTP decoder.
+     * 
+     * @return the request
+     */
+    public HttpRequest httpRequest() {
+        return httpRequest;
+    }
 
-	/**
-	 * Returns the "raw" request as provided by the HTTP decoder.
-	 * 
-	 * @return the request
-	 */
-	public HttpRequest httpRequest() {
-		return httpRequest;
-	}
+    /**
+     * @return the httpChannel
+     */
+    public IOSubchannel httpChannel() {
+        return httpChannel;
+    }
 
-	/**
-	 * @return the httpChannel
-	 */
-	public IOSubchannel httpChannel() {
-		return httpChannel;
-	}
-	
-	/**
-	 * Returns the render support.
-	 * 
-	 * @return the render support
-	 */
-	public RenderSupport renderSupport() {
-		return renderSupport;
-	}
+    /**
+     * Returns the render support.
+     * 
+     * @return the render support
+     */
+    public RenderSupport renderSupport() {
+        return renderSupport;
+    }
 
 }

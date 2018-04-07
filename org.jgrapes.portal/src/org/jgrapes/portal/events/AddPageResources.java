@@ -80,201 +80,200 @@ import org.jdrupes.json.JsonObject;
  */
 public class AddPageResources extends PortalCommand {
 
-	private final List<ScriptResource> scriptResources = new ArrayList<>();
-	private final List<URI> cssUris = new ArrayList<>();
-	private String cssSource;
-	
-	/**
-	 * Add the URI of a JavaScript resource that is to be added to the
-	 * header section of the portal page.
-	 * 
-	 * @param scriptResource the resource to add
-	 * @return the event for easy chaining
-	 */
-	public AddPageResources addScriptResource(ScriptResource scriptResource) {
-		scriptResources.add(scriptResource);
-		return this;
-	}
+    private final List<ScriptResource> scriptResources = new ArrayList<>();
+    private final List<URI> cssUris = new ArrayList<>();
+    private String cssSource;
 
-	/**
-	 * Return all script URIs
-	 * 
-	 * @return the result
-	 */
-	public ScriptResource[] scriptResources() {
-		return scriptResources.toArray(new ScriptResource[0]);
-	}
+    /**
+     * Add the URI of a JavaScript resource that is to be added to the
+     * header section of the portal page.
+     * 
+     * @param scriptResource the resource to add
+     * @return the event for easy chaining
+     */
+    public AddPageResources addScriptResource(ScriptResource scriptResource) {
+        scriptResources.add(scriptResource);
+        return this;
+    }
 
-	/**
-	 * Add the URI of a CSS resource that is to be added to the
-	 * header section of the portal page.
-	 * 
-	 * @param uri the URI
-	 * @return the event for easy chaining
-	 */
-	public AddPageResources addCss(URI uri) {
-		cssUris.add(uri);
-		return this;
-	}
+    /**
+     * Return all script URIs
+     * 
+     * @return the result
+     */
+    public ScriptResource[] scriptResources() {
+        return scriptResources.toArray(new ScriptResource[0]);
+    }
 
-	/**
-	 * Return all CSS URIs.
-	 * 
-	 * @return the result
-	 */
-	public URI[] cssUris() {
-		return cssUris.toArray(new URI[0]);
-	}
-	
-	/**
-	 * @return the cssSource
-	 */
-	public String cssSource() {
-		return cssSource;
-	}
+    /**
+     * Add the URI of a CSS resource that is to be added to the
+     * header section of the portal page.
+     * 
+     * @param uri the URI
+     * @return the event for easy chaining
+     */
+    public AddPageResources addCss(URI uri) {
+        cssUris.add(uri);
+        return this;
+    }
 
-	/**
-	 * @param cssSource the cssSource to set
-	 */
-	public AddPageResources setCssSource(String cssSource) {
-		this.cssSource = cssSource;
-		return this;
-	}
+    /**
+     * Return all CSS URIs.
+     * 
+     * @return the result
+     */
+    public URI[] cssUris() {
+        return cssUris.toArray(new URI[0]);
+    }
 
-	@Override
-	public void toJson(Writer writer) throws IOException {
-		JsonArray scripts = JsonArray.create();
-		for (ScriptResource scriptResource: scriptResources()) {
-			scripts.append(scriptResource.toJsonValue());
-		}
-		toJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
-				uri -> uri.toString()).toArray(String[]::new), 
-				cssSource(), scripts);
-	}
+    /**
+     * @return the cssSource
+     */
+    public String cssSource() {
+        return cssSource;
+    }
 
-	/**
-	 * Represents a script resource that is to be loaded or evaluated
-	 * by the browser. Note that a single instance can either be used
-	 * for a URI or inline JavaScript, not for both.
-	 */
-	public static class ScriptResource {
-		private static final String[] EMPTY_ARRAY = new String[0];
-		
-		private URI scriptUri;
-		private String scriptSource;
-		private String[] provides = EMPTY_ARRAY;
-		private String[] requires = EMPTY_ARRAY;
-		
-		/**
-		 * @return the scriptUri to be loaded
-		 */
-		public URI scriptUri() {
-			return scriptUri;
-		}
-		
-		/**
-		 * Sets the scriptUri to to be loaded, clears the `scriptSource`
-		 * attribute.
-		 * 
-		 * @param scriptUri the scriptUri to to be loaded
-		 * @return this object for easy chaining
-		 */
-		public ScriptResource setScriptUri(URI scriptUri) {
-			this.scriptUri = scriptUri;
-			return this;
-		}
-		
-		/**
-		 * @return the script source
-		 */
-		public String scriptSource() {
-			return scriptSource;
-		}
-		
-		/**
-		 * Sets the script source to evaluate. Clears the
-		 * `scriptUri` attribute.
-		 * 
-		 * @param scriptSource the scriptSource to set
-		 * @return this object for easy chaining
-		 */
-		public ScriptResource setScriptSource(String scriptSource) {
-			this.scriptSource = scriptSource;
-			return this;
-		}
-		
-		/**
-		 * Returns the list of JavaScript features that this
-		 * script resource provides.
-		 * 
-		 * @return the list of features
-		 */
-		public String[] provides() {
-			return Arrays.copyOf(provides, provides.length);
-		}
-		
-		/**
-		 * Sets the list of JavaScript features that this
-		 * script resource provides. For commonly available
-		 * JavaScript libraries, it is recommended to use
-		 * their home page URL (without the protocol part) as
-		 * feature name. 
-		 * 
-		 * @param provides the list of features
-		 * @return this object for easy chaining
-		 */
-		public ScriptResource setProvides(String... provides) {
-			this.provides = Arrays.copyOf(provides, provides.length);
-			return this;
-		}
-		
-		/**
-		 * Returns the list of JavaScript features that this
-		 * script resource requires.
-		 * 
-		 * @return the list of features
-		 */
-		public String[] requires() {
-			return Arrays.copyOf(requires, requires.length);
-		}
-		
-		/**
-		 * Sets the list of JavaScript features that this
-		 * script resource requires.
-		 * 
-		 * @param requires the list of features
-		 * @return this object for easy chaining
-		 */
-		public ScriptResource setRequires(String... requires) {
-			this.requires = Arrays.copyOf(requires, requires.length);
-			return this;
-		}
-		
-		
-		/**
-		 * Provides the JSON representation of the information.
-		 *
-		 * @return the json object
-		 */
-		public JsonObject toJsonValue() {
-			JsonObject obj = JsonObject.create();
-			if (scriptUri != null) {
-				obj.setField("uri", scriptUri.toString());
-			}
-			if (scriptSource != null) {
-				obj.setField("source", scriptSource);
-			}
-			JsonArray strArray = JsonArray.create();
-			for (String req: requires) {
-				strArray.append(req);
-			}
-			obj.setField("requires", strArray);
-			strArray = JsonArray.create();
-			for (String prov: provides) {
-				strArray.append(prov);
-			}
-			obj.setField("provides", strArray);
-			return obj;
-		}
-	}
+    /**
+     * @param cssSource the cssSource to set
+     */
+    public AddPageResources setCssSource(String cssSource) {
+        this.cssSource = cssSource;
+        return this;
+    }
+
+    @Override
+    public void toJson(Writer writer) throws IOException {
+        JsonArray scripts = JsonArray.create();
+        for (ScriptResource scriptResource : scriptResources()) {
+            scripts.append(scriptResource.toJsonValue());
+        }
+        toJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
+            uri -> uri.toString()).toArray(String[]::new),
+            cssSource(), scripts);
+    }
+
+    /**
+     * Represents a script resource that is to be loaded or evaluated
+     * by the browser. Note that a single instance can either be used
+     * for a URI or inline JavaScript, not for both.
+     */
+    public static class ScriptResource {
+        private static final String[] EMPTY_ARRAY = new String[0];
+
+        private URI scriptUri;
+        private String scriptSource;
+        private String[] provides = EMPTY_ARRAY;
+        private String[] requires = EMPTY_ARRAY;
+
+        /**
+         * @return the scriptUri to be loaded
+         */
+        public URI scriptUri() {
+            return scriptUri;
+        }
+
+        /**
+         * Sets the scriptUri to to be loaded, clears the `scriptSource`
+         * attribute.
+         * 
+         * @param scriptUri the scriptUri to to be loaded
+         * @return this object for easy chaining
+         */
+        public ScriptResource setScriptUri(URI scriptUri) {
+            this.scriptUri = scriptUri;
+            return this;
+        }
+
+        /**
+         * @return the script source
+         */
+        public String scriptSource() {
+            return scriptSource;
+        }
+
+        /**
+         * Sets the script source to evaluate. Clears the
+         * `scriptUri` attribute.
+         * 
+         * @param scriptSource the scriptSource to set
+         * @return this object for easy chaining
+         */
+        public ScriptResource setScriptSource(String scriptSource) {
+            this.scriptSource = scriptSource;
+            return this;
+        }
+
+        /**
+         * Returns the list of JavaScript features that this
+         * script resource provides.
+         * 
+         * @return the list of features
+         */
+        public String[] provides() {
+            return Arrays.copyOf(provides, provides.length);
+        }
+
+        /**
+         * Sets the list of JavaScript features that this
+         * script resource provides. For commonly available
+         * JavaScript libraries, it is recommended to use
+         * their home page URL (without the protocol part) as
+         * feature name. 
+         * 
+         * @param provides the list of features
+         * @return this object for easy chaining
+         */
+        public ScriptResource setProvides(String... provides) {
+            this.provides = Arrays.copyOf(provides, provides.length);
+            return this;
+        }
+
+        /**
+         * Returns the list of JavaScript features that this
+         * script resource requires.
+         * 
+         * @return the list of features
+         */
+        public String[] requires() {
+            return Arrays.copyOf(requires, requires.length);
+        }
+
+        /**
+         * Sets the list of JavaScript features that this
+         * script resource requires.
+         * 
+         * @param requires the list of features
+         * @return this object for easy chaining
+         */
+        public ScriptResource setRequires(String... requires) {
+            this.requires = Arrays.copyOf(requires, requires.length);
+            return this;
+        }
+
+        /**
+         * Provides the JSON representation of the information.
+         *
+         * @return the json object
+         */
+        public JsonObject toJsonValue() {
+            JsonObject obj = JsonObject.create();
+            if (scriptUri != null) {
+                obj.setField("uri", scriptUri.toString());
+            }
+            if (scriptSource != null) {
+                obj.setField("source", scriptSource);
+            }
+            JsonArray strArray = JsonArray.create();
+            for (String req : requires) {
+                strArray.append(req);
+            }
+            obj.setField("requires", strArray);
+            strArray = JsonArray.create();
+            for (String prov : provides) {
+                strArray.append(prov);
+            }
+            obj.setField("provides", strArray);
+            return obj;
+        }
+    }
 }

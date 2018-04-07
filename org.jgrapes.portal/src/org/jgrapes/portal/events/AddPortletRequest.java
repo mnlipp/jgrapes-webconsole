@@ -25,7 +25,6 @@ import java.util.function.BiConsumer;
 import org.jgrapes.portal.Portlet.RenderMode;
 import org.jgrapes.portal.RenderSupport;
 
-
 /**
  * Sent to the portal (server) if a new portlet instance of a given 
  * type should be added to the portal page. The portal server usually 
@@ -61,106 +60,106 @@ import org.jgrapes.portal.RenderSupport;
  */
 public class AddPortletRequest extends RenderPortletRequestBase<String> {
 
-	private final String portletType;
-	private boolean foreground = true;
-	private Map<? extends Object, ? extends Object> properties;
-	
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param renderSupport the render support
-	 * @param portletType the type of the portlet
-	 * @param mode the view mode that is requested
-	 */
-	public AddPortletRequest(RenderSupport renderSupport, String portletType,
-	        RenderMode mode) {
-		super(renderSupport, mode);
-		this.portletType = portletType;
-	}
+    private final String portletType;
+    private boolean foreground = true;
+    private Map<? extends Object, ? extends Object> properties;
 
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param renderSupport the render support
-	 * @param portletType the type of the portlet
-	 * @param mode the view mode that is requested
-	 * @param properties optional values for properties of the portlet instance
-	 */
-	public AddPortletRequest(RenderSupport renderSupport, String portletType,
-	        RenderMode mode, Map<?,?> properties) {
-		super(renderSupport, mode);
-		this.portletType = portletType;
-		@SuppressWarnings("unchecked")
-		Map<Object, Object> props = (Map<Object,Object>)properties;
-		this.properties = props;
-	}
+    /**
+     * Creates a new event.
+     * 
+     * @param renderSupport the render support
+     * @param portletType the type of the portlet
+     * @param mode the view mode that is requested
+     */
+    public AddPortletRequest(RenderSupport renderSupport, String portletType,
+            RenderMode mode) {
+        super(renderSupport, mode);
+        this.portletType = portletType;
+    }
 
-	/**
-	 * Determines if the portlet will be put in the foreground.
-	 * Defaults to `true` for added portlets as they are most likely
-	 * supposed to be seen. 
-	 *
-	 * @param foreground the foreground
-	 * @return the event for easy chaining
-	 */
-	public AddPortletRequest setForeground(boolean foreground) {
-		this.foreground = foreground;
-		return this;
-	}
-	
-	/**
-	 * Returns the portlet type
-	 * 
-	 * @return the portlet type
-	 */
-	public String portletType() {
-		return portletType;
-	}
+    /**
+     * Creates a new event.
+     * 
+     * @param renderSupport the render support
+     * @param portletType the type of the portlet
+     * @param mode the view mode that is requested
+     * @param properties optional values for properties of the portlet instance
+     */
+    public AddPortletRequest(RenderSupport renderSupport, String portletType,
+            RenderMode mode, Map<?, ?> properties) {
+        super(renderSupport, mode);
+        this.portletType = portletType;
+        @SuppressWarnings("unchecked")
+        Map<Object, Object> props = (Map<Object, Object>) properties;
+        this.properties = props;
+    }
 
-	/**
-	 * Returns the properties. Every event returns a mutable map,
-	 * thus allowing event handlers to modify the map even if
-	 * none was passed to the constructor.
-	 */
-	public Map<Object,Object> properties() {
-		if (properties == null) {
-			properties = new HashMap<>();
-		}
-		@SuppressWarnings("unchecked")
-		Map<Object, Object> props = (Map<Object, Object>) properties;
-		return props;
-	}
-	
-	/**
-	 * Convenience method for adding properties one-by-one.
-	 * 
-	 * @param key the property key
-	 * @param value the property value
-	 * @return the event for easy chaining
-	 */
-	public AddPortletRequest addProperty(Object key, Object value) {
-		properties().put(key, value);
-		return this;
-	}
-	
-	/**
-	 * Convenience method that performs the given action if a property
-	 * with the given key exists.
-	 * 
-	 * @param key the property key
-	 * @param action the action to perform
-	 */
-	public AddPortletRequest ifPresent(
-			Object key, BiConsumer<Object,Object> action) {
-		if (properties().containsKey(key)) {
-			action.accept(key, properties().get(key));
-		}
-		return this;
-	}
+    /**
+     * Determines if the portlet will be put in the foreground.
+     * Defaults to `true` for added portlets as they are most likely
+     * supposed to be seen. 
+     *
+     * @param foreground the foreground
+     * @return the event for easy chaining
+     */
+    public AddPortletRequest setForeground(boolean foreground) {
+        this.foreground = foreground;
+        return this;
+    }
 
-	@Override
-	public boolean isForeground() {
-		return foreground;
-	}
-	
+    /**
+     * Returns the portlet type
+     * 
+     * @return the portlet type
+     */
+    public String portletType() {
+        return portletType;
+    }
+
+    /**
+     * Returns the properties. Every event returns a mutable map,
+     * thus allowing event handlers to modify the map even if
+     * none was passed to the constructor.
+     */
+    public Map<Object, Object> properties() {
+        if (properties == null) {
+            properties = new HashMap<>();
+        }
+        @SuppressWarnings("unchecked")
+        Map<Object, Object> props = (Map<Object, Object>) properties;
+        return props;
+    }
+
+    /**
+     * Convenience method for adding properties one-by-one.
+     * 
+     * @param key the property key
+     * @param value the property value
+     * @return the event for easy chaining
+     */
+    public AddPortletRequest addProperty(Object key, Object value) {
+        properties().put(key, value);
+        return this;
+    }
+
+    /**
+     * Convenience method that performs the given action if a property
+     * with the given key exists.
+     * 
+     * @param key the property key
+     * @param action the action to perform
+     */
+    public AddPortletRequest ifPresent(
+            Object key, BiConsumer<Object, Object> action) {
+        if (properties().containsKey(key)) {
+            action.accept(key, properties().get(key));
+        }
+        return this;
+    }
+
+    @Override
+    public boolean isForeground() {
+        return foreground;
+    }
+
 }

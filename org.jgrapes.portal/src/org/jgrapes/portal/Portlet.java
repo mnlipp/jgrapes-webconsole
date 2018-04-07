@@ -30,22 +30,23 @@ import java.util.Set;
  * package description. Make sure to read this description first.
  */
 public interface Portlet {
-	
-	/**
-	 * The render modes.
-	 */
-	enum RenderMode { Preview, DeleteablePreview, View, Edit, Help;
-		
-		/**
-		 * Utility method that creates a {@link Set} of render modes
-		 * from anumerated values.
-		 *
-		 * @param modes the modes
-		 * @return the sets the
-		 */
-		public static Set<RenderMode> asSet(RenderMode... modes) {
-			return new HashSet<>(Arrays.asList(modes));
-		}
-	}
+
+    /**
+     * The render modes.
+     */
+    enum RenderMode {
+        Preview, DeleteablePreview, View, Edit, Help;
+
+        /**
+         * Utility method that creates a {@link Set} of render modes
+         * from anumerated values.
+         *
+         * @param modes the modes
+         * @return the sets the
+         */
+        public static Set<RenderMode> asSet(RenderMode... modes) {
+            return new HashSet<>(Arrays.asList(modes));
+        }
+    }
 
 }

@@ -67,178 +67,189 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  */
 public class HelloWorldPortlet extends FreeMarkerPortlet {
 
-	private static final Set<RenderMode> MODES = RenderMode.asSet(
-			DeleteablePreview, View);
-	
-	/**
-	 * Creates a new component with its channel set to the given 
-	 * channel.
-	 * 
-	 * @param componentChannel the channel that the component's 
-	 * handlers listen on by default and that 
-	 * {@link Manager#fire(Event, Channel...)} sends the event to 
-	 */
-	public HelloWorldPortlet(Channel componentChannel) {
-		super(componentChannel, false);
-	}
+    private static final Set<RenderMode> MODES = RenderMode.asSet(
+        DeleteablePreview, View);
 
-	private String storagePath(Session session) {
-		return "/" + Utils.userFromSession(session)
-			.map(UserPrincipal::toString).orElse("")
-			+ "/portlets/" + HelloWorldPortlet.class.getName()	+ "/";
-	}
-	
-	@Handler
-	public void onPortalReady(PortalReady event, PortalSession portalSession) 
-			throws TemplateNotFoundException, MalformedTemplateNameException, 
-			ParseException, IOException {
-		ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
-		// Add HelloWorldPortlet resources to page
-		portalSession.respond(new AddPortletType(type())
-				.setDisplayName(resourceBundle.getString("portletName"))
-				.addScript(new ScriptResource().setScriptUri(
-						event.renderSupport().portletResource(type(),
-								"HelloWorld-functions.js")))
-				.addCss(event.renderSupport(), PortalWeblet.uriFromPath(
-						"HelloWorld-style.css"))
-				.setInstantiable());
-		KeyValueStoreQuery query = new KeyValueStoreQuery(
-				storagePath(portalSession.browserSession()), portalSession);
-		fire(query, portalSession);
-	}
+    /**
+     * Creates a new component with its channel set to the given 
+     * channel.
+     * 
+     * @param componentChannel the channel that the component's 
+     * handlers listen on by default and that 
+     * {@link Manager#fire(Event, Channel...)} sends the event to 
+     */
+    public HelloWorldPortlet(Channel componentChannel) {
+        super(componentChannel, false);
+    }
 
-	@Handler
-	public void onKeyValueStoreData(
-			KeyValueStoreData event, PortalSession channel) 
-					throws JsonDecodeException {
-		if (!event.event().query().equals(storagePath(channel.browserSession()))) {
-			return;
-		}
-		for (String json: event.data().values()) {
-			HelloWorldModel model = JsonBeanDecoder.create(json)
-					.readObject(HelloWorldModel.class);
-			putInSession(channel.browserSession(), model);
-		}
-	}
-	
-	@Override
-	public String doAddPortlet(AddPortletRequest event,
-			PortalSession channel) throws Exception {
-		String portletId = generatePortletId();
-		HelloWorldModel portletModel = putInSession(
-				channel.browserSession(), new HelloWorldModel(portletId));
-		String jsonState = JsonBeanEncoder.create()
-				.writeObject(portletModel).toJson();
-		channel.respond(new KeyValueStoreUpdate().update(
-				storagePath(channel.browserSession()) + portletModel.getPortletId(),
-				jsonState));
-		renderPortlet(event, channel, portletModel);
-		return portletId;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
-	 */
-	@Override
-	protected void doRenderPortlet(RenderPortletRequest event,
-	        PortalSession channel, String portletId, 
-	        Serializable retrievedState) throws Exception {
-		HelloWorldModel portletModel = (HelloWorldModel)retrievedState;
-		renderPortlet(event, channel, portletModel);
-	}
+    private String storagePath(Session session) {
+        return "/" + Utils.userFromSession(session)
+            .map(UserPrincipal::toString).orElse("")
+            + "/portlets/" + HelloWorldPortlet.class.getName() + "/";
+    }
 
-	private void renderPortlet(RenderPortletRequestBase<?> event,
-	        PortalSession channel, HelloWorldModel portletModel)
-	        throws TemplateNotFoundException, MalformedTemplateNameException,
-	        ParseException, IOException {
-		switch (event.renderMode()) {
-		case Preview:
-		case DeleteablePreview: {
-			Template tpl = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
-			channel.respond(new RenderPortletFromTemplate(event,
-					HelloWorldPortlet.class, portletModel.getPortletId(), 
-					tpl, fmModel(event, channel, portletModel))
-					.setSupportedModes(MODES).setForeground(event.isForeground()));
-			break;
-		}
-		case View: {
-			Template tpl = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
-			channel.respond(new RenderPortletFromTemplate(event,
-					HelloWorldPortlet.class, portletModel.getPortletId(), 
-					tpl, fmModel(event, channel, portletModel))
-					.setSupportedModes(MODES).setForeground(event.isForeground()));
-			channel.respond(new NotifyPortletView(type(),
-					portletModel.getPortletId(), "setWorldVisible",
-					portletModel.isWorldVisible()));
-			break;
-		}
-		default:
-			break;
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
-	 */
-	@Override
-	protected void doDeletePortlet(DeletePortletRequest event,
-	        PortalSession channel, String portletId, 
-	        Serializable portletState) throws Exception {
-		channel.respond(new KeyValueStoreUpdate().delete(
-				storagePath(channel.browserSession()) + portletId));
-		channel.respond(new DeletePortlet(portletId));
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
-	 */
-	@Override
-	protected void doNotifyPortletModel(NotifyPortletModel event,
-	        PortalSession channel, Serializable portletState)
-	        throws Exception {
-		event.stop();
-		HelloWorldModel portletModel = (HelloWorldModel)portletState;
-		portletModel.setWorldVisible(!portletModel.isWorldVisible());
-		
-		String jsonState = JsonBeanEncoder.create()
-				.writeObject(portletModel).toJson();
-		channel.respond(new KeyValueStoreUpdate().update(
-				storagePath(channel.browserSession()) + portletModel.getPortletId(),
-				jsonState));
-		channel.respond(new NotifyPortletView(type(),
-				portletModel.getPortletId(), "setWorldVisible", 
-				portletModel.isWorldVisible()));
-		channel.respond(new DisplayNotification("<span>"
-				+ resourceBundle(channel.locale()).getString("visibilityChange")
-				+ "</span>")
-				.addOption("autoClose", 2000));
-	}
+    @Handler
+    public void onPortalReady(PortalReady event, PortalSession portalSession)
+            throws TemplateNotFoundException, MalformedTemplateNameException,
+            ParseException, IOException {
+        ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
+        // Add HelloWorldPortlet resources to page
+        portalSession.respond(new AddPortletType(type())
+            .setDisplayName(resourceBundle.getString("portletName"))
+            .addScript(new ScriptResource().setScriptUri(
+                event.renderSupport().portletResource(type(),
+                    "HelloWorld-functions.js")))
+            .addCss(event.renderSupport(), PortalWeblet.uriFromPath(
+                "HelloWorld-style.css"))
+            .setInstantiable());
+        KeyValueStoreQuery query = new KeyValueStoreQuery(
+            storagePath(portalSession.browserSession()), portalSession);
+        fire(query, portalSession);
+    }
 
-	@SuppressWarnings("serial")
-	public static class HelloWorldModel extends PortletBaseModel {
+    @Handler
+    public void onKeyValueStoreData(
+            KeyValueStoreData event, PortalSession channel)
+            throws JsonDecodeException {
+        if (!event.event().query()
+            .equals(storagePath(channel.browserSession()))) {
+            return;
+        }
+        for (String json : event.data().values()) {
+            HelloWorldModel model = JsonBeanDecoder.create(json)
+                .readObject(HelloWorldModel.class);
+            putInSession(channel.browserSession(), model);
+        }
+    }
 
-		private boolean worldVisible = true;
-		
-		/**
-		 * Creates a new model with the given type and id.
-		 * 
-		 * @param portletId the portlet id
-		 */
-		@ConstructorProperties({"portletId"})
-		public HelloWorldModel(String portletId) {
-			super(portletId);
-		}
+    @Override
+    public String doAddPortlet(AddPortletRequest event,
+            PortalSession channel) throws Exception {
+        String portletId = generatePortletId();
+        HelloWorldModel portletModel = putInSession(
+            channel.browserSession(), new HelloWorldModel(portletId));
+        String jsonState = JsonBeanEncoder.create()
+            .writeObject(portletModel).toJson();
+        channel.respond(new KeyValueStoreUpdate().update(
+            storagePath(channel.browserSession()) + portletModel.getPortletId(),
+            jsonState));
+        renderPortlet(event, channel, portletModel);
+        return portletId;
+    }
 
-		/**
-		 * @param visible the visible to set
-		 */
-		public void setWorldVisible(boolean visible) {
-			this.worldVisible = visible;
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
+     */
+    @Override
+    protected void doRenderPortlet(RenderPortletRequest event,
+            PortalSession channel, String portletId,
+            Serializable retrievedState) throws Exception {
+        HelloWorldModel portletModel = (HelloWorldModel) retrievedState;
+        renderPortlet(event, channel, portletModel);
+    }
 
-		public boolean isWorldVisible() {
-			return worldVisible;
-		}
-	}
-	
+    private void renderPortlet(RenderPortletRequestBase<?> event,
+            PortalSession channel, HelloWorldModel portletModel)
+            throws TemplateNotFoundException, MalformedTemplateNameException,
+            ParseException, IOException {
+        switch (event.renderMode()) {
+        case Preview:
+        case DeleteablePreview: {
+            Template tpl
+                = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
+            channel.respond(new RenderPortletFromTemplate(event,
+                HelloWorldPortlet.class, portletModel.getPortletId(),
+                tpl, fmModel(event, channel, portletModel))
+                    .setSupportedModes(MODES)
+                    .setForeground(event.isForeground()));
+            break;
+        }
+        case View: {
+            Template tpl
+                = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
+            channel.respond(new RenderPortletFromTemplate(event,
+                HelloWorldPortlet.class, portletModel.getPortletId(),
+                tpl, fmModel(event, channel, portletModel))
+                    .setSupportedModes(MODES)
+                    .setForeground(event.isForeground()));
+            channel.respond(new NotifyPortletView(type(),
+                portletModel.getPortletId(), "setWorldVisible",
+                portletModel.isWorldVisible()));
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
+     */
+    @Override
+    protected void doDeletePortlet(DeletePortletRequest event,
+            PortalSession channel, String portletId,
+            Serializable portletState) throws Exception {
+        channel.respond(new KeyValueStoreUpdate().delete(
+            storagePath(channel.browserSession()) + portletId));
+        channel.respond(new DeletePortlet(portletId));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
+     */
+    @Override
+    protected void doNotifyPortletModel(NotifyPortletModel event,
+            PortalSession channel, Serializable portletState)
+            throws Exception {
+        event.stop();
+        HelloWorldModel portletModel = (HelloWorldModel) portletState;
+        portletModel.setWorldVisible(!portletModel.isWorldVisible());
+
+        String jsonState = JsonBeanEncoder.create()
+            .writeObject(portletModel).toJson();
+        channel.respond(new KeyValueStoreUpdate().update(
+            storagePath(channel.browserSession()) + portletModel.getPortletId(),
+            jsonState));
+        channel.respond(new NotifyPortletView(type(),
+            portletModel.getPortletId(), "setWorldVisible",
+            portletModel.isWorldVisible()));
+        channel.respond(new DisplayNotification("<span>"
+            + resourceBundle(channel.locale()).getString("visibilityChange")
+            + "</span>")
+                .addOption("autoClose", 2000));
+    }
+
+    @SuppressWarnings("serial")
+    public static class HelloWorldModel extends PortletBaseModel {
+
+        private boolean worldVisible = true;
+
+        /**
+         * Creates a new model with the given type and id.
+         * 
+         * @param portletId the portlet id
+         */
+        @ConstructorProperties({ "portletId" })
+        public HelloWorldModel(String portletId) {
+            super(portletId);
+        }
+
+        /**
+         * @param visible the visible to set
+         */
+        public void setWorldVisible(boolean visible) {
+            this.worldVisible = visible;
+        }
+
+        public boolean isWorldVisible() {
+            return worldVisible;
+        }
+    }
+
 }

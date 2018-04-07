@@ -41,74 +41,73 @@ import org.jgrapes.portal.events.PortalReady;
  */
 public class DatatablesProvider extends PageResourceProvider {
 
-	/**
-	 * Creates a new component with its channel set to the given 
-	 * channel.
-	 * 
-	 * @param componentChannel the channel that the component's 
-	 * handlers listen on by default and that 
-	 * {@link Manager#fire(Event, Channel...)} sends the event to 
-	 */
-	public DatatablesProvider(Channel componentChannel) {
-		super(componentChannel);
-	}
+    /**
+     * Creates a new component with its channel set to the given 
+     * channel.
+     * 
+     * @param componentChannel the channel that the component's 
+     * handlers listen on by default and that 
+     * {@link Manager#fire(Event, Channel...)} sends the event to 
+     */
+    public DatatablesProvider(Channel componentChannel) {
+        super(componentChannel);
+    }
 
-	/**
-	 * Provides a resource bundle for localization.
-	 * The default implementation looks up a bundle using the
-	 * package name plus "l10n" as base name.
-	 * 
-	 * @return the resource bundle
-	 */
-	protected ResourceBundle resourceBundle(Locale locale) {
-		return ResourceBundle.getBundle(
-			getClass().getPackage().getName() + ".datatables.l10n", locale, 
-			getClass().getClassLoader(),
-				ResourceBundle.Control.getNoFallbackControl(
-						ResourceBundle.Control.FORMAT_DEFAULT));
-	}
-	
-	/**
-	 * On {@link PortalReady}, fire the appropriate {@link AddPageResources}.
-	 *
-	 * @param event the event
-	 * @param portalSession the portal session
-	 * @throws TemplateNotFoundException the template not found exception
-	 * @throws MalformedTemplateNameException the malformed template name exception
-	 * @throws ParseException the parse exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	@Handler(priority=100)
-	public void onPortalReady(PortalReady event, PortalSession portalSession) 
-			throws TemplateNotFoundException, MalformedTemplateNameException, 
-			ParseException, IOException {
-		String minExt = event.renderSupport()
-				.useMinifiedResources() ? ".min" : "";
-		ResourceBundle bundle = resourceBundle(portalSession.locale()); 
-		String script = 
-				"$.fn.dataTable.defaults.oLanguage._hungarianMap"
-				+ "[\"lengthAll\"] = \"sLengthAll\";\n"
-				+ "$.extend( $.fn.dataTable.defaults.oLanguage, {\n"
-				+ "	'sLengthAll': 'all',\n"
-				+ "} );\n"
-				+ "$.extend( $.fn.dataTable.defaults.oLanguage, "
-				+ bundle.getString("DataTablesL10n") +  ");\n";
-		portalSession.respond(new AddPageResources()
-				.addCss(event.renderSupport().pageResource(
-						"datatables/datatables" + minExt + ".css"))
-				.addCss(event.renderSupport().pageResource(
-						"datatables/overrides-1.0.0.css"))
-				.addScriptResource(new ScriptResource()
-						.setProvides(new String[] {"datatables.net"})
-						.setScriptUri(event.renderSupport().pageResource(
-								"datatables/datatables" + minExt + ".js")))
-				.addScriptResource(new ScriptResource()
-						.setRequires(new String[] {"datatables.net"})
-						.setScriptUri(event.renderSupport().pageResource(
-								"datatables/processing().js")))
-				.addScriptResource(new ScriptResource()
-						.setRequires(new String[] {"datatables.net"})
-						.setScriptSource(script)));
-	}
+    /**
+     * Provides a resource bundle for localization.
+     * The default implementation looks up a bundle using the
+     * package name plus "l10n" as base name.
+     * 
+     * @return the resource bundle
+     */
+    protected ResourceBundle resourceBundle(Locale locale) {
+        return ResourceBundle.getBundle(
+            getClass().getPackage().getName() + ".datatables.l10n", locale,
+            getClass().getClassLoader(),
+            ResourceBundle.Control.getNoFallbackControl(
+                ResourceBundle.Control.FORMAT_DEFAULT));
+    }
+
+    /**
+     * On {@link PortalReady}, fire the appropriate {@link AddPageResources}.
+     *
+     * @param event the event
+     * @param portalSession the portal session
+     * @throws TemplateNotFoundException the template not found exception
+     * @throws MalformedTemplateNameException the malformed template name exception
+     * @throws ParseException the parse exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Handler(priority = 100)
+    public void onPortalReady(PortalReady event, PortalSession portalSession)
+            throws TemplateNotFoundException, MalformedTemplateNameException,
+            ParseException, IOException {
+        String minExt = event.renderSupport()
+            .useMinifiedResources() ? ".min" : "";
+        ResourceBundle bundle = resourceBundle(portalSession.locale());
+        String script = "$.fn.dataTable.defaults.oLanguage._hungarianMap"
+            + "[\"lengthAll\"] = \"sLengthAll\";\n"
+            + "$.extend( $.fn.dataTable.defaults.oLanguage, {\n"
+            + "	'sLengthAll': 'all',\n"
+            + "} );\n"
+            + "$.extend( $.fn.dataTable.defaults.oLanguage, "
+            + bundle.getString("DataTablesL10n") + ");\n";
+        portalSession.respond(new AddPageResources()
+            .addCss(event.renderSupport().pageResource(
+                "datatables/datatables" + minExt + ".css"))
+            .addCss(event.renderSupport().pageResource(
+                "datatables/overrides-1.0.0.css"))
+            .addScriptResource(new ScriptResource()
+                .setProvides(new String[] { "datatables.net" })
+                .setScriptUri(event.renderSupport().pageResource(
+                    "datatables/datatables" + minExt + ".js")))
+            .addScriptResource(new ScriptResource()
+                .setRequires(new String[] { "datatables.net" })
+                .setScriptUri(event.renderSupport().pageResource(
+                    "datatables/processing().js")))
+            .addScriptResource(new ScriptResource()
+                .setRequires(new String[] { "datatables.net" })
+                .setScriptSource(script)));
+    }
 
 }

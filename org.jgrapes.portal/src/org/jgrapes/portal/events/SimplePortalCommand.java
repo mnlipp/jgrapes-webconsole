@@ -31,58 +31,60 @@ import org.jgrapes.core.Components;
  */
 public class SimplePortalCommand extends PortalCommand {
 
-	private String method;
-	private Object[] params;
+    private String method;
+    private Object[] params;
 
-	/**
-	 * Instantiates a new portal command.
-	 *
-	 * @param method the method
-	 * @param parameters the parameterss
-	 */
-	public SimplePortalCommand(String method, Object... parameters) {
-		this.method = method;
-		this.params = Arrays.copyOf(parameters, parameters.length);
-	}
-	
-	/**
-	 * Instantiates a new portal session command.
-	 *
-	 * @param method the method
-	 */
-	public SimplePortalCommand(String method) {
-		this(method, new Object[0]);
-	}
-	
-	/**
-	 * Sets the parameters.
-	 *
-	 * @param parameters the new parameters
-	 */
-	public void setParameters(Object... parameters) {
-		this.params = Arrays.copyOf(parameters, parameters.length);
-	}
-	
-	@Override
-	public void toJson(Writer writer) throws IOException {
-		toJson(writer, method, params);
-	}
+    /**
+     * Instantiates a new portal command.
+     *
+     * @param method the method
+     * @param parameters the parameterss
+     */
+    public SimplePortalCommand(String method, Object... parameters) {
+        this.method = method;
+        this.params = Arrays.copyOf(parameters, parameters.length);
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(Components.objectName(this))
-			.append(" [method=")
-			.append(method);
-		if (channels() != null) {
-			builder.append(", channels=")
-				.append(Channel.toString(channels()));
-		}
-		builder.append(']');
-		return builder.toString();
-	}
-	
+    /**
+     * Instantiates a new portal session command.
+     *
+     * @param method the method
+     */
+    public SimplePortalCommand(String method) {
+        this(method, new Object[0]);
+    }
+
+    /**
+     * Sets the parameters.
+     *
+     * @param parameters the new parameters
+     */
+    public void setParameters(Object... parameters) {
+        this.params = Arrays.copyOf(parameters, parameters.length);
+    }
+
+    @Override
+    public void toJson(Writer writer) throws IOException {
+        toJson(writer, method, params);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(Components.objectName(this))
+            .append(" [method=")
+            .append(method);
+        if (channels() != null) {
+            builder.append(", channels=")
+                .append(Channel.toString(channels()));
+        }
+        builder.append(']');
+        return builder.toString();
+    }
+
 }

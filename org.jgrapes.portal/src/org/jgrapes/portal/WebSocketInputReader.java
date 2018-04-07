@@ -41,136 +41,139 @@ import org.jgrapes.portal.events.JsonInput;
  */
 class WebSocketInputReader extends Thread {
 
-	private final WeakReference<EventPipeline> pipelineRef;
-	private final WeakReference<PortalSession> channelRef;
-	private PipedWriter decodeIn;
-	private Reader jsonSource;
+    private final WeakReference<EventPipeline> pipelineRef;
+    private final WeakReference<PortalSession> channelRef;
+    private PipedWriter decodeIn;
+    private Reader jsonSource;
 
-	private static ReferenceQueue<Object> abandoned 
-		= new ReferenceQueue<>();
+    private static ReferenceQueue<Object> abandoned
+        = new ReferenceQueue<>();
 
-	/**
-	 * Weak references to `T` that interrupt the input collecting
-	 * thread if the referent has been garbage collected.
-	 *
-	 * @param <T> the generic type
-	 */
-	private static class RefWithThread<T> extends WeakReference<T> {
-		public Thread watched;
+    /**
+     * Weak references to `T` that interrupt the input collecting
+     * thread if the referent has been garbage collected.
+     *
+     * @param <T> the generic type
+     */
+    private static class RefWithThread<T> extends WeakReference<T> {
+        public Thread watched;
 
-		/**
-		 * Creates a new instance.
-		 *
-		 * @param referent the referent
-		 * @param thread the thread
-		 */
-		public RefWithThread(T referent, Thread thread) {
-			super(referent, abandoned);
-			watched = thread;
-		}
-	}
+        /**
+         * Creates a new instance.
+         *
+         * @param referent the referent
+         * @param thread the thread
+         */
+        public RefWithThread(T referent, Thread thread) {
+            super(referent, abandoned);
+            watched = thread;
+        }
+    }
 
-	static {
-		Thread watchdog = new Thread(() -> {
-			while (true) {
-				try {
-					@SuppressWarnings("unchecked")
-					WebSocketInputReader.RefWithThread<Object> ref 
-						= (WebSocketInputReader.RefWithThread<Object>)abandoned.remove();
-					ref.watched.interrupt();
-				} catch (InterruptedException e) {
-					// Nothing to do
-				}
-			}
-		});
-		watchdog.setDaemon(true);
-		watchdog.start();
-	}
-	
-	/**
-	 * Instantiates a new web socket input reader.
-	 *
-	 * @param wsInPipeline the ws in pipeline
-	 * @param portalChannel the portal channel
-	 */
-	public WebSocketInputReader(EventPipeline wsInPipeline,
-	        PortalSession portalChannel) {
-		pipelineRef = new WebSocketInputReader.RefWithThread<>(wsInPipeline, this);
-		channelRef = new WebSocketInputReader.RefWithThread<>(portalChannel, this);
-		setDaemon(true);
-	}
+    static {
+        Thread watchdog = new Thread(() -> {
+            while (true) {
+                try {
+                    @SuppressWarnings("unchecked")
+                    WebSocketInputReader.RefWithThread<Object> ref
+                        = (WebSocketInputReader.RefWithThread<Object>) abandoned
+                            .remove();
+                    ref.watched.interrupt();
+                } catch (InterruptedException e) {
+                    // Nothing to do
+                }
+            }
+        });
+        watchdog.setDaemon(true);
+        watchdog.start();
+    }
 
-	/**
-	 * Forward the data to the JSON decoder.
-	 *
-	 * @param buffer the buffer
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public void write(CharBuffer buffer) throws IOException {
-		// Delayed initialization, allows adaption to buffer size.
-		if (decodeIn == null) {
-			decodeIn = new PipedWriter();
-			jsonSource = new PipedReader(decodeIn, buffer.capacity());
-			start();
-		}
-		decodeIn.append(buffer);
-		decodeIn.flush();
-	}
+    /**
+     * Instantiates a new web socket input reader.
+     *
+     * @param wsInPipeline the ws in pipeline
+     * @param portalChannel the portal channel
+     */
+    public WebSocketInputReader(EventPipeline wsInPipeline,
+            PortalSession portalChannel) {
+        pipelineRef
+            = new WebSocketInputReader.RefWithThread<>(wsInPipeline, this);
+        channelRef
+            = new WebSocketInputReader.RefWithThread<>(portalChannel, this);
+        setDaemon(true);
+    }
 
-	/**
-	 * Forward the close to the JSON decoder.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public void close() throws IOException {
-		if (decodeIn == null) {
-			// Never started
-			return;
-		}
-		decodeIn.close();
-		try {
-			join(1000);
-		} catch (InterruptedException e) {
-			// Just in case
-			interrupt();
-		}
-	}
+    /**
+     * Forward the data to the JSON decoder.
+     *
+     * @param buffer the buffer
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void write(CharBuffer buffer) throws IOException {
+        // Delayed initialization, allows adaption to buffer size.
+        if (decodeIn == null) {
+            decodeIn = new PipedWriter();
+            jsonSource = new PipedReader(decodeIn, buffer.capacity());
+            start();
+        }
+        decodeIn.append(buffer);
+        decodeIn.flush();
+    }
 
-	@SuppressWarnings({ "PMD.AvoidLiteralsInIfCondition",
-	        "PMD.AvoidInstantiatingObjectsInLoops",
-	        "PMD.DataflowAnomalyAnalysis" })
-	@Override
-	public void run() {
-		while (true) {
-			JsonBeanDecoder jsonDecoder = JsonBeanDecoder.create(jsonSource);
-			JsonRpc rpc = null;
-			try {
-				rpc = jsonDecoder.readObject(DefaultJsonRpc.class);
-			} catch (JsonDecodeException e) {
-				break;
-			}
-			if (rpc == null) {
-				break;
-			}
-			// Fully decoded JSON available.
-			PortalSession portalSession = channelRef.get();
-			EventPipeline eventPipeline = pipelineRef.get();
-			if (eventPipeline == null || portalSession == null) {
-				break;
-			}
-			// Portal session established, check for special disconnect
-			if ("disconnect".equals(rpc.method())
-						&& portalSession.portalSessionId().equals(
-								rpc.params().asString(0))) {
-				portalSession.discard();
-				return;
-			}
-			// Ordinary message from portal (view) to server.
-			portalSession.refresh();
-			if("keepAlive".equals(rpc.method())) {
-				continue;
-			}
-			eventPipeline.fire(new JsonInput(rpc), portalSession);
-		}
-	}
+    /**
+     * Forward the close to the JSON decoder.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void close() throws IOException {
+        if (decodeIn == null) {
+            // Never started
+            return;
+        }
+        decodeIn.close();
+        try {
+            join(1000);
+        } catch (InterruptedException e) {
+            // Just in case
+            interrupt();
+        }
+    }
+
+    @SuppressWarnings({ "PMD.AvoidLiteralsInIfCondition",
+        "PMD.AvoidInstantiatingObjectsInLoops",
+        "PMD.DataflowAnomalyAnalysis" })
+    @Override
+    public void run() {
+        while (true) {
+            JsonBeanDecoder jsonDecoder = JsonBeanDecoder.create(jsonSource);
+            JsonRpc rpc = null;
+            try {
+                rpc = jsonDecoder.readObject(DefaultJsonRpc.class);
+            } catch (JsonDecodeException e) {
+                break;
+            }
+            if (rpc == null) {
+                break;
+            }
+            // Fully decoded JSON available.
+            PortalSession portalSession = channelRef.get();
+            EventPipeline eventPipeline = pipelineRef.get();
+            if (eventPipeline == null || portalSession == null) {
+                break;
+            }
+            // Portal session established, check for special disconnect
+            if ("disconnect".equals(rpc.method())
+                && portalSession.portalSessionId().equals(
+                    rpc.params().asString(0))) {
+                portalSession.discard();
+                return;
+            }
+            // Ordinary message from portal (view) to server.
+            portalSession.refresh();
+            if ("keepAlive".equals(rpc.method())) {
+                continue;
+            }
+            eventPipeline.fire(new JsonInput(rpc), portalSession);
+        }
+    }
 }

@@ -29,69 +29,69 @@ import java.util.Arrays;
 @SuppressWarnings("PMD.DataClass")
 public class NotifyPortletView extends PortalCommand {
 
-	private final String portletType;
-	private final String portletId;
-	private final String method;
-	private final Object[] params;
-	
-	/**
-	 * Creates a new event.
-	 *  
-	 * @param portletType the portlet type (used by the portal 
-	 * core JS to look up the available functions, see {@link AddPortletType})
-	 * @param portletId the portlet (view) instance that the 
-	 * notification is directed at
-	 * @param method the method (function) to be executed, must
-	 * have been registered by handling {@link AddPortletType}
-	 * @param params the parameters
-	 */
-	public NotifyPortletView(String portletType,
-	        String portletId, String method, Object... params) {
-		this.portletType = portletType;
-		this.portletId = portletId;
-		this.method = method;
-		this.params = Arrays.copyOf(params, params.length);
-	}
+    private final String portletType;
+    private final String portletId;
+    private final String method;
+    private final Object[] params;
 
-	/**
-	 * Returns the portlet class.
-	 * 
-	 * @return the portlet class
-	 */
-	public String portletType() {
-		return portletType;
-	}
+    /**
+     * Creates a new event.
+     *  
+     * @param portletType the portlet type (used by the portal 
+     * core JS to look up the available functions, see {@link AddPortletType})
+     * @param portletId the portlet (view) instance that the 
+     * notification is directed at
+     * @param method the method (function) to be executed, must
+     * have been registered by handling {@link AddPortletType}
+     * @param params the parameters
+     */
+    public NotifyPortletView(String portletType,
+            String portletId, String method, Object... params) {
+        this.portletType = portletType;
+        this.portletId = portletId;
+        this.method = method;
+        this.params = Arrays.copyOf(params, params.length);
+    }
 
-	/**
-	 * Returns the portlet id.
-	 * 
-	 * @return the portlet id
-	 */
-	public String portletId() {
-		return portletId;
-	}
+    /**
+     * Returns the portlet class.
+     * 
+     * @return the portlet class
+     */
+    public String portletType() {
+        return portletType;
+    }
 
-	/**
-	 * Returns the method to be executed.
-	 * 
-	 * @return the method
-	 */
-	public String method() {
-		return method;
-	}
+    /**
+     * Returns the portlet id.
+     * 
+     * @return the portlet id
+     */
+    public String portletId() {
+        return portletId;
+    }
 
-	/**
-	 * Returns the parameters.
-	 * 
-	 * @return the parameters
-	 */
-	public Object[] params() {
-		return Arrays.copyOf(params, params.length);
-	}
+    /**
+     * Returns the method to be executed.
+     * 
+     * @return the method
+     */
+    public String method() {
+        return method;
+    }
 
-	@Override
-	public void toJson(Writer writer) throws IOException {
-		toJson(writer, "notifyPortletView", portletType(), portletId(), 
-				method(), params());
-	}
+    /**
+     * Returns the parameters.
+     * 
+     * @return the parameters
+     */
+    public Object[] params() {
+        return Arrays.copyOf(params, params.length);
+    }
+
+    @Override
+    public void toJson(Writer writer) throws IOException {
+        toJson(writer, "notifyPortletView", portletType(), portletId(),
+            method(), params());
+    }
 }
