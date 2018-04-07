@@ -40,6 +40,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
@@ -322,7 +323,7 @@ public abstract class AbstractPortlet extends Component {
     private void updateRefresh() {
         if (refreshInterval == null || portletIdsByPortalSession == null
             || portletIdsByPortalSession.isEmpty()) {
-            // At least one of the prerequisits is missing, terminate
+            // At least one of the prerequisites is missing, terminate
             if (refreshTimer != null) {
                 refreshTimer.cancel();
                 refreshTimer = null;
@@ -450,20 +451,36 @@ public abstract class AbstractPortlet extends Component {
     }
 
     /**
-     * Returns the set of portlet ids associated with the portal session.
-     * The set is created if it doesn't exist yet. If sessions aren't
-     * tracked, an empty set is returned. The method can therefore always
-     * be called and always returns a usable result.
+     * Returns the set of portlet ids associated with the portal session
+     * as an unmodifiable {@link Set}. If sessions aren't tracked, or no
+     * portlets have registered yet, an empty set is returned. The method 
+     * can therefore always be called and always returns a usable result.
      * 
      * @param portalSession the portal session
      * @return the set
      */
     protected Set<String> portletIds(PortalSession portalSession) {
         if (portletIdsByPortalSession != null) {
-            return portletIdsByPortalSession.computeIfAbsent(
-                portalSession, newKey -> new HashSet<>());
+            return Collections.unmodifiableSet(
+                portletIdsByPortalSession.getOrDefault(
+                    portalSession, Collections.emptySet()));
         }
         return new HashSet<>();
+    }
+
+    /**
+     * Track the given portlet from the given session if tracking is
+     * enabled.
+     *
+     * @param portalSession the portal session
+     * @param portletId the portlet id
+     */
+    protected void trackPortlet(PortalSession portalSession, String portletId) {
+        if (portletIdsByPortalSession != null) {
+            portletIdsByPortalSession.computeIfAbsent(portalSession,
+                newKey -> ConcurrentHashMap.newKeySet()).add(portletId);
+            updateRefresh();
+        }
     }
 
     /**
@@ -482,8 +499,9 @@ public abstract class AbstractPortlet extends Component {
                 Map<Serializable, Map<String, Serializable>>>) (Map<
                         Serializable, ?>) session)
                             .computeIfAbsent(AbstractPortlet.class,
-                                newKey -> new HashMap<>())
-                            .computeIfAbsent(type(), newKey -> new HashMap<>())
+                                newKey -> new ConcurrentHashMap<>())
+                            .computeIfAbsent(type(),
+                                newKey -> new ConcurrentHashMap<>())
                             .put(portletId, portletState);
         return portletState;
     }
@@ -588,8 +606,7 @@ public abstract class AbstractPortlet extends Component {
         event.stop();
         String portletId = doAddPortlet(event, portalSession);
         event.setResult(portletId);
-        portletIds(portalSession).add(portletId);
-        updateRefresh();
+        trackPortlet(portalSession, portletId);
     }
 
     /**
@@ -691,10 +708,9 @@ public abstract class AbstractPortlet extends Component {
         }
         event.setResult(true);
         event.stop();
-        portletIds(portalSession).add(event.portletId());
-        updateRefresh();
         doRenderPortlet(
             event, portalSession, event.portletId(), optPortletState.get());
+        trackPortlet(portalSession, event.portletId());
     }
 
     /**

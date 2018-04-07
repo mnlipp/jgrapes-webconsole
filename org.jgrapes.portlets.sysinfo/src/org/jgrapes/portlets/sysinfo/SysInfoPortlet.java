@@ -222,8 +222,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
      */
     @Handler
     public void onUpdate(Update event, PortalSession portalSession) {
-        Set<String> portletIds = portletIds(portalSession);
-        for (String portletId : portletIds) {
+        for (String portletId : portletIds(portalSession)) {
             updateView(portalSession, portletId);
         }
     }
@@ -235,8 +234,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
             throws Exception {
         event.stop();
         System.gc();
-        Set<String> portletIds = portletIds(portalSession);
-        for (String portletId : portletIds) {
+        for (String portletId : portletIds(portalSession)) {
             updateView(portalSession, portletId);
         }
     }
