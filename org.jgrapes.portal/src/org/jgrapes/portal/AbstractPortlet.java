@@ -416,6 +416,10 @@ public abstract class AbstractPortlet extends Component {
      * It is therefore always safe to invoke the method and use its
      * result.
      * 
+     * If you need a particular session's portlet ids, you should
+     * prefer {@link #portletIds(PortalSession)} over calling
+     * this method with `get(portalSession)` appended.
+     * 
      * @return the result
      */
     protected Map<PortalSession, Set<String>> portletIdsByPortalSession() {
