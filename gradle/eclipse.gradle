@@ -21,5 +21,15 @@ eclipse {
             'org.eclipse.jdt.groovy.core.groovyNature', \
             'org.jdrupes.eclipse.minify.plugin.minifyNature'
     }
+    jdt {
+        file {
+            withProperties { properties ->
+                def formatterPrefs = new Properties()
+                rootProject.file("gradle/org.eclipse.jdt.core.formatter.prefs")
+                    .withInputStream { formatterPrefs.load(it) }
+                properties.putAll(formatterPrefs)
+            }
+        }
+    }
 }
 tasks.eclipse.dependsOn(cleanEclipse)
