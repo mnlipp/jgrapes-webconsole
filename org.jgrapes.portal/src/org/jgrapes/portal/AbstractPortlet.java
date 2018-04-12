@@ -321,8 +321,7 @@ public abstract class AbstractPortlet extends Component {
     }
 
     private void updateRefresh() {
-        if (refreshInterval == null || portletIdsByPortalSession == null
-            || portletIdsByPortalSession.isEmpty()) {
+        if (refreshInterval == null || portletIdsByPortalSession().isEmpty()) {
             // At least one of the prerequisites is missing, terminate
             if (refreshTimer != null) {
                 refreshTimer.cancel();
