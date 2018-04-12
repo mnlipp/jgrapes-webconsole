@@ -72,6 +72,7 @@ public class PortalLocalBackedKVStore extends Component {
     @Handler(priority = 1000)
     public void onPortalReady(PortalReady event, PortalSession channel)
             throws InterruptedException {
+        // Put there by onJsonInput if retrieval has been done.
         if (channel.browserSession().containsKey(
             PortalLocalBackedKVStore.class)) {
             return;
@@ -109,11 +110,14 @@ public class PortalLocalBackedKVStore extends Component {
             + PortalLocalBackedKVStore.class.getName() + "/";
         channel.associated(PortalLocalBackedKVStore.class, PortalReady.class)
             .ifPresent(origEvent -> {
+                // We have intercepted the portal ready, fill out store.
+                // Having a store now also shows that retrieval has been done.
+                @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+                Map<String, String> data = getStore(channel);
                 JsonArray params = (JsonArray) event.request().params();
                 params.asArray(0).arrayStream().forEach(item -> {
                     String key = item.asString(0);
                     if (key.startsWith(keyStart)) {
-                        Map<String, String> data = getStore(channel);
                         data.put(key.substring(
                             keyStart.length() - 1), item.asString(1));
                     }
