@@ -18,12 +18,6 @@ Themes
 Additional themes are maintained in an 
 [independant repository](https://github.com/mnlipp/jgrapes-portal-themes).
 
-Demo
-----
-
-A [demo configuration](https://jgrapes-portal-demo.herokuapp.com/)
-of the portal is available at [heroku](https://www.heroku.com/).
-
 Building
 --------
 
