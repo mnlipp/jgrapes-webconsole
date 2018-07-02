@@ -88,10 +88,15 @@ tasks.gitPublishCopy.dependsOn(":org.jgrapes.portal:javadoc")
 tasks.gitPublishCopy.dependsOn(":org.jgrapes.portal:documentationjs")
 
 task stage {
-	// Build everything first
-	subprojects.tasks.each { tc -> dependsOn tc.findByName("build") }
-	// Publish JavaDoc
-	dependsOn gitPublishPush	
+    description = 'To be executed by travis, build and update JavaDoc.'
+    group = 'build'
+    
+    if (!isTravisBuild || JavaVersion.current().isJava8()) {
+        // Build everything first
+        subprojects.tasks.each { tc -> dependsOn tc.findByName("build") }
+        // Publish JavaDoc
+        dependsOn gitPublishPush
+    }	
 }
 
 configure(stage) {
