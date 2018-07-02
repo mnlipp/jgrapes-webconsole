@@ -9,7 +9,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.0.0'
     }
 }
 
@@ -48,9 +48,14 @@ allprojects {
 
 	group = 'org.jgrapes'
 	
-	ext.releaseVersion = "0.17.1"
+	ext.releaseVersion = "0.17.2"
 	ext.isSnapshot = false
 	version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
+    
+    compileJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 subprojects {

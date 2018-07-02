@@ -1,3 +1,5 @@
+enableFeaturePreview('STABLE_PUBLISHING')
+
 rootProject.name = 'JGrapes-Portal'
 
 include 'org.jgrapes.portal'

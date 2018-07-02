@@ -29,10 +29,10 @@ if (project.name != "HttpPortalDemo") {
     }
 
     model {
-        tasks.publishMavenJavaPublicationToSnapshotRepository {
+        tasks.publishMavenPublicationToSnapshotRepository {
             dependsOn baseline
         }
-        tasks.publishMavenJavaPublicationToReleaseRepository {
+        tasks.publishMavenPublicationToReleaseRepository {
             dependsOn baseline
         }
     }
