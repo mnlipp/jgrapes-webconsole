@@ -1,0 +1,3 @@
+before_install:
+   - npm config set strict-ssl false
+   
