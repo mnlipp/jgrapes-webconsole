@@ -45,7 +45,10 @@ task documentationjs(type: NodeTask) {
 }
 
 javadoc {
-	dependsOn documentationjs
+    if (!isJitPackbuild) {
+        // Does not work on jitpack
+        dependsOn documentationjs
+    }
 
 	options.tagletPath = rootProject.configurations.javadocTaglets.files as List
 	options.taglets = ["org.jdrupes.taglets.plantUml.Taglet"]
