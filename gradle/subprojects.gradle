@@ -64,8 +64,9 @@ test {
     }
 }
 
-apply from: "${project.rootDir}/gradle/publishing.gradle"
-
-apply from: "${project.rootDir}/gradle/baseline.gradle"
+if (project.name.startsWith("org.jgrapes.")) {
+    apply from: "${project.rootDir}/gradle/publishing.gradle"
+    apply from: "${project.rootDir}/gradle/baseline.gradle"
+}
 
 apply from: "${project.rootDir}/gradle/eclipse.gradle"
