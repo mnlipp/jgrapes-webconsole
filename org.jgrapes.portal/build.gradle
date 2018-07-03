@@ -45,7 +45,7 @@ task documentationjs(type: NodeTask) {
 }
 
 javadoc {
-    if (!isJitPackbuild) {
+    if (!isJitPackBuild) {
         // Does not work on jitpack
         dependsOn documentationjs
     }
