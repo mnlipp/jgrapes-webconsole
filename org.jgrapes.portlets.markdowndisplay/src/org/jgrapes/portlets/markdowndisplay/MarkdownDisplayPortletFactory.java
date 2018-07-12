@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
-import org.jgrapes.portal.PortletComponentFactory;
+import org.jgrapes.portal.base.PortletComponentFactory;
 
 /**
  * A factory for creating {@link MarkdownDisplayPortlet}s.

@@ -37,9 +37,9 @@ var orgJGrapesPortletsMarkdownDisplay = {
     JGPortal.registerPortletMethod(
             "org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet",
             "updateAll", function(portletId, params) {
-                let portlet = JGPortal.findPortletPreview(portletId);
+                let portlet = JGPortal.renderer.findPortletPreview(portletId);
                 if (portlet) {
-                    JGPortal.updatePortletModes(portletId, params[3]);
+                    JGPortal.renderer.updatePortletModes(portletId, params[3]);
                     let headerText = portlet.find(".portlet-header-text");
                     headerText.empty();
                     headerText.append(params[0]);
@@ -47,9 +47,9 @@ var orgJGrapesPortletsMarkdownDisplay = {
                     content.empty();
                     content.append(mdProc.render(params[1]));
                 }
-                portlet = JGPortal.findPortletView(portletId);
+                portlet = JGPortal.renderer.findPortletView(portletId);
                 if (portlet) {
-                    JGPortal.updatePortletViewTitle(portletId, params[0]);
+                    JGPortal.renderer.updatePortletViewTitle(portletId, params[0]);
                     let content = portlet.find(".jgrapes-markdownportlet-content");
                     content.empty();
                     content.append(mdProc.render(params[2]));
@@ -63,13 +63,13 @@ var orgJGrapesPortletsMarkdownDisplay = {
         f.debounceTimer = setTimeout(f, 500);
     }
     
-    orgJGrapesPortletsMarkdownDisplay.init = function(dialog) {
+    orgJGrapesPortletsMarkdownDisplay.init = function(content) {
         // Title
-        let titleSource = dialog.find('.jgrapes-portlets-mdp-title-input');
+        let titleSource = content.find('.jgrapes-portlets-mdp-title-input');
         
         // Preview
-        let previewSource = dialog.find('.jgrapes-portlets-mdp-preview-input');
-        let previewPreview = dialog.find('.jgrapes-portlets-mdp-preview-preview');
+        let previewSource = content.find('.jgrapes-portlets-mdp-preview-input');
+        let previewPreview = content.find('.jgrapes-portlets-mdp-preview-preview');
         let updatePreview = function() {
             let input = previewSource.val();
             let result = mdProc.render(input);
@@ -79,8 +79,8 @@ var orgJGrapesPortletsMarkdownDisplay = {
         previewSource.on("keyup", function() { debounce(updatePreview); });
         
         // View
-        let viewSource = dialog.find('.jgrapes-portlets-mdp-view-input');
-        let viewPreview = dialog.find('.jgrapes-portlets-mdp-view-preview');
+        let viewSource = content.find('.jgrapes-portlets-mdp-view-input');
+        let viewPreview = content.find('.jgrapes-portlets-mdp-view-preview');
         let updateView = function() {
             let input = viewSource.val();
             let result = mdProc.render(input);
@@ -90,13 +90,10 @@ var orgJGrapesPortletsMarkdownDisplay = {
         viewSource.on("keyup", function() { debounce(updateView); });
         
         // Close action
-        dialog.on("dialogclose", function(event) {
-            let oet = event.originalEvent.target;
-            if (oet.classList && oet.classList.contains("ui-dialog-titlebar-close")) {
-                let portletId = $(event.target).attr("data-portlet-id");
-                JGPortal.notifyPortletModel(portletId, "update", titleSource.val(),
-                        previewSource.val(), viewSource.val());
-            }
+        content.on("JGrapes.dialogClosed", function(event, portlet) {
+            let portletId = portlet.attr("data-portlet-id");
+            JGPortal.notifyPortletModel(portletId, "update", titleSource.val(),
+                    previewSource.val(), viewSource.val());
         })
     }
     

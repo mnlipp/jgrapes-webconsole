@@ -463,6 +463,30 @@ var JGPortal = {};
             log.warn("Not implemented!");
         }
         
+        /**
+         * Update the title of the portlet with the given id.
+         *
+         * @param {string} portletId the portlet id
+         * @param {string} title the new title
+         */
+        updatePortletViewTitle(portletId, title) {
+            log.warn("Not implemented!");
+        }
+
+        /**
+         * Update the modes of the portlet with the given id.
+         * 
+         * @param {string} portletId the portlet id
+         * @param {string[]} modes the modes
+         */
+        updatePortletModes(portletId, modes) {
+            log.warn("Not implemented!");
+        }
+        
+        showEditDialog(container, modes, content) {
+            log.warn("Not implemented!");
+        }
+        
         notification(content, options) {
             log.warn("Not implemented!");
         }
@@ -569,6 +593,55 @@ var JGPortal = {};
             return ids;
         }
         
+        /**
+         * Utility method to format a memory size to a maximum
+         * of 4 digits for the integer part by appending the
+         * appropriate unit.
+         * 
+         * @param {integer} size the size value to format
+         * @param {integer} digits the number of digits of the factional part
+         * @param {string} lang the language (BCP 47 code, 
+         * used to determine the delimiter)
+         */
+        formatMemorySize(size, digits, lang) {
+            if (lang === undefined) {
+                lang = digits;
+                digits = -1;
+            }
+            let scale = 0;
+            while (size > 10000 && scale < 5) {
+                    size = size / 1024;
+                    scale += 1;
+            }
+            let unit = "PiB";
+            switch (scale) {
+            case 0:
+                unit = "B";
+                break;
+            case 1:
+                unit = "kiB";
+                break;
+            case 2:
+                unit = "MiB";
+                break;
+            case 3:
+                unit = "GiB";
+                break;
+            case 4:
+                unit = "TiB";
+                break;
+            default:
+                break;
+            }
+            if (digits >= 0) {
+                return new Intl.NumberFormat(lang, {
+                    minimumFractionDigits: digits,
+                    maximumFractionDigits: digits
+                }).format(size) + " " + unit;
+            }
+            return new Intl.NumberFormat(lang).format(size) + " " + unit;
+        }
+        
     }
     
     class Portal {
@@ -623,7 +696,10 @@ var JGPortal = {};
                 } else if (mode === "View") {
                     self._updateView(portletId, modes, content, foreground);
                 } else if (mode === "Edit") {
-                    self._showEditDialog(portletId, modes, content);
+                    let container = self._editTemplate.clone();
+                    container.attr("data-portlet-id", portletId);
+                    self._renderer.showEditDialog(container, modes, content);
+                    self._execOnLoad(container);
                 }
             });
             this._webSocket.addMessageHandler('deletePortlet',
@@ -687,6 +763,7 @@ var JGPortal = {};
             this._sessionRefreshInterval = refreshInterval;
             this._sessionInactivityTimeout = inactivityTimeout;
             this._renderer = renderer;
+            JGPortal.renderer = renderer;
             
             // Everything set up, can connect web socket now.
             this._webSocket.connect();
@@ -745,18 +822,18 @@ var JGPortal = {};
 
         // Portlet management
         
-        _execOnLoad(tree) {
-            let onLoad = tree.data("onLoad");
-            if (onLoad) {
+        _execOnLoad(container) {
+            container.find("[data-on-load]").each(function() {
+                let onLoad = $(this).data("onLoad");
                 let segs = onLoad.split(".");
                 let obj = window;
                 while (obj && segs.length > 0) {
                     obj = obj[segs.shift()];
                 }
                 if (obj && typeof obj === "function") {
-                    obj.apply(null, [ tree ]);
+                    obj.apply(null, [ $(this) ]);
                 }
-            }
+            });
         }
 
         _updatePreview(portletId, modes, mode, content, foreground) {
@@ -788,11 +865,6 @@ var JGPortal = {};
             this._execOnLoad(container);
         };
         
-        showEditDialog(portletId, modes, content) {
-//            dialog.attr("data-portlet-id", portletId);
-//            execOnLoad(dialog);
-        }
-
         /**
          * Registers a portlet method that to be invoked if a
          * JSON RPC notification with method <code>notifyPortletView</code>
@@ -857,55 +929,6 @@ var JGPortal = {};
                 r[0].toString(14) + r[0].toString(15));
         };
         
-        /**
-         * Utility method to format a memory size to a maximum
-         * of 4 digits for the integer part by appending the
-         * appropriate unit.
-         * 
-         * @param {integer} size the size value to format
-         * @param {integer} digits the number of digits of the factional part
-         * @param {string} lang the language (BCP 47 code, 
-         * used to determine the delimiter)
-         */
-        formatMemorySize(size, digits, lang) {
-            if (lang === undefined) {
-                lang = digits;
-                digits = -1;
-            }
-            let scale = 0;
-            while (size > 10000 && scale < 5) {
-                    size = size / 1024;
-                    scale += 1;
-            }
-            let unit = "PiB";
-            switch (scale) {
-            case 0:
-                unit = "B";
-                break;
-            case 1:
-                unit = "kiB";
-                break;
-            case 2:
-                unit = "MiB";
-                break;
-            case 3:
-                unit = "GiB";
-                break;
-            case 4:
-                unit = "TiB";
-                break;
-            default:
-                break;
-            }
-            if (digits >= 0) {
-                return new Intl.NumberFormat(lang, {
-                    minimumFractionDigits: digits,
-                    maximumFractionDigits: digits
-                }).format(size) + " " + unit;
-            }
-            return new Intl.NumberFormat(lang).format(size) + " " + unit;
-        }
-        
     }
     
     var thePortal = new Portal();
@@ -918,20 +941,8 @@ var JGPortal = {};
         thePortal.registerPortletMethod(...params);
     }
     
-    JGPortal.findPortletView = function(...params) {
-        return thePortal.renderer.findPortletView(...params);
-    }
-    
-    JGPortal.findPortletPreview = function(...params) {
-        return thePortal.renderer.findPortletPreview(...params);
-    }
-    
     JGPortal.notifyPortletModel = function(...params) {
         return thePortal.notifyPortletModel(...params);
-    }
-    
-    JGPortal.formatMemorySize = function(...params) {
-        return thePortal.formatMemorySize(...params);
     }
     
 })();

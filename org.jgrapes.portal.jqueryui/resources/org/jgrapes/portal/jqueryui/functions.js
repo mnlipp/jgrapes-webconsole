@@ -222,7 +222,7 @@ var JQUIPortal = {
                 portletHeader.find(".portlet-edit").on( "click", function() {
                     let icon = $( this );
                     let portletId = icon.closest( ".portlet" ).attr("data-portlet-id");
-                    this._sendRenderPortlet(portletId, "Edit", true);
+                    self.sendRenderPortlet(portletId, "Edit", true);
                 });
             }
             if (modes.includes("DeleteablePreview")) {
@@ -321,60 +321,52 @@ var JQUIPortal = {
 
             this.sendLayout(previewLayout, tabsLayout, xtraInfo);
         };
-    }
         
-    
-//    /**
-//     * Update the title of the portlet with the given id.
-//     * 
-//     * @param {string} portletId the portlet id
-//     * @param {string} title the new title
-//     */
-//    JGPortal.updatePortletViewTitle = function (portletId, title) {
-//        let tabs = $( "#portlet-tabs" ).tabs();
-//        let portlet = tabs.find("> div[data-portlet-id='" + portletId + "']" );
-//        if (portlet.length === 0) {
-//            return;
-//        }
-//        portlet.find("[data-portlet-title]").attr("data-portlet-title", title);
-//        let tabId = portlet.attr("id");
-//        let portletTab = tabs.find("a[href='#" + tabId + "']");
-//        portletTab.empty();
-//        portletTab.append(title);
-//    }
-//    
-    
-    
-    
-    
-//    
-//    /**
-//     * Update the modes of the portlet with the given id.
-//     * 
-//     * @param {string} portletId the portlet id
-//     * @param {string[]} modes the modes
-//     */
-//    JGPortal.updatePortletModes = function (portletId, modes) {
-//        let portlet = findPortletPreview(portletId);
-//        if (!portlet) {
-//            return;
-//        }
-//        setModeIcons(portlet, modes);
-//    }
-//    var updatePortletModes = JGPortal.updatePortletModes; 
-//    
-//	
-//
-//    function showEditDialog(portletId, modes, content) {
-//        let dialog = $( content );
-//        dialog.dialog({
-//            modal: true,
-//            width: "auto",
-//        });
-//        dialog.attr("data-portlet-id", portletId);
-//        execOnLoad(dialog);
-//    }
-	
+        /**
+         * Update the title of the portlet with the given id.
+         *
+         * @param {string} portletId the portlet id
+         * @param {string} title the new title
+         */
+        updatePortletViewTitle(portletId, title) {
+            let tabs = $( "#portlet-tabs" ).tabs();
+            let portlet = tabs.find("> div[data-portlet-id='" + portletId + "']" );
+            if (portlet.length === 0) {
+                return;
+            }
+            portlet.find("[data-portlet-title]").attr("data-portlet-title", title);
+            let tabId = portlet.attr("id");
+            let portletTab = tabs.find("a[href='#" + tabId + "']");
+            portletTab.empty();
+            portletTab.append(title);
+        }
+      
+        /**
+         * Update the modes of the portlet with the given id.
+         * 
+         * @param {string} portletId the portlet id
+         * @param {string[]} modes the modes
+         */
+        updatePortletModes(portletId, modes) {
+            let portlet = this.findPortletPreview(portletId);
+            if (!portlet) {
+                return;
+            }
+            this._setModeIcons(portlet, modes);
+        }
+        
+        showEditDialog(container, modes, content) {
+            let dialogContent = $(content);
+            container.append(dialogContent);
+            container.dialog({
+                modal: true,
+                width: "auto",
+                close: function( event, ui ) {
+                    dialogContent.trigger("JGrapes.dialogClosed", [ container ]);
+                }
+            });
+        }   
+    }
 
 })();
 

@@ -50,13 +50,13 @@ var orgJGrapesPortletsSysInfo = {
                 let maxFormatted = "";
                 let totalFormatted = "";
                 let usedFormatted = "";
-                let portlet = JGPortal.findPortletPreview(portletId);
+                let portlet = JGPortal.renderer.findPortletPreview(portletId);
                 let lang = 'en';
                 if (portlet) {
                     lang = portlet.closest('[lang]').attr('lang') || 'en'
-                    maxFormatted = JGPortal.formatMemorySize(params[1], 1, lang);
-                    totalFormatted = JGPortal.formatMemorySize(params[2], 1, lang);
-                    usedFormatted = JGPortal.formatMemorySize(params[3], 1, lang);
+                    maxFormatted = JGPortal.renderer.formatMemorySize(params[1], 1, lang);
+                    totalFormatted = JGPortal.renderer.formatMemorySize(params[2], 1, lang);
+                    usedFormatted = JGPortal.renderer.formatMemorySize(params[3], 1, lang);
                     let col = portlet.find(".maxMemory");
                     col.html(maxFormatted);
                     col = portlet.find(".totalMemory");
@@ -64,7 +64,7 @@ var orgJGrapesPortletsSysInfo = {
                     col = portlet.find(".usedMemory");
                     col.html(usedFormatted);
                 }
-                portlet = JGPortal.findPortletView(portletId);
+                portlet = JGPortal.renderer.findPortletView(portletId);
                 if (portlet) {
                     let col = portlet.find(".maxMemory");
                     col.html(maxFormatted);
@@ -135,7 +135,7 @@ var orgJGrapesPortletsSysInfo = {
                     yAxes: [{
                         ticks: {
                             callback: function(value, index, values) {
-                                return JGPortal.formatMemorySize(value, 0, lang);
+                                return JGPortal.renderer.formatMemorySize(value, 0, lang);
                             }
                         }
                     }]

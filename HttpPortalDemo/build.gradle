@@ -46,5 +46,5 @@ dependencies {
     compile project(':org.jgrapes.portal.providers.datatables')
     compile project(':org.jgrapes.portal.providers.markdownit')
     compile project(':org.jgrapes.portlets.sysinfo')
-//    compile project(':org.jgrapes.portlets.markdowndisplay')
+    compile project(':org.jgrapes.portlets.markdowndisplay')
 }
