@@ -569,55 +569,6 @@ var JGPortal = {};
             return ids;
         }
         
-        /**
-         * Utility method to format a memory size to a maximum
-         * of 4 digits for the integer part by appending the
-         * appropriate unit.
-         * 
-         * @param {integer} size the size value to format
-         * @param {integer} digits the number of digits of the factional part
-         * @param {string} lang the language (BCP 47 code, 
-         * used to determine the delimiter)
-         */
-        formatMemorySize(size, digits, lang) {
-            if (lang === undefined) {
-                lang = digits;
-                digits = -1;
-            }
-            let scale = 0;
-            while (size > 10000 && scale < 5) {
-                    size = size / 1024;
-                    scale += 1;
-            }
-            let unit = "PiB";
-            switch (scale) {
-            case 0:
-                unit = "B";
-                break;
-            case 1:
-                unit = "kiB";
-                break;
-            case 2:
-                unit = "MiB";
-                break;
-            case 3:
-                unit = "GiB";
-                break;
-            case 4:
-                unit = "TiB";
-                break;
-            default:
-                break;
-            }
-            if (digits >= 0) {
-                return new Intl.NumberFormat(lang, {
-                    minimumFractionDigits: digits,
-                    maximumFractionDigits: digits
-                }).format(size) + " " + unit;
-            }
-            return new Intl.NumberFormat(lang).format(size) + " " + unit;
-        }
-        
     }
     
     class Portal {
@@ -906,6 +857,55 @@ var JGPortal = {};
                 r[0].toString(14) + r[0].toString(15));
         };
         
+        /**
+         * Utility method to format a memory size to a maximum
+         * of 4 digits for the integer part by appending the
+         * appropriate unit.
+         * 
+         * @param {integer} size the size value to format
+         * @param {integer} digits the number of digits of the factional part
+         * @param {string} lang the language (BCP 47 code, 
+         * used to determine the delimiter)
+         */
+        formatMemorySize(size, digits, lang) {
+            if (lang === undefined) {
+                lang = digits;
+                digits = -1;
+            }
+            let scale = 0;
+            while (size > 10000 && scale < 5) {
+                    size = size / 1024;
+                    scale += 1;
+            }
+            let unit = "PiB";
+            switch (scale) {
+            case 0:
+                unit = "B";
+                break;
+            case 1:
+                unit = "kiB";
+                break;
+            case 2:
+                unit = "MiB";
+                break;
+            case 3:
+                unit = "GiB";
+                break;
+            case 4:
+                unit = "TiB";
+                break;
+            default:
+                break;
+            }
+            if (digits >= 0) {
+                return new Intl.NumberFormat(lang, {
+                    minimumFractionDigits: digits,
+                    maximumFractionDigits: digits
+                }).format(size) + " " + unit;
+            }
+            return new Intl.NumberFormat(lang).format(size) + " " + unit;
+        }
+        
     }
     
     var thePortal = new Portal();
@@ -928,6 +928,10 @@ var JGPortal = {};
     
     JGPortal.notifyPortletModel = function(...params) {
         return thePortal.notifyPortletModel(...params);
+    }
+    
+    JGPortal.formatMemorySize = function(...params) {
+        return thePortal.formatMemorySize(...params);
     }
     
 })();
