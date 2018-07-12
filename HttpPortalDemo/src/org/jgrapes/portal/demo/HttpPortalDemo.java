@@ -53,11 +53,13 @@ import org.jgrapes.io.NioDispatcher;
 import org.jgrapes.io.util.PermitsPool;
 import org.jgrapes.net.SslServer;
 import org.jgrapes.net.TcpServer;
-import org.jgrapes.portal.KVStoreBasedPortalPolicy;
-import org.jgrapes.portal.PageResourceProviderFactory;
-import org.jgrapes.portal.Portal;
-import org.jgrapes.portal.PortalLocalBackedKVStore;
-import org.jgrapes.portal.PortletComponentFactory;
+import org.jgrapes.portal.base.KVStoreBasedPortalPolicy;
+import org.jgrapes.portal.base.PageResourceProviderFactory;
+import org.jgrapes.portal.base.Portal;
+import org.jgrapes.portal.base.PortalLocalBackedKVStore;
+import org.jgrapes.portal.base.PortalWeblet;
+import org.jgrapes.portal.base.PortletComponentFactory;
+import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
 import org.jgrapes.util.PreferencesStore;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -126,15 +128,17 @@ public class HttpPortalDemo extends Component implements BundleActivator {
             "/doc|**", Paths.get("../../jgrapes.gh-pages/javadoc").toUri()));
         app.attach(new PostProcessor(app.channel()));
         app.attach(new WsEchoServer(app.channel()));
-        Portal portal = app.attach(new Portal(Channel.SELF, app.channel(),
-            new URI("/portal/")))
-            .setResourceBundleSupplier(l -> ResourceBundle.getBundle(
-                getClass().getPackage().getName() + ".portal-l10n", l,
-                ResourceBundle.Control.getNoFallbackControl(
-                    ResourceBundle.Control.FORMAT_DEFAULT)));
-        // portal.setPortalSessionInactivityTimeout(30);
+        PortalWeblet portalWeblet
+            = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
+                new URI("/jqportal/")))
+                .setResourceBundleSupplier(l -> ResourceBundle.getBundle(
+                    getClass().getPackage().getName() + ".portal-l10n", l,
+                    ResourceBundle.Control.getNoFallbackControl(
+                        ResourceBundle.Control.FORMAT_DEFAULT)));
+        Portal portal = portalWeblet.portal();
+        portalWeblet.setPortalSessionInactivityTimeout(300000);
         portal.attach(new PortalLocalBackedKVStore(
-            portal, portal.prefix().getPath()));
+            portal, portalWeblet.prefix().getPath()));
         portal.attach(new KVStoreBasedPortalPolicy(portal));
         portal.attach(new NewPortalSessionPolicy(portal));
         // Add all available page resource providers

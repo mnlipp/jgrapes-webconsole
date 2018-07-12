@@ -30,11 +30,11 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.portal.PageResourceProvider;
-import org.jgrapes.portal.PortalSession;
-import org.jgrapes.portal.events.AddPageResources;
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
-import org.jgrapes.portal.events.PortalReady;
+import org.jgrapes.portal.base.PageResourceProvider;
+import org.jgrapes.portal.base.PortalSession;
+import org.jgrapes.portal.base.events.AddPageResources;
+import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.portal.base.events.PortalReady;
 
 /**
  * Provider for the [Datatables](https://datatables.net/) library.

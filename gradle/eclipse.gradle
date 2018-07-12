@@ -22,7 +22,8 @@ eclipse {
             'org.jdrupes.eclipse.minify.plugin.minifyNature'
     }
     jdt {
-        if (project.name.startsWith("org.jgrapes.")) {
+        if (project.name.startsWith("org.jgrapes.")
+            || project.name == 'HttpPortalDemo') {
             sourceCompatibility = 1.8
             targetCompatibility = 1.8
             javaRuntimeName = "JavaSE-1.8"

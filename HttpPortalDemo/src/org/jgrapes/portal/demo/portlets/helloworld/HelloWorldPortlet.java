@@ -37,27 +37,24 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
-import org.jgrapes.portal.PortalSession;
-import org.jgrapes.portal.PortalWeblet;
-
-import static org.jgrapes.portal.Portlet.*;
-import static org.jgrapes.portal.Portlet.RenderMode.*;
-
-import org.jgrapes.portal.UserPrincipal;
-import org.jgrapes.portal.Utils;
+import org.jgrapes.portal.base.PortalSession;
+import org.jgrapes.portal.base.PortalWeblet;
+import org.jgrapes.portal.base.Portlet.RenderMode;
+import org.jgrapes.portal.base.UserPrincipal;
+import org.jgrapes.portal.base.Utils;
+import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.portal.base.events.AddPortletRequest;
+import org.jgrapes.portal.base.events.AddPortletType;
+import org.jgrapes.portal.base.events.DeletePortlet;
+import org.jgrapes.portal.base.events.DeletePortletRequest;
+import org.jgrapes.portal.base.events.DisplayNotification;
+import org.jgrapes.portal.base.events.NotifyPortletModel;
+import org.jgrapes.portal.base.events.NotifyPortletView;
+import org.jgrapes.portal.base.events.PortalReady;
+import org.jgrapes.portal.base.events.RenderPortletRequest;
+import org.jgrapes.portal.base.events.RenderPortletRequestBase;
+import org.jgrapes.portal.base.freemarker.FreeMarkerPortlet;
 import org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortlet;
-import org.jgrapes.portal.events.AddPageResources.ScriptResource;
-import org.jgrapes.portal.events.AddPortletRequest;
-import org.jgrapes.portal.events.AddPortletType;
-import org.jgrapes.portal.events.DeletePortlet;
-import org.jgrapes.portal.events.DeletePortletRequest;
-import org.jgrapes.portal.events.DisplayNotification;
-import org.jgrapes.portal.events.NotifyPortletModel;
-import org.jgrapes.portal.events.NotifyPortletView;
-import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortletRequest;
-import org.jgrapes.portal.events.RenderPortletRequestBase;
-import org.jgrapes.portal.freemarker.FreeMarkerPortlet;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
@@ -68,7 +65,7 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
 public class HelloWorldPortlet extends FreeMarkerPortlet {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
-        DeleteablePreview, View);
+        RenderMode.DeleteablePreview, RenderMode.View);
 
     /**
      * Creates a new component with its channel set to the given 

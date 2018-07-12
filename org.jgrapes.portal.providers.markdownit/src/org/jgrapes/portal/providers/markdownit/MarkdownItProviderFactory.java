@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
-import org.jgrapes.portal.PageResourceProviderFactory;
+import org.jgrapes.portal.base.PageResourceProviderFactory;
 
 /**
  * A factory for creating {@link MarkdownItProvider}s.

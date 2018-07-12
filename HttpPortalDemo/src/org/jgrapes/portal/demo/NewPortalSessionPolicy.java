@@ -18,18 +18,13 @@
 
 package org.jgrapes.portal.demo;
 
-import java.util.Collections;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.portal.PortalSession;
-import org.jgrapes.portal.Portlet;
-import org.jgrapes.portal.events.AddPortletRequest;
-import org.jgrapes.portal.events.PortalConfigured;
-import org.jgrapes.portal.events.PortalReady;
-import org.jgrapes.portal.events.RenderPortlet;
-import org.jgrapes.portlets.markdowndisplay.MarkdownDisplayPortlet;
+import org.jgrapes.portal.base.PortalSession;
+import org.jgrapes.portal.base.events.PortalConfigured;
+import org.jgrapes.portal.base.events.PortalReady;
+import org.jgrapes.portal.base.events.RenderPortlet;
 
 /**
  * 
@@ -73,15 +68,15 @@ public class NewPortalSessionPolicy extends Component {
             renderedFlagName, false)) {
             return;
         }
-        fire(new AddPortletRequest(event.event().event().renderSupport(),
-            MarkdownDisplayPortlet.class.getName(),
-            Portlet.RenderMode.Preview)
-                .addProperty(MarkdownDisplayPortlet.TITLE, "Demo Portal")
-                .addProperty(MarkdownDisplayPortlet.PREVIEW_SOURCE,
-                    "A Demo Portal")
-                .addProperty(MarkdownDisplayPortlet.EDITABLE_BY,
-                    Collections.EMPTY_SET),
-            portalSession);
+//        fire(new AddPortletRequest(event.event().event().renderSupport(),
+//            MarkdownDisplayPortlet.class.getName(),
+//            Portlet.RenderMode.Preview)
+//                .addProperty(MarkdownDisplayPortlet.TITLE, "Demo Portal")
+//                .addProperty(MarkdownDisplayPortlet.PREVIEW_SOURCE,
+//                    "A Demo Portal")
+//                .addProperty(MarkdownDisplayPortlet.EDITABLE_BY,
+//                    Collections.EMPTY_SET),
+//            portalSession);
     }
 
 }
