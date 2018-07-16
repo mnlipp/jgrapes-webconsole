@@ -24,11 +24,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
 import java.text.ParseException;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
@@ -63,6 +67,7 @@ import org.jgrapes.portal.base.events.PortalReady;
 import org.jgrapes.portal.base.events.PortletResourceRequest;
 import org.jgrapes.portal.base.events.ResourceRequestCompleted;
 import org.jgrapes.portal.base.events.SimplePortalCommand;
+import org.jgrapes.portal.base.events.SetLocale;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 
 /**
@@ -87,6 +92,9 @@ public abstract class PortalWeblet extends Component {
     private long psNetworkTimeout = 45000;
     private long psRefreshInterval = 30000;
     private long psInactivityTimeout = -1;
+
+    private Function<Locale, ResourceBundle> resourceBundleSupplier;
+    private final Set<Locale> supportedLocales = new HashSet<>();
 
     /**
      * The class used in handler annotations to represent the 
@@ -121,6 +129,7 @@ public abstract class PortalWeblet extends Component {
         } catch (ParseException e) {
             throw new IllegalArgumentException(e);
         }
+        updateSupportedLocales();
 
         RequestHandler.Evaluator.add(this, "onGet", prefix + "**");
         RequestHandler.Evaluator.add(this, "onGetRedirect",
@@ -244,6 +253,58 @@ public abstract class PortalWeblet extends Component {
      */
     protected RenderSupport renderSupport() {
         return renderSupport;
+    }
+
+    /**
+     * Sets a function for obtaining a resource bundle for
+     * a given locale.
+     * 
+     * @param supplier the function
+     * @return the portal fo reasy chaining
+     */
+    public PortalWeblet setResourceBundleSupplier(
+            Function<Locale, ResourceBundle> supplier) {
+        resourceBundleSupplier = supplier;
+        updateSupportedLocales();
+        return this;
+    }
+
+    protected void updateSupportedLocales() {
+        supportedLocales.clear();
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().equals("")) {
+                continue;
+            }
+            if (resourceBundleSupplier != null) {
+                ResourceBundle bundle = resourceBundleSupplier.apply(locale);
+                if (bundle.getLocale().equals(locale)) {
+                    supportedLocales.add(locale);
+                }
+            }
+            ResourceBundle bundle = ResourceBundle.getBundle(getClass()
+                .getPackage().getName() + ".l10n", locale);
+            if (bundle.getLocale().equals(locale)) {
+                supportedLocales.add(locale);
+            }
+        }
+    }
+
+    /**
+     * Returns the resource bundle supplier.
+     *
+     * @return the result
+     */
+    protected Function<Locale, ResourceBundle> resourceBundleSupplier() {
+        return resourceBundleSupplier;
+    }
+
+    /**
+     * Returns the supported locales.
+     *
+     * @return the sets the
+     */
+    protected Set<Locale> supportedLocales() {
+        return supportedLocales;
     }
 
     /**
@@ -470,6 +531,29 @@ public abstract class PortalWeblet extends Component {
         }
         channel.respond(new ProtocolSwitchAccepted(event, "websocket"));
         event.stop();
+    }
+
+    /**
+     * Handles a change of Locale.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws InterruptedException the interrupted exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Handler(channels = PortalChannel.class)
+    public void onSetLocale(SetLocale event, PortalSession channel)
+            throws InterruptedException, IOException {
+        Session session = channel.browserSession();
+        if (session != null) {
+            Selection selection = (Selection) session.get(Selection.class);
+            if (selection != null) {
+                supportedLocales.stream()
+                    .filter(lang -> lang.equals(event.locale())).findFirst()
+                    .ifPresent(lang -> selection.prefer(lang));
+            }
+        }
+        channel.respond(new SimplePortalCommand("reload"));
     }
 
     /**

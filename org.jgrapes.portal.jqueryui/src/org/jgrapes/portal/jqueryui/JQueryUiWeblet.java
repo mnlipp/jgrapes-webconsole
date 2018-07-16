@@ -408,29 +408,6 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
 //    }
 //
 //    /**
-//     * Handles a change of Locale.
-//     *
-//     * @param event the event
-//     * @param channel the channel
-//     * @throws InterruptedException the interrupted exception
-//     * @throws IOException Signals that an I/O exception has occurred.
-//     */
-//    @Handler(channels = PortalChannel.class)
-//    public void onSetLocale(SetLocale event, PortalSession channel)
-//            throws InterruptedException, IOException {
-//        Session session = channel.browserSession();
-//        if (session != null) {
-//            Selection selection = (Selection) session.get(Selection.class);
-//            if (selection != null) {
-//                supportedLocales.stream()
-//                    .filter(lang -> lang.equals(event.locale())).findFirst()
-//                    .ifPresent(lang -> selection.prefer(lang));
-//            }
-//        }
-//        channel.respond(new SimplePortalCommand("reload"));
-//    }
-//
-//    /**
 //     * Handles a change of theme.
 //     *
 //     * @param event the event

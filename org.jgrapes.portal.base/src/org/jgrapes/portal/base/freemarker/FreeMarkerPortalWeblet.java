@@ -67,8 +67,6 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
      * Initialized with a base FreeMarker configuration.
      */
     protected Configuration freeMarkerConfig;
-    private Function<Locale, ResourceBundle> resourceBundleSupplier;
-    private Set<Locale> supportedLocales;
 
     /**
      * Instantiates a new free marker portal weblet.
@@ -124,16 +122,16 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
                     return coll.compare(o1.getLabel(), o2.getLabel());
                 }
             };
-        LanguageInfo[] languages = supportedLocales.stream()
+        LanguageInfo[] languages = supportedLocales().stream()
             .map(lang -> new LanguageInfo(lang))
             .sorted(comp).toArray(size -> new LanguageInfo[size]);
         model.put("supportedLanguages", languages);
 
         // Add localization
         final ResourceBundle additionalResources
-            = resourceBundleSupplier == null
+            = resourceBundleSupplier() == null
                 ? null
-                : resourceBundleSupplier.apply(locale);
+                : resourceBundleSupplier().apply(locale);
         final ResourceBundle baseResources = ResourceBundle.getBundle(
             getClass().getPackage().getName() + ".l10n", locale,
             ResourceBundle.Control.getNoFallbackControl(
@@ -199,49 +197,6 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         ResponseCreationSupport.sendStaticContent(event, channel,
             path -> getClass().getResource(requestPath),
             null);
-    }
-
-    /**
-     * Sets a function for obtaining a resource bundle for
-     * a given locale.
-     * 
-     * @param supplier the function
-     * @return the portal fo reasy chaining
-     */
-    public FreeMarkerPortalWeblet setResourceBundleSupplier(
-            Function<Locale, ResourceBundle> supplier) {
-        resourceBundleSupplier = supplier;
-        updateSupportedLocales();
-        return this;
-    }
-
-    private void updateSupportedLocales() {
-        supportedLocales = new HashSet<>();
-        for (Locale locale : Locale.getAvailableLocales()) {
-            if (locale.getLanguage().equals("")) {
-                continue;
-            }
-            if (resourceBundleSupplier != null) {
-                ResourceBundle bundle = resourceBundleSupplier.apply(locale);
-                if (bundle.getLocale().equals(locale)) {
-                    supportedLocales.add(locale);
-                }
-            }
-            ResourceBundle bundle = ResourceBundle.getBundle(getClass()
-                .getPackage().getName() + ".l10n", locale);
-            if (bundle.getLocale().equals(locale)) {
-                supportedLocales.add(locale);
-            }
-        }
-    }
-
-    /**
-     * Returns the supported locales.
-     *
-     * @return the sets the
-     */
-    protected Set<Locale> supportedLocales() {
-        return supportedLocales;
     }
 
 }

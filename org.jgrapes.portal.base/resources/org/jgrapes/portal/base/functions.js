@@ -492,7 +492,7 @@ var JGPortal = {};
         }
         
         // Send methods
-        
+
         /**
          * Sends a notification for changing the language to the server.
          * 
@@ -536,9 +536,13 @@ var JGPortal = {};
             if (!thePortal.isConfigured) {
                 return;
             }
-            thePortal.send("portalLayout",previewLayout, tabLayout, xtraInfo);
+            thePortal.send("portalLayout", previewLayout, tabLayout, xtraInfo);
         };
 
+        send(method, ...params) {
+            send(method, ...params);
+        };
+        
         // Utility methods.
 
         /**

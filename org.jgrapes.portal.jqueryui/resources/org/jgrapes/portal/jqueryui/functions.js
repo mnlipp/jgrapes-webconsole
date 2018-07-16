@@ -53,18 +53,18 @@ var JQUIPortal = {
           
             // Top bar
             $( "#theme-menu" ).on("click", "[data-theme-id]", function() {
-              JGPortal.sendSetTheme($(this).data("theme-id"));
+                self.send("setTheme", $(this).data("theme-id"));
               $( "#theme-menu" ).jqDropdown("hide");
             });
             
             $( "#language-menu" ).on("click", "[data-locale]", function() {
-              JGPortal.sendSetLocale($(this).data("locale"));
-              $( "#theme-menu" ).jqDropdown("hide");
+                self.sendSetLocale($(this).data("locale"));
+                $( "#theme-menu" ).jqDropdown("hide");
             });
             
             $( "#addon-menu" ).on("click", "[data-portlet-type]", function() {
-              self.sendAddPortlet($(this).data("portlet-type"));
-              $( "#theme-menu" ).jqDropdown("hide");
+                self.sendAddPortlet($(this).data("portlet-type"));
+                $( "#theme-menu" ).jqDropdown("hide");
             });
             
             // Tabs
