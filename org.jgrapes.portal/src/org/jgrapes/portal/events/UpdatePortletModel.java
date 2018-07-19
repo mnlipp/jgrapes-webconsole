@@ -44,6 +44,7 @@ import org.jgrapes.core.Event;
  * events sent from the portal page and from other components in the 
  * application to be handled in a uniform way.
  */
+@Deprecated
 public class UpdatePortletModel extends Event<Void> {
 
     private String portletId;

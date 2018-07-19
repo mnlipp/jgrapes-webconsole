@@ -31,6 +31,7 @@ import org.jgrapes.portal.RenderSupport;
  * generated during portal boot. See the description of
  * {@link AddPortletType} for details.
  */
+@Deprecated
 public class PortletResourceRequest extends ResourceRequest {
 
     private final String portletType;

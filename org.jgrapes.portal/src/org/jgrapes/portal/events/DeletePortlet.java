@@ -25,6 +25,7 @@ import java.io.Writer;
  * A notification (as defined by the JSON RPC specification) to be sent to
  * the portlet view (the browser).
  */
+@Deprecated
 public class DeletePortlet extends PortalCommand {
 
     private final String portletId;

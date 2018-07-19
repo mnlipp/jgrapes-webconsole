@@ -19,4 +19,5 @@
 /**
  * Themes packages.
  */
+@java.lang.Deprecated
 package org.jgrapes.portal.themes;

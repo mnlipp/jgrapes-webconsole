@@ -69,6 +69,7 @@ import org.jgrapes.portal.events.SimplePortalCommand;
 /**
  * Provides the portlet related part of the portal.
  */
+@Deprecated
 public class Portal extends Component {
 
     private static final Logger logger

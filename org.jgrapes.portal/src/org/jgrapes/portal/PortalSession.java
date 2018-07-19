@@ -114,6 +114,7 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * PortalSession "*" -up-> "1" Session: browser session
  * @enduml
  */
+@Deprecated
 public final class PortalSession extends DefaultSubchannel {
 
     private static Map<String, WeakReference<PortalSession>> portalSessions

@@ -27,6 +27,7 @@ import org.jgrapes.http.Session;
 /**
  * 
  */
+@Deprecated
 public final class Utils {
 
     private Utils() {

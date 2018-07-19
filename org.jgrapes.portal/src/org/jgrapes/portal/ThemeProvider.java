@@ -23,6 +23,7 @@ import java.net.URL;
 /**
  * Represents a theme provider.
  */
+@Deprecated
 public abstract class ThemeProvider {
 
     /**

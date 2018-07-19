@@ -42,6 +42,7 @@ import org.jgrapes.util.events.KeyValueStoreUpdate.Update;
 /**
  * 
  */
+@Deprecated
 public class PortalLocalBackedKVStore extends Component {
 
     private final String portalPrefix;

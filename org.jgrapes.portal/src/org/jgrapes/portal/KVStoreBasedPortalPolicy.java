@@ -104,6 +104,7 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  * 
  * @enduml
  */
+@Deprecated
 public class KVStoreBasedPortalPolicy extends Component {
 
     /**

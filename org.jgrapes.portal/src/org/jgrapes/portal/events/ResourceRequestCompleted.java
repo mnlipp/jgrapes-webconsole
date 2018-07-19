@@ -24,6 +24,7 @@ import org.jgrapes.core.CompletionEvent;
 /**
  * Indicates that a {@link ResourceRequest} event has been completed.
  */
+@Deprecated
 public class ResourceRequestCompleted
         extends CompletionEvent<ResourceRequest> {
 

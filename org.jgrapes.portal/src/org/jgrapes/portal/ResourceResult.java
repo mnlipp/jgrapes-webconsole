@@ -26,6 +26,7 @@ import org.jgrapes.portal.events.ResourceRequest;
  * The base class for all results from processing a resource
  * request.
  */
+@Deprecated
 public abstract class ResourceResult {
 
     private final ResourceRequest request;

@@ -261,6 +261,7 @@ import org.jgrapes.portal.events.RenderPortletRequestBase;
  */
 @SuppressWarnings({ "PMD.TooManyMethods",
     "PMD.EmptyMethodInAbstractClassShouldBeAbstract" })
+@Deprecated
 public abstract class AbstractPortlet extends Component {
 
     private Map<PortalSession, Set<String>> portletIdsByPortalSession;

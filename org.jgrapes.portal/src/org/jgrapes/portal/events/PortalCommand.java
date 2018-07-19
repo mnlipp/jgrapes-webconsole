@@ -32,6 +32,7 @@ import org.jgrapes.core.Event;
  * (usually with 
  * {@link org.jgrapes.portal.PortalSession#respond(org.jgrapes.core.Event)}).
  */
+@Deprecated
 public abstract class PortalCommand extends Event<Void> {
 
     /**

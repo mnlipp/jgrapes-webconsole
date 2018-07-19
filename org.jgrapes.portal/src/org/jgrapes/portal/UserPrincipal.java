@@ -23,6 +23,7 @@ import java.security.Principal;
 /**
  * A principal representing an identity established by a client.
  */
+@Deprecated
 public interface UserPrincipal extends Principal {
 
     /*

@@ -48,6 +48,7 @@ import org.jgrapes.portal.RenderSupport;
  * 
  * @enduml
  */
+@Deprecated
 public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
 
     private final String portletId;

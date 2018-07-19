@@ -22,6 +22,7 @@ package org.jgrapes.portal;
  * Thrown if a resource cannot be found.
  */
 @SuppressWarnings({ "serial", "PMD.CommentRequired" })
+@Deprecated
 public class ResourceNotFoundException extends Exception {
 
     public ResourceNotFoundException() {

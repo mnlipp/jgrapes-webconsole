@@ -19,4 +19,5 @@
 /**
  * The base theme for the portal.
  */
+@java.lang.Deprecated
 package org.jgrapes.portal.themes.base;

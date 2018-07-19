@@ -78,6 +78,7 @@ import org.jdrupes.json.JsonObject;
  * deactivate PageResourceProvider
  * @enduml
  */
+@Deprecated
 public class AddPageResources extends PortalCommand {
 
     private final List<ScriptResource> scriptResources = new ArrayList<>();

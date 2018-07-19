@@ -35,6 +35,7 @@ import org.jgrapes.portal.events.ResourceRequest;
 /**
  * Returns a {@link Runnable} that writes to an {@link OutputStream} as result.
  */
+@Deprecated
 public class ResourceByGenerator extends ResourceResult {
 
     private final Generator generator;

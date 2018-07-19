@@ -23,6 +23,7 @@ import org.jgrapes.core.ComponentFactory;
 /**
  * A factory interface for {@link PageResourceProvider} components.
  */
+@Deprecated
 public interface PageResourceProviderFactory
         extends ComponentFactory {
 }

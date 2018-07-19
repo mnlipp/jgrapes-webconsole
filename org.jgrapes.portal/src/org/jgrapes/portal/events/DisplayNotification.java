@@ -30,6 +30,7 @@ import java.util.Map;
  * The event triggers the creation of a notification widget in the
  * portal page. 
  */
+@Deprecated
 public class DisplayNotification extends PortalCommand {
 
     private String content;

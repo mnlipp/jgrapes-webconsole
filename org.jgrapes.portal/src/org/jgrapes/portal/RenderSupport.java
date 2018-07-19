@@ -27,6 +27,7 @@ import org.jgrapes.portal.events.PortletResourceRequest;
  * Provides support for creating URIs in the portal scope that
  * are forwarded to components listening on the portal channel.  
  */
+@Deprecated
 public interface RenderSupport {
 
     /**

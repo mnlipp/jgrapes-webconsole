@@ -33,6 +33,7 @@ import org.jgrapes.core.Event;
  * in response to {@link PortalReady} (see this event's description
  * for details). 
  */
+@Deprecated
 public class PortalLayoutChanged extends Event<Void> {
 
     private final List<String> previewLayout;

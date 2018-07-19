@@ -29,6 +29,7 @@ import org.jdrupes.json.JsonObject;
  * (see this event's description for details). The provided information
  * enables the portal to restore portlets to their previous positions.
  */
+@Deprecated
 public class LastPortalLayout extends PortalCommand {
 
     private final List<String> previewLayout;

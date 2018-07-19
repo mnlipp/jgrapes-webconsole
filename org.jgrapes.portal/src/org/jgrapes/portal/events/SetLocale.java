@@ -43,6 +43,7 @@ import org.jgrapes.portal.PortalWeblet;
  * 
  * @enduml
  */
+@Deprecated
 public class SetLocale extends Event<Void> {
 
     private final Locale locale;

@@ -23,6 +23,7 @@ import org.jgrapes.portal.ThemeProvider;
 /**
  * 
  */
+@Deprecated
 public class Provider extends ThemeProvider {
 
     /*

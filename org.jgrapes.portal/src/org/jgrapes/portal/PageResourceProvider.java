@@ -32,6 +32,7 @@ import org.jgrapes.portal.events.PageResourceRequest;
  * Base class for implementing components that add resources to
  * the `<HEAD>` section of the portal page.
  */
+@Deprecated
 public abstract class PageResourceProvider extends Component {
 
     /**

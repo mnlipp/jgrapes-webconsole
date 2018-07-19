@@ -29,6 +29,7 @@ import org.jgrapes.core.Components;
  * A {@link PortalCommand} created directly from the JSON RPC method
  * name and parameters.
  */
+@Deprecated
 public class SimplePortalCommand extends PortalCommand {
 
     private String method;

@@ -28,6 +28,7 @@ import org.jgrapes.core.CompletionEvent;
  * and triggering the rendering of the portlets
  * that are to be displayed in that layout.
  */
+@Deprecated
 public class PortalPrepared extends CompletionEvent<PortalReady> {
 
     /**

@@ -77,6 +77,7 @@ import org.jgrapes.portal.events.AddPageResources.ScriptResource;
  * 
  * @enduml
  */
+@Deprecated
 public class AddPortletType extends PortalCommand {
 
     private final String portletType;

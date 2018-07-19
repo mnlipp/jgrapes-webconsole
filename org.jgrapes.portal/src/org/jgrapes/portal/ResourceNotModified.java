@@ -26,6 +26,7 @@ import org.jgrapes.portal.events.ResourceRequest;
  * Indicates that a resource provider found the resource to be
  * unmodified.
  */
+@Deprecated
 public class ResourceNotModified extends ResourceResult {
 
     /**

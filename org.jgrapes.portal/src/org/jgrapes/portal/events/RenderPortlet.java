@@ -35,6 +35,7 @@ import org.jgrapes.portal.Portlet.RenderMode;
  * maintains all required information except the actual content
  * (the HTML) which must be provided by the derived classes.
  */
+@Deprecated
 public abstract class RenderPortlet extends PortalCommand {
 
     private static final Set<RenderMode> DEFAULT_SUPPORTED

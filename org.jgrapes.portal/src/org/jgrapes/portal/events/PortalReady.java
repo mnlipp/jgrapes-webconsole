@@ -31,6 +31,7 @@ import org.jgrapes.portal.RenderSupport;
  * event is generated as its {@link CompletionEvent}. All further action is 
  * triggered by the {@link PortalPrepared} event.
  */
+@Deprecated
 public class PortalReady extends Event<Void> {
 
     private final RenderSupport renderSupport;

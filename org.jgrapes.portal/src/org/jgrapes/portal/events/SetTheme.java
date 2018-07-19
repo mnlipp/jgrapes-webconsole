@@ -41,6 +41,7 @@ import org.jgrapes.portal.PortalWeblet;
  * 
  * @enduml
  */
+@Deprecated
 public class SetTheme extends Event<Void> {
 
     private final String theme;

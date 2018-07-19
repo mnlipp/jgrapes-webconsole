@@ -47,6 +47,7 @@ import org.jgrapes.portal.RenderSupport;
  * @enduml
  */
 @SuppressWarnings("PMD.DataClass")
+@Deprecated
 public class NotifyPortletModel extends Event<Void> {
 
     private final RenderSupport renderSupport;

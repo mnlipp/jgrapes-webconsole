@@ -39,6 +39,7 @@ import org.jgrapes.portal.events.JsonInput;
  * JSON message has been collected and then fires
  * the message as {@link JsonInput} event.
  */
+@Deprecated
 class WebSocketInputReader extends Thread {
 
     private final WeakReference<EventPipeline> pipelineRef;

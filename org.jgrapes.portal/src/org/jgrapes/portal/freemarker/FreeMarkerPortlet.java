@@ -62,6 +62,7 @@ import org.jgrapes.portal.events.RenderPortletRequestBase;
 /**
  * 
  */
+@Deprecated
 public abstract class FreeMarkerPortlet extends AbstractPortlet {
 
     @SuppressWarnings("PMD.VariableNamingConventions")

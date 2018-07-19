@@ -35,6 +35,7 @@ import org.jgrapes.portal.events.ResourceRequest;
 /**
  * Returns an {@link OutputStream} as result.
  */
+@Deprecated
 public class ResourceByInputStream extends ResourceResult {
 
     private final InputStream stream;

@@ -350,4 +350,5 @@
  * @enduml
  */
 @org.osgi.annotation.versioning.Version("${api_version}")
+@java.lang.Deprecated
 package org.jgrapes.portal;

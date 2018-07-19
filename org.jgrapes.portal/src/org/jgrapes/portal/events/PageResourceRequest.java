@@ -33,6 +33,7 @@ import org.jgrapes.portal.RenderSupport;
  * generated during portal boot. See the description of
  * {@link AddPageResources} for details.
  */
+@Deprecated
 public class PageResourceRequest extends ResourceRequest {
 
     /**

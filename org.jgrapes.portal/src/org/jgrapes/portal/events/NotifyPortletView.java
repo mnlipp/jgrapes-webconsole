@@ -27,6 +27,7 @@ import java.util.Arrays;
  * the portlet view (the browser).
  */
 @SuppressWarnings("PMD.DataClass")
+@Deprecated
 public class NotifyPortletView extends PortalCommand {
 
     private final String portletType;

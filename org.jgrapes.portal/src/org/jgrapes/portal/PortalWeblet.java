@@ -105,6 +105,7 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods" })
+@Deprecated
 public class PortalWeblet extends Component {
 
     private static final String PORTAL_SESSION_IDS

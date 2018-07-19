@@ -26,6 +26,7 @@ import org.jgrapes.core.Event;
 /**
  * A JSON notification from the portal view (browser) to the portal. 
  */
+@Deprecated
 public class JsonInput extends Event<Void> {
 
     private final JsonRpc request;

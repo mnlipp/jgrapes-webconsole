@@ -24,6 +24,7 @@ import org.jgrapes.portal.RenderSupport;
 /**
  * A request to delete a portlet instance.
  */
+@Deprecated
 public class DeletePortletRequest extends Event<Void> {
 
     private final RenderSupport renderSupport;

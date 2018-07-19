@@ -112,6 +112,7 @@ import org.jgrapes.portal.ResourceResult;
  * @enduml
  */
 @SuppressWarnings("PMD.DataClass")
+@Deprecated
 public class ResourceRequest extends Event<ResourceResult> {
 
     private final URI resourceUri;

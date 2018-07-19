@@ -26,6 +26,7 @@ import org.jgrapes.portal.events.ResourceRequest;
  * Indicates that a resource provider has fully processed the
  * resource request a provided a response.
  */
+@Deprecated
 public class ResourceProvided extends ResourceResult {
 
     /**

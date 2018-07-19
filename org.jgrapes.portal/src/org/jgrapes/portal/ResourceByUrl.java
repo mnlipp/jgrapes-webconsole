@@ -30,6 +30,7 @@ import org.jgrapes.portal.events.ResourceRequest;
  * checking if the resource needs to be sent and, if this is the case,
  * sending it.
  */
+@Deprecated
 public class ResourceByUrl extends ResourceResult {
     private final URL resourceUrl;
 

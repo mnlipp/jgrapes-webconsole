@@ -25,6 +25,7 @@ import org.jgrapes.core.CompletionEvent;
  * This event is the completed event for the {@link PortalPrepared}
  * event.
  */
+@Deprecated
 public class PortalConfigured extends CompletionEvent<PortalPrepared> {
 
     /**
