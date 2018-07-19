@@ -28,7 +28,9 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.StreamSupport;
 
+import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Channel;
+import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.ResourcePattern;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
@@ -36,12 +38,18 @@ import org.jgrapes.http.events.GetRequest;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.portal.base.Portal;
-import org.jgrapes.portal.base.ResourceNotFoundException;
-import org.jgrapes.portal.base.ThemeProvider;
-import org.jgrapes.portal.base.freemarker.FreeMarkerPortalWeblet;
-import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
 import org.jgrapes.portal.jqueryui.themes.base.Provider;
+import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
+import org.jgrapes.portal.base.events.JsonInput;
+import org.jgrapes.portal.base.events.SetTheme;
+import org.jgrapes.portal.base.events.SimplePortalCommand;
+import org.jgrapes.portal.base.freemarker.FreeMarkerPortalWeblet;
+import org.jgrapes.portal.base.Portal;
+import org.jgrapes.portal.base.PortalSession;
+import org.jgrapes.portal.base.ResourceNotFoundException;
+import org.jgrapes.portal.base.UserPrincipal;
+import org.jgrapes.portal.base.Utils;
+import org.jgrapes.util.events.KeyValueStoreUpdate;
 
 /**
  * Provides resources using {@link Request}/{@link Response}
@@ -159,381 +167,103 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
             path -> resUrl, null);
     }
 
-//    private void requestPageResource(GetRequest event, IOSubchannel channel,
-//            String resource) throws InterruptedException {
-//        // Send events to providers on portal's channel
-//        PageResourceRequest pageResourceRequest = new PageResourceRequest(
-//            uriFromPath(resource),
-//            event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
-//                Converters.DATE_TIME).orElse(null),
-//            event.httpRequest(), channel, renderSupport());
-//        // Make session available (associate with event, this is not
-//        // a websocket request).
-//        event.associated(Session.class).ifPresent(
-//            session -> pageResourceRequest.setAssociated(Session.class,
-//                session));
-//        event.setResult(true);
-//        event.stop();
-//        fire(pageResourceRequest, portalChannel(channel));
-//    }
-//
-//    private void requestPortletResource(GetRequest event, IOSubchannel channel,
-//            URI resource) throws InterruptedException {
-//        String resPath = resource.getPath();
-//        int sep = resPath.indexOf('/');
-//        // Send events to portlets on portal's channel
-//        PortletResourceRequest portletRequest = new PortletResourceRequest(
-//            resPath.substring(0, sep),
-//            uriFromPath(resPath.substring(sep + 1)),
-//            event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
-//                Converters.DATE_TIME).orElse(null),
-//            event.httpRequest(), channel, renderSupport());
-//        // Make session available (associate with event, this is not
-//        // a websocket request).
-//        event.associated(Session.class).ifPresent(
-//            session -> portletRequest.setAssociated(Session.class, session));
-//        event.setResult(true);
-//        event.stop();
-//        fire(portletRequest, portalChannel(channel));
-//    }
-//
-//    /**
-//     * The portal channel for getting resources. Resource providers
-//     * respond on the same event pipeline as they receive, because
-//     * handling is just a mapping to {@link ResourceRequestCompleted}.
-//     *
-//     * @param channel the channel
-//     * @return the IO subchannel
-//     */
-//    private IOSubchannel portalChannel(IOSubchannel channel) {
-//        @SuppressWarnings("unchecked")
-//        Optional<LinkedIOSubchannel> portalChannel
-//            = (Optional<LinkedIOSubchannel>) LinkedIOSubchannel
-//                .downstreamChannel(portal, channel);
-//        return portalChannel.orElseGet(
-//            () -> new PortalResourceChannel(
-//                portal, channel, activeEventPipeline()));
-//    }
-//
-//    /**
-//     * Handles the {@link ResourceRequestCompleted} event.
-//     *
-//     * @param event the event
-//     * @param channel the channel
-//     * @throws IOException Signals that an I/O exception has occurred.
-//     * @throws InterruptedException the interrupted exception
-//     */
-//    @Handler(channels = PortalChannel.class)
-//    public void onResourceRequestCompleted(
-//            ResourceRequestCompleted event, PortalResourceChannel channel)
-//            throws IOException, InterruptedException {
-//        event.stop();
-//        if (event.event().get() == null) {
-//            ResponseCreationSupport.sendResponse(event.event().httpRequest(),
-//                event.event().httpChannel(), HttpStatus.NOT_FOUND);
-//            return;
-//        }
-//        event.event().get().process();
-//    }
-//
-//    private void handleSessionRequest(
-//            GetRequest event, IOSubchannel channel, String portalSessionId)
-//            throws InterruptedException, IOException, ParseException {
-//        // Must be WebSocket request.
-//        if (!event.httpRequest().findField(
-//            HttpField.UPGRADE, Converters.STRING_LIST)
-//            .map(fld -> fld.value().containsIgnoreCase("websocket"))
-//            .orElse(false)) {
-//            return;
-//        }
-//
-//        // Can only connect to sessions that have been prepared
-//        // by loading the portal. (Prevents using a newly created
-//        // browser session from being (re-)connected to after a
-//        // long disconnect or restart and, of course, CSF).
-//        final Session browserSession = event.associated(Session.class).get();
-//        @SuppressWarnings("unchecked")
-//        Map<URI, UUID> knownIds
-//            = (Map<URI, UUID>) browserSession.computeIfAbsent(
-//                PORTAL_SESSION_IDS,
-//                newKey -> new ConcurrentHashMap<URI, UUID>());
-//        if (!UUID.fromString(portalSessionId) // NOPMD, note negation
-//            .equals(knownIds.get(portal.prefix()))) {
-//            channel.setAssociated(this, new String[2]);
-//        } else {
-//            channel.setAssociated(this, new String[] {
-//                portalSessionId,
-//                Optional.ofNullable(event.httpRequest().queryData()
-//                    .get("was")).map(vals -> vals.get(0)).orElse(null)
-//            });
-//        }
-//        channel.respond(new ProtocolSwitchAccepted(event, "websocket"));
-//        event.stop();
-//    }
-//
-////    /**
-////     * Called when the connection has been upgraded.
-////     *
-////     * @param event the event
-////     * @param wsChannel the ws channel
-////     * @throws IOException Signals that an I/O exception has occurred.
-////     */
-////    @Handler
-////    public void onUpgraded(Upgraded event, IOSubchannel wsChannel)
-////            throws IOException {
-////        Optional<String[]> passedIn
-////            = wsChannel.associated(this, String[].class);
-////        if (!passedIn.isPresent()) {
-////            return;
-////        }
-////
-////        // Check if reload required
-////        String[] portalSessionIds = passedIn.get();
-////        if (portalSessionIds[0] == null) {
-////            @SuppressWarnings("resource")
-////            CharBufferWriter out = new CharBufferWriter(wsChannel,
-////                wsChannel.responsePipeline()).suppressClose();
-////            new SimplePortalCommand("reload").toJson(out);
-////            out.close();
-////            event.stop();
-////            return;
-////        }
-////
-////        // Get portal session
-////        final Session browserSession
-////            = wsChannel.associated(Session.class).get();
-////        // Reuse old portal session if still available
-////        PortalSession portalSession = Optional.ofNullable(portalSessionIds[1])
-////            .flatMap(opsId -> PortalSession.lookup(opsId))
-////            .map(session -> session.replaceId(portalSessionIds[0]))
-////            .orElse(PortalSession.lookupOrCreate(portalSessionIds[0],
-////                portal, psNetworkTimeout))
-////            .setUpstreamChannel(wsChannel)
-////            .setSession(browserSession);
-////        wsChannel.setAssociated(PortalSession.class, portalSession);
-////        // Channel now used as JSON input
-////        wsChannel.setAssociated(this, new WebSocketInputReader(
-////            event.processedBy().get(), portalSession));
-////        // From now on, only portalSession.respond may be used to send on the
-////        // upstream channel.
-////        portalSession.upstreamChannel().responsePipeline()
-////            .restrictEventSource(portalSession.responsePipeline());
-////    }
-//
-//    /**
-//     * Handles network input (JSON data).
-//     *
-//     * @param event the event
-//     * @param wsChannel the ws channel
-//     * @throws IOException Signals that an I/O exception has occurred.
-//     */
-//    @Handler
-//    public void onInput(Input<CharBuffer> event, IOSubchannel wsChannel)
-//            throws IOException {
-//        Optional<WebSocketInputReader> optWsInputReader
-//            = wsChannel.associated(this, WebSocketInputReader.class);
-//        if (optWsInputReader.isPresent()) {
-//            optWsInputReader.get().write(event.buffer().backingBuffer());
-//        }
-//    }
-//
-////    /**
-////     * Handles the closed event from the web socket.
-////     *
-////     * @param event the event
-////     * @param wsChannel the WebSocket channel
-////     * @throws IOException Signals that an I/O exception has occurred.
-////     */
-////    @Handler
-////    public void onClosed(
-////            Closed event, IOSubchannel wsChannel) throws IOException {
-////        Optional<WebSocketInputReader> optWsInputReader
-////            = wsChannel.associated(this, WebSocketInputReader.class);
-////        if (optWsInputReader.isPresent()) {
-////            wsChannel.setAssociated(this, null);
-////            optWsInputReader.get().close();
-////        }
-////        wsChannel.associated(PortalSession.class).ifPresent(session -> {
-////            // Restore channel to normal mode, see onPortalReady
-////            session.responsePipeline().restrictEventSource(null);
-////            session.disconnected();
-////        });
-////    }
-//
-//    /**
-//     * Handles the {@link PortalReady} event.
-//     *
-//     * @param event the event
-//     * @param portalSession the portal session
-//     */
-//    @Handler(channels = PortalChannel.class)
-//    public void onPortalReady(PortalReady event, PortalSession portalSession) {
-//        String principal = Utils.userFromSession(portalSession.browserSession())
-//            .map(UserPrincipal::toString).orElse("");
-//        KeyValueStoreQuery query = new KeyValueStoreQuery(
-//            "/" + principal + "/themeProvider", portalSession);
-//        fire(query, portalSession);
-//    }
-//
-//    /**
-//     * Handles the data retrieved from storage.
-//     *
-//     * @param event the event
-//     * @param channel the channel
-//     * @throws JsonDecodeException the json decode exception
-//     */
-//    @Handler(channels = PortalChannel.class)
-//    public void onKeyValueStoreData(
-//            KeyValueStoreData event, PortalSession channel)
-//            throws JsonDecodeException {
-//        Session session = channel.browserSession();
-//        String principal = Utils.userFromSession(session)
-//            .map(UserPrincipal::toString).orElse("");
-//        if (!event.event().query().equals("/" + principal + "/themeProvider")) {
-//            return;
-//        }
-//        if (!event.data().values().iterator().hasNext()) {
-//            return;
-//        }
-//        String requestedThemeId = event.data().values().iterator().next();
-//        ThemeProvider themeProvider = Optional.ofNullable(
-//            session.get("themeProvider")).flatMap(
-//                themeId -> StreamSupport
-//                    .stream(themeLoader().spliterator(), false)
-//                    .filter(thi -> thi.themeId().equals(themeId)).findFirst())
-//            .orElse(baseTheme);
-//        if (!themeProvider.themeId().equals(requestedThemeId)) {
-//            fire(new SetTheme(requestedThemeId), channel);
-//        }
-//    }
-//
-//    /**
-//     * Handles a change of theme.
-//     *
-//     * @param event the event
-//     * @param channel the channel
-//     * @throws InterruptedException the interrupted exception
-//     * @throws IOException Signals that an I/O exception has occurred.
-//     */
-//    @Handler(channels = PortalChannel.class)
-//    public void onSetTheme(SetTheme event, PortalSession channel)
-//            throws InterruptedException, IOException {
-//        ThemeProvider themeProvider = StreamSupport
-//            .stream(themeLoader().spliterator(), false)
-//            .filter(thi -> thi.themeId().equals(event.theme())).findFirst()
-//            .orElse(baseTheme);
-//        channel.browserSession().put("themeProvider", themeProvider.themeId());
-//        channel.respond(new KeyValueStoreUpdate().update(
-//            "/" + Utils.userFromSession(channel.browserSession())
-//                .map(UserPrincipal::toString).orElse("")
-//                + "/themeProvider",
-//            themeProvider.themeId())).get();
-//        channel.respond(new SimplePortalCommand("reload"));
-//    }
-//
-//    /**
-//     * Sends a command to the portal.
-//     *
-//     * @param event the event
-//     * @param channel the channel
-//     * @throws InterruptedException the interrupted exception
-//     * @throws IOException Signals that an I/O exception has occurred.
-//     */
-//    @Handler(channels = PortalChannel.class, priority = -1000)
-//    public void onPortalCommand(
-//            PortalCommand event, PortalSession channel)
-//            throws InterruptedException, IOException {
-//        IOSubchannel upstream = channel.upstreamChannel();
-//        @SuppressWarnings("resource")
-//        CharBufferWriter out = new CharBufferWriter(upstream,
-//            upstream.responsePipeline()).suppressClose();
-//        event.toJson(out);
-//    }
-//
-//    /**
-//     * Holds the information about the selected language.
-//     */
-//    public static class LanguageInfo {
-//        private final Locale locale;
-//
-//        /**
-//         * Instantiates a new language info.
-//         *
-//         * @param locale the locale
-//         */
-//        public LanguageInfo(Locale locale) {
-//            this.locale = locale;
-//        }
-//
-//        /**
-//         * Gets the locale.
-//         *
-//         * @return the locale
-//         */
-//        public Locale getLocale() {
-//            return locale;
-//        }
-//
-//        /**
-//         * Gets the label.
-//         *
-//         * @return the label
-//         */
-//        public String getLabel() {
-//            String str = locale.getDisplayName(locale);
-//            return Character.toUpperCase(str.charAt(0)) + str.substring(1);
-//        }
-//    }
-//
-//    /**
-//     * Holds the information about a theme.
-//     */
-//    public static class ThemeInfo implements Comparable<ThemeInfo> {
-//        private final String id;
-//        private final String name;
-//
-//        /**
-//         * Instantiates a new theme info.
-//         *
-//         * @param id the id
-//         * @param name the name
-//         */
-//        public ThemeInfo(String id, String name) {
-//            super();
-//            this.id = id;
-//            this.name = name;
-//        }
-//
-//        /**
-//         * Returns the id.
-//         *
-//         * @return the id
-//         */
-//        @SuppressWarnings("PMD.ShortMethodName")
-//        public String id() {
-//            return id;
-//        }
-//
-//        /**
-//         * Returns the name.
-//         *
-//         * @return the name
-//         */
-//        public String name() {
-//            return name;
-//        }
-//
-//        /*
-//         * (non-Javadoc)
-//         * 
-//         * @see java.lang.Comparable#compareTo(java.lang.Object)
-//         */
-//        @Override
-//        public int compareTo(ThemeInfo other) {
-//            return name().compareToIgnoreCase(other.name());
-//        }
-//    }
-//
+    /**
+     * Handle JSON input.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws InterruptedException the interrupted exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Handler(channels = PortalChannel.class)
+    public void onJsonInput(JsonInput event, PortalSession channel)
+            throws InterruptedException, IOException {
+        // Send events to portlets on portal's channel
+        JsonArray params = event.request().params();
+        switch (event.request().method()) {
+        case "setTheme": {
+            fire(new SetTheme(params.asString(0)), channel);
+            break;
+        }
+        default:
+            // Ignore unknown
+            break;
+        }
+    }
+
+    /**
+     * Handles a change of theme.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws InterruptedException the interrupted exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Handler(channels = PortalChannel.class)
+    public void onSetTheme(SetTheme event, PortalSession channel)
+            throws InterruptedException, IOException {
+        ThemeProvider themeProvider = StreamSupport
+            .stream(themeLoader().spliterator(), false)
+            .filter(thi -> thi.themeId().equals(event.theme())).findFirst()
+            .orElse(baseTheme);
+        channel.browserSession().put("themeProvider", themeProvider.themeId());
+        channel.respond(new KeyValueStoreUpdate().update(
+            "/" + Utils.userFromSession(channel.browserSession())
+                .map(UserPrincipal::toString).orElse("")
+                + "/themeProvider",
+            themeProvider.themeId())).get();
+        channel.respond(new SimplePortalCommand("reload"));
+    }
+
+    /**
+     * Holds the information about a theme.
+     */
+    public static class ThemeInfo implements Comparable<ThemeInfo> {
+        private final String id;
+        private final String name;
+
+        /**
+         * Instantiates a new theme info.
+         *
+         * @param id the id
+         * @param name the name
+         */
+        public ThemeInfo(String id, String name) {
+            super();
+            this.id = id;
+            this.name = name;
+        }
+
+        /**
+         * Returns the id.
+         *
+         * @return the id
+         */
+        @SuppressWarnings("PMD.ShortMethodName")
+        public String id() {
+            return id;
+        }
+
+        /**
+         * Returns the name.
+         *
+         * @return the name
+         */
+        public String name() {
+            return name;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+        public int compareTo(ThemeInfo other) {
+            return name().compareToIgnoreCase(other.name());
+        }
+    }
+
 //    /**
 //     * Create a {@link URI} from a path. This is similar to calling
 //     * `new URI(null, null, path, null)` with the {@link URISyntaxException}

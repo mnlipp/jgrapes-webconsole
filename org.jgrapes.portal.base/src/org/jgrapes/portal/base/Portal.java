@@ -136,10 +136,6 @@ public class Portal extends Component {
                 channel);
             break;
         }
-        case "setTheme": {
-            fire(new SetTheme(params.asString(0)), channel);
-            break;
-        }
         case "notifyPortletModel": {
             fire(new NotifyPortletModel(view.renderSupport(),
                 params.asString(0), params.asString(1),

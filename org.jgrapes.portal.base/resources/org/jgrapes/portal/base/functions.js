@@ -540,7 +540,7 @@ var JGPortal = {};
         };
 
         send(method, ...params) {
-            send(method, ...params);
+            thePortal.send(method, ...params);
         };
         
         // Utility methods.

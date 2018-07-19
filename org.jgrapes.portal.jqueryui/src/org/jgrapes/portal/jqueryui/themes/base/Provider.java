@@ -18,7 +18,7 @@
 
 package org.jgrapes.portal.jqueryui.themes.base;
 
-import org.jgrapes.portal.base.ThemeProvider;
+import org.jgrapes.portal.jqueryui.ThemeProvider;
 
 /**
  * 

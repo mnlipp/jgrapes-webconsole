@@ -34,15 +34,12 @@ import java.net.URI;
 import java.text.Collator;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
@@ -197,6 +194,41 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         ResponseCreationSupport.sendStaticContent(event, channel,
             path -> getClass().getResource(requestPath),
             null);
+    }
+
+    /**
+    * Holds the information about the selected language.
+    */
+    public static class LanguageInfo {
+        private final Locale locale;
+
+        /**
+         * Instantiates a new language info.
+         *
+         * @param locale the locale
+         */
+        public LanguageInfo(Locale locale) {
+            this.locale = locale;
+        }
+
+        /**
+         * Gets the locale.
+         *
+         * @return the locale
+         */
+        public Locale getLocale() {
+            return locale;
+        }
+
+        /**
+         * Gets the label.
+         *
+         * @return the label
+         */
+        public String getLabel() {
+            String str = locale.getDisplayName(locale);
+            return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+        }
     }
 
 }

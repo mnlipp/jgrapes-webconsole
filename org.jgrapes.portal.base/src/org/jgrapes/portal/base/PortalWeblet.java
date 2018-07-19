@@ -66,8 +66,8 @@ import org.jgrapes.portal.base.events.PortalCommand;
 import org.jgrapes.portal.base.events.PortalReady;
 import org.jgrapes.portal.base.events.PortletResourceRequest;
 import org.jgrapes.portal.base.events.ResourceRequestCompleted;
-import org.jgrapes.portal.base.events.SimplePortalCommand;
 import org.jgrapes.portal.base.events.SetLocale;
+import org.jgrapes.portal.base.events.SimplePortalCommand;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 
 /**
@@ -100,7 +100,7 @@ public abstract class PortalWeblet extends Component {
      * The class used in handler annotations to represent the 
      * portal channel.
      */
-    private class PortalChannel extends ClassChannel {
+    protected class PortalChannel extends ClassChannel {
     }
 
     /**
@@ -677,90 +677,6 @@ public abstract class PortalWeblet extends Component {
         CharBufferWriter out = new CharBufferWriter(upstream,
             upstream.responsePipeline()).suppressClose();
         event.toJson(out);
-    }
-
-    /**
-     * Holds the information about the selected language.
-     */
-    public static class LanguageInfo {
-        private final Locale locale;
-
-        /**
-         * Instantiates a new language info.
-         *
-         * @param locale the locale
-         */
-        public LanguageInfo(Locale locale) {
-            this.locale = locale;
-        }
-
-        /**
-         * Gets the locale.
-         *
-         * @return the locale
-         */
-        public Locale getLocale() {
-            return locale;
-        }
-
-        /**
-         * Gets the label.
-         *
-         * @return the label
-         */
-        public String getLabel() {
-            String str = locale.getDisplayName(locale);
-            return Character.toUpperCase(str.charAt(0)) + str.substring(1);
-        }
-    }
-
-    /**
-     * Holds the information about a theme.
-     */
-    public static class ThemeInfo implements Comparable<ThemeInfo> {
-        private final String id;
-        private final String name;
-
-        /**
-         * Instantiates a new theme info.
-         *
-         * @param id the id
-         * @param name the name
-         */
-        public ThemeInfo(String id, String name) {
-            super();
-            this.id = id;
-            this.name = name;
-        }
-
-        /**
-         * Returns the id.
-         *
-         * @return the id
-         */
-        @SuppressWarnings("PMD.ShortMethodName")
-        public String id() {
-            return id;
-        }
-
-        /**
-         * Returns the name.
-         *
-         * @return the name
-         */
-        public String name() {
-            return name;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
-        @Override
-        public int compareTo(ThemeInfo other) {
-            return name().compareToIgnoreCase(other.name());
-        }
     }
 
     /**

@@ -16,9 +16,11 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.portal.base;
+package org.jgrapes.portal.jqueryui;
 
 import java.net.URL;
+
+import org.jgrapes.portal.base.ResourceNotFoundException;
 
 /**
  * Represents a theme provider.
