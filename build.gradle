@@ -85,8 +85,8 @@ gitPublish {
 }
 
 // Until https://github.com/ajoberstar/gradle-git-publish/issues/41 is fixed
-tasks.gitPublishCopy.dependsOn(":org.jgrapes.portal:javadoc")
-tasks.gitPublishCopy.dependsOn(":org.jgrapes.portal:documentationjs")
+tasks.gitPublishCopy.dependsOn(":org.jgrapes.portal.base:javadoc")
+tasks.gitPublishCopy.dependsOn(":org.jgrapes.portal.base:documentationjs")
 
 task stage {
     description = 'To be executed by travis, build and update JavaDoc.'
