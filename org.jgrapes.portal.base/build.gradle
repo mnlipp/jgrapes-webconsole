@@ -7,11 +7,6 @@ buildscript {
 	}
 }
 
-artifacts {
-	archives sourcesJar
-	archives javadocJar
-}
-
 dependencies {
 	// BndPomRepository (3.5.0) cannot handle ranges without upper limit 
 	compile 'org.jgrapes:org.jgrapes.http:[0.18.5,1.1.0)'
@@ -25,6 +20,16 @@ jar {
     into('META-INF') {
         from 'resources/META-INF'
     }
+}
+
+task javadocJar(type: Jar) {
+    from (javadoc)
+    classifier "javadoc"
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 
 apply plugin: 'com.moowork.node'
@@ -50,14 +55,17 @@ javadoc {
 	
 	classpath = files(rootProject.subprojects.collect {project ->
 		project.sourceSets.main.compileClasspath})
-	source rootProject.subprojects.findAll({project -> project.name.startsWith("org.jgrapes.")}) \
+	source rootProject.subprojects.findAll({project -> 
+        project.name.startsWith("org.jgrapes.") && project.name != "org.jgrapes.portal"}) \
 		.collect {project -> project.sourceSets.main.allJava }
 	options.addStringOption("doctitle", "JGrapes Portal ${project.version}")
 	options.addStringOption("overview", "${rootProject.rootDir}/overview.md")
 	inputs.file "${rootProject.rootDir}/overview.md"
 	options.addBooleanOption("use", true)
 	options.addBooleanOption("linksource", true)
-	options.stylesheetFile(file("${rootProject.rootDir}/misc/stylesheet.css"))
+    if (JavaVersion.current().isJava8()) {
+        options.stylesheetFile(file("${rootProject.rootDir}/misc/stylesheet.css"))
+    }
 	options.addStringOption("bottom", file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text)
 	options.links "https://docs.oracle.com/javase/8/docs/api/"
 	options.links "http://mnlipp.github.io/jgrapes/latest-release/javadoc/"

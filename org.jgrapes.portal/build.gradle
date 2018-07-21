@@ -7,15 +7,9 @@ buildscript {
 	}
 }
 
-task javadocJar(type: Jar) {
-	from (javadoc)
-	classifier "javadoc"
-}
-
-artifacts {
-	archives sourcesJar
-	archives javadocJar
-}
+ext.releaseVersion = "0.18.0"
+ext.isSnapshot = false
+version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 dependencies {
 	// BndPomRepository (3.5.0) cannot handle ranges without upper limit 
@@ -32,42 +26,8 @@ jar {
     }
 }
 
-apply plugin: 'com.moowork.node'
-
-ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
-
-task documentationjs(type: NodeTask) {
-	dependsOn(':npmInstall')
-	new File(jsDocDestDir).mkdirs()
-	script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
-	args = ["build", "--format", "html", "--output", jsDocDestDir,
-		"resources/org/jgrapes/portal/functions.js"]
-}
-
-javadoc {
-    if (!isJitPackBuild) {
-        // Does not work on jitpack
-        dependsOn documentationjs
+afterEvaluate {
+    tasks.matching { it.group == "publishing" }.all {
+        enabled = false
     }
-
-	options.tagletPath = rootProject.configurations.javadocTaglets.files as List
-	options.taglets = ["org.jdrupes.taglets.plantUml.Taglet"]
-	
-	classpath = files(rootProject.subprojects.collect {project ->
-		project.sourceSets.main.compileClasspath})
-	source rootProject.subprojects.findAll({project -> project.name.startsWith("org.jgrapes.")}) \
-		.collect {project -> project.sourceSets.main.allJava }
-	options.addStringOption("doctitle", "JGrapes Portal ${project.version}")
-	options.addStringOption("overview", "${rootProject.rootDir}/overview.md")
-	inputs.file "${rootProject.rootDir}/overview.md"
-	options.addBooleanOption("use", true)
-	options.addBooleanOption("linksource", true)
-    if (JavaVersion.current().isJava8()) {
-        options.stylesheetFile(file("${rootProject.rootDir}/misc/stylesheet.css"))
-    }
-	options.addStringOption("bottom", file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text)
-	options.links "https://docs.oracle.com/javase/8/docs/api/"
-	options.links "http://mnlipp.github.io/jgrapes/latest-release/javadoc/"
-	destinationDir = file("${rootProject.buildDir}/javadoc")
 }
-
