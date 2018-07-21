@@ -18,10 +18,11 @@
 
 package org.jgrapes.portal.demo;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -69,8 +70,11 @@ import org.osgi.framework.BundleContext;
  */
 public class HttpPortalDemo extends Component implements BundleActivator {
 
-    HttpPortalDemo app;
+    private HttpPortalDemo app;
 
+    /**
+     * Instantiates a new http portal demo.
+     */
     public HttpPortalDemo() {
         super(new ClassChannel() {
         });
@@ -97,8 +101,8 @@ public class HttpPortalDemo extends Component implements BundleActivator {
 
         // Create TLS "converter"
         KeyStore serverStore = KeyStore.getInstance("JKS");
-        try (FileInputStream kf
-            = new FileInputStream("demo-resources/localhost.jks")) {
+        try (InputStream kf
+            = Files.newInputStream(Paths.get("demo-resources/localhost.jks"))) {
             serverStore.load(kf, "nopass".toCharArray());
         }
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(
