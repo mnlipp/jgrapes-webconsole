@@ -58,7 +58,6 @@ import org.jgrapes.portal.base.events.PortalLayoutChanged;
 import org.jgrapes.portal.base.events.PortalReady;
 import org.jgrapes.portal.base.events.RenderPortletRequest;
 import org.jgrapes.portal.base.events.SetLocale;
-import org.jgrapes.portal.base.events.SetTheme;
 import org.jgrapes.portal.base.events.SimplePortalCommand;
 
 /**

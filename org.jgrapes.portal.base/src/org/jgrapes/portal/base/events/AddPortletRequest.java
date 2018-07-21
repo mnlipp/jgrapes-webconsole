@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import org.jgrapes.portal.base.RenderSupport;
 import org.jgrapes.portal.base.Portlet.RenderMode;
+import org.jgrapes.portal.base.RenderSupport;
 
 /**
  * Sent to the portal (server) if a new portlet instance of a given 

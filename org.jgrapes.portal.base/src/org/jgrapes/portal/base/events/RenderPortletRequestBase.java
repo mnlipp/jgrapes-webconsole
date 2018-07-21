@@ -19,8 +19,8 @@
 package org.jgrapes.portal.base.events;
 
 import org.jgrapes.core.Event;
-import org.jgrapes.portal.base.RenderSupport;
 import org.jgrapes.portal.base.Portlet.RenderMode;
+import org.jgrapes.portal.base.RenderSupport;
 
 /**
  * The base class for events that result in a portlet being rendered.

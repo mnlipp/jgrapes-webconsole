@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.portal.base.events;
+package org.jgrapes.portal.jqueryui.events;
 
 import org.jgrapes.core.Event;
 import org.jgrapes.portal.base.PortalWeblet;

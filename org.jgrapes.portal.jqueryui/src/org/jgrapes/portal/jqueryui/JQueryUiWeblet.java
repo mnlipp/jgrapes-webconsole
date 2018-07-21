@@ -38,17 +38,17 @@ import org.jgrapes.http.events.GetRequest;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.portal.jqueryui.themes.base.Provider;
-import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
-import org.jgrapes.portal.base.events.JsonInput;
-import org.jgrapes.portal.base.events.SetTheme;
-import org.jgrapes.portal.base.events.SimplePortalCommand;
-import org.jgrapes.portal.base.freemarker.FreeMarkerPortalWeblet;
 import org.jgrapes.portal.base.Portal;
 import org.jgrapes.portal.base.PortalSession;
 import org.jgrapes.portal.base.ResourceNotFoundException;
 import org.jgrapes.portal.base.UserPrincipal;
 import org.jgrapes.portal.base.Utils;
+import org.jgrapes.portal.base.events.JsonInput;
+import org.jgrapes.portal.base.events.SimplePortalCommand;
+import org.jgrapes.portal.base.freemarker.FreeMarkerPortalWeblet;
+import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
+import org.jgrapes.portal.jqueryui.events.SetTheme;
+import org.jgrapes.portal.jqueryui.themes.base.Provider;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 
 /**
