@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyManagementException;
@@ -60,6 +61,7 @@ import org.jgrapes.portal.base.Portal;
 import org.jgrapes.portal.base.PortalLocalBackedKVStore;
 import org.jgrapes.portal.base.PortalWeblet;
 import org.jgrapes.portal.base.PortletComponentFactory;
+import org.jgrapes.portal.bootstrap3.Bootstrap3Weblet;
 import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
 import org.jgrapes.util.PreferencesStore;
 import org.osgi.framework.BundleActivator;
@@ -132,6 +134,13 @@ public class HttpPortalDemo extends Component implements BundleActivator {
             "/doc|**", Paths.get("../../jgrapes.gh-pages/javadoc").toUri()));
         app.attach(new PostProcessor(app.channel()));
         app.attach(new WsEchoServer(app.channel()));
+
+        createJQueryUiPortal();
+        createBootstrap3Portal();
+        Components.start(app);
+    }
+
+    private void createJQueryUiPortal() throws URISyntaxException {
         PortalWeblet portalWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
                 new URI("/jqportal/")))
@@ -151,7 +160,18 @@ public class HttpPortalDemo extends Component implements BundleActivator {
         // Add all available portlets
         portal.attach(new ComponentCollector<>(
             PortletComponentFactory.class, portal));
-        Components.start(app);
+    }
+
+    private void createBootstrap3Portal() throws URISyntaxException {
+        PortalWeblet portalWeblet
+            = app.attach(new Bootstrap3Weblet(app.channel(), Channel.SELF,
+                new URI("/b3portal/")))
+                .setResourceBundleSupplier(l -> ResourceBundle.getBundle(
+                    getClass().getPackage().getName() + ".portal-l10n", l,
+                    ResourceBundle.Control.getNoFallbackControl(
+                        ResourceBundle.Control.FORMAT_DEFAULT)));
+        Portal portal = portalWeblet.portal();
+        portalWeblet.setPortalSessionInactivityTimeout(300000);
     }
 
     /*
