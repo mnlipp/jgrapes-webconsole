@@ -804,7 +804,7 @@ var JGPortal = {};
         }
 
         connectionSuspended(resume) {
-            this._renderer.connectionRestored(resume);
+            this._renderer.connectionSuspended(resume);
         }
         
         /**
