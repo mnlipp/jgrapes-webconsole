@@ -23,6 +23,7 @@
  * that are provided by the portal.
  */
 var B4UIPortal = {
+        l10n: {}
 };
 
 (function () {
@@ -33,7 +34,7 @@ var B4UIPortal = {
         
         constructor() {
             super();
-//            this._connectionLostNotification = null;
+            this._connectionLostNotification = null;
 //            this._lastPreviewLayout = [];
 //            this._lastTabsLayout = [];
 //            this._lastXtraInfo = {};
@@ -106,35 +107,47 @@ var B4UIPortal = {
         }
         
         connectionLost() {
-//            if (this._connectionLostNotification == null) {
-//                this._connectionLostNotification = 
-//                    $( "#server-connection-lost-notification" ).notification({
-//                        error: true,
-//                        icon: "alert",
-//                        destroyOnClose: false,
-//                    });
-//            } else {
-//                this._connectionLostNotification.notification( "open" );
-//            }
+            if (this._connectionLostNotification == null) {
+                this._connectionLostNotification = 
+                    this.notification(B4UIPortal.l10n.serverConnectionLost, {
+                        error: true,
+                        closeable: false,
+                    });
+            }
         }
         
         connectionRestored() {
-//            if (this._connectionLostNotification != null) {
-//                this._connectionLostNotification.notification( "close" );
-//            }
-//            $( "#server-connection-restored-notification" ).notification({
-//                autoClose: 2000,
-//            });
+            if (this._connectionLostNotification != null) {
+                this._connectionLostNotification.alert( "close" );
+            }
+            this.notification(B4UIPortal.l10n.serverConnectionRestored, {
+                type: "success",
+                autoClose: 2000,
+            });
         }
 
         connectionSuspended(resume) {
-//            $("#portal-session-suspended-dialog").dialog("option", "buttons", {
-//                Ok : function() {
-//                    $(this).dialog("close");
-//                    resume();
-//                }
-//            });
-//            $("#portal-session-suspended-dialog").dialog("open");
+            let dialog = $('<div class="modal" tabindex="-1" role="dialog">'
+                    + '<div class="modal-dialog" role="document">'
+                    + '<div class="modal-content">'
+                    + '<div class="modal-header">'
+                    + '<h5 class="modal-title">' 
+                    + B4UIPortal.l10n.sessionSuspendedTitle + '</h5>'
+                    + '</button></div>'
+                    + '<div class="modal-body">'
+                    + '<p>' + B4UIPortal.l10n.sessionSuspendedMessage + '</p>'
+                    + '</div>'
+                    + '<div class="modal-footer">'
+                    + '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+                    + B4UIPortal.l10n.ok + '</button>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>');
+            dialog.find('.modal-footer button').on('click', function() {
+                resume();
+            });
+            dialog.modal();
         }
         
         portalConfigured() {
@@ -315,7 +328,42 @@ var B4UIPortal = {
         }
         
         notification(content, options) {
-//            $(content).notification( options );
+            let notification = $('<div class="alert alert-dismissible fade show"'
+                    + ' role="alert"></div>');
+            if (('error' in options) && options.error) {
+                notification.addClass("alert-danger");
+            } else if ('type' in options) {
+                if (options.type == 'success') {
+                    notification.addClass("alert-success");
+                } else if (options.type == 'success') {
+                    notification.addClass("alert-success");
+                } else if (options.type == 'warning') {
+                    notification.addClass("alert-warning");
+                } else if (options.type == 'error') {
+                    notification.addClass("alert-danger");
+                } else {
+                    notification.addClass("alert-info");
+                }
+            } else {
+                notification.addClass("alert-info");
+            }
+            let parsed = $( "<div>" + content + "</div>");
+            if (parsed.text() == "" && parsed.children.size() > 0) {
+                parsed = parsed.children();
+            }
+            notification.append(parsed);
+            if (!('closeable' in options) || options.closeable) {
+                notification.append($('<button type="button" class="close"'
+                + ' data-dismiss="alert" aria-label="Close">'
+                + '<span aria-hidden="true">&times;</span></button>'));
+            }
+            notification.insertBefore("main");
+            if ('autoClose' in options) {
+                setTimeout(function() {
+                    notification.alert('close');
+                }, options.autoClose);
+            }
+            return notification;
         }
         
         _layoutChanged() {
@@ -381,161 +429,4 @@ var B4UIPortal = {
         }   
     }
 
-})();
-
-/**
- * A jQuery UI plugin for displaying notifications on the top of 
- * the portal page.
- * 
- * @name NotificationPlugin
- * @namespace NotificationPlugin
- */
-(function() {
-    var notificationContainer = null;
-    var notificationCounter = 0;
-    
-    $( function() {
-        let top = $( "<div></div>" );
-        notificationContainer = $( "<div class='ui-notification-container ui-front'></div>" );
-        top.append(notificationContainer);
-        $( "body" ).prepend(top);
-    });
-    
-    $.widget( "ui.notification", {
-        
-        /**
-         * <dl>
-         * <dt>error {Boolean}</dt>
-         *   <dd>Indicates that the notification is to be display as error.</dd>
-         * <dt>autoClose {integer}</dt>
-         *   <dd>If specified, closes the botification automatically after
-         *   the given number of milliseconds.</dd>
-         * <dt>destroyOnClose {Boolean}</dt>
-         *   <dd>Indicates that the widget should be destroyed if the
-         *   notification is closed.</dd>
-         * <dt>show {Object}</dt>
-         *   <dd>If and how to animate the showing of the notification
-         *   (see the <a href="https://api.jqueryui.com/jQuery.widget/#option-show">
-         *   jQuery UI</a> documentation). Defaults to: <code>
-         *   { effect: "blind", direction: "up", duration: "fast", }</code></dd>
-         * <dt>hide {Object}</dt>
-         *   <dd>If and how to animate the showing of the notification
-         *   (see the <a href="https://api.jqueryui.com/jQuery.widget/#option-hide">
-         *   jQuery UI</a> documentation). Defaults to: <code>
-         *   { effect: "blind", direction: "up", duration: "fast", }</dd>
-         * </dl>
-         * 
-         * @memberof NotificationPlugin
-         */
-        options: {
-            classes: {
-                "ui-notification": "ui-corner-all ui-widget-shadow",
-                "ui-notification-content": "ui-corner-all",
-            },
-            error: false,
-            icon: "circle-info",
-            autoOpen: true,
-            autoClose: null,
-            destroyOnClose: null,
-            show: {
-                effect: "blind",
-                direction: "up",
-                duration: "fast",
-            },
-            hide: { 
-                effect: "blind",
-                direction: "up",
-                duration: "fast",
-            },
-        },
-     
-        _create: function() {
-            let self = this;
-            this._isOpen = false;
-            if (this.options.destroyOnClose === null) {
-                this.options.destroyOnClose = this.options.autoOpen;
-            }
-            // Options are already merged and stored in this.options
-            let widget = $( "<div></div>" );
-            let notificationId = "ui-notification-" + ++notificationCounter;
-            widget.attr("id", notificationId);
-            this._addClass( widget, "ui-notification" );
-            widget.addClass( "ui-widget-content" );
-            widget.addClass( "ui-widget" );
-            if (this.options.error) {
-                widget.addClass( "ui-state-error" );
-            } else {
-                widget.addClass( "ui-state-highlight" );
-            }
-            
-            // Close button (must be first for overflow: hidden to work).
-            let button = $( "<button></button>");
-            button.addClass( "ui-notification-close" );
-            button.button({
-                icon: "ui-icon-close",
-                showLabel: false,
-            });
-            button.on ( "click", function() {
-                self.close();
-            } );
-            widget.append(button);
-            
-            // Prepend icon
-            if (this.options.icon) {
-                widget.append( $( '<span class="ui-notification-content ui-icon' +
-                        ' ui-icon-' + this.options.icon + '"></span>' ) );
-            }
-            let widgetContent = $( "<div></div>" );
-            this._addClass( widgetContent, "ui-notification-content" );
-            widget.append(widgetContent);
-            widgetContent.append( this.element.clone() );
-            widgetContent.find(":first-child").show();
-            widget.hide();
-
-            // Optional auto close
-            this._autoCloseTimer = null;
-            if (this.options.autoClose) {
-                self._autoCloseTimer = setTimeout(function() {
-                    self.close();
-                }, this.options.autoClose);
-            }
-            
-            // Add to container
-            this.notification = widget;
-            
-            // Open if desired
-            if (this.options.autoOpen) {
-                this.open();
-            }
-        },
-
-        open: function() {
-            notificationContainer.prepend( this.widget() );
-            this._isOpen = true;
-            this._show( this.widget(), this.options.show );
-        },
-        
-        widget: function() {
-            return this.notification;
-        },
-        
-        close: function() {
-            let self = this;
-            if (this._autoCloseTimer) {
-                clearTimeout(this._autoCloseTimer);
-            }
-            this._isOpen = false;
-            this._hide( this.widget(), this.options.hide, function() {
-                if (self.options.destroyOnClose) {
-                    self.destroy();
-                }
-            } );
-        },
-        
-        _destroy: function() {
-            if (this._isOpen) {
-                this.close();
-            }
-        }
-    });
 })();

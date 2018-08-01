@@ -62,7 +62,13 @@
   <script>
   $( function() {
     JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, 
-            ${portalSessionInactivityTimeout?c}, new B4UIPortal.Renderer());    
+            ${portalSessionInactivityTimeout?c}, new B4UIPortal.Renderer());
+    
+    B4UIPortal.l10n.ok = "${_("OK")}";
+    B4UIPortal.l10n.sessionSuspendedTitle = "${_("Portal Session Suspended")}";
+    B4UIPortal.l10n.sessionSuspendedMessage = "${_("portalSessionSuspendedMessage")}";
+    B4UIPortal.l10n.serverConnectionLost = "${_("serverConnectionLostMessage")}";
+    B4UIPortal.l10n.serverConnectionRestored = "${_("serverConnectionRestoredMessage")}";
   } );
   </script>
   
