@@ -171,8 +171,8 @@ var B4UIPortal = {
                 this._setModeIcons(container, modes);
                 
                 // Put into grid item wrapper
-                let gridItem = $('<div class="grid-stack-item" data-gs-x="0" data-gs-y="0"'
-                        + ' data-gs-width="4" data-gs-height="3">'
+                let gridItem = $('<div class="grid-stack-item" data-gs-auto-position="1"'
+                        + ' data-gs-width="4" data-gs-height="4">'
                         + '</div>');
                 container.addClass('grid-stack-item-content');
                 gridItem.append(container);
@@ -261,8 +261,7 @@ var B4UIPortal = {
                 this._tabCounter += 1;
                 let id = "portlet-tab-" + this._tabCounter;
                 let tabs = $( "#portalTabs" );
-                let tab = $('<li class="nav-item"'
-                        + ' data-portlet-tab="' + id + '">'
+                let tab = $('<li class="nav-item" data-portlet-tab="' + id + '">'
                         + '<a class="nav-link" role="tab"'
                         + ' id="' + id + '-tab" data-toggle="tab"' 
                         + ' href="#' + id + '-pane"'
@@ -272,7 +271,7 @@ var B4UIPortal = {
                         + '</li>');
                 tabs.append(tab);
 
-                container.addClass("tab-pane fade");
+                container.addClass("tab-pane fade m-3");
                 container.attr("id", id + "-pane");
                 container.attr("data-portlet-tab-tab", id + "-tab");
                 container.attr("role", "tabpanel");
