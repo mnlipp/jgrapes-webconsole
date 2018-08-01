@@ -117,11 +117,12 @@ var JGPortal = {};
                     self._initialConnect = false;
                 } else {
                     // Make sure to get any lost updates
-                    self._portal.findPreviewIds().forEach(function(id) {
-                        this._portal.sendRenderPortlet(id, "Preview", false);
+                    let renderer = self._portal._renderer; 
+                    renderer.findPreviewIds().forEach(function(id) {
+                        renderer.sendRenderPortlet(id, "Preview", false);
                     });
-                    self._portal.findViewIds().forEach(function(id) {
-                        this._portal.sendRenderPortlet(id, "View", false);
+                    renderer.findViewIds().forEach(function(id) {
+                        renderer.sendRenderPortlet(id, "View", false);
                     });
                 }
                 self._refreshTimer = setInterval(function() {
