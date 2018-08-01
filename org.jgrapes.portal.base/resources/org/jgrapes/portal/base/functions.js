@@ -117,10 +117,10 @@ var JGPortal = {};
                     self._initialConnect = false;
                 } else {
                     // Make sure to get any lost updates
-                    this._portal.findPreviewIds().forEach(function(id) {
+                    self._portal.findPreviewIds().forEach(function(id) {
                         this._portal.sendRenderPortlet(id, "Preview", false);
                     });
-                    this._portal.findViewIds().forEach(function(id) {
+                    self._portal.findViewIds().forEach(function(id) {
                         this._portal.sendRenderPortlet(id, "View", false);
                     });
                 }
