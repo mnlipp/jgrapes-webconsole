@@ -161,8 +161,11 @@ var B4UIPortal = {
         }
 
         updatePortletPreview(isNew, container, modes, content, foreground) {
-            // Container is "<div class="portlet portlet-preview data-portlet-id='...'"></div>"
+            // Container is:
+            //     <div class='portlet portlet-preview' data-portlet-id='...' 
+            //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></div>"
             let self = this;
+            let newContent = $(content);
             if (isNew) {
                 container.addClass('card');
                 container.append('<h6 class="card-header portlet-preview-header">'
@@ -174,6 +177,14 @@ var B4UIPortal = {
                 let gridItem = $('<div class="grid-stack-item" data-gs-auto-position="1"'
                         + ' data-gs-width="4" data-gs-height="4">'
                         + '</div>');
+                let gridHint = newContent.attr("data-portlet-grid-columns");
+                if (gridHint) {
+                    gridItem.attr("data-gs-width", gridHint);
+                }
+                gridHint = newContent.attr("data-portlet-grid-rows");
+                if (gridHint) {
+                    gridItem.attr("data-gs-height", gridHint);
+                }
                 container.addClass('grid-stack-item-content');
                 gridItem.append(container);
                 
@@ -183,7 +194,6 @@ var B4UIPortal = {
                 
                 this._layoutChanged();
             }
-            let newContent = $(content);
             let portletTitle = container.find(".portlet-preview-title");
             portletTitle.text(newContent.attr("data-portlet-title"));
             let previewContent = container.find(".portlet-preview-content");
