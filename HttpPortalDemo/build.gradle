@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
 
-    compile project(':org.jgrapes.portal.bootstrap3')
+    compile project(':org.jgrapes.portal.bootstrap4')
     
     compile project(':org.jgrapes.portal.jqueryui')
     compile 'org.jgrapes:org.jgrapes.portal.jqueryui.themes.blacktie:0.18.0'

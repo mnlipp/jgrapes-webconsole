@@ -61,7 +61,7 @@ import org.jgrapes.portal.base.Portal;
 import org.jgrapes.portal.base.PortalLocalBackedKVStore;
 import org.jgrapes.portal.base.PortalWeblet;
 import org.jgrapes.portal.base.PortletComponentFactory;
-import org.jgrapes.portal.bootstrap3.Bootstrap3Weblet;
+import org.jgrapes.portal.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
 import org.jgrapes.util.PreferencesStore;
 import org.osgi.framework.BundleActivator;
@@ -136,7 +136,7 @@ public class HttpPortalDemo extends Component implements BundleActivator {
         app.attach(new WsEchoServer(app.channel()));
 
         createJQueryUiPortal();
-        createBootstrap3Portal();
+        createBootstrap4Portal();
         Components.start(app);
     }
 
@@ -162,16 +162,26 @@ public class HttpPortalDemo extends Component implements BundleActivator {
             PortletComponentFactory.class, portal));
     }
 
-    private void createBootstrap3Portal() throws URISyntaxException {
+    private void createBootstrap4Portal() throws URISyntaxException {
         PortalWeblet portalWeblet
-            = app.attach(new Bootstrap3Weblet(app.channel(), Channel.SELF,
-                new URI("/b3portal/")))
+            = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
+                new URI("/b4portal/")))
                 .setResourceBundleSupplier(l -> ResourceBundle.getBundle(
                     getClass().getPackage().getName() + ".portal-l10n", l,
                     ResourceBundle.Control.getNoFallbackControl(
                         ResourceBundle.Control.FORMAT_DEFAULT)));
         Portal portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
+        portal.attach(new PortalLocalBackedKVStore(
+            portal, portalWeblet.prefix().getPath()));
+        portal.attach(new KVStoreBasedPortalPolicy(portal));
+        portal.attach(new NewPortalSessionPolicy(portal));
+        // Add all available page resource providers
+        portal.attach(new ComponentCollector<>(
+            PageResourceProviderFactory.class, portal));
+        // Add all available portlets
+        portal.attach(new ComponentCollector<>(
+            PortletComponentFactory.class, portal));
     }
 
     /*

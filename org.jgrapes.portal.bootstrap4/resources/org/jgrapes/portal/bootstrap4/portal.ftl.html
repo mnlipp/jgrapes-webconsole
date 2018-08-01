@@ -1,0 +1,134 @@
+<!doctype html>
+
+<html lang="${locale.toLanguageTag()}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Portal -->
+  <link rel="icon" href="${renderSupport.portalResource('favicon.ico')}">
+  <title>${_("portalTitle")}</title>
+
+  <!-- CSS -->
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+    href="${renderSupport.portalResource('lib/fontawesome-free-5.2.0-web/css/all' + minifiedExtension + '.css')}" />
+  <!-- Bootstrap 4 -->
+  <link rel="stylesheet"
+    href="${renderSupport.portalResource('lib/bootstrap-4.1.2/css/bootstrap' + minifiedExtension + '.css')}">
+  <!-- Gridstack -->
+  <link rel="stylesheet"
+    href="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack' + minifiedExtension + '.css')}" />
+  <!-- More... -->
+
+  <!-- Scripts(s) -->
+  <!-- JQuery etc. -->
+  <script
+    src="${renderSupport.portalBaseResource('lib/jquery/jquery-3.3.1' + minifiedExtension + '.js')}"></script>
+  <script
+    src="${renderSupport.portalBaseResource('lib/moment-js-2.19.1/moment-with-locales' + minifiedExtension + '.js')}"></script>
+  <script
+    src="${renderSupport.portalResource('lib/popper-1.14.3/popper' + minifiedExtension + '.js')}"></script>
+  <!-- Bootstrap 4 -->
+  <script src="${renderSupport.portalResource('lib/bootstrap-4.1.2/js/bootstrap' + minifiedExtension + '.js')}"></script>
+  <!-- Gridstack and prerequisites Lodash and JQueryUI () -->
+  <script
+    src="${renderSupport.portalResource('lib/lodash-4.17.4' + minifiedExtension + '.js')}"></script>
+  <script
+    src="${renderSupport.portalResource('lib/jquery-ui-1.12.1/jquery-ui' + minifiedExtension + '.js')}"></script>
+  <script
+    src="${renderSupport.portalResource('lib/jquery.ui.touch-punch' + minifiedExtension + '.js')}"></script>
+  <script
+    src="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack' + minifiedExtension + '.js')}"></script>
+  <script
+    src="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack.jQueryUI' + minifiedExtension + '.js')}"></script>
+  <!-- More... -->
+
+  <script type="text/javascript">
+  $(function () {
+      var options = {
+          cellHeight: 80,
+          verticalMargin: 10,
+          handle: '.card-header'
+      };
+      $('.grid-stack').gridstack(options);
+  });
+  </script>
+
+  <!-- Portal -->
+  <script src="${renderSupport.portalBaseResource('functions' + minifiedExtension + '.js')}"></script>
+  <script src="${renderSupport.portalResource('functions' + minifiedExtension + '.js')}"></script>
+  <script>
+  $( function() {
+    JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, 
+            ${portalSessionInactivityTimeout?c}, new B4UIPortal.Renderer());    
+  } );
+  </script>
+  
+  <style>
+    .nav-tabs .nav-item :not(.active) span {
+    display: none;
+  </style>
+
+</head>
+
+<body id="page-top" class="index">
+
+  <!-- Top navigation -->
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">${_("portalTitle")}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+      data-target="#portalNavbarContent"
+      aria-controls="portalNavbarContent" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="portalNavbarContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active dropdown"><a
+          class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+          role="button" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false"><span class="fa fa-puzzle-piece"></span></a>
+          <div class="dropdown-menu dropdown-menu-right"
+            id="portalNavbarPortletList"
+            aria-labelledby="navbarDropdown">
+          </div></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="m-2" role="main">
+
+  <ul class="nav nav-tabs" id="portalTabs" role="tablist">
+    <li class="nav-item"><a class="nav-link active"
+      id="portalOverviewTab" data-toggle="tab"
+      href="#portalOverviewPane" role="tab" aria-controls="home"
+      aria-selected="true">Overview</a></li>
+  </ul>
+
+  <div class="tab-content mt-3" id="portalTabPanes">
+    <div class="tab-pane fade show active" id="portalOverviewPane"
+      role="tabpanel" aria-labelledby="portalOverviewTab">
+      <div class="grid-stack" id="portalPreviews">
+      </div>
+    </div>
+  </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center">
+    <div class="footer-below">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">Copyright &copy; Michael N. Lipp
+            2018</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
