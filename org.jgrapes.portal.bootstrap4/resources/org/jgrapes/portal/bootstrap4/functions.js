@@ -87,12 +87,6 @@ var B4UIPortal = {
               self._layoutChanged();
             });
 
-//            // Dialogs
-//            $( "#portal-session-suspended-dialog" ).dialog({
-//                autoOpen: false,
-//                modal: true,
-//            });
-//
 //            //
 //            // Portlet Grid
 //            //
@@ -138,7 +132,7 @@ var B4UIPortal = {
                     + '<p>' + B4UIPortal.l10n.sessionSuspendedMessage + '</p>'
                     + '</div>'
                     + '<div class="modal-footer">'
-                    + '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+                    + '<button type="button" class="btn btn-primary" data-dismiss="modal">'
                     + B4UIPortal.l10n.ok + '</button>'
                     + '</div>'
                     + '</div>'
@@ -234,14 +228,16 @@ var B4UIPortal = {
             let self = this;
             let portletHeader = portlet.find( ".portlet-preview-header" );
             portletHeader.find( ".portlet-preview-icon" ).remove();
-//            if (modes.includes("Edit")) {
-//                portletHeader.prepend( "<span class='ui-icon ui-icon-wrench portlet-edit'></span>");
-//                portletHeader.find(".portlet-edit").on( "click", function() {
-//                    let icon = $( this );
-//                    let portletId = icon.closest( ".portlet" ).attr("data-portlet-id");
-//                    self.sendRenderPortlet(portletId, "Edit", true);
-//                });
-//            }
+            if (modes.includes("Edit")) {
+                portletHeader.prepend( "<a href='#' class='" + 
+                        "float-right mr-2 portlet-preview-icon portlet-edit" +
+                        " fa fa-wrench' role='button'></a>");
+                portletHeader.find(".portlet-edit").on( "click", function() {
+                    let icon = $( this );
+                    let portletId = icon.closest( ".portlet" ).attr("data-portlet-id");
+                    self.sendRenderPortlet(portletId, "Edit", true);
+                });
+            }
             if (modes.includes("DeleteablePreview")) {
                 portletHeader.prepend( "<a href='#' class='" + 
                         "float-right mr-2 portlet-preview-icon portlet-delete" +
@@ -278,6 +274,7 @@ var B4UIPortal = {
             // Container is "<div class="portlet portlet-view data-portlet-id='...'"></div>"
 
             let newContent = $(content);
+            this._styleSemantics(newContent);
             if (!isNew) {
                 container.children().detach();
                 container.append(newContent);
@@ -285,7 +282,8 @@ var B4UIPortal = {
                 this._tabCounter += 1;
                 let id = "portlet-tab-" + this._tabCounter;
                 let tabs = $( "#portalTabs" );
-                let tab = $('<li class="nav-item" data-portlet-tab="' + id + '">'
+                let tab = $('<li class="nav-item" data-portlet-tab="' + id + '"'
+                        + ' data-portlet-id="' + container.attr("data-portlet-id") + '">'
                         + '<a class="nav-link" role="tab"'
                         + ' id="' + id + '-tab" data-toggle="tab"' 
                         + ' href="#' + id + '-pane"'
@@ -300,7 +298,6 @@ var B4UIPortal = {
                 container.attr("data-portlet-tab-tab", id + "-tab");
                 container.attr("role", "tabpanel");
                 container.attr("aria-labelledby", id + "-tab");
-                this._styleSemantics(newContent);
                 container.append(newContent);
                 let tabPanes = $( "#portalTabPanes" );
                 tabPanes.append( container );
@@ -406,17 +403,22 @@ var B4UIPortal = {
          * @param {string} portletId the portlet id
          * @param {string} title the new title
          */
-        updatePortletViewTitle(portletId, title) {
-//            let tabs = $( "#portlet-tabs" ).tabs();
-//            let portlet = tabs.find("> div[data-portlet-id='" + portletId + "']" );
-//            if (portlet.length === 0) {
-//                return;
-//            }
-//            portlet.find("[data-portlet-title]").attr("data-portlet-title", title);
-//            let tabId = portlet.attr("id");
-//            let portletTab = tabs.find("a[href='#" + tabId + "']");
-//            portletTab.empty();
-//            portletTab.append(title);
+        updatePortletTitle(portletId, title) {
+            let preview = $("#portalPreviews .portlet-preview[data-portlet-id='"
+                    + portletId + "'");
+            if (preview.length > 0) {
+                let titleNode = preview.find(".portlet-preview-title");
+                titleNode.empty();
+                titleNode.append(title);
+            }
+            let view = $("#portalTabs .nav-item[data-portlet-id='" + portletId + "']");
+            if (view.length > 0) {
+                let titleNode = view.find(".nav-link");
+                let close = titleNode.find(".portlet-tab-close").detach();
+                titleNode.empty();
+                titleNode.append(title);
+                titleNode.append(close);
+            }
         }
       
         /**
@@ -426,23 +428,37 @@ var B4UIPortal = {
          * @param {string[]} modes the modes
          */
         updatePortletModes(portletId, modes) {
-//            let portlet = this.findPortletPreview(portletId);
-//            if (!portlet) {
-//                return;
-//            }
-//            this._setModeIcons(portlet, modes);
+            let portlet = this.findPortletPreview(portletId);
+            if (!portlet) {
+                return;
+            }
+            this._setModeIcons(portlet, modes);
         }
         
         showEditDialog(container, modes, content) {
-//            let dialogContent = $(content);
-//            container.append(dialogContent);
-//            container.dialog({
-//                modal: true,
-//                width: "auto",
-//                close: function( event, ui ) {
-//                    dialogContent.trigger("JGrapes.dialogClosed", [ container ]);
-//                }
-//            });
+            let dialogContent = $(content);
+            container.append(dialogContent);
+            let dialog = $('<div class="modal" tabindex="-1" role="dialog">'
+                    + '<div class="modal-dialog modal-lg" role="document">'
+                    + '<div class="modal-content">'
+                    + '<div class="modal-header">'
+                    + '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+                    + '<span aria-hidden="true">&times;</span>'
+                    + '</button></div>'
+                    + '<div class="modal-body">'
+                    + '</div>'
+                    + '<div class="modal-footer">'
+                    + '<button type="button" class="btn btn-primary" data-dismiss="modal">'
+                    + B4UIPortal.l10n.ok + '</button>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>');
+            dialog.find(".modal-body").append($(container));
+            dialog.find(".btn-primary").on('click', function() {
+                dialogContent.trigger("JGrapes.editDialog.apply", [ container ]);
+            });
+            dialog.modal();
         }   
     }
 

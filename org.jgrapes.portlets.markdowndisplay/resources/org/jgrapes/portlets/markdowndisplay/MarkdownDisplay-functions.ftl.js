@@ -40,20 +40,17 @@ var orgJGrapesPortletsMarkdownDisplay = {
                 let portlet = JGPortal.renderer.findPortletPreview(portletId);
                 if (portlet) {
                     JGPortal.renderer.updatePortletModes(portletId, params[3]);
-                    let headerText = portlet.find(".portlet-header-text");
-                    headerText.empty();
-                    headerText.append(params[0]);
                     let content = portlet.find(".jgrapes-markdownportlet-content");
                     content.empty();
                     content.append(mdProc.render(params[1]));
                 }
                 portlet = JGPortal.renderer.findPortletView(portletId);
                 if (portlet) {
-                    JGPortal.renderer.updatePortletViewTitle(portletId, params[0]);
                     let content = portlet.find(".jgrapes-markdownportlet-content");
                     content.empty();
                     content.append(mdProc.render(params[2]));
                 }
+                JGPortal.renderer.updatePortletTitle(portletId, params[0]);
             });
 
     function debounce (f) {
@@ -90,7 +87,7 @@ var orgJGrapesPortletsMarkdownDisplay = {
         viewSource.on("keyup", function() { debounce(updateView); });
         
         // Close action
-        content.on("JGrapes.dialogClosed", function(event, portlet) {
+        content.on("JGrapes.editDialog.apply", function(event, portlet) {
             let portletId = portlet.attr("data-portlet-id");
             JGPortal.notifyPortletModel(portletId, "update", titleSource.val(),
                     previewSource.val(), viewSource.val());

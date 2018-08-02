@@ -5,45 +5,43 @@
 
     <fieldset>
       <legend>${_("Title")}</legend>
-
-      <input type="text" value="${portlet.title}" class="jgrapes-portlets-mdp-title-input text ui-widget-content ui-corner-all">      
+      
+      <input type="text" value="${portlet.title}" class="jgrapes-portlets-mdp-title-input">
     </fieldset>
 
     <fieldset>
       <legend>${_("Preview Text")}</legend>
 
-      <div class="jgrapes-portlets-mdp-preview-preview-widget jgrapes-widget ui-widget ui-widget-content ui-helper-clearfix">
-        <div class="ui-widget-header jgrapes-widget-header ui-cornet-all">
-          ${_("Preview")}
+      <div class="jgrapes-portlets-mdp-preview">
+        <div class="jgrapes-portlets-mdp-preview-input-widget">
+          <div class="jgrapes-widget-header">${_("Markdown
+            Source")}</div>
+          <textarea class="jgrapes-portlets-mdp-preview-input">${portlet.previewContent}</textarea>
         </div>
-        <div class="jgrapes-portlets-mdp-preview-preview jgrapes-widget-content ui-widget-content">
+
+        <div class="jgrapes-portlets-mdp-preview-preview-widget">
+          <div class="">${_("Preview")}</div>
+          <div class="jgrapes-portlets-mdp-preview-preview"></div>
         </div>
       </div>
-  
-      <div class="jgrapes-portlets-mdp-preview-input-widget jgrapes-widget ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">
-        <div class="jgrapes-widget-header ui-widget-header ui-corner-all">
-          ${_("Markdown Source")}
-        </div>
-        <textarea class="jgrapes-portlets-mdp-preview-input jgrapes-widget-content ui-widget-content">${portlet.previewContent}</textarea>
-      </div>
-  
+
     </fieldset>
 
     <fieldset>
       <legend>${_("View Text")}</legend>
 
-      <div class="jgrapes-portlets-mdp-view-input-widget jgrapes-widget ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">
-        <div class="jgrapes-widget-header ui-widget-header ui-corner-all">
+      <div class="jgrapes-portlets-mdp-view-input-widget">
+        <div class="jgrapes-widget-header">
           ${_("Markdown Source")}
         </div>
-        <textarea class="jgrapes-portlets-mdp-view-input jgrapes-widget-content ui-widget-content">${portlet.viewContent}</textarea>
+        <textarea class="jgrapes-portlets-mdp-view-input">${portlet.viewContent}</textarea>
       </div>
   
-      <div class="jgrapes-portlets-mdp-view-preview-widget jgrapes-widget ui-widget ui-widget-content ui-helper-clearfix">
-        <div class="ui-widget-header jgrapes-widget-header ui-cornet-all">
+      <div class="jgrapes-portlets-mdp-view-preview-widget">
+        <div class="">
           ${_("Preview")}
         </div>
-        <div class="jgrapes-portlets-mdp-view-preview jgrapes-widget-content ui-widget-content">
+        <div class="jgrapes-portlets-mdp-view-preview">
         </div>
       </div>
   

@@ -328,17 +328,22 @@ var JQUIPortal = {
          * @param {string} portletId the portlet id
          * @param {string} title the new title
          */
-        updatePortletViewTitle(portletId, title) {
+        updatePortletTitle(portletId, title) {
             let tabs = $( "#portlet-tabs" ).tabs();
-            let portlet = tabs.find("> div[data-portlet-id='" + portletId + "']" );
-            if (portlet.length === 0) {
-                return;
+            let portletView = tabs.find("> .portlet-view[data-portlet-id='" + portletId + "']" );
+            if (portletView.length > 0) {
+                portletView.find("[data-portlet-title]").attr("data-portlet-title", title);
+                let tabId = portletView.attr("id");
+                let portletTab = tabs.find("a[href='#" + tabId + "']");
+                portletTab.empty();
+                portletTab.append(title);
             }
-            portlet.find("[data-portlet-title]").attr("data-portlet-title", title);
-            let tabId = portlet.attr("id");
-            let portletTab = tabs.find("a[href='#" + tabId + "']");
-            portletTab.empty();
-            portletTab.append(title);
+            let portletPreview = this.findPortletPreview(portletId);
+            if (portletPreview) {
+                let headerText = $(portletPreview).find(".portlet-header-text");
+                headerText.empty();
+                headerText.append(title);
+            }
         }
       
         /**
@@ -362,7 +367,7 @@ var JQUIPortal = {
                 modal: true,
                 width: "auto",
                 close: function( event, ui ) {
-                    dialogContent.trigger("JGrapes.dialogClosed", [ container ]);
+                    dialogContent.trigger("JGrapes.editDialog.apply", [ container ]);
                 }
             });
         }   

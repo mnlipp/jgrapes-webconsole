@@ -470,7 +470,7 @@ var JGPortal = {};
          * @param {string} portletId the portlet id
          * @param {string} title the new title
          */
-        updatePortletViewTitle(portletId, title) {
+        updatePortletTitle(portletId, title) {
             log.warn("Not implemented!");
         }
 
