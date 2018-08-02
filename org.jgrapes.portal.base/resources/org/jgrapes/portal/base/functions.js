@@ -394,13 +394,13 @@ var JGPortal = {};
             for (let index in cssUris) {
                 let uri = cssUris[index];
                 if ($("head > link[href='" + uri + "']").length === 0) {
-                    $("head link[href$='/portal.css']:last").after("<link rel='stylesheet' href='" + uri + "'>");
+                    $("head link[rel='stylesheet']:last").after("<link rel='stylesheet' href='" + uri + "'>");
                 }
             }
             if (cssSource) {
                 let style = $("style");
                 style.text(cssSource);
-                $("head link[href$='/portal.css']:last").after(style);
+                $("head link[rel='stylesheet']:last").after(style);
             }
             // Don't use jquery, https://stackoverflow.com/questions/610995/cant-append-script-element
             for (let index in scriptResources) {
