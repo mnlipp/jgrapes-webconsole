@@ -188,7 +188,7 @@ var B4UIPortal = {
                 
                 // Put into grid item wrapper
                 let gridItem = $('<div class="grid-stack-item" data-gs-auto-position="1"'
-                        + ' data-gs-width="4" data-gs-height="4">'
+                        + ' data-gs-width="4" data-gs-height="4" role="gridcell">'
                         + '</div>');
                 let gridHint = newContent.attr("data-portlet-grid-columns");
                 if (gridHint) {
@@ -210,6 +210,7 @@ var B4UIPortal = {
             let portletTitle = container.find(".portlet-preview-title");
             portletTitle.text(newContent.attr("data-portlet-title"));
             let previewContent = container.find(".portlet-preview-content");
+            this._styleSemantics(newContent);
             previewContent.empty();
             previewContent.append(newContent);
             if (foreground) {
@@ -299,6 +300,7 @@ var B4UIPortal = {
                 container.attr("data-portlet-tab-tab", id + "-tab");
                 container.attr("role", "tabpanel");
                 container.attr("aria-labelledby", id + "-tab");
+                this._styleSemantics(newContent);
                 container.append(newContent);
                 let tabPanes = $( "#portalTabPanes" );
                 tabPanes.append( container );
@@ -307,6 +309,21 @@ var B4UIPortal = {
             if (foreground) {
                 this._activatePortletView(container);
             }
+        }
+        
+        _styleSemantics(content) {
+            let toBeStyled = content.find("[data-style-semantics]")
+                .addBack("[data-style-semantics]");
+            toBeStyled.each(function() {
+               let subtree = $(this);
+               subtree.find("*").addBack().each(function() {
+                   let node = $(this);
+                   let tagName = node.prop("tagName");
+                   if (tagName == "BUTTON" && !node.hasClass("btn")) {
+                       node.addClass("btn btn-primary")
+                   }
+               })
+            });
         }
         
         portletRemoved(containers) {
@@ -368,7 +385,7 @@ var B4UIPortal = {
         
         _layoutChanged() {
             let previewLayout = [];
-            $("#portalOverviewPane").find("div.portlet[data-portlet-id]")
+            $("#portalOverviewPane").find(".portlet-preview[data-portlet-id]")
                 .each(function() {
                       previewLayout.push($(this).attr("data-portlet-id"));
                 });

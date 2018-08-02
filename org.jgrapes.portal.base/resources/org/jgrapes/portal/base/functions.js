@@ -659,8 +659,8 @@ var JGPortal = {};
             this._renderer = null;
             this._webSocket = new PortalWebSocket(this);
             this._portletFunctionRegistry = {};
-            this._previewTemplate = $('<div class="portlet portlet-preview"></div>');
-            this._viewTemplate = $( '<div class="portlet portlet-view"></div>');
+            this._previewTemplate = $('<section class="portlet portlet-preview"></section>');
+            this._viewTemplate = $( '<article class="portlet portlet-view"></article>');
             this._editTemplate = $( '<div class="portlet portlet-edit"></div>');
             this._resourceManager = new ResourceManager(this);
             this._webSocket.addMessageHandler('addPageResources', 

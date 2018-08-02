@@ -305,7 +305,7 @@ var JQUIPortal = {
         _layoutChanged() {
             let previewLayout = [];
             $(".overview-panel").find(".preview-area")
-                  .find("div.portlet[data-portlet-id]").each(function() {
+                  .find(".portlet-preview[data-portlet-id]").each(function() {
                       previewLayout.push($(this).attr("data-portlet-id"));
                   });
             let tabsLayout = [];
