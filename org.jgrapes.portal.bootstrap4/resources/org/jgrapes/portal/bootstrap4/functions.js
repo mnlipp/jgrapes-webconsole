@@ -261,6 +261,7 @@ var B4UIPortal = {
                         + '<a class="nav-link" role="tab"'
                         + ' id="' + id + '-tab" data-toggle="tab"' 
                         + ' href="#' + id + '-pane"'
+                        + ' alt="' + B4UIPortal.l10n.close + '"'
                         + '>' + newContent.attr("data-portlet-title")
                         + '<span class="fa fa-times ml-2 text-primary portlet-tab-close"></span>'
                         + '</a>'
@@ -432,7 +433,8 @@ var B4UIPortal = {
                     + '<div class="modal-dialog modal-lg" role="document">'
                     + '<div class="modal-content">'
                     + '<div class="modal-header">'
-                    + '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+                    + '<button type="button" class="close" data-dismiss="modal"'
+                    + ' alt="' + B4UIPortal.l10n.close + '">'
                     + '<span aria-hidden="true">&times;</span>'
                     + '</button></div>'
                     + '<div class="modal-body">'
