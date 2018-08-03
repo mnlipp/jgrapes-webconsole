@@ -1,0 +1,37 @@
+#notification-area {
+	width: 90%;
+	position: fixed;
+	top: 0;
+	left: 50%;
+    margin-top: 1rem;
+	margin-left: -45%;
+	margin-right: -45%;
+	z-index: 9999;
+}
+
+#loader-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	
+}
+
+#loader-overlay div {
+	border: 2vmin solid #f7f7f7;
+    border-top: 2vmin solid #007bff;
+    border-radius: 50%;
+    width: 25vmin;
+    height: 25vmin;
+    animation: spin 2s linear infinite;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25vh;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

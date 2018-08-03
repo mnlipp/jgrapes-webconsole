@@ -45,39 +45,15 @@ var B4UIPortal = {
         
         init() {
             let self = this;
-//            log.debug("Locking screen");
-//            $("body").faLoading({
-//                icon: "fa-circle-o-notch",
-//                spin: true,
-//                text: false
-//            });
-          
-//            // Top bar
-//            $( "#theme-menu" ).on("click", "[data-theme-id]", function() {
-//                self.send("setTheme", $(this).data("theme-id"));
-//              $( "#theme-menu" ).jqDropdown("hide");
-//            });
-//            
+            log.debug("Locking screen");
+            
 //            $( "#language-menu" ).on("click", "[data-locale]", function() {
 //                self.sendSetLocale($(this).data("locale"));
 //                $( "#theme-menu" ).jqDropdown("hide");
 //            });
 //            
-//            $( "#addon-menu" ).on("click", "[data-portlet-type]", function() {
-//                self.sendAddPortlet($(this).data("portlet-type"));
-//                $( "#theme-menu" ).jqDropdown("hide");
-//            });
-//            
             // Tabs
             var tabs = $( "#portalTabs" );
-            // Work around https://github.com/twbs/bootstrap/issues/27006
-//            tabs.on("shown.bs.tab", function(event) {
-//                let shown = $(event.target);
-//                if (!shown.hasClass("nav-link")) {
-//                    shown.removeClass("active show");
-//                    shown.closest(".nav-link").addClass("active show");
-//                }
-//            });
 
             // Close icon: removing the tab on click
             tabs.on("click", ".portlet-tab-close", function() {
@@ -87,17 +63,6 @@ var B4UIPortal = {
               self._layoutChanged();
             });
 
-//            //
-//            // Portlet Grid
-//            //
-//            
-//            // Prepare columns
-//            $( ".preview-area" ).sortable({
-//              handle: ".portlet-header",
-//              cancel: ".portlet-toggle",
-//              placeholder: "portlet-placeholder ui-corner-all",
-//              stop: function( event, ui ) { self._layoutChanged(); }
-//            });
         }
         
         connectionLost() {
@@ -146,8 +111,8 @@ var B4UIPortal = {
         
         portalConfigured() {
             this._layoutChanged();
-//            log.debug("Unlocking screen");
-//            $("body").faLoading('remove');
+            log.debug("Unlocking screen");
+            $("#loader-overlay").fadeOut("slow");
         }
         
         addPortletType(portletType, displayName, isInstantiable) {
@@ -371,7 +336,7 @@ var B4UIPortal = {
                 + ' data-dismiss="alert" aria-label="Close">'
                 + '<span aria-hidden="true">&times;</span></button>'));
             }
-            notification.insertBefore("main");
+            $("#notification-area").prepend(notification);
             if ('autoClose' in options) {
                 setTimeout(function() {
                     notification.alert('close');

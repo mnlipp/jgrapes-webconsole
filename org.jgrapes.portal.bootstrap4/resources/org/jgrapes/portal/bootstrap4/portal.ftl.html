@@ -2,50 +2,54 @@
 
 <html lang="${locale.toLanguageTag()}">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Portal -->
-  <link rel="icon" href="${renderSupport.portalResource('favicon.ico')}">
-  <title>${_("portalTitle")}</title>
+<!-- Portal -->
+<link rel="icon" href="${renderSupport.portalResource('favicon.ico')}">
+<title>${_("portalTitle")}</title>
 
-  <!-- CSS -->
-  <!-- Font Awesome -->
-  <link rel="stylesheet"
-    href="${renderSupport.portalResource('lib/fontawesome-free-5.2.0-web/css/all' + minifiedExtension + '.css')}" />
-  <!-- Bootstrap 4 -->
-  <link rel="stylesheet"
-    href="${renderSupport.portalResource('lib/bootstrap-4.1.2/css/bootstrap' + minifiedExtension + '.css')}">
-  <!-- Gridstack -->
-  <link rel="stylesheet"
-    href="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack' + minifiedExtension + '.css')}" />
-  <!-- More... -->
+<!-- CSS -->
+<!-- Font Awesome -->
+<link rel="stylesheet"
+  href="${renderSupport.portalResource('lib/fontawesome-free-5.2.0-web/css/all' + minifiedExtension + '.css')}" />
+<!-- Bootstrap 4 -->
+<link rel="stylesheet"
+  href="${renderSupport.portalResource('lib/bootstrap-4.1.2/css/bootstrap' + minifiedExtension + '.css')}">
+<!-- Gridstack -->
+<link rel="stylesheet"
+  href="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack' + minifiedExtension + '.css')}" />
+<!-- Portal -->
+<link rel="stylesheet"
+  href="${renderSupport.portalResource('portal' + minifiedExtension + '.css')}" />
+<!-- More... -->
 
-  <!-- Scripts(s) -->
-  <!-- JQuery etc. -->
-  <script
-    src="${renderSupport.portalBaseResource('lib/jquery/jquery-3.3.1' + minifiedExtension + '.js')}"></script>
-  <script
-    src="${renderSupport.portalBaseResource('lib/moment-js-2.19.1/moment-with-locales' + minifiedExtension + '.js')}"></script>
-  <script
-    src="${renderSupport.portalResource('lib/popper-1.14.3/popper' + minifiedExtension + '.js')}"></script>
-  <!-- Bootstrap 4 -->
-  <script src="${renderSupport.portalResource('lib/bootstrap-4.1.2/js/bootstrap' + minifiedExtension + '.js')}"></script>
-  <!-- Gridstack and prerequisites Lodash and JQueryUI () -->
-  <script
-    src="${renderSupport.portalResource('lib/lodash-4.17.4' + minifiedExtension + '.js')}"></script>
-  <script
-    src="${renderSupport.portalResource('lib/jquery-ui-1.12.1/jquery-ui' + minifiedExtension + '.js')}"></script>
-  <script
-    src="${renderSupport.portalResource('lib/jquery.ui.touch-punch' + minifiedExtension + '.js')}"></script>
-  <script
-    src="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack' + minifiedExtension + '.js')}"></script>
-  <script
-    src="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack.jQueryUI' + minifiedExtension + '.js')}"></script>
-  <!-- More... -->
+<!-- Scripts(s) -->
+<!-- JQuery etc. -->
+<script
+  src="${renderSupport.portalBaseResource('lib/jquery/jquery-3.3.1' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalBaseResource('lib/moment-js-2.19.1/moment-with-locales' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalResource('lib/popper-1.14.3/popper' + minifiedExtension + '.js')}"></script>
+<!-- Bootstrap 4 -->
+<script
+  src="${renderSupport.portalResource('lib/bootstrap-4.1.2/js/bootstrap' + minifiedExtension + '.js')}"></script>
+<!-- Gridstack and prerequisites Lodash and JQueryUI () -->
+<script
+  src="${renderSupport.portalResource('lib/lodash-4.17.4' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalResource('lib/jquery-ui-1.12.1/jquery-ui' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalResource('lib/jquery.ui.touch-punch' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack.jQueryUI' + minifiedExtension + '.js')}"></script>
+<!-- More... -->
 
-  <script type="text/javascript">
+<script type="text/javascript">
   $(function () {
       var options = {
           cellHeight: 80,
@@ -56,10 +60,12 @@
   });
   </script>
 
-  <!-- Portal -->
-  <script src="${renderSupport.portalBaseResource('functions' + minifiedExtension + '.js')}"></script>
-  <script src="${renderSupport.portalResource('functions' + minifiedExtension + '.js')}"></script>
-  <script>
+<!-- Portal -->
+<script
+  src="${renderSupport.portalBaseResource('functions' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalResource('functions' + minifiedExtension + '.js')}"></script>
+<script>
   $( function() {
     JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, 
             ${portalSessionInactivityTimeout?c}, new B4UIPortal.Renderer());
@@ -71,11 +77,12 @@
     B4UIPortal.l10n.serverConnectionRestored = "${_("serverConnectionRestoredMessage")}";
   } );
   </script>
-  
-  <style>
-    .nav-tabs .nav-item :not(.active) span {
-    display: none;
-  </style>
+
+<style>
+.nav-tabs .nav-item :not (.active ) span {
+	display: none;
+}
+</style>
 
 </head>
 
@@ -112,17 +119,17 @@
   <main class="m-2" role="main">
 
   <ul class="nav nav-tabs" id="portalTabs" role="tablist">
-    <li class="nav-item"><a class="nav-link active"
-      id="portalOverviewTab" data-toggle="tab"
-      href="#portalOverviewPane" role="tab" aria-controls="home"
-      aria-selected="true">${_("Overview")}</a></li>
+    <li class="nav-item">
+      <a class="nav-link active" id="portalOverviewTab"
+        data-toggle="tab" href="#portalOverviewPane" role="tab"
+        aria-controls="home" aria-selected="true">${_("Overview")}</a>
+    </li>
   </ul>
 
   <div class="tab-content mt-3" id="portalTabPanes">
     <section class="tab-pane fade show active" id="portalOverviewPane"
       role="tabpanel" aria-labelledby="portalOverviewTab">
-      <div class="grid-stack" id="portalPreviews" role="grid">
-      </div>
+      <div class="grid-stack" id="portalPreviews" role="grid"></div>
     </section>
   </div>
 
@@ -140,5 +147,14 @@
     </div>
   </footer>
 
+  <!-- Notification area -->
+  <div id="notification-area">
+  </div>
+
+  <!-- Loader -->
+  <div id="loader-overlay">
+    <div></div>
+  </div> 
+ 
 </body>
 </html>
