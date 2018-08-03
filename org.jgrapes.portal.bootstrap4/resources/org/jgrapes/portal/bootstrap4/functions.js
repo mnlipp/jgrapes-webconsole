@@ -35,11 +35,9 @@ var B4UIPortal = {
         constructor() {
             super();
             this._connectionLostNotification = null;
-//            this._lastPreviewLayout = [];
-//            this._lastTabsLayout = [];
-//            this._lastXtraInfo = {};
-//            this._tabTemplate = "<li><a href='@{href}'>@{label}</a> " +
-//                "<span class='ui-icon ui-icon-close' role='presentation'>Remove Tab</span></li>";
+            this._lastPreviewLayout = [];
+            this._lastTabsLayout = [];
+            this._lastXtraInfo = {};
             this._tabCounter = 1;
         }
         
@@ -51,7 +49,19 @@ var B4UIPortal = {
 //                self.sendSetLocale($(this).data("locale"));
 //                $( "#theme-menu" ).jqDropdown("hide");
 //            });
-//            
+
+            
+            // Grid
+            var options = {
+                    cellHeight: 80,
+                    verticalMargin: 10,
+                    handle: '.card-header'
+            };
+            $('#portalPreviews').gridstack(options);
+            $('#portalPreviews').on('change', function(event, items) {
+                self._layoutChanged();
+            });
+            
             // Tabs
             var tabs = $( "#portalTabs" );
 
@@ -127,9 +137,9 @@ var B4UIPortal = {
         }
         
         lastPortalLayout(previewLayout, tabsLayout, xtraInfo) {
-//            this._lastPreviewLayout = previewLayout;
-//            this._lastTabsLayout = tabsLayout;
-//            this._lastXtraInfo = xtraInfo;
+            this._lastPreviewLayout = previewLayout;
+            this._lastTabsLayout = tabsLayout;
+            this._lastXtraInfo = xtraInfo;
         }
 
         updatePortletPreview(isNew, container, modes, content, foreground) {
@@ -144,25 +154,36 @@ var B4UIPortal = {
                         + '<span class="portlet-preview-title"></span></h6>'
                         + '<div class="card-body portlet-preview-content"></div>');
                 this._setModeIcons(container, modes);
-                
+
+                // Get grid info
+                let portletId = container.attr("data-portlet-id");
+                let x = null;
+                let y = null;
+                let width = 4;
+                let height = 4;
+                if (portletId in this._lastXtraInfo) {
+                    x = this._lastXtraInfo[portletId][0];
+                    y = this._lastXtraInfo[portletId][1];
+                    width = this._lastXtraInfo[portletId][2];
+                    height = this._lastXtraInfo[portletId][3];
+                } else {
+                    if (newContent.attr("data-portlet-grid-columns")) {
+                        width = newContent.attr("data-portlet-grid-columns");
+                    }
+                    if (newContent.attr("data-portlet-grid-rows")) {
+                        height = newContent.attr("data-portlet-grid-rows");
+                    }
+                }
+
                 // Put into grid item wrapper
                 let gridItem = $('<div class="grid-stack-item" data-gs-auto-position="1"'
-                        + ' data-gs-width="4" data-gs-height="4" role="gridcell">'
-                        + '</div>');
-                let gridHint = newContent.attr("data-portlet-grid-columns");
-                if (gridHint) {
-                    gridItem.attr("data-gs-width", gridHint);
-                }
-                gridHint = newContent.attr("data-portlet-grid-rows");
-                if (gridHint) {
-                    gridItem.attr("data-gs-height", gridHint);
-                }
+                        + ' role="gridcell"></div>');
                 container.addClass('grid-stack-item-content');
                 gridItem.append(container);
                 
                 // Finally add to grid
                 let grid = $('#portalPreviews').data('gridstack');
-                grid.addWidget(gridItem);
+                grid.addWidget(gridItem, x, y, width, height, x == null || y == null);
                 
                 this._layoutChanged();
             }
@@ -176,18 +197,6 @@ var B4UIPortal = {
                 $("#portalOverviewTab").tab('show');
             }
         }
-        
-//        _isBefore(items, x, limit) {
-//            for (let i = 0; i < items.length; i++) {
-//                if (items[i] === x) {
-//                    return true;
-//                }
-//                if (items[i] === limit) {
-//                    return false;
-//                }
-//            }
-//            return false;
-//        }
         
         _setModeIcons(portlet, modes) {
             let self = this;
@@ -346,19 +355,34 @@ var B4UIPortal = {
         }
         
         _layoutChanged() {
+            let gridItems = [];
+            $("#portalPreviews .grid-stack-item").each(function() {
+               gridItems.push($(this)); 
+            });
+            gridItems.sort(function(a, b) {
+                if (a.attr("data-gs-y") != b.attr("data-gs-y")) {
+                    return b.attr("data-gs-y") - a.attr("data-gs-y");
+                }
+                return b.attr("data-gs-x") - a.attr("data-gs-x");
+            });
+            
             let previewLayout = [];
-            $("#portalOverviewPane").find(".portlet-preview[data-portlet-id]")
-                .each(function() {
-                      previewLayout.push($(this).attr("data-portlet-id"));
-                });
+            let xtraInfo = {};
+            gridItems.forEach(function(item) {
+                let portletId = item.find(".portlet-preview[data-portlet-id]")
+                    .attr("data-portlet-id");
+                previewLayout.push(portletId);
+                xtraInfo[portletId] = [item.attr("data-gs-x"), 
+                    item.attr("data-gs-y"), item.attr("data-gs-width"),
+                    item.attr("data-gs-height")]
+            });
+
             let tabsLayout = [];
             $("#portalTabPanes > [data-portlet-id]").each(function(index) {
                 let portletId = $(this).attr("data-portlet-id");
                 tabsLayout.push(portletId);
             });
-                
-            let xtraInfo = {};
-
+            
             this.sendLayout(previewLayout, tabsLayout, xtraInfo);
         };
         
