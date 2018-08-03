@@ -1,3 +1,9 @@
+/* Activate close only on selected. */
+#portalTabs .nav-link:not(.active) span {
+    display: none;
+}
+
+/* Pop-up notifications. */
 #notification-area {
 	width: 90%;
 	position: fixed;
@@ -9,6 +15,7 @@
 	z-index: 9999;
 }
 
+/* Spin while loading. */
 #loader-overlay {
 	position: fixed;
 	top: 0;
