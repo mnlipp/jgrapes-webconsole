@@ -86,13 +86,28 @@
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active dropdown">
             <a class="nav-link dropdown-toggle" href="#"
-              id="navbarDropdown" role="button" data-toggle="dropdown"
+              id="navbarPortletDropdown" role="button" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
               <span class="fa fa-puzzle-piece"></span>
             </a>
             <div class="dropdown-menu dropdown-menu-right"
               id="portalNavbarPortletList"
-              aria-labelledby="navbarDropdown"></div>
+              aria-labelledby="navbarPortletDropdown"></div>
+          </li>
+          <li class="nav-item active dropdown" id="portalLanguageMenu">
+            <a class="nav-link dropdown-toggle" href="#"
+              id="navbarLanguageDropdown" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <span class="fa fa-language"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right"
+              id="portalNavbarLanguageList"
+              aria-labelledby="navbarLanguageDropdown">
+                <#list supportedLanguages as l>
+                  <button class="dropdown-item" type="button" 
+                    data-locale="${l.locale.toLanguageTag()}">${l.label}</button>
+                </#list>
+            </div>
           </li>
         </ul>
       </div>

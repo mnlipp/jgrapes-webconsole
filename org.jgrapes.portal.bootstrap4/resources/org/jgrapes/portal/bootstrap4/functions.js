@@ -45,11 +45,9 @@ var B4UIPortal = {
             let self = this;
             log.debug("Locking screen");
             
-//            $( "#language-menu" ).on("click", "[data-locale]", function() {
-//                self.sendSetLocale($(this).data("locale"));
-//                $( "#theme-menu" ).jqDropdown("hide");
-//            });
-
+            $( "#portalLanguageMenu" ).on("click", "[data-locale]", function() {
+                self.sendSetLocale($(this).data("locale"));
+            });
             
             // Grid
             var options = {
