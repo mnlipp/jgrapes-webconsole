@@ -23,7 +23,6 @@
  * that are provided by the portal.
  */
 var B4UIPortal = {
-        l10n: {}
 };
 
 (function () {
@@ -32,8 +31,9 @@ var B4UIPortal = {
     
     B4UIPortal.Renderer = class extends JGPortal.Renderer {
         
-        constructor() {
+        constructor(l10n) {
             super();
+            B4UIPortal.l10n = l10n;
             this._connectionLostNotification = null;
             this._lastPreviewLayout = [];
             this._lastTabsLayout = [];
