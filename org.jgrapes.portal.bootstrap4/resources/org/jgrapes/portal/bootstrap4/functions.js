@@ -148,8 +148,8 @@ var B4UIPortal = {
             let newContent = $(content);
             if (isNew) {
                 container.addClass('card');
-                container.append('<h6 class="card-header portlet-preview-header">'
-                        + '<span class="portlet-preview-title"></span></h6>'
+                container.append('<h6 class="card-header portlet-preview-header '
+                        + 'd-flex flex-row"></h6>'
                         + '<div class="card-body portlet-preview-content"></div>');
                 this._setModeIcons(container, modes);
 
@@ -185,8 +185,10 @@ var B4UIPortal = {
                 
                 this._layoutChanged();
             }
-            let portletTitle = container.find(".portlet-preview-title");
-            portletTitle.text(newContent.attr("data-portlet-title"));
+            let portletHeader = container.find(".portlet-preview-header");
+            portletHeader.find(".portlet-preview-title").remove();
+            portletHeader.prepend("<span class='portlet-preview-title flex-fill'>" 
+                    + newContent.attr("data-portlet-title") + "</span>");
             let previewContent = container.find(".portlet-preview-content");
             this._styleSemantics(newContent);
             previewContent.empty();
@@ -201,9 +203,9 @@ var B4UIPortal = {
             let portletHeader = portlet.find( ".portlet-preview-header" );
             portletHeader.find( ".portlet-preview-icon" ).remove();
             if (modes.includes("Edit")) {
-                portletHeader.prepend( "<a href='#' class='" + 
-                        "float-right mr-2 portlet-preview-icon portlet-edit" +
-                        " fa fa-wrench' role='button'></a>");
+                portletHeader.append( "<a href='#' class='" + 
+                        "portlet-preview-icon portlet-edit" +
+                        " ml-2 fa fa-wrench' role='button'></a>");
                 portletHeader.find(".portlet-edit").on( "click", function() {
                     let icon = $( this );
                     let portletId = icon.closest( ".portlet" ).attr("data-portlet-id");
@@ -211,9 +213,9 @@ var B4UIPortal = {
                 });
             }
             if (modes.includes("DeleteablePreview")) {
-                portletHeader.prepend( "<a href='#' class='" + 
-                        "float-right mr-2 portlet-preview-icon portlet-delete" +
-                        " fa fa-times' role='button'></a>");
+                portletHeader.append( "<a href='#' class='" + 
+                        "portlet-preview-icon portlet-delete" +
+                        " ml-2 fa fa-times' role='button'></a>");
                 portletHeader.find(".portlet-delete").on( "click", function() {
                     let icon = $( this );
                     let portletId = icon.closest( ".portlet" ).attr("data-portlet-id");
@@ -221,9 +223,9 @@ var B4UIPortal = {
                 });
             }
             if (modes.includes("View")) {
-                portletHeader.prepend( "<a href='#' class='" + 
-                        "float-right portlet-preview-icon portlet-expand" +
-                        " fa fa-expand' role='button'></a>");
+                portletHeader.append( "<a href='#' class='" + 
+                        "portlet-preview-icon portlet-expand" +
+                        " ml-2 fa fa-expand' role='button'></a>");
                 portletHeader.find(".portlet-expand").on( "click", function() {
                     let icon = $( this );
                     let portletId = icon.closest( ".portlet" ).attr("data-portlet-id");
@@ -394,9 +396,10 @@ var B4UIPortal = {
             let preview = $("#portalPreviews .portlet-preview[data-portlet-id='"
                     + portletId + "'");
             if (preview.length > 0) {
-                let titleNode = preview.find(".portlet-preview-title");
-                titleNode.empty();
-                titleNode.append(title);
+                let portletHeader = preview.find(".portlet-preview-header");
+                portletHeader.find(".portlet-preview-title").remove();
+                portletHeader.prepend("<span class='portlet-preview-title flex-fill'>" 
+                        + title + "</span>");
             }
             let view = $("#portalTabs .nav-item[data-portlet-id='" + portletId + "']");
             if (view.length > 0) {
