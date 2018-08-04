@@ -49,7 +49,8 @@ public class DatatablesProviderFactory implements PageResourceProviderFactory {
     @Override
     public Optional<ComponentType> create(
             Channel componentChannel, Map<Object, Object> properties) {
-        return Optional.of(new DatatablesProvider(componentChannel));
+        return Optional
+            .of(new DatatablesProvider(componentChannel, properties));
     }
 
 }

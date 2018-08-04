@@ -80,6 +80,11 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
         baseTheme = new Provider();
     }
 
+    @Override
+    public String styling() {
+        return "jqueryui";
+    }
+
     /**
      * The service loader must be created lazily, else the OSGi
      * service mediator doesn't work properly.

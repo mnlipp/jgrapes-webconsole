@@ -24,14 +24,18 @@ import freemarker.template.TemplateNotFoundException;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.jgrapes.core.Channel;
+import org.jgrapes.core.ComponentType;
+import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.base.PageResourceProvider;
 import org.jgrapes.portal.base.PortalSession;
+import org.jgrapes.portal.base.PortalWeblet;
 import org.jgrapes.portal.base.events.AddPageResources;
 import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.base.events.PortalReady;
@@ -41,6 +45,8 @@ import org.jgrapes.portal.base.events.PortalReady;
  */
 public class DatatablesProvider extends PageResourceProvider {
 
+    private Map<Object, Object> properties;
+
     /**
      * Creates a new component with its channel set to the given 
      * channel.
@@ -49,8 +55,10 @@ public class DatatablesProvider extends PageResourceProvider {
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
-    public DatatablesProvider(Channel componentChannel) {
+    public DatatablesProvider(Channel componentChannel,
+            Map<Object, Object> properties) {
         super(componentChannel);
+        this.properties = properties;
     }
 
     /**
@@ -62,7 +70,7 @@ public class DatatablesProvider extends PageResourceProvider {
      */
     protected ResourceBundle resourceBundle(Locale locale) {
         return ResourceBundle.getBundle(
-            getClass().getPackage().getName() + ".datatables.l10n", locale,
+            getClass().getPackage().getName() + ".l10n", locale,
             getClass().getClassLoader(),
             ResourceBundle.Control.getNoFallbackControl(
                 ResourceBundle.Control.FORMAT_DEFAULT));
@@ -92,22 +100,46 @@ public class DatatablesProvider extends PageResourceProvider {
             + "} );\n"
             + "$.extend( $.fn.dataTable.defaults.oLanguage, "
             + bundle.getString("DataTablesL10n") + ");\n";
-        portalSession.respond(new AddPageResources()
-            .addCss(event.renderSupport().pageResource(
-                "datatables/datatables" + minExt + ".css"))
-            .addCss(event.renderSupport().pageResource(
-                "datatables/overrides-1.0.0.css"))
+        String baseDir = "datatables-20180804";
+        String styling = (String) properties.get("styling");
+        if (styling == null) {
+            // Try to get the information from the portal (weblet)
+            ComponentType portal = this;
+            while (true) {
+                portal = Components.manager(portal).parent();
+                if (portal == null) {
+                    break;
+                }
+                if (portal instanceof PortalWeblet) {
+                    styling = ((PortalWeblet) portal).styling();
+                    break;
+                }
+            }
+        }
+        if (styling == null
+            || (!styling.equals("jqueryui") && !styling.equals("bootstrap4"))) {
+            styling = "standard";
+        }
+        AddPageResources addRequest = new AddPageResources()
+            .addCss(event.renderSupport()
+                .pageResource(baseDir + "/" + styling + "/datatables"
+                    + minExt + ".css"))
             .addScriptResource(new ScriptResource()
                 .setProvides(new String[] { "datatables.net" })
                 .setScriptUri(event.renderSupport().pageResource(
-                    "datatables/datatables" + minExt + ".js")))
+                    baseDir + "/" + styling + "/datatables" + minExt + ".js")))
             .addScriptResource(new ScriptResource()
                 .setRequires(new String[] { "datatables.net" })
                 .setScriptUri(event.renderSupport().pageResource(
-                    "datatables/processing().js")))
+                    baseDir + "/processing().js")))
             .addScriptResource(new ScriptResource()
                 .setRequires(new String[] { "datatables.net" })
-                .setScriptSource(script)));
+                .setScriptSource(script));
+        if (styling.equals("jqueryui")) {
+            addRequest.addCss(event.renderSupport().pageResource(
+                "jqueryui-overrides-1.0.0.css"));
+        }
+        portalSession.respond(addRequest);
     }
 
 }

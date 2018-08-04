@@ -48,4 +48,9 @@ public class Bootstrap4Weblet extends FreeMarkerPortalWeblet {
         super(webletChannel, portalChannel, portalPrefix);
     }
 
+    @Override
+    public String styling() {
+        return "bootstrap4";
+    }
+
 }
