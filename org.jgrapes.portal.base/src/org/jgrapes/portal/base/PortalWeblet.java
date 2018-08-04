@@ -145,6 +145,16 @@ public abstract class PortalWeblet extends Component {
     }
 
     /**
+     * Returns the name of the styling library or toolkit used by the portal.
+     * This value is informative. It may, however, be used by
+     * a {@link PageResourceProviderFactory} to influence the creation
+     * of {@link PageResourceProvider}s.
+     *
+     * @return the value
+     */
+    public abstract String styling();
+
+    /**
      * @return the prefix
      */
     public URI prefix() {

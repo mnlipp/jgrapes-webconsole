@@ -29,6 +29,7 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
+import org.jgrapes.core.TypedIdKey;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.base.events.JsonInput;
 import org.jgrapes.portal.base.events.PortalReady;
@@ -73,23 +74,25 @@ public class PortalLocalBackedKVStore extends Component {
     public void onPortalReady(PortalReady event, PortalSession channel)
             throws InterruptedException {
         // Put there by onJsonInput if retrieval has been done.
-        if (channel.browserSession().containsKey(
-            PortalLocalBackedKVStore.class)) {
+        if (TypedIdKey.get(channel.browserSession(), Store.class, portalPrefix)
+            .isPresent()) {
+            // Already have store, nothing to do
             return;
         }
         // Remove portal ready event from queue and save it
         event.cancel(false);
-        channel.setAssociated(PortalLocalBackedKVStore.class, event);
+        channel.setAssociated(this, event);
         String keyStart = portalPrefix
             + PortalLocalBackedKVStore.class.getName() + "/";
         channel.respond(new SimplePortalCommand("retrieveLocalData", keyStart));
     }
 
-    @SuppressWarnings({ "unchecked", "PMD.AvoidDuplicateLiterals" })
-    private Map<String, String> getStore(PortalSession channel) {
-        return (Map<String, String>) channel
-            .browserSession().computeIfAbsent(
-                PortalLocalBackedKVStore.class, newKey -> new HashMap<>());
+    private Store getStore(PortalSession channel) {
+        return TypedIdKey
+            .get(channel.browserSession(), Store.class, portalPrefix)
+            .orElseGet(
+                () -> TypedIdKey.put(channel.browserSession(), portalPrefix,
+                    new Store()));
     }
 
     /**
@@ -106,14 +109,14 @@ public class PortalLocalBackedKVStore extends Component {
         if (!event.request().method().equals("retrievedLocalData")) {
             return;
         }
-        final String keyStart = portalPrefix
-            + PortalLocalBackedKVStore.class.getName() + "/";
-        channel.associated(PortalLocalBackedKVStore.class, PortalReady.class)
+        channel.associated(this, PortalReady.class)
             .ifPresent(origEvent -> {
-                // We have intercepted the portal ready, fill out store.
+                // We have intercepted the portal ready event, fill store.
                 // Having a store now also shows that retrieval has been done.
+                final String keyStart = portalPrefix
+                    + PortalLocalBackedKVStore.class.getName() + "/";
                 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-                Map<String, String> data = getStore(channel);
+                Store data = getStore(channel);
                 JsonArray params = (JsonArray) event.request().params();
                 params.asArray(0).arrayStream().forEach(item -> {
                     String key = item.asString(0);
@@ -122,7 +125,8 @@ public class PortalLocalBackedKVStore extends Component {
                             keyStart.length() - 1), item.asString(1));
                     }
                 });
-                channel.setAssociated(PortalLocalBackedKVStore.class, null);
+                // Don't intercept again
+                channel.setAssociated(this, null);
                 // Let others process the portal ready event
                 fire(new PortalReady(origEvent.renderSupport()), channel);
             });
@@ -142,7 +146,7 @@ public class PortalLocalBackedKVStore extends Component {
     public void onKeyValueStoreUpdate(
             KeyValueStoreUpdate event, PortalSession channel)
             throws InterruptedException, IOException {
-        Map<String, String> data = getStore(channel);
+        Store data = getStore(channel);
         List<String[]> actions = new ArrayList<>();
         String keyStart = portalPrefix
             + PortalLocalBackedKVStore.class.getName();
@@ -176,23 +180,25 @@ public class PortalLocalBackedKVStore extends Component {
             KeyValueStoreQuery event, PortalSession channel) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<String, String> result = new HashMap<>();
-        @SuppressWarnings("unchecked")
-        Map<String, String> data = (Map<String, String>) channel
-            .browserSession().get(PortalLocalBackedKVStore.class);
-        if (data != null) {
-            if (!event.query().endsWith("/")) {
-                // Single value
-                if (data.containsKey(event.query())) {
-                    result.put(event.query(), data.get(event.query()));
-                }
-            } else {
-                for (Map.Entry<String, String> e : data.entrySet()) {
-                    if (e.getKey().startsWith(event.query())) {
-                        result.put(e.getKey(), e.getValue());
+        TypedIdKey.get(channel.browserSession(), Store.class, portalPrefix)
+            .ifPresent(data -> {
+                if (!event.query().endsWith("/")) {
+                    // Single value
+                    if (data.containsKey(event.query())) {
+                        result.put(event.query(), data.get(event.query()));
+                    }
+                } else {
+                    for (Map.Entry<String, String> e : data.entrySet()) {
+                        if (e.getKey().startsWith(event.query())) {
+                            result.put(e.getKey(), e.getValue());
+                        }
                     }
                 }
-            }
-        }
-        event.setResult(result);
+                event.setResult(result);
+            });
+    }
+
+    @SuppressWarnings("serial")
+    private class Store extends HashMap<String, String> {
     }
 }
