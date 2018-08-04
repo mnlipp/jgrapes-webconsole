@@ -27,7 +27,8 @@ jar {
 }
 
 afterEvaluate {
-    tasks.matching { it.group == "publishing" }.all {
+    tasks.matching { it.group == "publishing" ||
+        it.name == "signMavenPublication" }.all {
         enabled = false
     }
 }
