@@ -567,7 +567,7 @@ var JGPortal = {};
             if (matches.length === 1) {
                 return $( matches[0] );
             }
-            return undefined;
+            return null;
         };
 
         findPreviewIds() {
@@ -588,7 +588,7 @@ var JGPortal = {};
             if (matches.length === 1) {
                 return $( matches[0] );
             }
-            return undefined;
+            return null;
         };
 
         findViewIds() {
@@ -949,5 +949,22 @@ var JGPortal = {};
     JGPortal.notifyPortletModel = function(...params) {
         return thePortal.notifyPortletModel(...params);
     }
+    
+    JGPortal.lockMessageQueue = function(...params) {
+        thePortal.lockMessageQueue(...params);
+    }
+    
+    JGPortal.unlockMessageQueue = function(...params) {
+        thePortal.unlockMessageQueue(...params);
+    }
+    
+    JGPortal.findPortletPreview = function(...params) {
+        return thePortal.renderer.findPortletPreview(...params);
+    }
+    
+    JGPortal.findPortletView = function(...params) {
+        return thePortal.renderer.findPortletView(...params);
+    }
+    
     
 })();
