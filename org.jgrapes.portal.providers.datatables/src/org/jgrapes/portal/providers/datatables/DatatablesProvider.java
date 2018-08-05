@@ -28,14 +28,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.jgrapes.core.Channel;
-import org.jgrapes.core.ComponentType;
-import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.portal.base.PageResourceProvider;
 import org.jgrapes.portal.base.PortalSession;
-import org.jgrapes.portal.base.PortalWeblet;
+import org.jgrapes.portal.base.StylingInfo;
 import org.jgrapes.portal.base.events.AddPageResources;
 import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.base.events.PortalReady;
@@ -45,7 +43,7 @@ import org.jgrapes.portal.base.events.PortalReady;
  */
 public class DatatablesProvider extends PageResourceProvider {
 
-    private Map<Object, Object> properties;
+    private StylingInfo stylingInfo;
 
     /**
      * Creates a new component with its channel set to the given 
@@ -58,7 +56,7 @@ public class DatatablesProvider extends PageResourceProvider {
     public DatatablesProvider(Channel componentChannel,
             Map<Object, Object> properties) {
         super(componentChannel);
-        this.properties = properties;
+        stylingInfo = new StylingInfo(this, properties);
     }
 
     /**
@@ -101,23 +99,8 @@ public class DatatablesProvider extends PageResourceProvider {
             + "$.extend( $.fn.dataTable.defaults.oLanguage, "
             + bundle.getString("DataTablesL10n") + ");\n";
         String baseDir = "datatables-20180804";
-        String styling = (String) properties.get("styling");
-        if (styling == null) {
-            // Try to get the information from the portal (weblet)
-            ComponentType portal = this;
-            while (true) {
-                portal = Components.manager(portal).parent();
-                if (portal == null) {
-                    break;
-                }
-                if (portal instanceof PortalWeblet) {
-                    styling = ((PortalWeblet) portal).styling();
-                    break;
-                }
-            }
-        }
-        if (styling == null
-            || (!styling.equals("jqueryui") && !styling.equals("bootstrap4"))) {
+        String styling = stylingInfo.get();
+        if (!styling.equals("jqueryui") && !styling.equals("bootstrap4")) {
             styling = "standard";
         }
         AddPageResources addRequest = new AddPageResources()
