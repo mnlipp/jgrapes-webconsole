@@ -107,7 +107,8 @@ public abstract class PortalWeblet extends Component {
      * Instantiates a new portal weblet.
      *
      * @param webletChannel the weblet channel
-     * @param portal the portal
+     * @param portalChannel the portal channel
+     * @param portalPrefix the portal prefix
      */
     @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     public PortalWeblet(Channel webletChannel, Channel portalChannel,

@@ -55,7 +55,7 @@ public class PortalLocalBackedKVStore extends Component {
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      * @param portalPrefix the portal's prefix as returned by
-     * {@link Portal#prefix()}, i.e. staring and ending with a slash
+     * {@link PortalWeblet#prefix()}, i.e. staring and ending with a slash
      */
     public PortalLocalBackedKVStore(
             Channel componentChannel, String portalPrefix) {

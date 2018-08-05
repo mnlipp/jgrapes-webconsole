@@ -27,17 +27,17 @@
  *
  * ### Portal and PortalWeblet 
  * 
- * The {@link org.jgrapes.portal.base.base.Portal} component 
+ * The {@link org.jgrapes.portal.base.Portal} component 
  * is conceptually the main component of the portal. It exchanges events 
  * with the portlets and helper components, using a channel that is 
  * independent of the channel used for the communication with the browser.
  *
- * The {@link org.jgrapes.portal.base.base.Portal} component is automatically
+ * The {@link org.jgrapes.portal.base.Portal} component is automatically
  * instantiated as a child component of a 
- * {@link org.jgrapes.portal.base.base.PortalWeblet} which handles the 
+ * {@link org.jgrapes.portal.base.PortalWeblet} which handles the 
  * communication with the {@link org.jgrapes.http.HttpServer} and thus
  * with the browser. You can think of the 
- * {@link org.jgrapes.portal.base.base.PortalWeblet}/{@link org.jgrapes.portal.base.base.Portal}
+ * {@link org.jgrapes.portal.base.PortalWeblet}/{@link org.jgrapes.portal.base.Portal}
  * pair as a gateway that translates the Input/Output related events on the 
  * HTTP/WebSocket side to portal/portlet related events on the portlet side and 
  * vice versa.
@@ -45,7 +45,7 @@
  * ![Portal Structure](PortalStructure.svg)
  * 
  * In the browser, the portal is implemented as a single page 
- * application. The {@link org.jgrapes.portal.base.base.PortalWeblet} provides
+ * application. The {@link org.jgrapes.portal.base.PortalWeblet} provides
  * an initial HTML document that implements the basic structure of
  * the portal. Aside from additional HTTP requests for static resources
  * like JavaScript libraries, CSS, images etc. all information is
@@ -61,7 +61,7 @@
  * work. While it is possible for the portlets to add libraries, it is
  * usually preferable to add such libraries independent from individual
  * portlets in order to avoid duplicate loading and version conflicts.
- * This is done by {@link org.jgrapes.portal.base.base.PageResourceProvider}s
+ * This is done by {@link org.jgrapes.portal.base.PageResourceProvider}s
  * that fire the required events on portal startup (see below).
  * 
  * ### Portlets
@@ -72,7 +72,7 @@
  * the portlet has to create and maintain a server side representation
  * of the instance. How this is done is completely up to the portlet. 
  * A common approach, which is supported by the portlet base class 
- * {@link org.jgrapes.portal.base.base.AbstractPortlet}, is shown in the 
+ * {@link org.jgrapes.portal.base.AbstractPortlet}, is shown in the 
  * diagram above. 
  * 
  * Using this approach, the portlet creates a portlet data object 
@@ -95,7 +95,7 @@
  * Portal policy components are responsible for establishing the initial
  * set of portlets shown after the portal page has loaded. Usually,
  * there will be a portal policy component that restores the layout from the
- * previous session. {@link org.jgrapes.portal.base.base.KVStoreBasedPortalPolicy}
+ * previous session. {@link org.jgrapes.portal.base.KVStoreBasedPortalPolicy}
  * is an example of such a component.
  * 
  * There can be more than one portal policy component. A common use case
@@ -116,23 +116,23 @@
  * After the portal page has loaded and the web socket connection has been
  * established, all information is exchanged using 
  * [JSON RPC notifications](http://www.jsonrpc.org/specification#notification). 
- * The {@link org.jgrapes.portal.base.base.PortalWeblet} processes 
+ * The {@link org.jgrapes.portal.base.PortalWeblet} processes 
  * {@link org.jgrapes.io.events.Input} events with serialized JSON RPC 
  * data from the web socket channel until the complete JSON RPC notification 
  * has been received. The notification
- * (a {@link org.jgrapes.portal.base.base.events.JsonInput} from the servers point 
+ * (a {@link org.jgrapes.portal.base.events.JsonInput} from the servers point 
  * of view) is then fired on the associated
- * {@link org.jgrapes.portal.base.base.PortalSession} channel, which allows it to 
+ * {@link org.jgrapes.portal.base.PortalSession} channel, which allows it to 
  * be intercepted by additional components. Usually, however, it is 
- * handled by the {@link org.jgrapes.portal.base.base.Portal} that converts it 
+ * handled by the {@link org.jgrapes.portal.base.Portal} that converts it 
  * to a higher level event that is again fired on the
- * {@link org.jgrapes.portal.base.base.PortalSession} channel.
+ * {@link org.jgrapes.portal.base.PortalSession} channel.
  * 
  * Components such as portlets or portal policies respond by sending 
- * {@link org.jgrapes.portal.base.base.events.PortalCommand}s on the
- * {@link org.jgrapes.portal.base.base.PortalSession} channel as responses.
- * The {@link org.jgrapes.portal.base.base.events.PortalCommand}s are handled 
- * by the {@link org.jgrapes.portal.base.base.PortalWeblet} which serializes 
+ * {@link org.jgrapes.portal.base.events.PortalCommand}s on the
+ * {@link org.jgrapes.portal.base.PortalSession} channel as responses.
+ * The {@link org.jgrapes.portal.base.events.PortalCommand}s are handled 
+ * by the {@link org.jgrapes.portal.base.PortalWeblet} which serializes 
  * the data and sends it to the websocket using 
  * {@link org.jgrapes.io.events.Output} events.
  * 
@@ -141,8 +141,8 @@
  * The diagram below shows the complete mandatory sequence of events 
  * following the portal ready message. The diagram uses a 
  * simplified version of the sequence diagram that combines the 
- * {@link org.jgrapes.portal.base.base.PortalWeblet} and the 
- * {@link org.jgrapes.portal.base.base.Portal} into a single object and leaves out the
+ * {@link org.jgrapes.portal.base.PortalWeblet} and the 
+ * {@link org.jgrapes.portal.base.Portal} into a single object and leaves out the
  * details about the JSON serialization/deserialization.
  * 
  * ![Portal Ready Event Sequence](PortalReadySeq.svg)
@@ -156,34 +156,34 @@
  * sequence diagram as well.
  * 
  * The preparation sequence starts with 
- * {@link org.jgrapes.portal.base.base.events.AddPageResources} events fired 
- * by the {@link org.jgrapes.portal.base.base.PageResourceProvider} components
- * in response to the {@link org.jgrapes.portal.base.base.events.PortalReady} event.
+ * {@link org.jgrapes.portal.base.events.AddPageResources} events fired 
+ * by the {@link org.jgrapes.portal.base.PageResourceProvider} components
+ * in response to the {@link org.jgrapes.portal.base.events.PortalReady} event.
  * These cause the portal page to load additional, global resources.
  * 
  * In parallel (also in response to the 
- * {@link org.jgrapes.portal.base.base.events.PortalReady} event), each portlet 
- * component fires an {@link org.jgrapes.portal.base.base.events.AddPortletType} event.
+ * {@link org.jgrapes.portal.base.events.PortalReady} event), each portlet 
+ * component fires an {@link org.jgrapes.portal.base.events.AddPortletType} event.
  * This cause the portal page in the browser to register the portlet type 
  * in the portal's menu of instantiable portlets and to load any additionally 
  * required resources.
  * 
  * When all previously mentioned events have
  * been processed, the portal is considered prepared for usage and a
- * {@link org.jgrapes.portal.base.base.events.PortalPrepared} event is generated
+ * {@link org.jgrapes.portal.base.events.PortalPrepared} event is generated
  * (by the framework as {@link org.jgrapes.core.CompletionEvent} of the
- * {@link org.jgrapes.portal.base.base.events.PortalReady} event). This causes
+ * {@link org.jgrapes.portal.base.events.PortalReady} event). This causes
  * the portal policy to send the last known layout to the portal page
  * in the browser and to send 
- * {@link org.jgrapes.portal.base.base.events.RenderPortletRequest} events 
+ * {@link org.jgrapes.portal.base.events.RenderPortletRequest} events 
  * for all portlets (portlet instances) in that last known layout.
  * These are the same events as those sent by the browser
  * when the user adds a new portlet instance to the portal page.
  * The portal policy thus "replays" the creation of the portlets.
  * 
- * As completion event of the {@link org.jgrapes.portal.base.base.events.PortalPrepared}
+ * As completion event of the {@link org.jgrapes.portal.base.events.PortalPrepared}
  * event, the framework generates a 
- * {@link org.jgrapes.portal.base.base.events.PortalConfigured} event which is sent to
+ * {@link org.jgrapes.portal.base.events.PortalConfigured} event which is sent to
  * the portal, indicating that it is now ready for use.
  * 
  * Portal Session Use
@@ -192,19 +192,19 @@
  * After the portal session has been configured, the system usually
  * waits for input from the user. Changes of the layout of the
  * portal page result in events such as 
- * {@link org.jgrapes.portal.base.base.events.AddPortletRequest},
- * {@link org.jgrapes.portal.base.base.events.DeletePortletRequest} and
- * {@link org.jgrapes.portal.base.base.events.RenderPortletRequest}.
+ * {@link org.jgrapes.portal.base.events.AddPortletRequest},
+ * {@link org.jgrapes.portal.base.events.DeletePortletRequest} and
+ * {@link org.jgrapes.portal.base.events.RenderPortletRequest}.
  * 
  * Actions on portlets trigger JSON messages that result in
- * {@link org.jgrapes.portal.base.base.events.NotifyPortletModel} events
+ * {@link org.jgrapes.portal.base.events.NotifyPortletModel} events
  * that are processed by the respective portlet component. If,
  * due to the results of the action, the representation of the
  * portlet on the portal page must be updated, the portlet 
  * component fires a 
- * {@link org.jgrapes.portal.base.base.events.NotifyPortletView} event.
+ * {@link org.jgrapes.portal.base.events.NotifyPortletView} event.
  * 
- * {@link org.jgrapes.portal.base.base.events.NotifyPortletView} events
+ * {@link org.jgrapes.portal.base.events.NotifyPortletView} events
  * can also be sent unsolicitedly by portlet components if
  * the model data changes independent of user actions.
  * 
@@ -215,7 +215,7 @@
  * don't have to implement a specific interface. Rather they have
  * exhibit a specific behaviour that can be derived from the
  * descritions above. The documentation of the base class
- * {@link org.jgrapes.portal.base.base.AbstractPortlet} summarizes
+ * {@link org.jgrapes.portal.base.AbstractPortlet} summarizes
  * the responsibilities of a portal component.
  * 
  * @startuml PortalStructure.svg

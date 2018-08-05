@@ -28,9 +28,9 @@ import org.jgrapes.core.Event;
 /**
  * Events derived from this class are transformed to JSON messages
  * that are sent to the portal session. They may only be fired
- * on the {@link org.jgrapes.portal.base.base.PortalSession#responsePipeline()}
+ * on the {@link org.jgrapes.portal.base.PortalSession#responsePipeline()}
  * (usually with 
- * {@link org.jgrapes.portal.base.base.PortalSession#respond(org.jgrapes.core.Event)}).
+ * {@link org.jgrapes.portal.base.PortalSession#respond(org.jgrapes.core.Event)}).
  */
 public abstract class PortalCommand extends Event<Void> {
 
