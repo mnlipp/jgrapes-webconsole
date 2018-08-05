@@ -131,6 +131,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
                 : resourceBundleSupplier().apply(locale);
         final ResourceBundle baseResources = ResourceBundle.getBundle(
             getClass().getPackage().getName() + ".l10n", locale,
+            getClass().getClassLoader(),
             ResourceBundle.Control.getNoFallbackControl(
                 ResourceBundle.Control.FORMAT_DEFAULT));
         model.put("_", new TemplateMethodModelEx() {

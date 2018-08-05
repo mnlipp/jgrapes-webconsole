@@ -292,7 +292,8 @@ public abstract class PortalWeblet extends Component {
                 }
             }
             ResourceBundle bundle = ResourceBundle.getBundle(getClass()
-                .getPackage().getName() + ".l10n", locale);
+                .getPackage().getName() + ".l10n", locale,
+                getClass().getClassLoader());
             if (bundle.getLocale().equals(locale)) {
                 supportedLocales.add(locale);
             }
