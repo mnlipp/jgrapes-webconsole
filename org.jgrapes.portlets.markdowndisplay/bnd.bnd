@@ -16,8 +16,8 @@ Require-Capability: \
     org.jgrapes.portal.page.resource;filter:="(name=markdown-it.github.io)"
 
 Provide-Capability: osgi.serviceloader; \
-    osgi.serviceloader=org.jgrapes.portal.PortletComponentFactory; \
-    uses:="org.jgrapes.portal,org.jgrapes.core"
+    osgi.serviceloader=org.jgrapes.portal.base.PortletComponentFactory; \
+    uses:="org.jgrapes.portal.base,org.jgrapes.core"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

@@ -15,8 +15,8 @@ Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
 
 Provide-Capability: osgi.serviceloader; \
-    osgi.serviceloader=org.jgrapes.portal.PageResourceProviderFactory; \
-        uses:="org.jgrapes.portal,org.jgrapes.core", \
+    osgi.serviceloader=org.jgrapes.portal.base.PageResourceProviderFactory; \
+        uses:="org.jgrapes.portal.base,org.jgrapes.core", \
     org.jgrapes.portal.page.resource;name:List<String>="markdown-it.github.io"
 
 -fixupmessages: \
