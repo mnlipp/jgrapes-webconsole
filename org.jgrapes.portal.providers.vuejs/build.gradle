@@ -1,0 +1,7 @@
+dependencies {
+	
+	compile project(':org.jgrapes.portal.base')
+	
+}
+
+baseline.onlyIf { false }
