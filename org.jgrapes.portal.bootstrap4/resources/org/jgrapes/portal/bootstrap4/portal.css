@@ -1,3 +1,8 @@
+/* Scroll portlet content (card body) not portlet */
+ .portlet-preview-content {
+    overflow: auto;
+ }
+
 /* Activate close only on selected. */
 #portalTabs .nav-link:not(.active) span {
     display: none;
