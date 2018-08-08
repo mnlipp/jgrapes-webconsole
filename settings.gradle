@@ -7,6 +7,7 @@ include 'org.jgrapes.portal.base'
 include 'org.jgrapes.portal.jqueryui'
 include 'org.jgrapes.portal.bootstrap4'
 
+include 'org.jgrapes.portal.providers.fontawesome'
 include 'org.jgrapes.portal.providers.datatables'
 include 'org.jgrapes.portal.providers.chartjs'
 include 'org.jgrapes.portal.providers.markdownit'
