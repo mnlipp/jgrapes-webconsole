@@ -966,5 +966,14 @@ var JGPortal = {};
         return thePortal.renderer.findPortletView(...params);
     }
     
+    JGPortal.createIfMissing = function(node, key, supplier) {
+        let data = node.data(key);
+        if (data) {
+            return data;
+        }
+        data = supplier();
+        node.data(key, data);
+        return data;
+    }
     
 })();
