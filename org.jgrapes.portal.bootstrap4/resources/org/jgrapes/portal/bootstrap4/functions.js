@@ -54,7 +54,8 @@ var B4UIPortal = {
                     cellHeight: 80,
                     verticalMargin: 10,
                     handle: '.card-header',
-                    alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                    alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                    disableOneColumnMode: true,
             };
             $('#portalPreviews').gridstack(options);
             $('#portalPreviews').on('change', function(event, items) {
