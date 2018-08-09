@@ -976,4 +976,90 @@ var JGPortal = {};
         return data;
     }
     
+    function TableController(columns, options) {
+        this.keys = [];
+        this.labelsByKey = {};
+        for (let i in columns) {
+            this.keys.push(columns[i][0]);
+            this.labelsByKey[columns[i][0]] = columns[i][1];
+        }
+        this.sortKey = '';
+        this.sortOrders = {};
+        for (let i in this.keys) {
+            this.sortOrders[this.keys[i]] = 1;
+        }
+        this.filterKey = '';
+        if (options) {
+            if ("sortKey" in options) {
+                this.sortBy(options.sortKey);
+            }
+        }
+    }
+
+    TableController.prototype.label = function(key) {
+        return this.labelsByKey[key];
+    }
+    
+    TableController.prototype.sortOrder = function(key) {
+        return this.sortOrders[key];
+    }
+    
+    TableController.prototype.sortBy = function(key) {
+        if (this.sortKey != key) {
+            this.sortKey = key;
+        } else {
+            this.sortOrders[key] = this.sortOrders[key] * -1;
+        }
+    }
+    
+    TableController.prototype.sortedByAsc = function(key) {
+        return this.sortKey == key && this.sortOrders[key] == 1;
+    }
+    
+    TableController.prototype.sortedByDesc = function(key) {
+        return this.sortKey == key && this.sortOrders[key] == -1;
+    }
+    
+    TableController.prototype.filter = function(data) {
+        let filterKey = this.filterKey && this.filterKey.toLowerCase();
+        if (filterKey) {
+          data = data.filter(function (item) {
+            return Object.values(item).some(function (value) {
+              return String(value).toLowerCase().indexOf(filterKey) > -1
+            })
+          })
+        }
+        if (this.sortKey) {
+            let sortKey = this.sortKey;
+            let order = this.sortOrders[sortKey];
+            data = data.sort(function (a, b) {
+                a = a[sortKey];
+                b = b[sortKey];
+                return (a === b ? 0 : a > b ? 1 : -1) * order;
+            })
+        }
+        return data;
+    }
+
+    TableController.prototype.filterBy = function(filter) {
+        this.filterKey = filter;
+    }
+    
+    TableController.prototype.updateFilter = function(event) {
+        this.filterKey = $(event.target).val();
+    }
+    
+    TableController.prototype.clearFilter = function(event) {
+        let form = $(event.target).closest("form");
+        let input = form.find("input");
+        input.val('');
+        this.filterKey = '';
+    }
+
+    TableController.prototype.breakBeforeDots = function(text) {
+        return String(text).replace(/\./g, "&#x200b;.")
+    }
+
+    JGPortal.TableController = TableController;
+    
 })();
