@@ -1,0 +1,42 @@
+<header>
+  <!-- Top navigation -->
+  <nav class="navbar navbar-expand navbar-dark bg-dark py-0">
+    <#include "portal-brand.ftl.html">
+    <button class="navbar-toggler" type="button"
+      data-toggle="collapse" data-target="#portalNavbarContent"
+      aria-controls="portalNavbarContent" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="portalNavbarContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active dropdown">
+          <a class="nav-link dropdown-toggle" href="#"
+            id="navbarPortletDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <span class="fa fa-puzzle-piece"></span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right"
+            id="portalNavbarPortletList"
+            aria-labelledby="navbarPortletDropdown"></div>
+        </li>
+        <li class="nav-item active dropdown" id="portalLanguageMenu">
+          <a class="nav-link dropdown-toggle" href="#"
+            id="navbarLanguageDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <span class="fa fa-language"></span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right"
+            id="portalNavbarLanguageList"
+            aria-labelledby="navbarLanguageDropdown">
+              <#list supportedLanguages as l>
+                <button class="dropdown-item" type="button" 
+                  data-locale="${l.locale.toLanguageTag()}">${l.label}</button>
+              </#list>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>

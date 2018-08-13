@@ -18,6 +18,9 @@
 
 package org.jgrapes.portal.base.freemarker;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.SimpleScalar;
 import freemarker.template.Template;
@@ -32,6 +35,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -76,13 +80,38 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
             URI portalPrefix) {
         super(webletChannel, portalChannel, portalPrefix);
         freeMarkerConfig = new Configuration(Configuration.VERSION_2_3_26);
-        freeMarkerConfig.setClassLoaderForTemplateLoading(
-            getClass().getClassLoader(),
-            getClass().getPackage().getName().replace('.', '/'));
+        List<TemplateLoader> loaders = new ArrayList<>();
+        Class<?> clazz = getClass();
+        while (!clazz.equals(FreeMarkerPortalWeblet.class)) {
+            loaders.add(new ClassTemplateLoader(clazz.getClassLoader(),
+                clazz.getPackage().getName().replace('.', '/')));
+            clazz = clazz.getSuperclass();
+        }
+        freeMarkerConfig.setTemplateLoader(
+            new MultiTemplateLoader(loaders.toArray(new TemplateLoader[0])));
         freeMarkerConfig.setDefaultEncoding(UTF_8);
         freeMarkerConfig.setTemplateExceptionHandler(
             TemplateExceptionHandler.RETHROW_HANDLER);
         freeMarkerConfig.setLogTemplateExceptions(false);
+    }
+
+    public FreeMarkerPortalWeblet
+            prependClassTemplateLoader(ClassLoader classloader, String path) {
+        List<TemplateLoader> loaders = new ArrayList<>();
+        loaders.add(new ClassTemplateLoader(classloader, path));
+        MultiTemplateLoader oldLoader
+            = (MultiTemplateLoader) freeMarkerConfig.getTemplateLoader();
+        for (int i = 0; i < oldLoader.getTemplateLoaderCount(); i++) {
+            loaders.add(oldLoader.getTemplateLoader(i));
+        }
+        freeMarkerConfig.setTemplateLoader(
+            new MultiTemplateLoader(loaders.toArray(new TemplateLoader[0])));
+        return this;
+    }
+
+    public FreeMarkerPortalWeblet prependClassTemplateLoader(Class<?> clazz) {
+        return prependClassTemplateLoader(clazz.getClassLoader(),
+            clazz.getPackage().getName().replace('.', '/'));
     }
 
     protected Map<String, Object> createPortalBaseModel() {

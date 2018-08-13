@@ -8,6 +8,17 @@
     display: none;
 }
 
+/* Flush footer to bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
 /* Pop-up notifications. */
 #notification-area {
 	width: 90%;
