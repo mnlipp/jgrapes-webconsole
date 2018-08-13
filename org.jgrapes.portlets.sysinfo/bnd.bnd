@@ -13,7 +13,6 @@ api_version = 0.11.0.${tstamp}
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.portal.page.resource;filter:="(name=datatables.net)",\
     org.jgrapes.portal.page.resource;filter:="(name=chartjs.org)"
 
 Provide-Capability: osgi.serviceloader; \
