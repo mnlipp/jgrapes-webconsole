@@ -9,3 +9,7 @@
 .jgrapes-portlets-sysinfo-view .GarbageCollection-action {
 	float: right;
 }
+
+.jgrapes-portlets-sysinfo-view button span.fa {
+    margin-right: 0.5em;
+}
