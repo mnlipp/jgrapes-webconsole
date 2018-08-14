@@ -17,17 +17,25 @@ the core framework and components.
 skinparam svgLinkTarget _parent
 
 package org.jgrapes {
-    package "Core Components" {
+    package "JGrapes Core Components" {
     }
 
-    package org.jgrapes.portal [[org/jgrapes/portal/package-summary.html#package.description]] {
+    package org.jgrapes.portal.base [[org/jgrapes/portal/base/package-summary.html#package.description]] {
+    }
+
+    package org.jgrapes.portal.bootstrap4 [[org/jgrapes/portal/bootstrap4/package-summary.html#package.description]] {
+    }
+
+    package org.jgrapes.portal.jqueryui [[org/jgrapes/portal/jqueryui/package-summary.html#package.description]] {
     }
 
     package "org.jgrapes.portal.themes.*" {
     }
 }
 
-"Core Components" <.. org.jgrapes.portal
-org.jgrapes.portal <.. "org.jgrapes.portal.themes.*"
+"JGrapes Core Components" <.. org.jgrapes.portal.base
+org.jgrapes.portal.base <.. "org.jgrapes.portal.jqueryui"
+org.jgrapes.portal.jqueryui <.. "org.jgrapes.portal.themes.*"
+org.jgrapes.portal.base <.. "org.jgrapes.portal.bootstrap4"
 
 @enduml
