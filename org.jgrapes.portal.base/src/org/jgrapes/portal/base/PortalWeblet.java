@@ -24,7 +24,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -93,6 +95,7 @@ public abstract class PortalWeblet extends Component {
     private long psRefreshInterval = 30000;
     private long psInactivityTimeout = -1;
 
+    private List<Class<?>> portalResourceSearchSeq;
     private Function<Locale, ResourceBundle> resourceBundleSupplier;
     private final Set<Locale> supportedLocales = new HashSet<>();
 
@@ -130,6 +133,7 @@ public abstract class PortalWeblet extends Component {
         } catch (ParseException e) {
             throw new IllegalArgumentException(e);
         }
+        portalResourceSearchSeq = portalHierarchy();
         updateSupportedLocales();
 
         RequestHandler.Evaluator.add(this, "onGet", prefix + "**");
@@ -144,6 +148,32 @@ public abstract class PortalWeblet extends Component {
         this.portal = portal;
         attach(portal);
     }
+
+    protected List<Class<?>> portalHierarchy() {
+        List<Class<?>> result = new ArrayList<>();
+        Class<?> derivative = getClass();
+        while (true) {
+            result.add(derivative);
+            if (derivative.equals(PortalWeblet.class)) {
+                break;
+            }
+            derivative = derivative.getSuperclass();
+        }
+        return result;
+    }
+
+//    private Function<Locale, ResourceBundle> resourceBundleSupplier
+//        = locale -> {
+//            ResourceBundle last = null;
+//            List<Class<?>> clses = portalHierarchy();
+//            Collections.reverse(clses);
+//            for (Class<?> cls : clses) {
+//                last = new LinkedResourceBundle(ResourceBundle.getBundle(
+//                    cls.getPackage().getName() + ".l10n", locale,
+//                    cls.getClassLoader()), last);
+//            }
+//            return last;
+//        };
 
     /**
      * Returns the name of the styling library or toolkit used by the portal.
@@ -423,15 +453,37 @@ public abstract class PortalWeblet extends Component {
             throws IOException, InterruptedException;
 
     /**
-     * Provide a portal resource.
+     * Provide a portal resource. The implementation tries to load the
+     * resource using {@link Class#getResource(String)} for each class
+     * in the class hierarchy, starting with the finally derived class.
      *
      * @param event the event
      * @param requestPath the request path relativized to the 
      * common part for portal resources
      * @param channel the channel
      */
-    protected abstract void providePortalResource(GetRequest event,
-            String requestPath, IOSubchannel channel);
+    protected void providePortalResource(GetRequest event,
+            String requestPath, IOSubchannel channel) {
+        for (Class<?> cls : portalResourceSearchSeq) {
+            if (ResponseCreationSupport.sendStaticContent(event, channel,
+                path -> cls.getResource(requestPath),
+                null)) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Prepends the given class to the list of classes searched by
+     * {@link #providePortalResource(GetRequest, String, IOSubchannel)}.
+     * 
+     * @param cls the class to prepend
+     * @return the portal weblet for easy chaining
+     */
+    public PortalWeblet prependToResourceSearchPath(Class<?> cls) {
+        portalResourceSearchSeq.add(0, cls);
+        return this;
+    }
 
     private void providePageResource(GetRequest event, IOSubchannel channel,
             String resource) throws InterruptedException {

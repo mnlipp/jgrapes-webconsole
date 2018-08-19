@@ -51,7 +51,6 @@ import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jdrupes.httpcodec.types.MediaType;
 import org.jgrapes.core.Channel;
 import org.jgrapes.http.LanguageSelector.Selection;
-import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.events.GetRequest;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
@@ -216,14 +215,6 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         } catch (TemplateException e) {
             throw new IOException(e);
         }
-    }
-
-    @Override
-    protected void providePortalResource(GetRequest event,
-            String requestPath, IOSubchannel channel) {
-        ResponseCreationSupport.sendStaticContent(event, channel,
-            path -> getClass().getResource(requestPath),
-            null);
     }
 
     /**
