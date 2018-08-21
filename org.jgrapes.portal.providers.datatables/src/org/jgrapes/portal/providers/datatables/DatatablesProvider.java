@@ -43,7 +43,7 @@ import org.jgrapes.portal.base.events.PortalReady;
  */
 public class DatatablesProvider extends PageResourceProvider {
 
-    private StylingInfo stylingInfo;
+    private final StylingInfo stylingInfo;
 
     /**
      * Creates a new component with its channel set to the given 
@@ -100,7 +100,7 @@ public class DatatablesProvider extends PageResourceProvider {
             + bundle.getString("DataTablesL10n") + ");\n";
         String baseDir = "datatables-20180804";
         String styling = stylingInfo.get();
-        if (!styling.equals("jqueryui") && !styling.equals("bootstrap4")) {
+        if (!"jqueryui".equals(styling) && !"bootstrap4".equals(styling)) {
             styling = "standard";
         }
         AddPageResources addRequest = new AddPageResources()
@@ -118,7 +118,7 @@ public class DatatablesProvider extends PageResourceProvider {
             .addScriptResource(new ScriptResource()
                 .setRequires(new String[] { "datatables.net" })
                 .setScriptSource(script));
-        if (styling.equals("jqueryui")) {
+        if ("jqueryui".equals(styling)) {
             addRequest.addCss(event.renderSupport().pageResource(
                 "jqueryui-overrides-1.0.0.css"));
         }

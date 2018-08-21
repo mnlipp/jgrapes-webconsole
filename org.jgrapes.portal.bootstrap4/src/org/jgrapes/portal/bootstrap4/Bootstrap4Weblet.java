@@ -25,7 +25,6 @@ import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.portal.base.Portal;
 import org.jgrapes.portal.base.freemarker.FreeMarkerPortalWeblet;
-import org.jgrapes.portal.bootstrap4.Bootstrap4Weblet;
 
 /**
  * Provides resources using {@link Request}/{@link Response}

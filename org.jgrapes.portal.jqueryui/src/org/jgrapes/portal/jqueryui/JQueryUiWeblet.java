@@ -40,13 +40,12 @@ import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.base.Portal;
 import org.jgrapes.portal.base.PortalSession;
+import org.jgrapes.portal.base.PortalUtils;
 import org.jgrapes.portal.base.ResourceNotFoundException;
 import org.jgrapes.portal.base.UserPrincipal;
-import org.jgrapes.portal.base.Utils;
 import org.jgrapes.portal.base.events.JsonInput;
 import org.jgrapes.portal.base.events.SimplePortalCommand;
 import org.jgrapes.portal.base.freemarker.FreeMarkerPortalWeblet;
-import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
 import org.jgrapes.portal.jqueryui.events.SetTheme;
 import org.jgrapes.portal.jqueryui.themes.base.Provider;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
@@ -142,6 +141,7 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
         super.providePortalResource(event, requestPath, channel);
     }
 
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private void sendThemeResource(GetRequest event, IOSubchannel channel,
             String resource) {
         // Get resource
@@ -180,12 +180,13 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
      * @throws InterruptedException the interrupted exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @Handler(channels = PortalChannel.class)
     public void onJsonInput(JsonInput event, PortalSession channel)
             throws InterruptedException, IOException {
         // Send events to portlets on portal's channel
         JsonArray params = event.request().params();
-        switch (event.request().method()) {
+        switch (event.request().method()) { // NOPMD
         case "setTheme": {
             fire(new SetTheme(params.asString(0)), channel);
             break;
@@ -213,7 +214,7 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
             .orElse(baseTheme);
         channel.browserSession().put("themeProvider", themeProvider.themeId());
         channel.respond(new KeyValueStoreUpdate().update(
-            "/" + Utils.userFromSession(channel.browserSession())
+            "/" + PortalUtils.userFromSession(channel.browserSession())
                 .map(UserPrincipal::toString).orElse("")
                 + "/themeProvider",
             themeProvider.themeId())).get();

@@ -28,8 +28,8 @@ import org.jgrapes.core.Components;
  */
 public class StylingInfo {
 
-    private ComponentType component;
-    private Map<Object, Object> properties;
+    private final ComponentType component;
+    private final Map<Object, Object> properties;
     private String styling;
 
     /**
@@ -55,6 +55,7 @@ public class StylingInfo {
      *
      * @return the result
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public String get() {
         if (styling != null) {
             return styling;

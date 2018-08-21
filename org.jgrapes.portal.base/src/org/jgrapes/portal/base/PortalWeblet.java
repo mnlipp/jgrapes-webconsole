@@ -715,7 +715,7 @@ public abstract class PortalWeblet extends Component {
      */
     @Handler(channels = PortalChannel.class)
     public void onPortalReady(PortalReady event, PortalSession portalSession) {
-        String principal = Utils.userFromSession(portalSession.browserSession())
+        String principal = PortalUtils.userFromSession(portalSession.browserSession())
             .map(UserPrincipal::toString).orElse("");
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             "/" + principal + "/themeProvider", portalSession);

@@ -199,7 +199,7 @@ public class KVStoreBasedPortalPolicy extends Component {
 
         public PortalSessionDataStore(Session session) {
             storagePath = "/"
-                + Utils.userFromSession(session)
+                + PortalUtils.userFromSession(session)
                     .map(UserPrincipal::toString).orElse("")
                 + "/" + KVStoreBasedPortalPolicy.class.getName();
         }

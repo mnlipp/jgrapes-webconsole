@@ -27,9 +27,9 @@ import org.jgrapes.http.Session;
 /**
  * 
  */
-public final class Utils {
+public final class PortalUtils {
 
-    private Utils() {
+    private PortalUtils() {
     }
 
     /**

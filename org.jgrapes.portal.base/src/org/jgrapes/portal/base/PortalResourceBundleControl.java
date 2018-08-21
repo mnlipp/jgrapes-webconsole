@@ -35,16 +35,22 @@ import java.util.ResourceBundle.Control;
  */
 public class PortalResourceBundleControl extends Control {
 
-    private List<Class<?>> clses;
+    private final List<Class<?>> clses;
 
+    /**
+     * Instantiates a new portal resource bundle control.
+     *
+     * @param clses the classes to use
+     */
     public PortalResourceBundleControl(List<Class<?>> clses) {
         super();
         this.clses = clses;
     }
 
+    @Override
     public List<String> getFormats(String baseName) {
         if (baseName == null) {
-            throw new NullPointerException();
+            throw new NullPointerException(); // NOPMD
         }
         return FORMAT_PROPERTIES;
     }
@@ -67,6 +73,8 @@ public class PortalResourceBundleControl extends Control {
      * can thus override resources from their base classes.
      */
     @Override
+    @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
+        "PMD.AvoidInstantiatingObjectsInLoops" })
     public ResourceBundle newBundle(String baseName, Locale locale,
             String format, ClassLoader loader, boolean reload)
             throws IllegalAccessException, InstantiationException, IOException {
@@ -77,7 +85,7 @@ public class PortalResourceBundleControl extends Control {
         Properties props = new Properties();
         while (iter.hasPrevious()) {
             Class<?> cls = iter.previous();
-            InputStream is = null;
+            InputStream inStream = null;
             if (reload) {
                 URL url = cls.getResource(resourceName);
                 if (url != null) {
@@ -86,17 +94,17 @@ public class PortalResourceBundleControl extends Control {
                         // Disable caches to get fresh data for
                         // reloading.
                         connection.setUseCaches(false);
-                        is = connection.getInputStream();
+                        inStream = connection.getInputStream();
                     }
                 }
             } else {
-                is = cls.getResourceAsStream(resourceName);
+                inStream = cls.getResourceAsStream(resourceName);
             }
-            if (is == null) {
+            if (inStream == null) {
                 continue;
             }
-            props.load(is);
-            is.close();
+            props.load(inStream);
+            inStream.close();
             if (bundle == null) {
                 bundle = new PortalResourceBundle(props);
             }

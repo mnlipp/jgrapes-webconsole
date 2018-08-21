@@ -75,6 +75,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
      * @param portalChannel the portal channel
      * @param portalPrefix the portal prefix
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public FreeMarkerPortalWeblet(Channel webletChannel, Channel portalChannel,
             URI portalPrefix) {
         super(webletChannel, portalChannel, portalPrefix);
@@ -94,6 +95,14 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         freeMarkerConfig.setLogTemplateExceptions(false);
     }
 
+    /**
+     * Prepend a class template loader to the list of loaders 
+     * derived from the class hierarchy.
+     *
+     * @param classloader the class loader
+     * @param path the path
+     * @return the free marker portal weblet
+     */
     public FreeMarkerPortalWeblet
             prependClassTemplateLoader(ClassLoader classloader, String path) {
         List<TemplateLoader> loaders = new ArrayList<>();
@@ -108,11 +117,25 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         return this;
     }
 
+    /**
+     * Convenience version of 
+     * {@link #prependClassTemplateLoader(ClassLoader, String)} that derives
+     * the path from the class's package name.
+     *
+     * @param clazz the clazz
+     * @return the free marker portal weblet
+     */
     public FreeMarkerPortalWeblet prependClassTemplateLoader(Class<?> clazz) {
         return prependClassTemplateLoader(clazz.getClassLoader(),
             clazz.getPackage().getName().replace('.', '/'));
     }
 
+    /**
+     * Creates the portal base model.
+     *
+     * @return the base model
+     */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     protected Map<String, Object> createPortalBaseModel() {
         // Create portal model
         Map<String, Object> portalModel = new HashMap<>();
@@ -127,6 +150,16 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         return portalModel;
     }
 
+    /**
+     * Expand the given portal model with data from the event 
+     * (portal session id, locale information).
+     *
+     * @param model the model
+     * @param event the event
+     * @param portalSessionId the portal session id
+     * @return the map
+     */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     protected Map<String, Object> expandPortalModel(
             Map<String, Object> model, GetRequest event,
             UUID portalSessionId) {
@@ -143,7 +176,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         final Comparator<LanguageInfo> comp
             = new Comparator<LanguageInfo>() {
                 @Override
-                public int compare(LanguageInfo o1, LanguageInfo o2) {
+                public int compare(LanguageInfo o1, LanguageInfo o2) { // NOPMD
                     return coll.compare(o1.getLabel(), o2.getLabel());
                 }
             };

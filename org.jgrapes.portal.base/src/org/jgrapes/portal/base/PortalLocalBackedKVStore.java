@@ -40,8 +40,9 @@ import org.jgrapes.util.events.KeyValueStoreUpdate.Action;
 import org.jgrapes.util.events.KeyValueStoreUpdate.Deletion;
 import org.jgrapes.util.events.KeyValueStoreUpdate.Update;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
+ * The Class PortalLocalBackedKVStore.
  */
 public class PortalLocalBackedKVStore extends Component {
 
@@ -198,6 +199,9 @@ public class PortalLocalBackedKVStore extends Component {
             });
     }
 
+    /**
+     * The store.
+     */
     @SuppressWarnings("serial")
     private class Store extends HashMap<String, String> {
     }

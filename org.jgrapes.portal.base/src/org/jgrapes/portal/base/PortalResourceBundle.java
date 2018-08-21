@@ -27,8 +27,13 @@ import java.util.ResourceBundle;
  */
 public class PortalResourceBundle extends ResourceBundle {
 
-    private Properties properties;
+    private final Properties properties;
 
+    /**
+     * Instantiates a new portal resource bundle.
+     *
+     * @param properties the properties
+     */
     public PortalResourceBundle(Properties properties) {
         super();
         this.properties = properties;

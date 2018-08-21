@@ -43,10 +43,10 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.base.PortalSession;
+import org.jgrapes.portal.base.PortalUtils;
 import org.jgrapes.portal.base.PortalWeblet;
 import org.jgrapes.portal.base.Portlet.RenderMode;
 import org.jgrapes.portal.base.UserPrincipal;
-import org.jgrapes.portal.base.Utils;
 import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.base.events.AddPortletRequest;
 import org.jgrapes.portal.base.events.AddPortletType;
@@ -100,7 +100,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
     }
 
     private String storagePath(Session session) {
-        return "/" + Utils.userFromSession(session)
+        return "/" + PortalUtils.userFromSession(session)
             .map(UserPrincipal::toString).orElse("")
             + "/portlets/" + MarkdownDisplayPortlet.class.getName() + "/";
     }
