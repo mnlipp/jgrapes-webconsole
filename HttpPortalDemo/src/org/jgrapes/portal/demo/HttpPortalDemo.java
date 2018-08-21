@@ -144,11 +144,11 @@ public class HttpPortalDemo extends Component implements BundleActivator {
         PortalWeblet portalWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
                 new URI("/jqportal/")))
-                .prependToResourceSearchPath(HttpPortalDemo.class)
                 .setResourceBundleSupplier(l -> ResourceBundle.getBundle(
                     getClass().getPackage().getName() + ".portal-l10n", l,
                     ResourceBundle.Control.getNoFallbackControl(
-                        ResourceBundle.Control.FORMAT_DEFAULT)));
+                        ResourceBundle.Control.FORMAT_DEFAULT)))
+                .prependToResourceSearchPath(HttpPortalDemo.class);
         Portal portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
         portal.attach(new PortalLocalBackedKVStore(
@@ -168,11 +168,11 @@ public class HttpPortalDemo extends Component implements BundleActivator {
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
                 new URI("/b4portal/")))
                 .prependClassTemplateLoader(this.getClass())
-                .prependToResourceSearchPath(HttpPortalDemo.class)
                 .setResourceBundleSupplier(l -> ResourceBundle.getBundle(
                     getClass().getPackage().getName() + ".portal-l10n", l,
                     ResourceBundle.Control.getNoFallbackControl(
-                        ResourceBundle.Control.FORMAT_DEFAULT)));
+                        ResourceBundle.Control.FORMAT_DEFAULT)))
+                .prependToResourceSearchPath(HttpPortalDemo.class);
         Portal portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
         portal.attach(new PortalLocalBackedKVStore(

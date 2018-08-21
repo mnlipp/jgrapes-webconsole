@@ -31,10 +31,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
@@ -96,7 +96,7 @@ public abstract class PortalWeblet extends Component {
     private long psInactivityTimeout = -1;
 
     private List<Class<?>> portalResourceSearchSeq;
-    private Function<Locale, ResourceBundle> resourceBundleSupplier;
+    private List<Class<?>> resourceClasses = new ArrayList<>();
     private final Set<Locale> supportedLocales = new HashSet<>();
 
     /**
@@ -134,6 +134,7 @@ public abstract class PortalWeblet extends Component {
             throw new IllegalArgumentException(e);
         }
         portalResourceSearchSeq = portalHierarchy();
+
         updateSupportedLocales();
 
         RequestHandler.Evaluator.add(this, "onGet", prefix + "**");
@@ -297,47 +298,41 @@ public abstract class PortalWeblet extends Component {
     }
 
     /**
-     * Sets a function for obtaining a resource bundle for
-     * a given locale.
+     * Prepends a class to the list of classes used to lookup portal
+     * resources. See {@link PortalResourceBundleControl#newBundle}.
      * 
-     * @param supplier the function
-     * @return the portal fo reasy chaining
+     * @param cls the class to prepend.
+     * @return the portal weblet for easy chaining
      */
-    public PortalWeblet setResourceBundleSupplier(
-            Function<Locale, ResourceBundle> supplier) {
-        resourceBundleSupplier = supplier;
+    public PortalWeblet prependResourceClass(Class<?> cls) {
+        resourceClasses.add(0, cls);
         updateSupportedLocales();
         return this;
     }
 
     protected void updateSupportedLocales() {
+        List<Class<?>> clses = new ArrayList<>(resourceClasses);
+        clses.addAll(portalHierarchy());
         supportedLocales.clear();
+        Control control = new PortalResourceBundleControl(clses);
         for (Locale locale : Locale.getAvailableLocales()) {
             if (locale.getLanguage().equals("")) {
                 continue;
             }
-            if (resourceBundleSupplier != null) {
-                ResourceBundle bundle = resourceBundleSupplier.apply(locale);
-                if (bundle.getLocale().equals(locale)) {
-                    supportedLocales.add(locale);
-                }
-            }
-            ResourceBundle bundle = ResourceBundle.getBundle(getClass()
-                .getPackage().getName() + ".l10n", locale,
-                getClass().getClassLoader());
+            ResourceBundle bundle = ResourceBundle.getBundle("l10n", locale,
+                getClass().getClassLoader(), control);
             if (bundle.getLocale().equals(locale)) {
                 supportedLocales.add(locale);
             }
         }
     }
 
-    /**
-     * Returns the resource bundle supplier.
-     *
-     * @return the result
-     */
-    protected Function<Locale, ResourceBundle> resourceBundleSupplier() {
-        return resourceBundleSupplier;
+    public ResourceBundle portalResources(Locale locale) {
+        List<Class<?>> clses = new ArrayList<>(resourceClasses);
+        clses.addAll(portalHierarchy());
+        return ResourceBundle.getBundle("l10n", locale,
+            getClass().getClassLoader(),
+            new PortalResourceBundleControl(clses));
     }
 
     /**

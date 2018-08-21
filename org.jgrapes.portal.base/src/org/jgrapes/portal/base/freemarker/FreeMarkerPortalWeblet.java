@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
@@ -67,6 +68,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
      * Initialized with a base FreeMarker configuration.
      */
     protected Configuration freeMarkerConfig;
+    private Function<Locale, ResourceBundle> resourceBundleSupplier;
 
     /**
      * Instantiates a new free marker portal weblet.
@@ -127,6 +129,28 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         return portalModel;
     }
 
+    /**
+     * Sets a function for obtaining a resource bundle for
+     * a given locale.
+     * 
+     * @param supplier the function
+     * @return the portal fo reasy chaining
+     */
+    public PortalWeblet setResourceBundleSupplier(
+            Function<Locale, ResourceBundle> supplier) {
+        resourceBundleSupplier = supplier;
+        return this;
+    }
+
+    /**
+     * Returns the resource bundle supplier.
+     *
+     * @return the result
+     */
+    public Function<Locale, ResourceBundle> resourceBundleSupplier() {
+        return resourceBundleSupplier;
+    }
+
     protected Map<String, Object> expandPortalModel(
             Map<String, Object> model, GetRequest event,
             UUID portalSessionId) {
@@ -157,11 +181,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
             = resourceBundleSupplier() == null
                 ? null
                 : resourceBundleSupplier().apply(locale);
-        final ResourceBundle baseResources = ResourceBundle.getBundle(
-            getClass().getPackage().getName() + ".l10n", locale,
-            getClass().getClassLoader(),
-            ResourceBundle.Control.getNoFallbackControl(
-                ResourceBundle.Control.FORMAT_DEFAULT));
+        final ResourceBundle baseResources = portalResources(locale);
         model.put("_", new TemplateMethodModelEx() {
             @Override
             public Object exec(@SuppressWarnings("rawtypes") List arguments)
