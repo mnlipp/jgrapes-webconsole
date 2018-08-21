@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
 /**
- * A {@link ResourceBundle.Control} that implements a special lookup
+ * A {@link Control} that implements a special lookup
  * algorithm. See {@link #newBundle}. 
  */
 public class PortalResourceBundleControl extends Control {
