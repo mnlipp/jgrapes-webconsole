@@ -143,8 +143,8 @@ public class HttpPortalDemo extends Component implements BundleActivator {
         PortalWeblet portalWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
                 new URI("/jqportal/")))
-                .prependResourceProvider(HttpPortalDemo.class)
-                .prependToResourceSearchPath(HttpPortalDemo.class);
+                .prependResourceBundleProvider(HttpPortalDemo.class)
+                .prependPortalResourceProvider(HttpPortalDemo.class);
         Portal portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
         portal.attach(new PortalLocalBackedKVStore(
@@ -164,8 +164,8 @@ public class HttpPortalDemo extends Component implements BundleActivator {
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
                 new URI("/b4portal/")))
                 .prependClassTemplateLoader(this.getClass())
-                .prependResourceProvider(HttpPortalDemo.class)
-                .prependToResourceSearchPath(HttpPortalDemo.class);
+                .prependResourceBundleProvider(HttpPortalDemo.class)
+                .prependPortalResourceProvider(HttpPortalDemo.class);
         Portal portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
         portal.attach(new PortalLocalBackedKVStore(

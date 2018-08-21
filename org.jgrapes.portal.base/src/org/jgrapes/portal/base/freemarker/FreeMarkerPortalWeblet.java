@@ -185,7 +185,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
             .sorted(comp).toArray(size -> new LanguageInfo[size]);
         model.put("supportedLanguages", languages);
 
-        final ResourceBundle baseResources = portalResources(locale);
+        final ResourceBundle baseResources = portalResourceBundle(locale);
         model.put("_", new TemplateMethodModelEx() {
             @Override
             public Object exec(@SuppressWarnings("rawtypes") List arguments)

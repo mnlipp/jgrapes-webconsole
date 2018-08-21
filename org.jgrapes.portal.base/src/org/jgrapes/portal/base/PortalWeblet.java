@@ -297,11 +297,13 @@ public abstract class PortalWeblet extends Component {
     /**
      * Prepends a class to the list of classes used to lookup portal
      * resources. See {@link PortalResourceBundleControl#newBundle}.
+     * Affects the content of the resource bundle returned by
+     * {@link #portalResourceBundle(Locale)}. 
      * 
      * @param cls the class to prepend.
      * @return the portal weblet for easy chaining
      */
-    public PortalWeblet prependResourceProvider(Class<?> cls) {
+    public PortalWeblet prependResourceBundleProvider(Class<?> cls) {
         resourceClasses.add(0, cls);
         updateSupportedLocales();
         return this;
@@ -331,7 +333,7 @@ public abstract class PortalWeblet extends Component {
      * @param locale the locale
      * @return the resource bundle
      */
-    public ResourceBundle portalResources(Locale locale) {
+    public ResourceBundle portalResourceBundle(Locale locale) {
         List<Class<?>> clses = new ArrayList<>(resourceClasses);
         clses.addAll(portalHierarchy());
         return ResourceBundle.getBundle("l10n", locale,
@@ -478,7 +480,7 @@ public abstract class PortalWeblet extends Component {
      * @param cls the class to prepend
      * @return the portal weblet for easy chaining
      */
-    public PortalWeblet prependToResourceSearchPath(Class<?> cls) {
+    public PortalWeblet prependPortalResourceProvider(Class<?> cls) {
         portalResourceSearchSeq.add(0, cls);
         return this;
     }
@@ -715,8 +717,9 @@ public abstract class PortalWeblet extends Component {
      */
     @Handler(channels = PortalChannel.class)
     public void onPortalReady(PortalReady event, PortalSession portalSession) {
-        String principal = PortalUtils.userFromSession(portalSession.browserSession())
-            .map(UserPrincipal::toString).orElse("");
+        String principal
+            = PortalUtils.userFromSession(portalSession.browserSession())
+                .map(UserPrincipal::toString).orElse("");
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             "/" + principal + "/themeProvider", portalSession);
         fire(query, portalSession);
