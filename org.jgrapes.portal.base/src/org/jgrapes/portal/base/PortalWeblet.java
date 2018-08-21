@@ -31,7 +31,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.ResourceBundle.Control;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -96,7 +95,9 @@ public abstract class PortalWeblet extends Component {
     private long psInactivityTimeout = -1;
 
     private List<Class<?>> portalResourceSearchSeq;
-    private List<Class<?>> resourceClasses = new ArrayList<>();
+    private final List<Class<?>> resourceClasses = new ArrayList<>();
+    private final ResourceBundle.Control resourceControl
+        = new PortalResourceBundleControl(resourceClasses);
     private final Set<Locale> supportedLocales = new HashSet<>();
 
     /**
@@ -120,7 +121,7 @@ public abstract class PortalWeblet extends Component {
 
         prefix = URI.create(portalPrefix.getPath().endsWith("/")
             ? portalPrefix.getPath()
-            : (portalPrefix.getPath() + "/"));
+            : portalPrefix.getPath() + "/");
         portal.setView(this);
 
         String portalPath = prefix.getPath();
@@ -135,6 +136,7 @@ public abstract class PortalWeblet extends Component {
         }
         portalResourceSearchSeq = portalHierarchy();
 
+        resourceClasses.addAll(portalHierarchy());
         updateSupportedLocales();
 
         RequestHandler.Evaluator.add(this, "onGet", prefix + "**");
@@ -150,7 +152,15 @@ public abstract class PortalWeblet extends Component {
         attach(portal);
     }
 
-    protected List<Class<?>> portalHierarchy() {
+    /**
+     * Return the list of classes that form the current portal
+     * weblet implementation. This consists of all classes from
+     * `getClass()` up to `PortalWeblet.class`. 
+     *
+     * @return the list
+     */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    protected final List<Class<?>> portalHierarchy() {
         List<Class<?>> result = new ArrayList<>();
         Class<?> derivative = getClass();
         while (true) {
@@ -162,19 +172,6 @@ public abstract class PortalWeblet extends Component {
         }
         return result;
     }
-
-//    private Function<Locale, ResourceBundle> resourceBundleSupplier
-//        = locale -> {
-//            ResourceBundle last = null;
-//            List<Class<?>> clses = portalHierarchy();
-//            Collections.reverse(clses);
-//            for (Class<?> cls : clses) {
-//                last = new LinkedResourceBundle(ResourceBundle.getBundle(
-//                    cls.getPackage().getName() + ".l10n", locale,
-//                    cls.getClassLoader()), last);
-//            }
-//            return last;
-//        };
 
     /**
      * Returns the name of the styling library or toolkit used by the portal.
@@ -304,35 +301,41 @@ public abstract class PortalWeblet extends Component {
      * @param cls the class to prepend.
      * @return the portal weblet for easy chaining
      */
-    public PortalWeblet prependResourceClass(Class<?> cls) {
+    public PortalWeblet prependResourceProvider(Class<?> cls) {
         resourceClasses.add(0, cls);
         updateSupportedLocales();
         return this;
     }
 
-    protected void updateSupportedLocales() {
-        List<Class<?>> clses = new ArrayList<>(resourceClasses);
-        clses.addAll(portalHierarchy());
+    /**
+     * Update the supported locales.
+     */
+    protected final void updateSupportedLocales() {
         supportedLocales.clear();
-        Control control = new PortalResourceBundleControl(clses);
+        ResourceBundle.clearCache(PortalWeblet.class.getClassLoader());
         for (Locale locale : Locale.getAvailableLocales()) {
             if (locale.getLanguage().equals("")) {
                 continue;
             }
             ResourceBundle bundle = ResourceBundle.getBundle("l10n", locale,
-                getClass().getClassLoader(), control);
+                PortalWeblet.class.getClassLoader(), resourceControl);
             if (bundle.getLocale().equals(locale)) {
                 supportedLocales.add(locale);
             }
         }
     }
 
+    /**
+     * Return the portal resources for a given locale.
+     *
+     * @param locale the locale
+     * @return the resource bundle
+     */
     public ResourceBundle portalResources(Locale locale) {
         List<Class<?>> clses = new ArrayList<>(resourceClasses);
         clses.addAll(portalHierarchy());
         return ResourceBundle.getBundle("l10n", locale,
-            getClass().getClassLoader(),
-            new PortalResourceBundleControl(clses));
+            PortalWeblet.class.getClassLoader(), resourceControl);
     }
 
     /**

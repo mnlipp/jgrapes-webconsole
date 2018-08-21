@@ -32,7 +32,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.ResourceBundle;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -144,10 +143,7 @@ public class HttpPortalDemo extends Component implements BundleActivator {
         PortalWeblet portalWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
                 new URI("/jqportal/")))
-                .setResourceBundleSupplier(l -> ResourceBundle.getBundle(
-                    getClass().getPackage().getName() + ".portal-l10n", l,
-                    ResourceBundle.Control.getNoFallbackControl(
-                        ResourceBundle.Control.FORMAT_DEFAULT)))
+                .prependResourceProvider(HttpPortalDemo.class)
                 .prependToResourceSearchPath(HttpPortalDemo.class);
         Portal portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
@@ -168,10 +164,7 @@ public class HttpPortalDemo extends Component implements BundleActivator {
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
                 new URI("/b4portal/")))
                 .prependClassTemplateLoader(this.getClass())
-                .setResourceBundleSupplier(l -> ResourceBundle.getBundle(
-                    getClass().getPackage().getName() + ".portal-l10n", l,
-                    ResourceBundle.Control.getNoFallbackControl(
-                        ResourceBundle.Control.FORMAT_DEFAULT)))
+                .prependResourceProvider(HttpPortalDemo.class)
                 .prependToResourceSearchPath(HttpPortalDemo.class);
         Portal portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
