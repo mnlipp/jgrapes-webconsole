@@ -334,8 +334,6 @@ public abstract class PortalWeblet extends Component {
      * @return the resource bundle
      */
     public ResourceBundle portalResourceBundle(Locale locale) {
-        List<Class<?>> clses = new ArrayList<>(resourceClasses);
-        clses.addAll(portalHierarchy());
         return ResourceBundle.getBundle("l10n", locale,
             PortalWeblet.class.getClassLoader(), resourceControl);
     }
