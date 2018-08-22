@@ -17,7 +17,8 @@
  */
 
 /**
- * Provides a component for adding the chartjs library to a portal.
+ * Provides a component for adding the [Chart.js](http://www.chartjs.org/)
+ * library to a portal.
  */
 @org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.portal.providers.chartjs;

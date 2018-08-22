@@ -5,16 +5,8 @@ task sourcesJar(type: Jar) {
     classifier "sources"
 }
     
-if (project.name != "org.jgrapes.portal.base") {
-    task javadocJar(type: Jar) {
-        from ("${project.rootDir}/misc/javadoc-redirect")
-        classifier "javadoc"
-    }
-    
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-    }
+artifacts {
+    archives sourcesJar
 }
 
 // MavenPublishing (new)

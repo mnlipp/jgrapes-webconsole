@@ -17,8 +17,8 @@
  */
 
 /**
- * Provides a component for adding the [vue.js](https://vuejs.org/) 
- * library to a portal.
+ * Provides a portal weblet that implements the portal page using the
+ * [JQuery UI](http://jqueryui.com/) framework.
  */
 @org.osgi.annotation.versioning.Version("${api_version}")
-package org.jgrapes.portal.providers.vuejs;
+package org.jgrapes.portal.jqueryui;

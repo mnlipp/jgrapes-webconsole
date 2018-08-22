@@ -49,8 +49,8 @@ allprojects {
 
 	group = 'org.jgrapes'
 	
-	ext.releaseVersion = "0.19.3"
-	ext.isSnapshot = false
+	ext.releaseVersion = "0.19.4"
+	ext.isSnapshot = true
 	version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
     
     compileJava {

@@ -17,7 +17,9 @@
  */
 
 /**
- * Provides a component for adding the markdownit library to a portal.
+ * Provides a component for adding the 
+ * [markdownit](https://github.com/markdown-it/markdown-it) library 
+ * to a portal.
  */
 @org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.portal.providers.markdownit;

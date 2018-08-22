@@ -10,7 +10,7 @@ the core framework and components.
 
 `org.jgrapes.portal`
 : Components for building portals. **Make sure to read 
-    <a href="org/jgrapes/portal/package-summary.html#package.description">this package's description</a>
+    <a href="org/jgrapes/portal/base/package-summary.html#package.description">this package's description</a>
     first.**
     
 @startuml package-hierarchy.svg

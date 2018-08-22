@@ -17,7 +17,8 @@
  */
 
 /**
- * Provides a component for adding the datatables library to a portal.
+ * Provides a component for adding the [datatables](https://datatables.net/)
+ * library to a portal.
  */
 @org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.portal.providers.datatables;

@@ -55,8 +55,9 @@
  * 
  * ### Page Resource Providers
  * 
- * The initial HTML document already includes some JavaScript resources
- * like [jQuery](http://jquery.com/) and [jQuery-UI](http://jqueryui.com/).
+ * The initial HTML document already includes some basic JavaScript 
+ * resources which are required to implement the basic functions 
+ * (such as [jQuery](http://jquery.com/)).
  * The portlets may, however, require additional libraries in order to
  * work. While it is possible for the portlets to add libraries, it is
  * usually preferable to add such libraries independent from individual
