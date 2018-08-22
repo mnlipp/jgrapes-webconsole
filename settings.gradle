@@ -2,7 +2,6 @@ enableFeaturePreview('STABLE_PUBLISHING')
 
 rootProject.name = 'JGrapes-Portal'
 
-include 'org.jgrapes.portal'
 include 'org.jgrapes.portal.base'
 include 'org.jgrapes.portal.jqueryui'
 include 'org.jgrapes.portal.bootstrap4'
