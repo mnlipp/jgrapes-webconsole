@@ -51,7 +51,6 @@ import org.jgrapes.http.ResourcePattern;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
 import org.jgrapes.http.annotation.RequestHandler;
-import org.jgrapes.http.events.GetRequest;
 import org.jgrapes.http.events.ProtocolSwitchAccepted;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
@@ -358,7 +357,7 @@ public abstract class PortalWeblet extends Component {
      */
     @RequestHandler(dynamic = true)
     @SuppressWarnings("PMD.EmptyCatchBlock")
-    public void onGetRedirect(GetRequest event, IOSubchannel channel)
+    public void onGetRedirect(Request.In.Get event, IOSubchannel channel)
             throws InterruptedException, IOException, ParseException {
         HttpResponse response = event.httpRequest().response().get();
         response.setStatus(HttpStatus.MOVED_PERMANENTLY)
@@ -385,7 +384,7 @@ public abstract class PortalWeblet extends Component {
      * @throws ParseException the parse exception
      */
     @RequestHandler(dynamic = true)
-    public void onGet(GetRequest event, IOSubchannel channel)
+    public void onGet(Request.In.Get event, IOSubchannel channel)
             throws InterruptedException, IOException, ParseException {
         URI requestUri = event.requestUri();
         int prefixSegs = requestPattern.matches(requestUri);
@@ -446,7 +445,8 @@ public abstract class PortalWeblet extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws InterruptedException the interrupted exception
      */
-    protected abstract void renderPortal(GetRequest event, IOSubchannel channel,
+    protected abstract void renderPortal(Request.In.Get event,
+            IOSubchannel channel,
             UUID portalSessionId)
             throws IOException, InterruptedException;
 
@@ -460,7 +460,7 @@ public abstract class PortalWeblet extends Component {
      * common part for portal resources
      * @param channel the channel
      */
-    protected void providePortalResource(GetRequest event,
+    protected void providePortalResource(Request.In.Get event,
             String requestPath, IOSubchannel channel) {
         for (Class<?> cls : portalResourceSearchSeq) {
             if (ResponseCreationSupport.sendStaticContent(event, channel,
@@ -483,7 +483,7 @@ public abstract class PortalWeblet extends Component {
         return this;
     }
 
-    private void providePageResource(GetRequest event, IOSubchannel channel,
+    private void providePageResource(Request.In.Get event, IOSubchannel channel,
             String resource) throws InterruptedException {
         // Send events to providers on portal's channel
         PageResourceRequest pageResourceRequest = new PageResourceRequest(
@@ -501,7 +501,8 @@ public abstract class PortalWeblet extends Component {
         fire(pageResourceRequest, portalChannel(channel));
     }
 
-    private void providePortletResource(GetRequest event, IOSubchannel channel,
+    private void providePortletResource(Request.In.Get event,
+            IOSubchannel channel,
             URI resource) throws InterruptedException {
         String resPath = resource.getPath();
         int sep = resPath.indexOf('/');
@@ -561,7 +562,7 @@ public abstract class PortalWeblet extends Component {
     }
 
     private void handleSessionRequest(
-            GetRequest event, IOSubchannel channel, String portalSessionId)
+            Request.In.Get event, IOSubchannel channel, String portalSessionId)
             throws InterruptedException, IOException, ParseException {
         // Must be WebSocket request.
         if (!event.httpRequest().findField(

@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jgrapes.core.Event;
-import org.jgrapes.http.events.GetRequest;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.base.RenderSupport;
 import org.jgrapes.portal.base.ResourceByUrl;

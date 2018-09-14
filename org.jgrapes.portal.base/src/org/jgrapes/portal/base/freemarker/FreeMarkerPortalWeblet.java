@@ -51,7 +51,7 @@ import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jdrupes.httpcodec.types.MediaType;
 import org.jgrapes.core.Channel;
 import org.jgrapes.http.LanguageSelector.Selection;
-import org.jgrapes.http.events.GetRequest;
+import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.util.ByteBufferOutputStream;
@@ -161,7 +161,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     protected Map<String, Object> expandPortalModel(
-            Map<String, Object> model, GetRequest event,
+            Map<String, Object> model, Request.In.Get event,
             UUID portalSessionId) {
         // Portal Session UUID
         model.put("portalSessionId", portalSessionId.toString());
@@ -208,7 +208,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
     }
 
     @Override
-    protected void renderPortal(GetRequest event, IOSubchannel channel,
+    protected void renderPortal(Request.In.Get event, IOSubchannel channel,
             UUID portalSessionId) throws IOException, InterruptedException {
         event.setResult(true);
         event.stop();

@@ -34,7 +34,6 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.ResourcePattern;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
-import org.jgrapes.http.events.GetRequest;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
@@ -121,7 +120,7 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
     }
 
     @Override
-    protected void renderPortal(GetRequest event, IOSubchannel channel,
+    protected void renderPortal(Request.In.Get event, IOSubchannel channel,
             UUID portalSessionId) throws IOException, InterruptedException {
         // Reloading themes on every reload allows themes
         // to be added dynamically. Note that we must load again
@@ -131,7 +130,7 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
     }
 
     @Override
-    protected void providePortalResource(GetRequest event,
+    protected void providePortalResource(Request.In.Get event,
             String requestPath, IOSubchannel channel) {
         String[] requestParts = ResourcePattern.split(requestPath, 1);
         if (requestParts.length == 2 && requestParts[0].equals("theme")) {
@@ -142,7 +141,7 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private void sendThemeResource(GetRequest event, IOSubchannel channel,
+    private void sendThemeResource(Request.In.Get event, IOSubchannel channel,
             String resource) {
         // Get resource
         ThemeProvider themeProvider = event.associated(Session.class).flatMap(

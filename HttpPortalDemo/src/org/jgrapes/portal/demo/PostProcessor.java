@@ -33,7 +33,7 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.http.annotation.RequestHandler;
-import org.jgrapes.http.events.PostRequest;
+import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.events.Input;
@@ -59,7 +59,7 @@ public class PostProcessor extends Component {
     }
 
     @RequestHandler(patterns = "/form")
-    public void onPost(PostRequest event, IOSubchannel channel) {
+    public void onPost(Request.In.Post event, IOSubchannel channel) {
         FormContext ctx = channel
             .associated(this, FormContext::new);
         ctx.request = event.httpRequest();
