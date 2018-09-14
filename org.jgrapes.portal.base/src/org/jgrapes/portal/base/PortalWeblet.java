@@ -473,7 +473,7 @@ public abstract class PortalWeblet extends Component {
 
     /**
      * Prepends the given class to the list of classes searched by
-     * {@link #providePortalResource(GetRequest, String, IOSubchannel)}.
+     * {@link #providePortalResource(Request.In.Get, String, IOSubchannel)}.
      * 
      * @param cls the class to prepend
      * @return the portal weblet for easy chaining

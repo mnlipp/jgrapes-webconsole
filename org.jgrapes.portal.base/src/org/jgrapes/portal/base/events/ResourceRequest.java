@@ -35,11 +35,11 @@ import org.jgrapes.portal.base.ResourceResult;
 /**
  * An event that signals the request for a resource by the browser.
  * 
- * This event is effectively a "transformed" {@link GetRequest}. It 
+ * This event is effectively a "transformed" {@link Request.In.Get}. It 
  * simplifies handling of such an event by portal components, because
  * they can simply set a result of type {@link ResourceResult} and
  * thus need no knowledge about generating all the events required to 
- * properly respond to a {@link GetRequest}.
+ * properly respond to a {@link Request.In.Get}.
  * 
  * The complete sequence of events is shown in the diagram.
  * 
@@ -60,7 +60,7 @@ import org.jgrapes.portal.base.ResourceResult;
  * Handlers of {@link ResourceRequest} events use usually only
  * the information provided by {@link #resourceUri()}. The other
  * items are needed by the handler of the {@link ResourceRequestCompleted}
- * event (the portal) to generate the response for the {@link GetRequest}.
+ * event (the portal) to generate the response for the {@link Request.In.Get}.
  * 
  * If none of the provided {@link ResourceResult} type matches the
  * requirements of the resource provider, it can set
