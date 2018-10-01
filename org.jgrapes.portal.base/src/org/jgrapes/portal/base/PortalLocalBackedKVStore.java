@@ -75,7 +75,8 @@ public class PortalLocalBackedKVStore extends Component {
     public void onPortalReady(PortalReady event, PortalSession channel)
             throws InterruptedException {
         // Put there by onJsonInput if retrieval has been done.
-        if (TypedIdKey.get(channel.browserSession(), Store.class, portalPrefix)
+        if (TypedIdKey.get(channel.browserSession(), Store.class,
+            portalPrefix)
             .isPresent()) {
             // Already have store, nothing to do
             return;
