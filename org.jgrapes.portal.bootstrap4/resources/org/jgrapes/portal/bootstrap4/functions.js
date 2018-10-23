@@ -175,7 +175,7 @@ var B4UIPortal = {
                     }
                     if ($(window).width() < 1200) {
                         let winWidth = Math.max(320, $(window).width());
-                        width = Math.round(12 - 11/(1200-320)*(winWidth-320));
+                        width = Math.round(width+(12-width)*(1-(winWidth-320)/(1200-320)));
                     }
                 }
 
