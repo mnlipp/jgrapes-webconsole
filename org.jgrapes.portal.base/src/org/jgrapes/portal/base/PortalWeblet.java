@@ -22,9 +22,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.CharBuffer;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +37,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
@@ -758,6 +762,77 @@ public abstract class PortalWeblet extends Component {
             return new URI(null, null, path, null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
+        }
+    }
+
+    /**
+     * Returns the query part of a URI as map. Note that query parts
+     * can have multiple entries with the same key.
+     *
+     * @param uri the uri
+     * @return the map
+     */
+    public static Map<String, List<String>> queryAsMap(URI uri) {
+        if (uri.getQuery() == null) {
+            return new HashMap<>();
+        }
+        @SuppressWarnings("PMD.UseConcurrentHashMap")
+        Map<String, List<String>> result = new HashMap<>();
+        Arrays.stream(uri.getQuery().split("&")).forEach(item -> {
+            String[] pair = item.split("=");
+            result.computeIfAbsent(pair[0], key -> new ArrayList<>())
+                .add(pair[1]);
+        });
+        return result;
+    }
+
+    /**
+     * Merge query parameters into an existing URI.
+     *
+     * @param uri the URI
+     * @param parameters the parameters
+     * @return the new URI
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public static URI mergeQuery(URI uri, Map<String, String> parameters) {
+        Map<String, List<String>> oldQuery = queryAsMap(uri);
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            oldQuery.computeIfAbsent(entry.getKey(), key -> new ArrayList<>())
+                .add(entry.getValue());
+        }
+        String newQuery = oldQuery.entrySet().stream()
+            .map(entry -> entry.getValue().stream()
+                .map(
+                    value -> isoEncode(entry.getKey()) + "=" + isoEncode(value))
+                .collect(Collectors.joining("&")))
+            .collect(Collectors.joining("&"));
+        // When constructing the new URI, we cannot pass the newQuery
+        // to the constructor because it would be encoded once more.
+        // So we build the most basic parseable URI with the newQuery
+        // and resolve it against the remaining information.
+        try {
+            return new URI(uri.getScheme(), uri.getAuthority(), null, null,
+                null).resolve(
+                    uri.getRawPath() + "?" + newQuery
+                        + (uri.getFragment() == null ? ""
+                            : ("#" + uri.getRawFragment())));
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    /**
+     * Returns `URLEncoder.encode(value, "ISO-8859-1")`.
+     *
+     * @param value the value
+     * @return the result
+     */
+    public static String isoEncode(String value) {
+        try {
+            return URLEncoder.encode(value, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            // Cannot happen, ISO-8859-1 is specified to be supported
+            throw new IllegalStateException(e);
         }
     }
 

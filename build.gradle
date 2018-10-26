@@ -49,7 +49,7 @@ allprojects {
 
 	group = 'org.jgrapes'
 	
-	ext.releaseVersion = "0.20.2"
+	ext.releaseVersion = "0.20.3"
 	ext.isSnapshot = false
 	version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
     
