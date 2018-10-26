@@ -45,7 +45,7 @@ public interface RenderSupport {
      * @return the resulting URI
      */
     default URI portalBaseResource(String path) {
-        return portalBaseResource(PortalWeblet.uriFromPath(path));
+        return portalBaseResource(PortalUtils.uriFromPath(path));
     }
 
     /**
@@ -64,7 +64,7 @@ public interface RenderSupport {
      * @return the resulting URI
      */
     default URI portalResource(String path) {
-        return portalResource(PortalWeblet.uriFromPath(path));
+        return portalResource(PortalUtils.uriFromPath(path));
     }
 
     /**
@@ -86,7 +86,7 @@ public interface RenderSupport {
      * @return the resulting URI
      */
     default URI pageResource(String path) {
-        return pageResource(PortalWeblet.uriFromPath(path));
+        return pageResource(PortalUtils.uriFromPath(path));
     }
 
     /**
@@ -110,7 +110,7 @@ public interface RenderSupport {
      * @return the resulting URI
      */
     default URI portletResource(String portletType, String path) {
-        return portletResource(portletType, PortalWeblet.uriFromPath(path));
+        return portletResource(portletType, PortalUtils.uriFromPath(path));
     }
 
     /**

@@ -39,7 +39,6 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.portal.base.PortalSession;
 import org.jgrapes.portal.base.PortalUtils;
-import org.jgrapes.portal.base.PortalWeblet;
 import org.jgrapes.portal.base.Portlet.RenderMode;
 import org.jgrapes.portal.base.UserPrincipal;
 import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
@@ -96,7 +95,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().portletResource(type(),
                     "HelloWorld-functions.js")))
-            .addCss(event.renderSupport(), PortalWeblet.uriFromPath(
+            .addCss(event.renderSupport(), PortalUtils.uriFromPath(
                 "HelloWorld-style.css"))
             .setInstantiable());
         KeyValueStoreQuery query = new KeyValueStoreQuery(

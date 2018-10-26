@@ -21,13 +21,9 @@ package org.jgrapes.portal.base;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.nio.CharBuffer;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +33,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
@@ -491,7 +486,7 @@ public abstract class PortalWeblet extends Component {
             String resource) throws InterruptedException {
         // Send events to providers on portal's channel
         PageResourceRequest pageResourceRequest = new PageResourceRequest(
-            uriFromPath(resource),
+            PortalUtils.uriFromPath(resource),
             event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
                 Converters.DATE_TIME).orElse(null),
             event.httpRequest(), channel, renderSupport());
@@ -513,7 +508,7 @@ public abstract class PortalWeblet extends Component {
         // Send events to portlets on portal's channel
         PortletResourceRequest portletRequest = new PortletResourceRequest(
             resPath.substring(0, sep),
-            uriFromPath(resPath.substring(sep + 1)),
+            PortalUtils.uriFromPath(resPath.substring(sep + 1)),
             event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
                 Converters.DATE_TIME).orElse(null),
             event.httpRequest(), channel, renderSupport());
@@ -748,95 +743,6 @@ public abstract class PortalWeblet extends Component {
     }
 
     /**
-     * Create a {@link URI} from a path. This is similar to calling
-     * `new URI(null, null, path, null)` with the {@link URISyntaxException}
-     * converted to a {@link IllegalArgumentException}.
-     * 
-     * @param path the path
-     * @return the uri
-     * @throws IllegalArgumentException if the string violates 
-     * RFC 2396
-     */
-    public static URI uriFromPath(String path) throws IllegalArgumentException {
-        try {
-            return new URI(null, null, path, null);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    /**
-     * Returns the query part of a URI as map. Note that query parts
-     * can have multiple entries with the same key.
-     *
-     * @param uri the uri
-     * @return the map
-     */
-    public static Map<String, List<String>> queryAsMap(URI uri) {
-        if (uri.getQuery() == null) {
-            return new HashMap<>();
-        }
-        @SuppressWarnings("PMD.UseConcurrentHashMap")
-        Map<String, List<String>> result = new HashMap<>();
-        Arrays.stream(uri.getQuery().split("&")).forEach(item -> {
-            String[] pair = item.split("=");
-            result.computeIfAbsent(pair[0], key -> new ArrayList<>())
-                .add(pair[1]);
-        });
-        return result;
-    }
-
-    /**
-     * Merge query parameters into an existing URI.
-     *
-     * @param uri the URI
-     * @param parameters the parameters
-     * @return the new URI
-     */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public static URI mergeQuery(URI uri, Map<String, String> parameters) {
-        Map<String, List<String>> oldQuery = queryAsMap(uri);
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            oldQuery.computeIfAbsent(entry.getKey(), key -> new ArrayList<>())
-                .add(entry.getValue());
-        }
-        String newQuery = oldQuery.entrySet().stream()
-            .map(entry -> entry.getValue().stream()
-                .map(
-                    value -> isoEncode(entry.getKey()) + "=" + isoEncode(value))
-                .collect(Collectors.joining("&")))
-            .collect(Collectors.joining("&"));
-        // When constructing the new URI, we cannot pass the newQuery
-        // to the constructor because it would be encoded once more.
-        // So we build the most basic parseable URI with the newQuery
-        // and resolve it against the remaining information.
-        try {
-            return new URI(uri.getScheme(), uri.getAuthority(), null, null,
-                null).resolve(
-                    uri.getRawPath() + "?" + newQuery
-                        + (uri.getFragment() == null ? ""
-                            : ("#" + uri.getRawFragment())));
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    /**
-     * Returns `URLEncoder.encode(value, "ISO-8859-1")`.
-     *
-     * @param value the value
-     * @return the result
-     */
-    public static String isoEncode(String value) {
-        try {
-            return URLEncoder.encode(value, "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            // Cannot happen, ISO-8859-1 is specified to be supported
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
      * The channel used to send {@link PageResourceRequest}s and
      * {@link PortletResourceRequest}s to the portlets (via the
      * portal).
@@ -863,13 +769,13 @@ public abstract class PortalWeblet extends Component {
 
         @Override
         public URI portalBaseResource(URI uri) {
-            return prefix.resolve(uriFromPath("portal-base-resource/"))
+            return prefix.resolve(PortalUtils.uriFromPath("portal-base-resource/"))
                 .resolve(uri);
         }
 
         @Override
         public URI portalResource(URI uri) {
-            return prefix.resolve(uriFromPath("portal-resource/")).resolve(uri);
+            return prefix.resolve(PortalUtils.uriFromPath("portal-resource/")).resolve(uri);
         }
 
         /*
@@ -882,7 +788,7 @@ public abstract class PortalWeblet extends Component {
          */
         @Override
         public URI portletResource(String portletType, URI uri) {
-            return prefix.resolve(uriFromPath(
+            return prefix.resolve(PortalUtils.uriFromPath(
                 "portlet-resource/" + portletType + "/")).resolve(uri);
         }
 
@@ -894,7 +800,7 @@ public abstract class PortalWeblet extends Component {
          */
         @Override
         public URI pageResource(URI uri) {
-            return prefix.resolve(uriFromPath(
+            return prefix.resolve(PortalUtils.uriFromPath(
                 "page-resource/")).resolve(uri);
         }
 
