@@ -21,6 +21,7 @@ package org.jgrapes.portal.base;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.CharBuffer;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -503,22 +504,29 @@ public abstract class PortalWeblet extends Component {
     private void providePortletResource(Request.In.Get event,
             IOSubchannel channel,
             URI resource) throws InterruptedException {
-        String resPath = resource.getPath();
-        int sep = resPath.indexOf('/');
-        // Send events to portlets on portal's channel
-        PortletResourceRequest portletRequest = new PortletResourceRequest(
-            resPath.substring(0, sep),
-            PortalUtils.uriFromPath(resPath.substring(sep + 1)),
-            event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
-                Converters.DATE_TIME).orElse(null),
-            event.httpRequest(), channel, renderSupport());
-        // Make session available (associate with event, this is not
-        // a websocket request).
-        event.associated(Session.class).ifPresent(
-            session -> portletRequest.setAssociated(Session.class, session));
-        event.setResult(true);
-        event.stop();
-        fire(portletRequest, portalChannel(channel));
+        try {
+            String resPath = resource.getPath();
+            int sep = resPath.indexOf('/');
+            // Send events to portlets on portal's channel
+            PortletResourceRequest portletRequest = new PortletResourceRequest(
+                resPath.substring(0, sep),
+                new URI(null, null, resPath.substring(sep + 1),
+                    event.requestUri().getQuery(),
+                    event.requestUri().getFragment()),
+                event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
+                    Converters.DATE_TIME).orElse(null),
+                event.httpRequest(), channel, renderSupport());
+            // Make session available (associate with event, this is not
+            // a websocket request).
+            event.associated(Session.class).ifPresent(
+                session -> portletRequest.setAssociated(Session.class,
+                    session));
+            event.setResult(true);
+            event.stop();
+            fire(portletRequest, portalChannel(channel));
+        } catch (URISyntaxException e) {
+            // Won't happen, new URI derived from existing
+        }
     }
 
     /**
@@ -769,13 +777,15 @@ public abstract class PortalWeblet extends Component {
 
         @Override
         public URI portalBaseResource(URI uri) {
-            return prefix.resolve(PortalUtils.uriFromPath("portal-base-resource/"))
+            return prefix
+                .resolve(PortalUtils.uriFromPath("portal-base-resource/"))
                 .resolve(uri);
         }
 
         @Override
         public URI portalResource(URI uri) {
-            return prefix.resolve(PortalUtils.uriFromPath("portal-resource/")).resolve(uri);
+            return prefix.resolve(PortalUtils.uriFromPath("portal-resource/"))
+                .resolve(uri);
         }
 
         /*
