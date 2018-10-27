@@ -261,8 +261,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
             // Prepare template
             final Template tpl = freemarkerConfig().getTemplate(
                 event.resourceUri().getPath());
-            Map<String, Object> model = fmSessionModel(
-                event.associated(Session.class).get());
+            Map<String, Object> model = fmSessionModel(event.session());
             model.putAll(fmTypeModel(event.renderSupport()));
 
             // Everything successfully prepared

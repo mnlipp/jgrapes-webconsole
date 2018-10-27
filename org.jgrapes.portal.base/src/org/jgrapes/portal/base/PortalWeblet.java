@@ -490,12 +490,8 @@ public abstract class PortalWeblet extends Component {
             PortalUtils.uriFromPath(resource),
             event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
                 Converters.DATE_TIME).orElse(null),
-            event.httpRequest(), channel, renderSupport());
-        // Make session available (associate with event, this is not
-        // a websocket request).
-        event.associated(Session.class).ifPresent(
-            session -> pageResourceRequest.setAssociated(Session.class,
-                session));
+            event.httpRequest(), channel, event.associated(Session.class).get(),
+            renderSupport());
         event.setResult(true);
         event.stop();
         fire(pageResourceRequest, portalChannel(channel));
@@ -515,7 +511,8 @@ public abstract class PortalWeblet extends Component {
                     event.requestUri().getFragment()),
                 event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
                     Converters.DATE_TIME).orElse(null),
-                event.httpRequest(), channel, renderSupport());
+                event.httpRequest(), channel,
+                event.associated(Session.class).get(), renderSupport());
             // Make session available (associate with event, this is not
             // a websocket request).
             event.associated(Session.class).ifPresent(

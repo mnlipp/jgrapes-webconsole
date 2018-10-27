@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jgrapes.core.Event;
+import org.jgrapes.http.Session;
 import org.jgrapes.http.events.Request.In.Get;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.portal.base.RenderSupport;
@@ -119,6 +120,7 @@ public class ResourceRequest extends Event<ResourceResult> {
     private final HttpRequest httpRequest;
     private final IOSubchannel httpChannel;
     private final RenderSupport renderSupport;
+    private final Session session;
 
     /**
      * Creates a new request, including the associated 
@@ -131,12 +133,13 @@ public class ResourceRequest extends Event<ResourceResult> {
      */
     public ResourceRequest(URI resourceUri, Instant ifModifiedSince,
             HttpRequest httpRequest, IOSubchannel httpChannel,
-            RenderSupport renderSupport) {
+            Session session, RenderSupport renderSupport) {
         this.resourceUri = resourceUri;
         this.ifModifiedSince = ifModifiedSince;
         this.httpRequest = httpRequest;
         this.httpChannel = httpChannel;
         this.renderSupport = renderSupport;
+        this.session = session;
         new ResourceRequestCompleted(this);
     }
 
@@ -182,4 +185,12 @@ public class ResourceRequest extends Event<ResourceResult> {
         return renderSupport;
     }
 
+    /**
+     * Returns the (browser) session.
+     *
+     * @return the session
+     */
+    public Session session() {
+        return session;
+    }
 }
