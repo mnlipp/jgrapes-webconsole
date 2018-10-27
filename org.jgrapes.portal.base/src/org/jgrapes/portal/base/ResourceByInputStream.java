@@ -47,7 +47,9 @@ public class ResourceByInputStream extends ResourceResult {
      *
      * @param request the request
      * @param stream the stream
-     * @param maxAge
+     * @param mediaType the media type, may be `null`
+     * @param lastModifiedAt the last modified at
+     * @param maxAge the max age
      */
     public ResourceByInputStream(ResourceRequest request,
             InputStream stream, MediaType mediaType,
@@ -71,9 +73,10 @@ public class ResourceByInputStream extends ResourceResult {
         if (lastModifiedAt != null) {
             response.setField(HttpField.LAST_MODIFIED, lastModifiedAt);
         }
-        response.setContentType(mediaType);
-        ResponseCreationSupport.setMaxAge(response, (req, mtype) -> maxAge,
-            request().httpRequest(), mediaType);
+        if (mediaType != null) {
+            response.setContentType(mediaType);
+        }
+        ResponseCreationSupport.setMaxAge(response, maxAge);
         response.setStatus(HttpStatus.OK);
         request().httpChannel().respond(new Response(response));
         // Start sending content
