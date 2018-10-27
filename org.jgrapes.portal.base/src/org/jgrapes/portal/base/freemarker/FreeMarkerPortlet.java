@@ -159,7 +159,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
     }
 
     /**
-     * Build a freemarker model holdiung the information associated 
+     * Build a freemarker model holding the information associated 
      * with the session.
      * 
      * This model provides:
