@@ -75,6 +75,9 @@ public class ResourceByInputStream extends ResourceResult {
         }
         if (mediaType != null) {
             response.setContentType(mediaType);
+        } else {
+            // Usually a set by setContentType
+            response.setHasPayload(true);
         }
         ResponseCreationSupport.setMaxAge(response, maxAge);
         response.setStatus(HttpStatus.OK);

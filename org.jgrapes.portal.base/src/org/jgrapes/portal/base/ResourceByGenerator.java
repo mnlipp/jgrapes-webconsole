@@ -94,6 +94,9 @@ public class ResourceByGenerator extends ResourceResult {
         }
         if (mediaType != null) {
             response.setContentType(mediaType);
+        } else {
+            // Usually set by setContenType
+            response.setHasPayload(true);
         }
         ResponseCreationSupport.setMaxAge(response, maxAge);
         response.setStatus(HttpStatus.OK);

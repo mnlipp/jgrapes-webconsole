@@ -19,7 +19,13 @@
 package org.jgrapes.portal.base;
 
 import java.io.IOException;
+import java.time.Instant;
 
+import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
+import org.jdrupes.httpcodec.protocols.http.HttpField;
+import org.jdrupes.httpcodec.protocols.http.HttpResponse;
+import org.jgrapes.http.ResponseCreationSupport;
+import org.jgrapes.http.events.Response;
 import org.jgrapes.portal.base.events.ResourceRequest;
 
 /**
@@ -28,21 +34,33 @@ import org.jgrapes.portal.base.events.ResourceRequest;
  */
 public class ResourceNotModified extends ResourceResult {
 
+    private final Instant lastModifiedAt;
+    private final int maxAge;
+
     /**
      * Creates a new instance.
      *
      * @param request the request
      */
-    public ResourceNotModified(ResourceRequest request) {
+    public ResourceNotModified(ResourceRequest request, Instant lastModifiedAt,
+            int maxAge) {
         super(request);
+        this.lastModifiedAt = lastModifiedAt;
+        this.maxAge = maxAge;
     }
 
     /** 
-     * Does nothing, because the resource does not have to be sent.
+     * Send header only, because the resource does not have to be sent.
      */
     @Override
     public void process() throws IOException, InterruptedException {
-        // Do nothing.
+        HttpResponse response = request().httpRequest().response().get();
+        if (lastModifiedAt != null) {
+            response.setField(HttpField.LAST_MODIFIED, lastModifiedAt);
+        }
+        ResponseCreationSupport.setMaxAge(response, maxAge);
+        response.setStatus(HttpStatus.NOT_MODIFIED);
+        request().httpChannel().respond(new Response(response));
     }
 
 }
