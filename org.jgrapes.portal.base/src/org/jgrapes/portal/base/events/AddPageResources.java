@@ -18,12 +18,16 @@
 
 package org.jgrapes.portal.base.events;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jdrupes.json.JsonArray;
 import org.jdrupes.json.JsonObject;
@@ -242,6 +246,26 @@ public class AddPageResources extends PortalCommand {
          */
         public ScriptResource setScriptSource(String scriptSource) {
             this.scriptSource = scriptSource;
+            scriptUri = null;
+            return this;
+        }
+
+        /**
+         * Loads the script source to evaluate. Clears the
+         * `scriptUri` attribute. Closes the reader.
+         *
+         * @param in the input stream
+         * @return this object for easy chaining
+         * @throws IOException 
+         */
+        public ScriptResource loadScriptSource(Reader in) throws IOException {
+            try (BufferedReader buffered = new BufferedReader(in)) {
+                this.scriptSource
+                    = buffered.lines().collect(Collectors.joining("\r\n"));
+            } catch (UncheckedIOException e) {
+                throw e.getCause();
+            }
+            scriptUri = null;
             return this;
         }
 
