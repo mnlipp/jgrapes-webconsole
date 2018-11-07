@@ -95,6 +95,8 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().portletResource(type(),
                     "HelloWorld-functions.js")))
+            .addScript(new ScriptResource().setScriptType("text/x-test")
+                .setScriptSource("Just a test."))
             .addCss(event.renderSupport(), PortalUtils.uriFromPath(
                 "HelloWorld-style.css"))
             .setInstantiable());
