@@ -337,6 +337,9 @@ var JGPortal = {};
             let self = this;
             let head = $("head").get()[0];
             let script = document.createElement("script");
+            if (scriptResource.id) {
+                script.setAttribute("id", scriptResource.id);
+            }
             if (scriptResource.type) {
                 script.setAttribute("type", scriptResource.type);
             }

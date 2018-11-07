@@ -161,8 +161,9 @@ public class AddPageResources extends PortalCommand {
         private static final String[] EMPTY_ARRAY = new String[0];
 
         private URI scriptUri;
-        private String scriptSource;
+        private String scriptId;
         private String scriptType;
+        private String scriptSource;
         private String[] provides = EMPTY_ARRAY;
         private String[] requires = EMPTY_ARRAY;
 
@@ -186,6 +187,46 @@ public class AddPageResources extends PortalCommand {
         }
 
         /**
+         * Gets the script type (defaults to no type).
+         *
+         * @return the script type
+         */
+        public String getScriptType() {
+            return scriptType;
+        }
+
+        /**
+         * Sets the script type.
+         *
+         * @param scriptType the new script type
+         * @return the script resource
+         */
+        public ScriptResource setScriptType(String scriptType) {
+            this.scriptType = scriptType;
+            return this;
+        }
+
+        /**
+         * Gets the script id (defaults to no id).
+         *
+         * @return the script type
+         */
+        public String getScriptId() {
+            return scriptId;
+        }
+
+        /**
+         * Sets the script id.
+         *
+         * @param scriptId the script id
+         * @return the script resource
+         */
+        public ScriptResource setScriptId(String scriptId) {
+            this.scriptId = scriptId;
+            return this;
+        }
+
+        /**
          * @return the script source
          */
         public String scriptSource() {
@@ -201,25 +242,6 @@ public class AddPageResources extends PortalCommand {
          */
         public ScriptResource setScriptSource(String scriptSource) {
             this.scriptSource = scriptSource;
-            return this;
-        }
-
-        /**
-         * Gets the script type.
-         *
-         * @return the script type
-         */
-        public String getScriptType() {
-            return scriptType;
-        }
-
-        /**
-         * Sets the script type.
-         *
-         * @param scriptType the new script type
-         */
-        public ScriptResource setScriptType(String scriptType) {
-            this.scriptType = scriptType;
             return this;
         }
 
@@ -280,11 +302,14 @@ public class AddPageResources extends PortalCommand {
             if (scriptUri != null) {
                 obj.setField("uri", scriptUri.toString());
             }
-            if (scriptSource != null) {
-                obj.setField("source", scriptSource);
+            if (scriptId != null) {
+                obj.setField("id", scriptId);
             }
             if (scriptType != null) {
                 obj.setField("type", scriptType);
+            }
+            if (scriptSource != null) {
+                obj.setField("source", scriptSource);
             }
             JsonArray strArray = JsonArray.create();
             for (String req : requires) {
