@@ -34,9 +34,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.EventPipeline;
+import org.jgrapes.core.Subchannel;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.io.IOSubchannel.DefaultSubchannel;
+import org.jgrapes.io.IOSubchannel.DefaultIOSubchannel;
 import org.jgrapes.io.events.Closed;
 import org.jgrapes.io.util.LinkedIOSubchannel;
 
@@ -114,7 +115,7 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * PortalSession "*" -up-> "1" Session: browser session
  * @enduml
  */
-public final class PortalSession extends DefaultSubchannel {
+public final class PortalSession extends DefaultIOSubchannel {
 
     private static Map<String, WeakReference<PortalSession>> portalSessions
         = new ConcurrentHashMap<>();
@@ -353,7 +354,7 @@ public final class PortalSession extends DefaultSubchannel {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(IOSubchannel.toString(this));
+        builder.append(Subchannel.toString(this));
         Optional.ofNullable(upstreamChannel).ifPresent(upstr -> builder.append(
             LinkedIOSubchannel.upstreamToString(upstr)));
         return builder.toString();
