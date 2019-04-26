@@ -35,7 +35,7 @@ import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
  * `<link .../>` or `<script ...></script>` nodes
  * being added to the page's `<head>` node.
  * 
- * This in turn causes the browser to issue `GET` request that
+ * This in turn causes the browser to issue `GET` requests that
  * (usually) refer to the portlet's resources. These requests are
  * converted to {@link PortletResourceRequest}s by the portal and
  * sent to the portlets, which must respond to the requests.
