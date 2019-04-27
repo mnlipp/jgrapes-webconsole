@@ -18,6 +18,8 @@
 
 package org.jgrapes.portal.base.events;
 
+import java.util.List;
+
 import org.jgrapes.core.Event;
 import org.jgrapes.portal.base.Portlet.RenderMode;
 import org.jgrapes.portal.base.RenderSupport;
@@ -27,18 +29,18 @@ import org.jgrapes.portal.base.RenderSupport;
  */
 public abstract class RenderPortletRequestBase<T> extends Event<T> {
     private final RenderSupport renderSupport;
-    private final RenderMode renderMode;
+    private final List<RenderMode> renderModes;
 
     /**
      * Creates a new event.
-     * 
+     *
      * @param renderSupport the render support
-     * @param mode the view mode that is requested
+     * @param renderModes the render modes
      */
     public RenderPortletRequestBase(
-            RenderSupport renderSupport, RenderMode mode) {
+            RenderSupport renderSupport, List<RenderMode> renderModes) {
         this.renderSupport = renderSupport;
-        this.renderMode = mode;
+        this.renderModes = renderModes;
     }
 
     /**
@@ -51,12 +53,23 @@ public abstract class RenderPortletRequestBase<T> extends Event<T> {
     }
 
     /**
-     * Returns the render mode.
+     * Returns the render modes.
      * 
+     * @return the render modes
+     */
+    public List<RenderMode> renderModes() {
+        return renderModes;
+    }
+
+    /**
+     * Returns the preferred render mode.
+     *
      * @return the render mode
      */
-    public RenderMode renderMode() {
-        return renderMode;
+    public RenderMode preferredRenderMode() {
+        return renderModes().stream()
+            .filter(mode -> mode != RenderMode.Foreground).findFirst()
+            .orElse(RenderMode.Preview);
     }
 
     /**
@@ -65,4 +78,5 @@ public abstract class RenderPortletRequestBase<T> extends Event<T> {
      * @return the result
      */
     public abstract boolean isForeground();
+
 }

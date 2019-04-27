@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jdrupes.json.JsonArray;
+import org.jgrapes.portal.base.Portlet.RenderMode;
 import org.jgrapes.portal.base.RenderSupport;
 import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
 
@@ -81,9 +82,9 @@ public class AddPortletType extends PortalCommand {
 
     private final String portletType;
     private String displayName = "";
-    private boolean instantiable;
     private final List<URI> cssUris = new ArrayList<>();
     private final List<ScriptResource> scriptResources = new ArrayList<>();
+    private final List<RenderMode> renderModes = new ArrayList<>();
 
     /**
      * Create a new event for the given portlet type.
@@ -125,22 +126,26 @@ public class AddPortletType extends PortalCommand {
     }
 
     /**
-     * Mark the portlet type as instantiable.
-     * 
+     * Add a render mode. The render mode determines how the portlet
+     * is initially rendered (i.e. when added). Several modes may be
+     * added in order of preference. The default mode (i.e. none 
+     * specified) is {@link RenderMode#Preview}.
+     *
+     * @param mode the mode
      * @return the event for easy chaining
      */
-    public AddPortletType setInstantiable() {
-        instantiable = true;
+    public AddPortletType addRenderMode(RenderMode mode) {
+        renderModes.add(mode);
         return this;
     }
 
     /**
-     * Return if the portelt is instantiable.
+     * Return the render modes.
      * 
      * @return the result
      */
-    public boolean isInstantiable() {
-        return instantiable;
+    public List<RenderMode> renderModes() {
+        return renderModes;
     }
 
     /**
@@ -194,6 +199,7 @@ public class AddPortletType extends PortalCommand {
         toJson(writer, "addPortletType", portletType(), displayName(),
             Arrays.stream(cssUris()).map(
                 uri -> uri.toString()).toArray(String[]::new),
-            strArray, isInstantiable());
+            strArray, renderModes().stream().map(RenderMode::name)
+                .toArray(size -> new String[size]));
     }
 }

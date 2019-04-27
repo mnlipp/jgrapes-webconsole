@@ -74,7 +74,7 @@ public class TableDemoPortlet extends FreeMarkerPortlet {
         // Add HelloWorldPortlet resources to page
         portalSession.respond(new AddPortletType(type())
             .setDisplayName(resourceBundle.getString("portletName"))
-            .setInstantiable());
+            .addRenderMode(RenderMode.View));
     }
 
     /*
@@ -129,7 +129,7 @@ public class TableDemoPortlet extends FreeMarkerPortlet {
             PortalSession channel, TableDemoModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        switch (event.renderMode()) {
+        switch (event.preferredRenderMode()) {
         case Preview:
         case DeleteablePreview: {
             Template tpl

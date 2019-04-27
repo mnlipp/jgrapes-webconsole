@@ -63,7 +63,8 @@ var JQUIPortal = {
             });
             
             $( "#addon-menu" ).on("click", "[data-portlet-type]", function() {
-                self.sendAddPortlet($(this).data("portlet-type"));
+                self.sendAddPortlet($(this).data("portlet-type"),
+                        $(this).data("render-modes"));
                 $( "#theme-menu" ).jqDropdown("hide");
             });
             
@@ -138,11 +139,12 @@ var JQUIPortal = {
             $("body").faLoading('remove');
         }
         
-        addPortletType(portletType, displayName, isInstantiable) {
+        addPortletType(portletType, displayName, renderModes) {
             // Add to menu
             let item = $('<li class="ui-menu-item">'
                     + '<div class="ui-menu-item-wrapper" data-portlet-type="' 
                     + portletType + '">' + displayName + '</div></li>');
+            item.find("div").data("render-modes", renderModes)
             $("#addon-menu-list").append(item);
         }
         
@@ -222,7 +224,7 @@ var JQUIPortal = {
                 portletHeader.find(".portlet-edit").on( "click", function() {
                     let icon = $( this );
                     let portletId = icon.closest( ".portlet" ).attr("data-portlet-id");
-                    self.sendRenderPortlet(portletId, "Edit", true);
+                    self.sendRenderPortlet(portletId, ["Edit", "Foreground"]);
                 });
             }
             if (modes.includes("DeleteablePreview")) {
@@ -242,7 +244,7 @@ var JQUIPortal = {
                     if(portletView) { 
                         self._activatePortletView(portletView);
                     } else {
-                        self.sendRenderPortlet(portletId, "View", true);
+                        self.sendRenderPortlet(portletId, ["View", "Foreground"]);
                     }
                 });
             }

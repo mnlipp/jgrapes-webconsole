@@ -136,8 +136,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
                 .setScriptUri(event.renderSupport().portletResource(
                     type(), "MarkdownDisplay-functions.ftl.js")))
             .addCss(event.renderSupport(), PortalUtils.uriFromPath(
-                "MarkdownDisplay-style.css"))
-            .setInstantiable());
+                "MarkdownDisplay-style.css")));
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             storagePath(portalSession.browserSession()), portalSession);
         fire(query, portalSession);
@@ -246,7 +245,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
             && !model.getViewContent().isEmpty()) {
             modes.add(RenderMode.View);
         }
-        switch (event.renderMode()) {
+        switch (event.preferredRenderMode()) {
         case Preview:
         case DeleteablePreview: {
             Template tpl = freemarkerConfig()
@@ -254,7 +253,8 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
             portalSession.respond(new RenderPortletFromTemplate(event,
                 MarkdownDisplayPortlet.class, model.getPortletId(),
                 tpl, fmModel(event, portalSession, model))
-                    .setRenderMode(event.renderMode()).setSupportedModes(modes)
+                    .setRenderMode(event.preferredRenderMode())
+                    .setSupportedModes(modes)
                     .setForeground(event.isForeground()));
             updateView(portalSession, model);
             break;

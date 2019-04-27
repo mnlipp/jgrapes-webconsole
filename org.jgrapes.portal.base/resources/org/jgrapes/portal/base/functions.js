@@ -119,10 +119,10 @@ var JGPortal = {};
                     // Make sure to get any lost updates
                     let renderer = self._portal._renderer; 
                     renderer.findPreviewIds().forEach(function(id) {
-                        renderer.sendRenderPortlet(id, "Preview", false);
+                        renderer.sendRenderPortlet(id, ["Preview"]);
                     });
                     renderer.findViewIds().forEach(function(id) {
-                        renderer.sendRenderPortlet(id, "View", false);
+                        renderer.sendRenderPortlet(id, ["View"]);
                     });
                 }
                 self._refreshTimer = setInterval(function() {
@@ -450,7 +450,7 @@ var JGPortal = {};
             log.warn("Not implemented!");
         }
         
-        addPortletType(portletType, displayName, isInstantiable) {
+        addPortletType(portletType, displayName, renderModes) {
             log.warn("Not implemented!");
         }
         
@@ -513,12 +513,10 @@ var JGPortal = {};
          * Sends a notification that requests the rendering of a portlet.
          * 
          * @param {string} portletId the portlet id
-         * @param {string} mode the requested render mode
-         * @param {boolean} foreground if the portlet is to be put in
-         * the foreground after rendering
+         * @param {string} modes the requested render mode(s)
          */
-        sendRenderPortlet(portletId, mode, foreground) {
-            thePortal.send("renderPortlet", portletId, mode, foreground);
+        sendRenderPortlet(portletId, modes) {
+            thePortal.send("renderPortlet", portletId, modes);
         };
 
         /**
@@ -526,8 +524,8 @@ var JGPortal = {};
          * 
          * @param {string} portletType the type of the portlet to add
          */
-        sendAddPortlet(portletType) {
-            thePortal.send("addPortlet", portletType, "Preview");
+        sendAddPortlet(portletType, renderModes) {
+            thePortal.send("addPortlet", portletType, renderModes);
         };
 
         /**
@@ -675,9 +673,9 @@ var JGPortal = {};
             });
             this._webSocket.addMessageHandler('addPortletType',
                     function (portletType, displayName, cssUris, scriptResources,
-                            isInstantiable) {
+                            renderModes) {
                 self._resourceManager.addPageResources(cssUris, null, scriptResources);
-                self._renderer.addPortletType(portletType, displayName, isInstantiable);
+                self._renderer.addPortletType(portletType, displayName, renderModes);
             });
             this._webSocket.addMessageHandler('lastPortalLayout',
                     function(previewLayout, tabsLayout, xtraInfo) {

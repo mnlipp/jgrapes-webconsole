@@ -305,7 +305,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
                 Class<?> portletClass, String portletId, Template template,
                 Object dataModel) {
             super(portletClass, portletId);
-            setRenderMode(request.renderMode());
+            setRenderMode(request.preferredRenderMode());
             // Start to prepare the content immediately and concurrently.
             content
                 = request.processedBy().map(procBy -> procBy.executorService())

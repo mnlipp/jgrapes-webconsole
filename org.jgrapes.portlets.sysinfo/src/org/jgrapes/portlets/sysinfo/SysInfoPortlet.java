@@ -102,8 +102,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
                 .setScriptUri(event.renderSupport().portletResource(
                     type(), "SysInfo-functions.ftl.js")))
             .addCss(event.renderSupport(), PortalUtils.uriFromPath(
-                "SysInfo-style.css"))
-            .setInstantiable());
+                "SysInfo-style.css")));
     }
 
     /*
@@ -159,7 +158,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
             PortalSession portalSession, SysInfoModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        switch (event.renderMode()) {
+        switch (event.preferredRenderMode()) {
         case Preview:
         case DeleteablePreview: {
             Template tpl

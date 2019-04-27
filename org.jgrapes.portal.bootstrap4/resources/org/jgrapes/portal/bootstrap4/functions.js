@@ -125,13 +125,15 @@ var B4UIPortal = {
             $("#loader-overlay").fadeOut("slow");
         }
         
-        addPortletType(portletType, displayName, isInstantiable) {
+        addPortletType(portletType, displayName, renderModes) {
             // Add to menu
             let self = this;
             let item = $('<a class="dropdown-item" href="#" data-portlet-type="' 
                     + portletType + '">' + displayName + '</a>');
+            item.data("render-modes", renderModes)
             item.on('click', function(e) {
-                self.sendAddPortlet($(this).data("portlet-type"));
+                self.sendAddPortlet($(this).data("portlet-type"),
+                        $(this).data("render-modes"));
             });
             $("#portalNavbarPortletList").append(item);
         }
@@ -215,7 +217,7 @@ var B4UIPortal = {
                 portletHeader.find(".portlet-edit").on( "click", function() {
                     let icon = $( this );
                     let portletId = icon.closest( ".portlet" ).attr("data-portlet-id");
-                    self.sendRenderPortlet(portletId, "Edit", true);
+                    self.sendRenderPortlet(portletId, ["Edit", "Foreground"]);
                 });
             }
             if (modes.includes("DeleteablePreview")) {
@@ -239,7 +241,7 @@ var B4UIPortal = {
                     if(portletView) { 
                         self._activatePortletView(portletView);
                     } else {
-                        self.sendRenderPortlet(portletId, "View", true);
+                        self.sendRenderPortlet(portletId, ["View", "Foreground"]);
                     }
                 });
             }

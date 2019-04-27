@@ -18,8 +18,9 @@
 
 package org.jgrapes.portal.base.events;
 
-import static org.jgrapes.portal.base.Portlet.RenderMode;
+import java.util.List;
 
+import org.jgrapes.portal.base.Portlet.RenderMode;
 import org.jgrapes.portal.base.RenderSupport;
 
 /**
@@ -51,20 +52,18 @@ import org.jgrapes.portal.base.RenderSupport;
 public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
 
     private final String portletId;
-    private final boolean foreground;
 
     /**
      * Creates a new request.
-     * 
+     *
      * @param renderSupport the render support for generating the response
      * @param portletId the portlet to be updated
-     * @param renderMode the requested mode
+     * @param renderModes the render options
      */
     public RenderPortletRequest(RenderSupport renderSupport,
-            String portletId, RenderMode renderMode, boolean foreground) {
-        super(renderSupport, renderMode);
+            String portletId, List<RenderMode> renderModes) {
+        super(renderSupport, renderModes);
         this.portletId = portletId;
-        this.foreground = foreground;
     }
 
     /**
@@ -78,7 +77,7 @@ public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
 
     @Override
     public boolean isForeground() {
-        return foreground;
+        return renderModes().contains(RenderMode.Foreground);
     }
 
     /**

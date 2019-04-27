@@ -99,8 +99,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
                 .setScriptType("text/x-test")
                 .setScriptSource("Just a test."))
             .addCss(event.renderSupport(), PortalUtils.uriFromPath(
-                "HelloWorld-style.css"))
-            .setInstantiable());
+                "HelloWorld-style.css")));
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             storagePath(portalSession.browserSession()), portalSession);
         fire(query, portalSession);
@@ -153,7 +152,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
             PortalSession channel, HelloWorldModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        switch (event.renderMode()) {
+        switch (event.preferredRenderMode()) {
         case Preview:
         case DeleteablePreview: {
             Template tpl

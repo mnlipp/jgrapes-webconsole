@@ -19,6 +19,7 @@
 package org.jgrapes.portal.base.events;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -66,28 +67,28 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
 
     /**
      * Creates a new event.
-     * 
+     *
      * @param renderSupport the render support
      * @param portletType the type of the portlet
-     * @param mode the view mode that is requested
+     * @param renderModes the render modes
      */
     public AddPortletRequest(RenderSupport renderSupport, String portletType,
-            RenderMode mode) {
-        super(renderSupport, mode);
+            List<RenderMode> renderModes) {
+        super(renderSupport, renderModes);
         this.portletType = portletType;
     }
 
     /**
      * Creates a new event.
-     * 
+     *
      * @param renderSupport the render support
      * @param portletType the type of the portlet
-     * @param mode the view mode that is requested
+     * @param renderModes the render modes
      * @param properties optional values for properties of the portlet instance
      */
     public AddPortletRequest(RenderSupport renderSupport, String portletType,
-            RenderMode mode, Map<?, ?> properties) {
-        super(renderSupport, mode);
+            List<RenderMode> renderModes, Map<?, ?> properties) {
+        super(renderSupport, renderModes);
         this.portletType = portletType;
         @SuppressWarnings("unchecked")
         Map<Object, Object> props = (Map<Object, Object>) properties;

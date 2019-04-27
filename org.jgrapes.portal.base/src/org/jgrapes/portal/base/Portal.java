@@ -103,8 +103,9 @@ public class Portal extends Component {
         }
         case "addPortlet": {
             fire(new AddPortletRequest(view.renderSupport(),
-                params.asString(0), RenderMode.valueOf(
-                    params.asString(1))),
+                params.asString(0), params.asArray(1).stream().map(
+                    value -> RenderMode.valueOf((String) value))
+                    .collect(Collectors.toList())),
                 channel);
             break;
         }
@@ -126,8 +127,10 @@ public class Portal extends Component {
         case "renderPortlet": {
             fire(new RenderPortletRequest(view.renderSupport(),
                 params.asString(0),
-                RenderMode.valueOf(params.asString(1)),
-                (Boolean) params.asBoolean(2)), channel);
+                params.asArray(1).stream().map(
+                    value -> RenderMode.valueOf((String) value))
+                    .collect(Collectors.toList())),
+                channel);
             break;
         }
         case "setLocale": {

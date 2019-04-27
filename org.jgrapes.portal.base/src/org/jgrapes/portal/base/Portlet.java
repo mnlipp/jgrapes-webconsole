@@ -35,7 +35,7 @@ public interface Portlet {
      * The render modes.
      */
     enum RenderMode {
-        Preview, DeleteablePreview, View, Edit, Help;
+        Preview, DeleteablePreview, View, Edit, Help, Foreground;
 
         /**
          * Utility method that creates a {@link Set} of render modes
