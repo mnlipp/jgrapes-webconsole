@@ -65,6 +65,7 @@ var JGPortal = {};
         
         constructor(portal) {
             // "Privacy by convention" is sufficient for this.
+            this._debugHandler = false;
             this._portal = portal;
             this._ws = null;
             this._sendQueue = [];
@@ -257,9 +258,20 @@ var JGPortal = {};
             this._messageHandlers[method] = handler;
         }
     
+        _handlerLog(msgSup) {
+            if(this._debugHandler) {
+                log.debug(msgSup());
+            }
+        }
+        
         _handleMessages() {
             while (true) {
-                if (this._recvQueue.length === 0 || this._recvQueueLocks > 0) {
+                if (this._recvQueueLocks > 0) {
+                    this._handlerLog(() => "Handler receive queue locked.");
+                    break;
+                }
+                if (this._recvQueue.length === 0) {
+                    this._handlerLog(() => "Handler receive queue empty.");
                     break;
                 }
                 var message = this._recvQueue.shift(); 
@@ -269,8 +281,11 @@ var JGPortal = {};
                     continue;
                 }
                 if (message.hasOwnProperty("params")) {
+                    this._handlerLog(() => "Handling: " + message.method 
+                            + "[" + message.params + "]");
                     handler(...message.params);
                 } else {
+                    this._handlerLog(() => "Handling: " + message.method);
                     handler();
                 }
             }
@@ -278,10 +293,24 @@ var JGPortal = {};
     
         lockMessageReceiver() {
             this._recvQueueLocks += 1;
+            if(this._debugHandler) {
+                try {
+                    throw new Error("Lock");
+                } catch (exc) {
+                    log.debug("Locking receiver:\n" + exc.stack);
+                }
+            }
         }
 
         unlockMessageReceiver() {
             this._recvQueueLocks -= 1;
+            if(this._debugHandler) {
+                try {
+                    throw new Error("Unlock");
+                } catch (exc) {
+                    log.debug("Unlocking receiver:\n" + exc.stack);
+                }
+            }
             if (this._recvQueueLocks == 0) {
                 this._handleMessages();
             }
@@ -297,6 +326,7 @@ var JGPortal = {};
             this._unresolvedScriptRequests = []; // ScriptResource objects
             this._loadingScripts = new Set(); // uris (src attribute)
             this._unlockMessageQueueAfterLoad = false;
+            this._loadingTimeoutHandler = null;
             this._scriptResourceSnippet = 0;
         }
         
@@ -344,25 +374,29 @@ var JGPortal = {};
                 script.setAttribute("type", scriptResource.type);
             }
             if (scriptResource.source) {
+                // Script source is part of request, add and proceed as if loaded.
                 script.text = scriptResource.source;
                 head.appendChild(script);
                 self._scriptResourceLoaded(scriptResource);
                 return;
             }
+            // Asynchronous loading.
             script.src = scriptResource.uri;
             script.addEventListener('load', function(event) {
                 // Remove this from loading
                 self._loadingScripts.delete(script.src);
-                // All done?
                 self._scriptResourceLoaded(scriptResource);
-                if (self._loadingScripts.size == 0 && self._unlockMessageQueueAfterLoad) {
-                    self._loadingMsg(function() { return "All loaded, unlocking message queue." });
-                    self._portal.unlockMessageQueue();
-                }
             });
             // Put on script load queue to indicate load in progress
             self._loadingMsg(function() { return "Loading: " + scriptResource.id });
             self._loadingScripts.add(script.src);
+            if (this._loadingTimeoutHandler === null) {
+                this._loadingTimeoutHandler = setInterval(
+                        function() {
+                            log.warn("Still waiting for: "
+                                    + Array.from(self._loadingScripts).join(", "));
+                        }, 5000)
+            }
             head.appendChild(script);
         }
 
@@ -390,10 +424,21 @@ var JGPortal = {};
                 if (reqRes.requires.length == 0) {
                     self._startScriptLoad(reqRes);
                 } else {
-                    // Still unresolved
+                    // Back to still unresolved
                     self._unresolvedScriptRequests.push(reqRes);
                 }
             });
+            // All done?
+            if (self._loadingScripts.size == 0) {
+                if (this._loadingTimeoutHandler !== null) {
+                    clearInterval(this._loadingTimeoutHandler);
+                    this._loadingTimeoutHandler = null;
+                }
+                if(self._unlockMessageQueueAfterLoad) {
+                    self._loadingMsg(function() { return "All loaded, unlocking message queue." });
+                    self._portal.unlockMessageQueue();
+                }
+            }
         }
         
         addPageResources(cssUris, cssSource, scriptResources) {
@@ -421,7 +466,7 @@ var JGPortal = {};
         }
         
         lockWhileLoading() {
-            if (this._loadingScripts.size > 0) {
+            if (this._loadingScripts.size > 0 && !this._unlockMessageQueueAfterLoad) {
                 this._portal.lockMessageQueue();
                 this._loadingMsg(function() { return "Locking message queue until all loaded." });
                 this._unlockMessageQueueAfterLoad = true;
@@ -813,7 +858,7 @@ var JGPortal = {};
         }
         
         /**
-         * Increses the lock count on the receiver. As long as
+         * Increases the lock count on the receiver. As long as
          * the lock count is greater than 0, the invocation of
          * handlers is suspended.
          */
