@@ -1,5 +1,5 @@
 /*
- * Basic, framework independant table.
+ * Basic, framework independent table.
  */
 
 .jgportal-basic-table thead th {
@@ -27,3 +27,6 @@
     padding-right: 1em;
 } 
 
+.jgportal-striped-table tbody tr.odd {
+    background-color: rgba(0,0,0,.05);
+}
