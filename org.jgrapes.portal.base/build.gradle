@@ -44,6 +44,9 @@ task documentationjs(type: NodeTask) {
 }
 
 javadoc {
+    // Does not work on JitPack, no /usr/bin/dot
+    enabled = JavaVersion.current().isJava8() && !isJitPackBuild
+    
     if (!isJitPackBuild) {
         // Does not work on jitpack
         dependsOn documentationjs
