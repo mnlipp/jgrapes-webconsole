@@ -1042,6 +1042,9 @@ var JGPortal = {};
             if ("sortKey" in options) {
                 this.sortBy(options.sortKey);
             }
+            if ("sortOrder" in options) {
+                this.sortBy(this.sortKey, options.sortOrder);
+            }
         }
     }
 
@@ -1053,11 +1056,19 @@ var JGPortal = {};
         return this.sortOrders[key];
     }
     
-    TableController.prototype.sortBy = function(key) {
+    TableController.prototype.sortBy = function(key, order) {
         if (this.sortKey != key) {
             this.sortKey = key;
         } else {
             this.sortOrders[key] = this.sortOrders[key] * -1;
+        }
+        if (typeof order !== 'undefined') {
+            if (order === 'up') {
+                this.sortOrders[key] = 1;
+            }
+            if (order === 'down') {
+                this.sortOrders[key] = -1;
+            }
         }
     }
     
