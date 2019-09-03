@@ -62,8 +62,65 @@ main {
 /*
  * Bootstrap4 specific overrides for base portal definitions.
  */
+ 
 .jgportal-button-icon {
     cursor: pointer;
     color: var(--primary);
 }
 
+.jgportal-input-group  {
+    color: #495057;
+    box-sizing: border-box;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.jgportal-input-group > .jgportal-item {
+    display: inline-flex;
+    align-items: center;
+    padding: .375rem .75rem;
+    border-width: 1px 0px 1px 1px;
+    border-style: solid;
+    border-color: #ced4da;
+}
+
+.jgportal-input-group > .jgportal-item:focus-within {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+.jgportal-input-group > .jgportal-item:first-child {
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+}
+
+.jgportal-input-group > .jgportal-item:last-child {
+    border-right-width: 1px;
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+
+.jgportal-input-group > .jgportal-item > * {
+    margin: 0;
+}
+
+.jgportal-input-group > .jgportal-item input,
+.jgportal-input-group > .jgportal-item label {
+    border: 0;
+}
+
+.jgportal-input-group > .jgportal-item select {
+    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+    background-color: rgba(0, 0, 0, 0);
+    border: 0;
+    margin-right: -.75rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.jgportal-input-group > .jgportal-input-label {
+    background-color: #e9ecef;
+}
