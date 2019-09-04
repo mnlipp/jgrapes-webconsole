@@ -61,7 +61,36 @@ configurePublishing {
         }
     }
 }
-    
+
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = project.properties['bintrayUser'] ?: "nouser"
+    key = project.properties['bintrayApiKey'] ?: "nokey"
+    publications = ['maven']
+    publish = true
+    pkg {
+        repo = "jgrapes"
+        name = "org.jgrapes:" + project.name
+        licenses = ['AGPL-V3']
+        vcsUrl = 'https://github.com/mnlipp/jgrapes-portal.git'
+        githubRepo = 'mnlipp/jgrapes-portal'
+        githubReleaseNotesFile = 'README.md'
+        version {
+             name = project.version
+             gpg {
+                 sign = true
+             }
+             mavenCentralSync {
+                sync = true
+                user = project.properties['sonatypeTokenKey'] ?: "nokey"
+                password = project.properties['sonatypeTokenSecret'] ?: "nosecret"
+                close = '1'
+            }
+        }
+    }
+}
+
 afterEvaluate {
     if(!project.name.startsWith("org.jgrapes")) {
         tasks.matching { it.group == "publishing" }.all {
