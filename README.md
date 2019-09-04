@@ -3,9 +3,11 @@ JGrapes-Portal
 
 [![Build Status](https://travis-ci.org/mnlipp/jgrapes-portal.svg?branch=master)](https://travis-ci.org/mnlipp/jgrapes-portal)
 
-| Package | Maven |
-| ------- | ----- |
-| portal  | [![Maven Central](https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.portal.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.portal%22)
+| Package | Bintray |
+| ------- | ------- |
+| base    | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.base/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.base/_latestVersion)
+| jqueryui | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.jqueryui/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.jqueryui/_latestVersion)
+| bootstrap4 | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.bootstrap4/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.bootstrap4/_latestVersion)
 
 See the [project's home page](https://mnlipp.github.io/jgrapes/).
 
