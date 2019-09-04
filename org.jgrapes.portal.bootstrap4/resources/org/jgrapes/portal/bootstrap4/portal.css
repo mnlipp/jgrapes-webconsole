@@ -80,7 +80,7 @@ main {
 .jgportal-input-group > .jgportal-item {
     display: inline-flex;
     align-items: center;
-    padding: .375rem .75rem;
+    padding: calc(.375rem - 1px) .75rem;
     border-width: 1px 0px 1px 1px;
     border-style: solid;
     border-color: #ced4da;
