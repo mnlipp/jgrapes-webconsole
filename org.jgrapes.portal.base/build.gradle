@@ -16,7 +16,7 @@ dependencies {
     compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 }
 
-ext.releaseVersion = "0.25"
+ext.releaseVersion = "0.25.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 

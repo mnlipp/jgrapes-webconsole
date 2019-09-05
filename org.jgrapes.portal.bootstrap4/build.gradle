@@ -17,7 +17,7 @@ dependencies {
     compile project(':org.jgrapes.portal.providers.fontawesome')
 }
 
-ext.releaseVersion = "0.25"
+ext.releaseVersion = "0.25.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 

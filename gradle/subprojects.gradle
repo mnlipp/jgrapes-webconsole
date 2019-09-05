@@ -79,6 +79,19 @@ test {
     }
 }
 
+task tag {
+    doLast {
+        repo = grgit.open()
+        String name = project.name.startsWith(project.group + ".") ?
+            project.name.substring(project.group.length() + 1) : project.name
+        name = name.replace('.', '-')
+        repo.tag.add(name: name + "-" + project.version,
+            message: "Released.")
+        repo.push(tags: true)
+        repo.close()
+    }
+}
+
 if (project.name.startsWith("org.jgrapes.")) {
     apply from: "${project.rootDir}/gradle/javadoc.gradle"
     apply from: "${project.rootDir}/gradle/publishing.gradle"
