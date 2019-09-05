@@ -26,16 +26,14 @@ if (project.file("bnd.bnd").exists()) {
 
 }
 
-def repo = grgit.open()
 jar {
     manifest {
         attributes([
-            "Git-Descriptor": repo.describe(),
-            "Git-SHA": repo.head().id
+            "Git-Descriptor": grgit.describe(),
+            "Git-SHA": grgit.head().id
         ])
     }
 }
-repo.close()
 
 dependencies {
     compileOnly 'org.osgi:org.osgi.annotation:6.0.0'
@@ -81,14 +79,12 @@ test {
 
 task releaseTag {
     doLast {
-        repo = grgit.open()
         String name = project.name.startsWith(project.group + ".") ?
             project.name.substring(project.group.length() + 1) : project.name
         name = name.replace('.', '-')
         String tag = name + "-" + project.version
-        repo.tag.add(name: tag, message: "Released.")
-        repo.push(refsOrSpecs: [tag])
-        repo.close()
+        grgit.tag.add(name: tag, message: "Released.")
+        grgit.push(refsOrSpecs: [tag])
     }
 }
 
