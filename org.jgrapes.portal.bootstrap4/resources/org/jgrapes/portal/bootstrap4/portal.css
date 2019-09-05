@@ -68,26 +68,26 @@ main {
     color: var(--primary);
 }
 
+/* Bootstrap4 like input groups. */
+
 .jgportal-input-group  {
     color: #495057;
-    box-sizing: border-box;
-    display: inline-flex;
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: stretch;
 }
 
 .jgportal-input-group > .jgportal-item {
-    display: inline-flex;
-    align-items: center;
     padding: calc(.375rem - 1px) .75rem;
     border-width: 1px 0px 1px 1px;
     border-style: solid;
     border-color: #ced4da;
 }
 
-.jgportal-input-group > .jgportal-item:focus-within {
-    border-color: #80bdff;
+.jgportal-input-group > .jgportal-item:focus-within,
+.jgportal-vinput-group > .jgportal-item:focus-within {
+	border-color: #80bdff;
     outline: 0;
     box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
 }
@@ -103,17 +103,24 @@ main {
     border-bottom-right-radius: .25rem;
 }
 
-.jgportal-input-group > .jgportal-item > * {
-    margin: 0;
+/* We do our own positioning, definitely. */
+.jgportal-input-group > .jgportal-item > *,
+.jgportal-vinput-group > .jgportal-item > * {
+	margin: 0 !important;
 }
 
 .jgportal-input-group > .jgportal-item input,
-.jgportal-input-group > .jgportal-item label {
-    border: 0;
+.jgportal-input-group > .jgportal-item label,
+.jgportal-input-group > .jgportal-item textarea,
+.jgportal-vinput-group > .jgportal-item input,
+.jgportal-vinput-group > .jgportal-item label,
+.jgportal-vinput-group > .jgportal-item textarea {
+	border: 0;
 }
 
-.jgportal-input-group > .jgportal-item select {
-    background: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%205'%3e%3cpath%20fill='%23343a40'%20d='M2%200L0%202h4zm0%205L0%203h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+.jgportal-input-group > .jgportal-item select,
+.jgportal-vinput-group > .jgportal-item select {
+	background: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%205'%3e%3cpath%20fill='%23343a40'%20d='M2%200L0%202h4zm0%205L0%203h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
     background-color: rgba(0, 0, 0, 0);
     border: 0;
     margin-right: -.75rem;
@@ -121,6 +128,37 @@ main {
     -moz-appearance: none;
 }
 
-.jgportal-input-group > .jgportal-input-label {
-    background-color: #e9ecef;
+.jgportal-input-group > .jgportal-input-label,
+.jgportal-vinput-group > .jgportal-input-label {
+	background-color: #e9ecef;
 }
+
+.jgportal-vinput-group  {
+    color: #495057;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.jgportal-vinput-group > .jgportal-item {
+    display: flex;
+    align-items: center;
+    padding: calc(.375rem - 1px) .75rem;
+    border-width: 1px 1px 0px 1px;
+    border-style: solid;
+    border-color: #ced4da;
+}
+
+.jgportal-vinput-group > .jgportal-item:first-child {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+}
+
+.jgportal-vinput-group > .jgportal-item:last-child {
+    border-bottom-width: 1px;
+    border-bottom-left-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+
