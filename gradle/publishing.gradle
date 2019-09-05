@@ -68,7 +68,7 @@ bintray {
     user = project.properties['bintrayUser'] ?: "nouser"
     key = project.properties['bintrayApiKey'] ?: "nokey"
     publications = ['maven']
-    publish = true
+    // publish = true
     pkg {
         repo = "jgrapes"
         name = "org.jgrapes:" + project.name
@@ -77,11 +77,10 @@ bintray {
         githubRepo = 'mnlipp/jgrapes-portal'
         githubReleaseNotesFile = 'README.md'
         version {
-             name = project.version
-             gpg {
-                 sign = true
-             }
-             mavenCentralSync {
+            gpg {
+                sign = true
+            }
+            mavenCentralSync {
                 sync = true
                 user = project.properties['sonatypeTokenKey'] ?: "nokey"
                 password = project.properties['sonatypeTokenSecret'] ?: "nosecret"
@@ -89,6 +88,10 @@ bintray {
             }
         }
     }
+}
+
+afterEvaluate {
+    bintray.pkg.version.name = project.version
 }
 
 afterEvaluate {
