@@ -79,15 +79,15 @@ test {
     }
 }
 
-task tag {
+task releaseTag {
     doLast {
         repo = grgit.open()
         String name = project.name.startsWith(project.group + ".") ?
             project.name.substring(project.group.length() + 1) : project.name
         name = name.replace('.', '-')
-        repo.tag.add(name: name + "-" + project.version,
-            message: "Released.")
-        repo.push(tags: true)
+        String tag = name + "-" + project.version
+        repo.tag.add(name: tag, message: "Released.")
+        repo.push(refsOrSpecs: [tag])
         repo.close()
     }
 }
@@ -99,3 +99,13 @@ if (project.name.startsWith("org.jgrapes.")) {
 }
 
 apply from: "${project.rootDir}/gradle/eclipse.gradle"
+
+task release {
+    group = "publishing"
+    
+    dependsOn "releaseTag"
+    dependsOn "clean"
+    dependsOn "build"
+    dependsOn "bintrayUpload"
+}
+
