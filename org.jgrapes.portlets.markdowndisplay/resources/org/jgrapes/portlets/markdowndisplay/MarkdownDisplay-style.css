@@ -2,31 +2,80 @@
  * Portlet specific styles.
  */
 
-.jgrapes-portlets-mdp-title-input {
-	width: 100%;
+.jgrapes-portlets-mdp-body * {
+	box-sizing: border-box;
+}
+
+.jgrapes-portlets-mdp-title .jgportal-input-group {
+    display: flex;
+}
+
+.jgrapes-portlets-mdp-title .jgportal-input-group > .jgportal-item:nth-child(2) {
+    flex-grow: 1;
+}
+
+/* Restore spacing that we have between inline elements (lost with flex). */
+.jgrapes-portlets-mdp-title .jgportal-input-group > 
+    .jgportal-item:not(:last-child) > *:last-child {
+    margin-right: 0.25em;
+}
+
+.jgrapes-portlets-mdp-title .jgportal-input-group > .jgportal-item:nth-child(2)
+    input {
+    width: 100%;
 }
 
 .jgrapes-portlets-mdp-preview {
 	width: 100%;
 	display: flex;
+	align-items: stretch;
 }
 
-.jgrapes-portlets-mdp-preview-input-widget {
-	padding-right: 1em;
+.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(1) {
+	padding-right: 0.5em;
 	flex-basis: 50%;
 	flex-grow: 1;
 }
 
-.jgrapes-portlets-mdp-preview-input-widget textarea {
-    width: 100%;
+.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(1) > .jgportal-item:nth-child(1) {
+    flex-grow: 0;
 }
 
-.jgrapes-portlets-mdp-preview-preview-widget {
-    padding-left: 1em;
+.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(1) > .jgportal-item:nth-child(2) {
+    flex-grow: 1;
+}
+
+.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(1) textarea {
+    height: 100%;
+	width: 100%;
+}
+
+.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(2) {
+	padding-left: 0.5em;
 	flex-basis: 50%;
 	flex-grow: 1;
 }
 
-.jgrapes-portlets-mdp-view-input-widget textarea {
+.jgrapes-portlets-mdp-view {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.jgrapes-portlets-mdp-view .jgportal-vinput-group:nth-child(1) {
+    padding-bottom: 0.5em;
+    flex-basis: 50%;
+    flex-grow: 1;
+}
+
+.jgrapes-portlets-mdp-view .jgportal-vinput-group:nth-child(1) textarea {
+    height: 100%;
+    width: 100%;
+}
+
+.jgrapes-portlets-mdp-view .jgportal-vinput-group:nth-child(2) {
+    padding-top: 0.5em;
+    flex-basis: 50%;
+    flex-grow: 1;
 }
