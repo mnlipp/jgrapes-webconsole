@@ -22,8 +22,8 @@
 
 -plugin.4.JGrapes: \
     de.mnl.osgi.bnd.repository.maven.provider.NexusSearchRepositoryProvider; \
-        path:="${workspace}/cnf/plugins/de.mnl.osgi.bnd.repository-0.0.15.jar,\
-            ${workspace}/cnf/plugins/biz.aQute.repository-4.0.0.jar"; \
+        path:="${workspace}/cnf/plugins/de.mnl.osgi.bnd.repository-2.0.1.jar,\
+            ${workspace}/cnf/plugins/biz.aQute.repository-4.2.0.jar"; \
         name=JGrapes; \
         server="https://oss.sonatype.org"; \
         query="g=org.jgrapes"
