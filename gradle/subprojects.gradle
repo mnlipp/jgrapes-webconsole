@@ -96,7 +96,7 @@ if (project.name.startsWith("org.jgrapes.")) {
 
 apply from: "${project.rootDir}/gradle/eclipse.gradle"
 
-task release {
+task releaseToBintray {
     group = "publishing"
     
     dependsOn "releaseTag"
