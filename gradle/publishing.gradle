@@ -92,7 +92,7 @@ bintray {
 
 afterEvaluate {
     bintray.pkg.version.name = project.version
-    bintrayUpload.mustRunAfter "releaseTag"
+    bintrayUpload.mustRunAfter "build"
 }
 
 afterEvaluate {

@@ -88,13 +88,7 @@ task releaseTag {
     }
 }
 
-if (project.name.startsWith("org.jgrapes.")) {
-    apply from: "${project.rootDir}/gradle/javadoc.gradle"
-    apply from: "${project.rootDir}/gradle/publishing.gradle"
-    apply from: "${project.rootDir}/gradle/baseline.gradle"
-}
-
-apply from: "${project.rootDir}/gradle/eclipse.gradle"
+build.mustRunAfter "releaseTag"
 
 task releaseToBintray {
     group = "publishing"
@@ -104,4 +98,12 @@ task releaseToBintray {
     dependsOn "build"
     dependsOn "bintrayUpload"
 }
+
+if (project.name.startsWith("org.jgrapes.")) {
+    apply from: "${project.rootDir}/gradle/javadoc.gradle"
+    apply from: "${project.rootDir}/gradle/publishing.gradle"
+    apply from: "${project.rootDir}/gradle/baseline.gradle"
+}
+
+apply from: "${project.rootDir}/gradle/eclipse.gradle"
 
