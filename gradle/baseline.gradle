@@ -12,11 +12,14 @@ if (project.name != "HttpPortalDemo") {
         } else if (relVer.getMinor() > 0) {
             cmpVer = new org.gradle.util.VersionNumber(
                 relVer.getMajor(), relVer.getMinor() - 1, 999999, null)
-        } else {
+        } else if (relVer.getMajor() > 0) {
             cmpVer = new org.gradle.util.VersionNumber(
                 relVer.getMajor() - 1, 999999, 999999, null)
+        } else {
+            cmpVer = new org.gradle.util.VersionNumber(
+                0, 999999, 999999, null)
         }
-        
+
         baseline("${group}:${project.name}:(,${cmpVer}]") {
             transitive false
         }
