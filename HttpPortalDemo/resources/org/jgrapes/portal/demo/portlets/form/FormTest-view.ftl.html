@@ -54,6 +54,21 @@
   </span>
 </form>
 
+<form>
+  <span class="form-group form-group--panel">
+    <span class="form-item form-item--label">
+      <label>Name</label>
+    </span>
+    <span class="form-item">
+      <input type="search" placeholder="Search for...">
+    </span>
+    <span class="form-item">
+      <span role="button" class="jgportal-button-icon fas fa-backspace" 
+        v-on:click="controller.clearFilter($event)"></span>
+    </span>
+  </span>
+</form>
+
 <h2>Vertical</h2>
 
 <p>Text inputs are expanded to full width.<p>

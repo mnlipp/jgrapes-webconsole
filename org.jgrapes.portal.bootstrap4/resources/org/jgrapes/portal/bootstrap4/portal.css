@@ -96,7 +96,15 @@ main {
 	}
 }
 
-.form-group > .form-item input:focus {
+.form-group > .form-item input,
+.form-group > .form-item textarea,
+.form-group > .form-item select {
+    position: relative; /* Puts element on top of the others. */
+}
+
+.form-group > .form-item input:focus,
+.form-group > .form-item textarea:focus,
+.form-group > .form-item select:focus {
     border-color: #80bdff;
     outline: 0;
     box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
@@ -116,7 +124,7 @@ span.form-group--panel {
 }
 
 span.form-group--panel > .form-item > * {
-	border-width: 1px 0px 1px 1px;
+	border-width: 1px;
     border-style: solid;
     border-color: #ced4da;
 }
@@ -129,7 +137,10 @@ span.form-group--panel > .form-item:first-child > * {
 span.form-group--panel > .form-item:last-child > * {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
-    border-right-width: 1px;
+}
+
+span.form-group--panel > .form-item:not(:last-child) > * {
+	margin-right: -1px;
 }
 
 div.form-group--panel {
@@ -163,6 +174,7 @@ div.form-group--panel > .form-item:last-child > * {
 }
 
 .form-group--panel > .form-item select {
+	height: 100%;
     background: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%205'%3e%3cpath%20fill='%23343a40'%20d='M2%200L0%202h4zm0%205L0%203h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
     background-color: rgba(0, 0, 0, 0);
     padding: .375rem .75rem;
