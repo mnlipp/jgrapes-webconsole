@@ -14,9 +14,11 @@ Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.portal.PortletComponentFactory; \
         uses:="org.jgrapes.portal,org.jgrapes.core"
 
-Export-Package: org.jgrapes.portal.demo, \
-    org.jgrapes.portal.demo.portlets.helloworld, \
-    org.jgrapes.portal.demo.portlets.tabledemo
+Export-Package: \
+	org.jgrapes.portal.demo,\
+	org.jgrapes.portal.demo.portlets.helloworld,\
+	org.jgrapes.portal.demo.portlets.tabledemo,\
+	org.jgrapes.portal.demo.portlets.form
 	
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

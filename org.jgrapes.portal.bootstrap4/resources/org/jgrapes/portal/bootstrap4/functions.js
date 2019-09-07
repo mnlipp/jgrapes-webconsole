@@ -292,6 +292,7 @@ var B4UIPortal = {
         }
         
         _styleSemantics(content) {
+            /*
             let toBeStyled = content.find("[data-style-semantics]")
                 .addBack("[data-style-semantics]");
             toBeStyled.each(function() {
@@ -304,6 +305,7 @@ var B4UIPortal = {
                    }
                })
             });
+            */
         }
         
         portletRemoved(containers) {

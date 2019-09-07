@@ -6,56 +6,57 @@
 	box-sizing: border-box;
 }
 
-.jgrapes-portlets-mdp-title .jgportal-input-group {
+/* Expand title input to width. */
+.jgrapes-portlets-mdp-title .form-group {
     display: flex;
+    align-items: center;
 }
 
-.jgrapes-portlets-mdp-title .jgportal-input-group > .jgportal-item:nth-child(2) {
+.jgrapes-portlets-mdp-title .form-group > .form-item:last-child {
     flex-grow: 1;
 }
 
-/* Restore spacing that we have between inline elements (lost with flex). */
-.jgrapes-portlets-mdp-title .jgportal-input-group > 
-    .jgportal-item:not(:last-child) > *:last-child {
-    margin-right: 0.25em;
-}
-
-.jgrapes-portlets-mdp-title .jgportal-input-group > .jgportal-item:nth-child(2)
-    input {
+.jgrapes-portlets-mdp-title .form-group > .form-item:last-child input {
     width: 100%;
 }
 
+/* Restore spacing that we have between inline elements (lost with flex). */
+.jgrapes-portlets-mdp-title .form-group > 
+    .form-item:not(:last-child) > *:last-child {
+    margin-right: 0.25em;
+}
+
+/* Put preview input and preview side by side. */
 .jgrapes-portlets-mdp-preview {
-	width: 100%;
-	display: flex;
-	align-items: stretch;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
 }
 
-.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(1) {
-	padding-right: 0.5em;
-	flex-basis: 50%;
-	flex-grow: 1;
-}
-
-.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(1) > .jgportal-item:nth-child(1) {
-    flex-grow: 0;
-}
-
-.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(1) > .jgportal-item:nth-child(2) {
+.jgrapes-portlets-mdp-preview .form-group:nth-child(1) {
+    padding-right: 0.5em;
+    flex-basis: 50%;
     flex-grow: 1;
 }
 
-.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(1) textarea {
-    height: 100%;
-	width: 100%;
+.jgrapes-portlets-mdp-preview .form-group:nth-child(2) {
+    padding-left: 0.5em;
+    flex-basis: 50%;
+    flex-grow: 1;
 }
 
-.jgrapes-portlets-mdp-preview .jgportal-vinput-group:nth-child(2) {
-	padding-left: 0.5em;
-	flex-basis: 50%;
+/* Let preview input grow. */
+.jgrapes-portlets-mdp-preview .form-group:nth-child(1) {
+	display: flex;
+	flex-direction: column;
+}
+
+.jgrapes-portlets-mdp-preview .form-group:nth-child(1) 
+    .form-item:last-child {
 	flex-grow: 1;
 }
 
+/*
 .jgrapes-portlets-mdp-view {
     width: 100%;
     display: flex;
@@ -78,4 +79,9 @@
     padding-top: 0.5em;
     flex-basis: 50%;
     flex-grow: 1;
+}
+*/
+
+.dummy {
+	width: 10%;
 }

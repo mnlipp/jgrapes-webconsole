@@ -56,13 +56,34 @@
 /*
  * Input groups, to be refined according to portal framework.
  */
- 
-.jgportal-input-group * {
+
+.form-group {
     box-sizing: border-box;
 }
 
-/* Vertically align items in (horizontal) input groups. */
-.jgportal-input-group > .jgportal-item {
-    display: flex;
-    align-items: center;
+.form-group * {
+    box-sizing: border-box;
+}
+
+/* Remove margin from label, else vertical centering with flex won't work. */
+span.form-group label {
+	margin-top: 0;
+    margin-bottom: 0;
+}
+
+div.form-group > .form-item {
+	width: 100%;
+}
+
+div.form-group > .form-item input[type="text"],
+div.form-group > .form-item input[type="email"],
+div.form-group > .form-item input[type="password"],
+div.form-group > .form-item input[type="search"],
+div.form-group > .form-item input[type="url"],
+div.form-group > .form-item textarea {
+	width: 100%;
+}
+
+div.form-group > .form-item textarea {
+    height: 100%;
 }
