@@ -4,28 +4,28 @@
   <div class="jgrapes-portlets-mdp-body">
 
     <div class="jgrapes-portlets-mdp-title">
-      <span class="form-group">
+      <div class="form-group form-group--panel">
         <span class="form-item">
           <label>${_("Title")}</label>
         </span>
         <span class="form-item">
           <input type="text" value="${portlet.title}">
         </span>
-      </span>
+      </div>
     </div>
 
     <fieldset>
       <legend>${_("Preview Text")}</legend>
 
       <div class="jgrapes-portlets-mdp-preview">
-        <div class="form-group">
+        <div class="form-group form-group--panel">
           <span class="form-item"><label>${_("Markdown Source")}</label></span>
           <div class="form-item">
             <textarea class="jgrapes-portlets-mdp-preview-input">${portlet.previewContent}</textarea>
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group form-group--panel">
           <span class="form-item"><label>${_("Preview")}</label></span>
           <div class="form-item">
             <div class="jgrapes-portlets-mdp-preview-preview"></div>
@@ -38,7 +38,7 @@
       <legend>${_("View Text")}</legend>
 
       <div class="jgrapes-portlets-mdp-view">
-        <div class="form-group">
+        <div class="form-group form-group--panel">
           <span class="form-item"><label>${_("Markdown
             Source")}</label></span>
           <div class="form-item">
@@ -46,9 +46,9 @@
           </div>
         </div>
   
-        <div class="form-group">
+        <div class="form-group form-group--panel">
           <div class="form-item"><label>${_("Preview")}</label></div>
-          <div class="jgportal-item">
+          <div class="form-item">
             <div class="jgrapes-portlets-mdp-view-preview"></div>
           </div>
         </div>

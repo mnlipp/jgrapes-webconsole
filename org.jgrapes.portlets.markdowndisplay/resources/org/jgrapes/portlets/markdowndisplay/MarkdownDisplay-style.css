@@ -6,26 +6,6 @@
 	box-sizing: border-box;
 }
 
-/* Expand title input to width. */
-.jgrapes-portlets-mdp-title .form-group {
-    display: flex;
-    align-items: center;
-}
-
-.jgrapes-portlets-mdp-title .form-group > .form-item:last-child {
-    flex-grow: 1;
-}
-
-.jgrapes-portlets-mdp-title .form-group > .form-item:last-child input {
-    width: 100%;
-}
-
-/* Restore spacing that we have between inline elements (lost with flex). */
-.jgrapes-portlets-mdp-title .form-group > 
-    .form-item:not(:last-child) > *:last-child {
-    margin-right: 0.25em;
-}
-
 /* Put preview input and preview side by side. */
 .jgrapes-portlets-mdp-preview {
     width: 100%;
