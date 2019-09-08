@@ -16,10 +16,81 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+/* 
+ * # Basic, framework independent table style.
+ *
+ * Very basic table styling that should make simple tables look good
+ * in any context. 
+ */
+.table--basic thead th {
+    white-space: nowrap;
+} 
+
+.table--basic {
+    display: block;
+    overflow-x: auto;
+}
+
+.table--basic thead th {
+    white-space: nowrap;
+} 
+
+.table--basic thead th.sortable {
+    cursor: pointer;
+}
+
+.table--basic thead th:not(:last-child) {
+    padding-right: 1em;
+} 
+
+.table--basic tbody td:not(:last-child) {
+    padding-right: 1em;
+} 
+
+.table--basic--striped tbody tr.even {
+    background-color: rgba(0,0,0,.05);
+}
+
+.table--basic--autoStriped tbody tr:nth-of-type(2n+1) {
+    background-color: rgba(0,0,0,.05);
+}
+
 /*
- * Basic, portal framework independent table.
+ * # Input groups, to be refined according to portal framework.
  */
 
+.form-group {
+    box-sizing: border-box;
+}
+
+.form-group * {
+    box-sizing: border-box;
+}
+
+/* Remove margin from label, else vertical centering with flex won't work. */
+span.form-group label {
+	margin-top: 0;
+    margin-bottom: 0;
+}
+
+div.form-group > .form-item {
+	width: 100%;
+}
+
+div.form-group > .form-item input[type="text"],
+div.form-group > .form-item input[type="email"],
+div.form-group > .form-item input[type="password"],
+div.form-group > .form-item input[type="search"],
+div.form-group > .form-item input[type="url"],
+div.form-group > .form-item textarea {
+	width: 100%;
+}
+
+div.form-group > .form-item textarea {
+    height: 100%;
+}
+
+/* # Deprecated, kept for backward compatibility. */
 .jgportal-basic-table thead th {
     white-space: nowrap;
 } 
@@ -53,37 +124,3 @@
     background-color: rgba(0,0,0,.05);
 }
 
-/*
- * Input groups, to be refined according to portal framework.
- */
-
-.form-group {
-    box-sizing: border-box;
-}
-
-.form-group * {
-    box-sizing: border-box;
-}
-
-/* Remove margin from label, else vertical centering with flex won't work. */
-span.form-group label {
-	margin-top: 0;
-    margin-bottom: 0;
-}
-
-div.form-group > .form-item {
-	width: 100%;
-}
-
-div.form-group > .form-item input[type="text"],
-div.form-group > .form-item input[type="email"],
-div.form-group > .form-item input[type="password"],
-div.form-group > .form-item input[type="search"],
-div.form-group > .form-item input[type="url"],
-div.form-group > .form-item textarea {
-	width: 100%;
-}
-
-div.form-group > .form-item textarea {
-    height: 100%;
-}
