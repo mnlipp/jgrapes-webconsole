@@ -195,7 +195,7 @@ div.form-group--panel > .form-item:last-child > * {
 }
 
 /* Button styling. */
-button {
+form button {
     display: inline-block;
     font-weight: 400;
     color: #fff;
@@ -215,12 +215,12 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    button {
+    form button {
         transition: none;
     }
 }
 
-button:hover {
+form button:hover {
     color: #fff;
     background-color: #0069d9;
     border-color: #0062cc;
