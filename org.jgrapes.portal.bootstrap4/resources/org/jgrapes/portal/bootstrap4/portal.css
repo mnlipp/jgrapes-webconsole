@@ -78,7 +78,9 @@ span[role="button"] {
 	margin-bottom: 1rem;
 }
 
-.form-group > .form-item * {
+.form-group > .form-item input,
+.form-group > .form-item select,
+.form-group > .form-item textarea {
     color: #495057;
     line-height: 1.5;
     background-color: #fff;
@@ -112,6 +114,10 @@ span[role="button"] {
     border-color: #80bdff;
     outline: 0;
     box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+.form-group--panel > .form-item * {
+    padding: .375rem .75rem;
 }
 
 .form-group--panel > .form-item--label > * {
