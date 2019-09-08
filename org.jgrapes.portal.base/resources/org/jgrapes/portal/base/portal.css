@@ -90,6 +90,13 @@ div.form-group > .form-item textarea {
     height: 100%;
 }
 
+/*
+ * # Miscellaneous
+ */
+span[role="button"] {
+    cursor: pointer;
+}
+
 /* # Deprecated, kept for backward compatibility. */
 .jgportal-basic-table thead th {
     white-space: nowrap;

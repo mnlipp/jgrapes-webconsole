@@ -63,8 +63,12 @@ main {
  * Bootstrap4 specific overrides for base portal definitions.
  */
  
-.jgportal-button-icon {
-    cursor: pointer;
+span[role="button"] {
+    color: var(--primary);
+}
+
+/* Also override (more specific) match in forms. */
+.form-group > .form-item span[role="button"] {
     color: var(--primary);
 }
 
