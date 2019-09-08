@@ -117,6 +117,8 @@ span[role="button"] {
 }
 
 .form-group--panel > .form-item * {
+	display: inline-block;
+    line-height: 1.5;
     padding: .375rem .75rem;
 }
 
