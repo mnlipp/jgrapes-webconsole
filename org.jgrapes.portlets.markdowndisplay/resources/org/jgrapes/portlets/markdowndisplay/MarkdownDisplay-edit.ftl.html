@@ -6,10 +6,10 @@
     <div class="jgrapes-portlets-mdp-title">
       <div class="form-group form-group--panel">
         <span class="form-item">
-          <label>${_("Title")}</label>
+          <label for="${_id('Title')}">${_("Title")}</label>
         </span>
         <span class="form-item">
-          <input type="text" value="${portlet.title}">
+          <input id="${_id('Title')}" type="text" value="${portlet.title}">
         </span>
       </div>
     </div>
@@ -19,9 +19,11 @@
 
       <div class="jgrapes-portlets-mdp-preview">
         <div class="form-group form-group--panel">
-          <span class="form-item"><label>${_("Markdown Source")}</label></span>
+          <span class="form-item">
+            <label for="${_id('Preview-input')}">${_("Markdown Source")}</label></span>
           <div class="form-item">
-            <textarea class="jgrapes-portlets-mdp-preview-input">${portlet.previewContent}</textarea>
+            <textarea id="${_id('Preview-input')}"
+              class="jgrapes-portlets-mdp-preview-input">${portlet.previewContent}</textarea>
           </div>
         </div>
 
@@ -39,10 +41,11 @@
 
       <div class="jgrapes-portlets-mdp-view">
         <div class="form-group form-group--panel">
-          <span class="form-item"><label>${_("Markdown
+          <span class="form-item"><label for="${_id('View-input')}">${_("Markdown
             Source")}</label></span>
           <div class="form-item">
-            <textarea class="jgrapes-portlets-mdp-view-input">${portlet.viewContent}</textarea>
+            <textarea id="${_id('View-input')}" 
+              class="jgrapes-portlets-mdp-view-input">${portlet.viewContent}</textarea>
           </div>
         </div>
   

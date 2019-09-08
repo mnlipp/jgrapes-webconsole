@@ -205,6 +205,9 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
      * This model provides:
      *  * The `event` property (of type {@link RenderPortletRequest}).
      *  * The `portlet` property (of type {@link PortletBaseModel}).
+     *  * The function `_Id(String base)` that creates a unique
+     *    id for an HTML element by appending the portlet id to the 
+     *    provided base.
      *    
      * @param event the event
      * @param channel the channel
@@ -218,6 +221,19 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
         final Map<String, Object> model = new HashMap<>();
         model.put("event", event);
         model.put("portlet", portletModel);
+        model.put("_id", new TemplateMethodModelEx() {
+            @Override
+            public Object exec(@SuppressWarnings("rawtypes") List arguments)
+                    throws TemplateModelException {
+                @SuppressWarnings("unchecked")
+                List<TemplateModel> args = (List<TemplateModel>) arguments;
+                if (!(args.get(0) instanceof SimpleScalar)) {
+                    throw new TemplateModelException("Not a string.");
+                }
+                return ((SimpleScalar) args.get(0)).getAsString()
+                    + "-" + portletModel.getPortletId();
+            }
+        });
         return model;
     }
 
