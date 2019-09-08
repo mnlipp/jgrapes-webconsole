@@ -18,7 +18,7 @@ Export-Package: \
 	org.jgrapes.portal.demo,\
 	org.jgrapes.portal.demo.portlets.helloworld,\
 	org.jgrapes.portal.demo.portlets.tabledemo,\
-	org.jgrapes.portal.demo.portlets.form
+	org.jgrapes.portal.demo.portlets.formtest
 	
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

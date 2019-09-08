@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.portal.demo.portlets.form;
+package org.jgrapes.portal.demo.portlets.formtest;
 
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;

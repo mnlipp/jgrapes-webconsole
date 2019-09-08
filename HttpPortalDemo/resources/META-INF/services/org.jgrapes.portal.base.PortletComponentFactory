@@ -1,3 +1,3 @@
 org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortletFactory
 org.jgrapes.portal.demo.portlets.tabledemo.TableDemoPortletFactory
-org.jgrapes.portal.demo.portlets.form.FormTestPortletFactory
+org.jgrapes.portal.demo.portlets.formtest.FormTestPortletFactory
