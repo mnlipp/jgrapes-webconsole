@@ -149,7 +149,7 @@ form:not(.form--noMarkupStyles) select:focus {
 
 /* ### Panel form styles */
 
-form:not(.form--noMarkupStyles) label.form-labeledInput--panel:not(.form-label--topAligned) {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel:not(.form-labeledInput--fullWidth):not(.form-label--topAligned) {
     display: inline-flex;
     align-items: stretch;
 }
@@ -274,129 +274,6 @@ form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel.form-fieldset--hor
 form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel.form-fieldset--horizontal > span > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
-}
-
-
-/* ------- */
-
-.form-group {
-	margin-bottom: 1rem;
-}
-
-.form-group > .form-item input,
-.form-group > .form-item select,
-.form-group > .form-item textarea {
-    color: #495057;
-    line-height: 1.5;
-    background-color: #fff;
-    background-clip: padding-box;
-    padding: .375rem .75rem;
-}
-
-.form-group:not(.form-group--panel) > .form-item input,
-.form-group:not(.form-group--panel) > .form-item select,
-.form-group:not(.form-group--panel) > .form-item textarea {
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.form-group > .form-item * {
-        transition: none;
-	}
-}
-
-.form-group > .form-item input,
-.form-group > .form-item textarea,
-.form-group > .form-item select {
-    position: relative; /* Puts element on top of the others. */
-}
-
-.form-group > .form-item input:focus,
-.form-group > .form-item textarea:focus,
-.form-group > .form-item select:focus {
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
-}
-
-.form-group--panel > .form-item * {
-	display: inline-block;
-    line-height: 1.5;
-    padding: .375rem .75rem;
-}
-
-.form-group--panel > .form-item--label > * {
-    background-color: #e9ecef;
-}
-
-.form-group--panel > .form-item > label {
-    background-color: #e9ecef;
-}
-
-span.form-group--panel {
-	display: inline-flex;
-	align-items: stretch;
-}
-
-span.form-group--panel > .form-item > * {
-	border-width: 1px;
-    border-style: solid;
-    border-color: #ced4da;
-}
-
-span.form-group--panel > .form-item:first-child > * {
-    border-top-left-radius: .25rem;  
-    border-bottom-left-radius: .25rem;  
-}
-
-span.form-group--panel > .form-item:last-child > * {
-    border-top-right-radius: .25rem;  
-    border-bottom-right-radius: .25rem;  
-}
-
-span.form-group--panel > .form-item:not(:last-child) > * {
-	margin-right: -1px;
-}
-
-div.form-group--panel {
-    display: flex;
-    flex-direction: column;
-}
-
-div.form-group--panel > .form-item > * {
-	display: block;
-	width: 100%;
-}
-
-div.form-group--panel > .form-item > * {
-	margin-top: 0;
-	margin-bottom: 0;
-    border-width: 1px 1px 0px 1px;
-    border-style: solid;
-    border-color: #ced4da;
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-}
-
-div.form-group--panel > .form-item:first-child > * {
-    border-top-left-radius: .25rem;  
-    border-top-right-radius: .25rem;  
-}
-
-div.form-group--panel > .form-item:last-child > * {
-    border-bottom-left-radius: .25rem;  
-    border-bottom-right-radius: .25rem;  
-    border-bottom-width: 1px;
-}
-
-.form-group--panel > .form-item select {
-	height: 100%;
-    background: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%205'%3e%3cpath%20fill='%23343a40'%20d='M2%200L0%202h4zm0%205L0%203h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
-    background-color: rgba(0, 0, 0, 0);
-    padding: .375rem .75rem;
-    -webkit-appearance: none;
-    -moz-appearance: none;
 }
 
 /* Button styling. */

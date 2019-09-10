@@ -114,6 +114,22 @@
       </p>
       
       <div class="jgportal-formTest-inputAlternative--1">
+      <p><small><em>Expanded input by using class 
+        <code>form-labeledInput--fullWidth</code> on label:</em></small></p>
+      <p>
+        <label class="form-labeledInput--fullWidth">
+          <span>
+            Name
+            <strong>
+              <abbr title="required">*</abbr>
+            </strong>
+          </span>
+          <input type="text" name="username">
+        </label>
+      </p>
+      </div>
+      
+      <div class="jgportal-formTest-inputAlternative--2">
       <p><small><em>Label top-aligned by using class 
         <code>form-label--topAligned</code> on label:</em></small></p>
       <p>
@@ -293,6 +309,13 @@
     <label class="form-labeledInput--panel">
       <span>Name</span>
       <textarea></textarea>
+    </label>
+  </form>
+
+  <form>
+    <label class="form-labeledInput--panel form-labeledInput--fullWidth">
+      <span>Name</span>
+      <input type="text">
     </label>
   </form>
 

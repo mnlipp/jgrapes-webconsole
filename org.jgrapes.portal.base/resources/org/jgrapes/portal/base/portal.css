@@ -71,12 +71,30 @@ form:not(.form--noMarkupStyles) label > * {
 	display: inline-block;
 }
 
-/* div cannot be used in label context. */
-form:not(.form--noMarkupStyles) label.form-label--topAligned > :nth-child(2) {
-	display: block;
-	width: 100%;
+form:not(.form--noMarkupStyles) label textarea {
+    vertical-align: top;
 }
 
+/* div cannot be used in label context. */
+form:not(.form--noMarkupStyles) label.form-label--topAligned > :nth-child(2) {
+    display: block;
+    width: 100%;
+}
+
+form:not(.form--noMarkupStyles) label.form-labeledInput--fullWidth {
+    display: flex;
+    align-items: stretch;
+}
+
+form:not(.form--noMarkupStyles) label.form-labeledInput--fullWidth > :nth-child(1) {
+    margin-right: 0.25em;
+}
+
+form:not(.form--noMarkupStyles) label.form-labeledInput--fullWidth > :nth-child(2) {
+    flex-grow: 1;
+}
+
+/* Fieldsets are a different issue. */
 form:not(.form--noMarkupStyles) fieldset {
 	display: inline-block;
 }
@@ -85,10 +103,6 @@ form:not(.form--noMarkupStyles) fieldset ul {
     margin: 0;
     padding: 0;
     list-style: none;
-}
-
-form:not(.form--noMarkupStyles) label textarea {
-	vertical-align: top;
 }
 
 /* Use form-fieldset--horizontal to layout legend and inputs side-by-side. */
@@ -111,41 +125,6 @@ form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal > span > lege
 form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal {
 	border-width: 0;
 	padding: 0;
-}
-
-/*
- * # Input groups, to be refined according to portal framework.
- */
-
-.form-group {
-    box-sizing: border-box;
-}
-
-.form-group * {
-    box-sizing: border-box;
-}
-
-/* Remove margin from label, else vertical centering with flex won't work. */
-span.form-group label {
-	margin-top: 0;
-    margin-bottom: 0;
-}
-
-div.form-group > .form-item {
-	width: 100%;
-}
-
-div.form-group > .form-item input[type="text"],
-div.form-group > .form-item input[type="email"],
-div.form-group > .form-item input[type="password"],
-div.form-group > .form-item input[type="search"],
-div.form-group > .form-item input[type="url"],
-div.form-group > .form-item textarea {
-	width: 100%;
-}
-
-div.form-group > .form-item textarea {
-    height: 100%;
 }
 
 /*
