@@ -195,7 +195,7 @@ form label.form-labeledInput--panel select {
 }
 
 form label.form-labeledInput--panel.form-label--topAligned {
-    display: inline-flex;
+    display: flex;
     align-items: stretch;
 	flex-direction: column;
 }
