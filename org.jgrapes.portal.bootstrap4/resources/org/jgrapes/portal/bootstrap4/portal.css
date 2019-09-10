@@ -75,32 +75,32 @@ span[role="button"] {
 /* # Bootstrap4 like forms/input groups. */
 
 /* Override Bootstrap4 style. */
-form fieldset.form-fieldset--horizontal > span > legend {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal > span > legend {
 	width: auto;
 	font-size: inherit;
 }
 
-form fieldset legend {
+form:not(.form--noMarkupStyles) fieldset legend {
 	font-size: inherit;
 }
 
-form fieldset {
+form:not(.form--noMarkupStyles) fieldset {
     margin-bottom: 1rem;	
 }
 
-form label.form-label--topAligned {
+form:not(.form--noMarkupStyles) label.form-label--topAligned {
 	display: block;
 }
 
-form label :first-child {
+form:not(.form--noMarkupStyles) label :first-child {
 	margin-bottom: 0.5rem;
 }
 
-form li label {
+form:not(.form--noMarkupStyles) li label {
     margin-bottom: 0;
 }
 
-form li label :first-child {
+form:not(.form--noMarkupStyles) li label :first-child {
     margin-bottom: 0rem;
 }
 
@@ -109,9 +109,9 @@ form li label :first-child {
 
 /* ### Plain form styles */
 
-form label input,
-form label select,
-form label textarea {
+form:not(.form--noMarkupStyles) label input,
+form:not(.form--noMarkupStyles) label select,
+form:not(.form--noMarkupStyles) label textarea {
     color: #495057;
     line-height: 1.5;
     background-color: #fff;
@@ -119,29 +119,29 @@ form label textarea {
     padding: .375rem .75rem;
 }
 
-form label:not(.form-labeledInput--panel) input,
-form label:not(.form-labeledInput--panel) select,
-form label:not(.form-labeledInput--panel) textarea {
+form:not(.form--noMarkupStyles) label:not(.form-labeledInput--panel) input,
+form:not(.form--noMarkupStyles) label:not(.form-labeledInput--panel) select,
+form:not(.form--noMarkupStyles) label:not(.form-labeledInput--panel) textarea {
     border: 1px solid #ced4da;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    form label * {
+    form:not(.form--noMarkupStyles) label * {
         transition: none;
     }
 }
 
-form input,
-form textarea,
-form select {
+form:not(.form--noMarkupStyles) input,
+form:not(.form--noMarkupStyles) textarea,
+form:not(.form--noMarkupStyles) select {
     position: relative; /* Puts element on top of the others. */
 }
 
-form input:focus,
-form textarea:focus,
-form select:focus {
+form:not(.form--noMarkupStyles) input:focus,
+form:not(.form--noMarkupStyles) textarea:focus,
+form:not(.form--noMarkupStyles) select:focus {
     border-color: #80bdff;
     outline: 0;
     box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
@@ -149,12 +149,12 @@ form select:focus {
 
 /* ### Panel form styles */
 
-form label.form-labeledInput--panel:not(.form-label--topAligned) {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel:not(.form-label--topAligned) {
     display: inline-flex;
     align-items: stretch;
 }
 
-form label.form-labeledInput--panel > * {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -162,30 +162,30 @@ form label.form-labeledInput--panel > * {
     border-color: #ced4da;
 }
 
-form label.form-labeledInput--panel:not(.form-label--topAligned) > :not(:last-child) {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel:not(.form-label--topAligned) > :not(:last-child) {
     margin-right: -1px;
 }
 
-form label.form-labeledInput--panel * {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel * {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-form label.form-labeledInput--panel > :first-child {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel > :first-child {
     background-color: #e9ecef;
 }
 
-form label.form-labeledInput--panel:not(.form-label--topAligned) > :first-child {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel:not(.form-label--topAligned) > :first-child {
     border-top-left-radius: .25rem;  
     border-bottom-left-radius: .25rem;  
 }
 
-form label.form-labeledInput--panel:not(.form-label--topAligned) > :last-child {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel:not(.form-label--topAligned) > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form label.form-labeledInput--panel select {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel select {
     height: 100%;
     background: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%205'%3e%3cpath%20fill='%23343a40'%20d='M2%200L0%202h4zm0%205L0%203h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
     background-color: rgba(0, 0, 0, 0);
@@ -194,33 +194,33 @@ form label.form-labeledInput--panel select {
     -moz-appearance: none;
 }
 
-form label.form-labeledInput--panel.form-label--topAligned {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel.form-label--topAligned {
     display: flex;
     align-items: stretch;
 	flex-direction: column;
 }
 
-form label.form-labeledInput--panel.form-label--topAligned > :not(:last-child) {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel.form-label--topAligned > :not(:last-child) {
     margin-bottom: -1px;
 }
 
-form label.form-labeledInput--panel.form-label--topAligned > :first-child {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel.form-label--topAligned > :first-child {
     border-top-left-radius: .25rem;  
     border-top-right-radius: .25rem;  
 }
 
-form label.form-labeledInput--panel.form-label--topAligned > :last-child {
+form:not(.form--noMarkupStyles) label.form-labeledInput--panel.form-label--topAligned > :last-child {
     border-bottom-left-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) {
     display: inline-flex;
     align-items: stretch;
     flex-direction: column;
 }
 
-form fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > * {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -228,37 +228,37 @@ form fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > * {
     border-color: #ced4da;
 }
 
-form fieldset.form-fieldset--panel * {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel * {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-form fieldset.form-fieldset--panel legend {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel legend {
 	display: inline-block;
     line-height: 1.5;
     padding: .375rem .75rem;
 	background-color: #e9ecef;
 }
 
-form fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > :not(:last-child) {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > :not(:last-child) {
     margin-bottom: -1px;
 }
 
-form fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > :first-child {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > :first-child {
     border-top-left-radius: .25rem;  
     border-top-right-radius: .25rem;  
 }
 
-form fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > :last-child {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel:not(.form-fieldset--horizontal) > :last-child {
     border-bottom-left-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form fieldset.form-fieldset--panel.form-fieldset--horizontal > span > :not(legend) {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel.form-fieldset--horizontal > span > :not(legend) {
 	margin-left: -1px;
 }
 
-form fieldset.form-fieldset--panel.form-fieldset--horizontal > span > * {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel.form-fieldset--horizontal > span > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -266,12 +266,12 @@ form fieldset.form-fieldset--panel.form-fieldset--horizontal > span > * {
     border-color: #ced4da;
 }
 
-form fieldset.form-fieldset--panel.form-fieldset--horizontal > span > :first-child {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel.form-fieldset--horizontal > span > :first-child {
     border-top-left-radius: .25rem;  
     border-bottom-left-radius: .25rem;  
 }
 
-form fieldset.form-fieldset--panel.form-fieldset--horizontal > span > :last-child {
+form:not(.form--noMarkupStyles) fieldset.form-fieldset--panel.form-fieldset--horizontal > span > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
@@ -400,7 +400,7 @@ div.form-group--panel > .form-item:last-child > * {
 }
 
 /* Button styling. */
-form button {
+form:not(.form--noMarkupStyles) button {
     display: inline-block;
     font-weight: 400;
     color: #fff;
@@ -420,12 +420,12 @@ form button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    form button {
+    form:not(.form--noMarkupStyles) button {
         transition: none;
     }
 }
 
-form button:hover {
+form:not(.form--noMarkupStyles) button:hover {
     color: #fff;
     background-color: #0069d9;
     border-color: #0062cc;
