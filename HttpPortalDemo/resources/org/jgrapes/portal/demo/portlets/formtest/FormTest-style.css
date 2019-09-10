@@ -1,3 +1,24 @@
 /*
  * Portlet specific styles.
  */
+ 
+.jgportal-formTest-paymentFormSample {
+	padding: 1rem;
+	border: solid 1px black;
+	border-radius: 0.25rem;
+}
+
+.jgportal-formTest-inputAlternative--1 {
+    background-color: rgba(0,0,0,.05);
+}
+
+.jgportal-formTest-inputAlternative--2 {
+    background-color: rgba(0,0,0,.1);
+}
+
+.jgportal-formTest-paymentFormSample section:nth-of-type(2) label > *:first-child {
+	display: inline-block;
+    vertical-align: middle;
+    text-align: right;
+	width: 15em;
+}

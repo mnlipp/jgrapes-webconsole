@@ -1,130 +1,354 @@
 <div class="FormTest-view" data-portlet-title="${_("portletName")}">
 
-<h1>Input Groups</h1>
+<h1>Markup mostly forms</h1>
 
-<h2>Horizontal</h2>
+<p>Based on "<a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/How_to_structure_an_HTML_form">How to structure an HTML form</a>".</p>
 
-<form>
-  <span class="form-group">
-    <span class="form-item">
-      <label for="${_id('Input1')}">Name</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input1')}" type="text" placeholder="Your text here">
-    </span>
-  </span>
-  <span class="form-group">
-    <span class="form-item">
-      <label for="${_id('Input2')}">Choose</label>
-    </span>
-    <span class="form-item">
-      <select id="${_id('Input2')}">
-        <option selected>Open this select menu</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-      </select>
-    </span>
-  </span>
-</form>
+<!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/How_to_structure_an_HTML_form -->
 
-<h3>As panel</h3>
+  <form class="jgportal-formTest-paymentFormSample">
+    <h2>Payment form</h2>
+    <p>
+      Required fields are followed by
+      <strong>
+        <abbr title="required">*</abbr>
+      </strong>
+      .
+    </p>
+    <section>
+      <h3>Contact information</h3>
+      <p><small><em>Plain fieldset:</em></small></p>
+      <fieldset>
+        <legend>Title</legend>
+        <ul>
+          <li>
+            <label>
+              <input type="radio" name="title" value="M.">
+              <span>Mister</span>
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="radio" name="title" value="Ms.">
+              <span>Miss</span>
+            </label>
+          </li>
+        </ul>
+      </fieldset>
 
-<form>
-  <span class="form-group form-group--panel">
-    <span class="form-item form-item--label">
-      <label for="${_id('Input3')}">Name</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input3')}" type="text" placeholder="Your text here">
-    </span>
-  </span>
-  <span class="form-group form-group--panel">
-    <span class="form-item form-item--label">
-      <label for="${_id('Input4')}">Choose</label>
-    </span>
-    <span class="form-item">
+      <div class="jgportal-formTest-inputAlternative--1">
+      <p><small><em>Fieldset with class <code>form-fieldset--horizontal</code>
+        and span child (cannot change fieldset's display property):</em></small></p>
+      <fieldset class="form-fieldset--horizontal">
+        <span>
+          <legend>Title</legend>
+          <ul>
+            <li>
+              <label>
+                <input type="radio" name="title" value="M.">
+                <span>Mister</span>
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="radio" name="title" value="Ms.">
+                <span>Miss</span>
+              </label>
+            </li>
+          </ul>
+        </span>
+      </fieldset>
+      </div>
+
+      <div class="jgportal-formTest-inputAlternative--2">
+      <p><small><em>Fieldset with class <code>form-fieldset--horizontal</code>
+        with span child and inputs in span:</em></small></p>
+      <fieldset class="form-fieldset--horizontal">
+        <span>
+          <legend>Title</legend>
+          <span>
+            <label>
+              <input type="radio" name="title" value="M.">
+              <span>Mister</span>
+            </label>
+            <label>
+              <input type="radio" name="title" value="Ms.">
+              <span>Miss</span>
+            </label>
+          </span>
+        </span>
+      </fieldset>
+      </div>
+
+      <div class="jgportal-formTest-inputAlternative--1">
+      <p><small><em>Fieldset with class <code>form-fieldset--horizontal</code>
+        with span child and inputs in span and legend width:</em></small></p>
+      <fieldset class="form-fieldset--horizontal">
+        <span>
+          <legend style="width: 15em;">Title</legend>
+          <span>
+            <label>
+              <input type="radio" name="title" value="M.">
+              <span>Mister</span>
+            </label>
+            <label>
+              <input type="radio" name="title" value="Ms.">
+              <span>Miss</span>
+            </label>
+          </span>
+        </span>
+      </fieldset>
+      </div>
+
+      <p><small><em>Plain label:</em></small></p>
+      <p>
+        <label>
+          <span>
+            Name
+            <strong>
+              <abbr title="required">*</abbr>
+            </strong>
+          </span>
+          <input type="text" name="username">
+        </label>
+      </p>
+      
+      <div class="jgportal-formTest-inputAlternative--1">
+      <p><small><em>Label top-aligned by using class 
+        <code>form-label--topAligned</code> on label:</em></small></p>
+      <p>
+        <label class="form-label--topAligned">
+          <span>
+            Name
+            <strong>
+              <abbr title="required">*</abbr>
+            </strong>
+          </span>
+          <input type="text" name="username">
+        </label>
+      </p>
+      </div>
+      
+      <p>
+        <label>
+          <span>
+            E-mail
+            <strong>
+              <abbr title="required">*</abbr>
+            </strong>
+          </span>
+          <input type="email" name="usermail">
+        </label>
+      </p>
+      <p>
+        <label>
+          <span>
+            Password
+            <strong>
+              <abbr title="required">*</abbr>
+            </strong>
+          </span>
+          <input type="password" name="password">
+        </label>
+      </p>
+      <p>
+        <label>
+          <span>Comment</span>
+          <textarea></textarea>
+        </label>
+      </p>
+      <div class="jgportal-formTest-inputAlternative--1">
+      <p><small><em>Label top-aligned by using class 
+        <code>form-label--topAligned</code> on label:</em></small></p>
+      <p>
+        <label class="form-label--topAligned">
+          <span>Comment</span>
+          <textarea></textarea>
+        </label>
+      </p>
+      </div>
+      
+      
+    </section>
+    <section>
+      <h3>Payment information</h3>
+      <p><small><em>Using aligned input fields.</em></small></p>
+      <p>
+        <label>
+          <span>Card type</span>
+          <select name="usercard">
+            <option value="visa">Visa</option>
+            <option value="mc">Mastercard</option>
+            <option value="amex">American Express</option>
+          </select>
+        </label>
+      </p>
+      <p>
+        <label>
+          <span>
+            Card number
+            <strong>
+              <abbr title="required">*</abbr>
+            </strong>
+          </span>
+          <input type="number" name="cardnumber">
+        </label>
+      </p>
+      <p>
+        <label>
+          <span>
+            Expiration date
+            <strong>
+              <abbr title="required">*</abbr>
+            </strong>
+            <em>formatted as mm/yy</em>
+          </span>
+          <input type="date" name="expiration">
+        </label>
+      </p>
+    </section>
+    <section>
+      <p>
+        <button type="submit">Validate the payment</button>
+      </p>
+    </section>
+  </form>
+
+<h1>Inline Forms</h1>
+
+  <h3>Plain</h3>
+
+  <form>
+    <label>
+      <span>Name</span>
+      <input type="text">
+      <span class="form-item">
+        <span role="button" class="fas fa-backspace"></span>
+      </span>
+    </label>
+    <label>
+      <span>Choose</span>
       <select id="${_id('Input4')}">
         <option selected>Open this select menu</option>
         <option value="1">One</option>
         <option value="2">Two</option>
         <option value="3">Three</option>
       </select>
-    </span>
-  </span>
-  <span class="form-group form-group--panel">
-    <span class="form-item form-item--label">
-      <label for="${_id('Input5')}">Name</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input5')}" type="search" placeholder="Search for...">
-    </span>
-    <span class="form-item">
-      <span role="button" class="fas fa-backspace" 
-        v-on:click="controller.clearFilter($event)"></span>
-    </span>
-  </span>
-</form>
+    </label>
+    <fieldset class="form-fieldset--horizontal">
+      <span>
+        <legend>Title</legend>
+        <span>
+          <label>
+            <input type="radio" name="title" value="M.">
+            <span>Mister</span>
+          </label>
+          <label>
+            <input type="radio" name="title" value="Ms.">
+            <span>Miss</span>
+          </label>
+        </span>
+      </span>
+    </fieldset>
+  </form>
 
-<h2>Vertical</h2>
+  <h3>As panel</h3>
 
-<p>Text inputs are expanded to full width.<p>
+  <form>
+    <label class="form-labeledInput--panel">
+      <span>Name</span>
+      <input type="text">
+      <span class="form-item">
+        <span role="button" class="fas fa-backspace"></span>
+      </span>
+    </label>
+    <label class="form-labeledInput--panel">
+      <span>Choose</span>
+      <select id="${_id('Input4')}">
+        <option selected>Open this select menu</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+      </select>
+    </label>
+    
+    <fieldset class="form-fieldset--horizontal form-fieldset--panel">
+      <span>
+        <legend>Title</legend>
+        <span>
+          <label>
+            <input type="radio" name="title" value="M.">
+            <span>Mister</span>
+          </label>
+          <label>
+            <input type="radio" name="title" value="Ms.">
+            <span>Miss</span>
+          </label>
+        </span>
+      </span>
+    </fieldset>
+  </form>
 
-<form>
-  <div class="form-group">
-    <span class="form-item">
-      <label for="${_id('Input6')}">Name</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input6')}" type="text" placeholder="Your text here">
-    </span>
-  </div>
-  <div class="form-group">
-    <span class="form-item">
-      <label for="${_id('Input7')}">Mail</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input7')}" type="email" placeholder="Your address here">
-    </span>
-  </div>
-  <div class="form-group">
-    <span class="form-item">
-      <label for="${_id('Input8')}">Password</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input8')}" type="password">
-    </span>
-  </div>
-  <div class="form-group">
-    <span class="form-item">
-      <label for="${_id('Input9')}">Search</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input9')}" type="search">
-    </span>
-  </div>
-  <div class="form-group">
-    <span class="form-item">
-      <label for="${_id('Input10')}">URL</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input10')}" type="url">
-    </span>
-  </div>
-</form>
+  <form>
+    <label class="form-labeledInput--panel">
+      <span>Name</span>
+      <textarea></textarea>
+    </label>
+  </form>
 
-<h3>As panel</h3>
+<h2>Vertical as panel</h2>
 
-<form>
-  <div class="form-group form-group--panel">
-    <span class="form-item form-item--label">
-      <label for="${_id('Input11')}">Name</label>
-    </span>
-    <span class="form-item">
-      <input id="${_id('Input11')}" type="text" placeholder="Your text here">
-    </span>
-  </div>
-</form>
+  <form>
+    <p><small><em>Top-align and as panel:</em></small></p>
+    <p>
+      <label class="form-label--topAligned form-labeledInput--panel">
+        <span>
+          Name
+          <strong>
+            <abbr title="required">*</abbr>
+          </strong>
+        </span>
+        <input type="text" name="username">
+      </label>
+    </p>
 
+    <fieldset class="form-fieldset--panel">
+      <legend>Title</legend>
+      <ul>
+        <li>
+          <label>
+            <input type="radio" name="title" value="M.">
+            <span>Mister</span>
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="radio" name="title" value="Ms.">
+            <span>Miss</span>
+          </label>
+        </li>
+      </ul>
+    </fieldset>
+    <fieldset class="form-fieldset--panel">
+      <legend>Title</legend>
+      <span>
+        <label>
+          <input type="radio" name="title" value="M.">
+          <span>Mister</span>
+        </label>
+        <label>
+          <input type="radio" name="title" value="Ms.">
+          <span>Miss</span>
+        </label>
+      </span>
+    </fieldset>
+    
+    <p>
+    <label class="form-label--topAligned form-labeledInput--panel">
+      <span>Comment</span>
+      <textarea></textarea>
+    </label>
+    <p>
+  </form>
 
 </div>
