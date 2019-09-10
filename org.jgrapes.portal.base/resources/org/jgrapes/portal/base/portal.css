@@ -79,7 +79,6 @@ form:not(.form--noMarkupStyles) label.form-label--topAligned > :nth-child(2) {
 
 form:not(.form--noMarkupStyles) fieldset {
 	display: inline-block;
-	vertical-align: top;
 }
 /* Use of unnumbered list to specify inputs. */
 form:not(.form--noMarkupStyles) fieldset ul {
