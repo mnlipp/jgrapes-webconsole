@@ -83,7 +83,7 @@ form:not(.form--noMarkupStyles) label.form-label--topAligned > :nth-child(2) {
 
 form:not(.form--noMarkupStyles) label.form-labeledInput--fullWidth {
     display: flex;
-    align-items: stretch;
+    align-items: center;
 }
 
 form:not(.form--noMarkupStyles) label.form-labeledInput--fullWidth > :nth-child(1) {
