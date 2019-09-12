@@ -31,11 +31,11 @@ apply plugin: 'com.moowork.node'
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
 
-task documentationjs(type: NodeTask) {
-	dependsOn(':npmInstall')
-	new File(jsDocDestDir).mkdirs()
-	script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
-	args = ["build", "--format", "html", "--output", jsDocDestDir,
-		"resources/org/jgrapes/portal/functions.js"]
+task jsdoc(type: NodeTask) {
+    dependsOn(':npmInstall')
+    new File(jsDocDestDir).mkdirs()
+    script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
+    args = ["-c", "${rootProject.projectDir}/jsdoc.json",
+        "--destination", jsDocDestDir,
+        "resources/org/jgrapes/portal/bootstrap4/functions.js"]
 }
-

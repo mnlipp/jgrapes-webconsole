@@ -39,11 +39,12 @@ apply plugin: 'com.moowork.node'
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
 
-task documentationjs(type: NodeTask) {
+task jsdoc(type: NodeTask) {
 	dependsOn(':npmInstall')
 	new File(jsDocDestDir).mkdirs()
-	script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
-	args = ["build", "--format", "html", "--output", jsDocDestDir,
+	script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
+	args = ["-c", "${rootProject.projectDir}/jsdoc.json",
+        "--destination", jsDocDestDir,
 		"resources/org/jgrapes/portal/base/functions.js"]
 }
 
@@ -53,7 +54,7 @@ javadoc {
     
     if (!isJitPackBuild) {
         // Does not work on jitpack
-        dependsOn documentationjs
+        dependsOn jsdoc
     }
 
 	options.tagletPath = rootProject.configurations.javadocTaglets.files as List
