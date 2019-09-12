@@ -6,4 +6,3 @@
 **/.classpath
 **/org.eclipse.jdt.core.prefs
 /node_modules/
-/package-lock.json
