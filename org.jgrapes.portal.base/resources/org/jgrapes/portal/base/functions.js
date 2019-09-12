@@ -21,11 +21,18 @@
 /**
  * JGPortal establishes a namespace for the JavaScript functions
  * that are provided by the portal.
+ * 
+ * @namespace
  */
 var JGPortal = {};
 
 (function () {
 
+    /**
+     * Easy access to logging.
+     * 
+     * @memberof JGPortal
+     */
     var log = {
         debug: function(message) {
             if (console && console.debug) {
@@ -238,7 +245,7 @@ var JGPortal = {};
          * and sends it to the server. The object should represent
          * a JSON RPC notification.
          * 
-         * @param  {object} data the data
+         * @param  {Object} data the data
          */
         send(data) {
             this._inactivity = 0;
@@ -474,6 +481,9 @@ var JGPortal = {};
         }
     }
     
+    /**
+     * The renderer.
+     */
     JGPortal.Renderer = class {
         
         init() {
@@ -698,6 +708,11 @@ var JGPortal = {};
         
     }
     
+    /**
+     * Provides portal related methods. A singleton is automatically
+     * created. Selected methods are made available in the JGPortal
+     * namespace.
+     */
     class Portal {
         
         constructor() {
@@ -987,34 +1002,60 @@ var JGPortal = {};
     
     var thePortal = new Portal();
     
+    /**
+     * Initialize the portal singleton.
+     * 
+     * @memberof JGPortal
+     */
     JGPortal.init = function(...params) {
         thePortal.init(...params);
     }
     
+    /**
+     * @memberof JGPortal
+     */
     JGPortal.registerPortletMethod = function(...params) {
         thePortal.registerPortletMethod(...params);
     }
     
+    /**
+     * @memberof JGPortal
+     */
     JGPortal.notifyPortletModel = function(...params) {
         return thePortal.notifyPortletModel(...params);
     }
     
+    /**
+     * @memberof JGPortal
+     */
     JGPortal.lockMessageQueue = function(...params) {
         thePortal.lockMessageQueue(...params);
     }
     
+    /**
+     * @memberof JGPortal
+     */
     JGPortal.unlockMessageQueue = function(...params) {
         thePortal.unlockMessageQueue(...params);
     }
     
+    /**
+     * @memberof JGPortal
+     */
     JGPortal.findPortletPreview = function(...params) {
         return thePortal.renderer.findPortletPreview(...params);
     }
     
+    /**
+     * @memberof JGPortal
+     */
     JGPortal.findPortletView = function(...params) {
         return thePortal.renderer.findPortletView(...params);
     }
     
+    /**
+     * @memberof JGPortal
+     */
     JGPortal.createIfMissing = function(node, key, supplier) {
         let data = node.data(key);
         if (data) {
@@ -1025,101 +1066,109 @@ var JGPortal = {};
         return data;
     }
     
-    function TableController(columns, options) {
-        this.keys = [];
-        this.labelsByKey = {};
-        for (let i in columns) {
-            this.keys.push(columns[i][0]);
-            this.labelsByKey[columns[i][0]] = columns[i][1];
-        }
-        this.sortKey = '';
-        this.sortOrders = {};
-        for (let i in this.keys) {
-            this.sortOrders[this.keys[i]] = 1;
-        }
-        this.filterKey = '';
-        if (options) {
-            if ("sortKey" in options) {
-                this.sortBy(options.sortKey);
+    /**
+     * A generic controller for tables. It provides information about
+     * the available columns and maintains state regarding their
+     * sort order and direction. In addition, it supports simple
+     * filtering based on cell content.
+     */
+    JGPortal.TableController = class {
+        
+        constructor(columns, options) {
+            this.keys = [];
+            this.labelsByKey = {};
+            for (let i in columns) {
+                this.keys.push(columns[i][0]);
+                this.labelsByKey[columns[i][0]] = columns[i][1];
             }
-            if ("sortOrder" in options) {
-                this.sortBy(this.sortKey, options.sortOrder);
+            this.sortKey = '';
+            this.sortOrders = {};
+            for (let i in this.keys) {
+                this.sortOrders[this.keys[i]] = 1;
             }
-        }
-    }
-
-    TableController.prototype.label = function(key) {
-        return this.labelsByKey[key];
-    }
-    
-    TableController.prototype.sortOrder = function(key) {
-        return this.sortOrders[key];
-    }
-    
-    TableController.prototype.sortBy = function(key, order) {
-        if (this.sortKey != key) {
-            this.sortKey = key;
-        } else {
-            this.sortOrders[key] = this.sortOrders[key] * -1;
-        }
-        if (typeof order !== 'undefined') {
-            if (order === 'up') {
-                this.sortOrders[key] = 1;
-            }
-            if (order === 'down') {
-                this.sortOrders[key] = -1;
+            this.filterKey = '';
+            if (options) {
+                if ("sortKey" in options) {
+                    this.sortBy(options.sortKey);
+                }
+                if ("sortOrder" in options) {
+                    this.sortBy(this.sortKey, options.sortOrder);
+                }
             }
         }
-    }
-    
-    TableController.prototype.sortedByAsc = function(key) {
-        return this.sortKey == key && this.sortOrders[key] == 1;
-    }
-    
-    TableController.prototype.sortedByDesc = function(key) {
-        return this.sortKey == key && this.sortOrders[key] == -1;
-    }
-    
-    TableController.prototype.filter = function(data) {
-        let filterKey = this.filterKey && this.filterKey.toLowerCase();
-        if (filterKey) {
-          data = data.filter(function (item) {
-            return Object.values(item).some(function (value) {
-              return String(value).toLowerCase().indexOf(filterKey) > -1
-            })
-          })
+        
+        label(key) {
+            return this.labelsByKey[key];
         }
-        if (this.sortKey) {
-            let sortKey = this.sortKey;
-            let order = this.sortOrders[sortKey];
-            data = data.sort(function (a, b) {
-                a = a[sortKey];
-                b = b[sortKey];
-                return (a === b ? 0 : a > b ? 1 : -1) * order;
-            })
+        
+        sortOrder(key) {
+            return this.sortOrders[key];
         }
-        return data;
+        
+        sortBy(key, order) {
+            if (this.sortKey != key) {
+                this.sortKey = key;
+            }
+            else {
+                this.sortOrders[key] = this.sortOrders[key] * -1;
+            }
+            if (typeof order !== 'undefined') {
+                if (order === 'up') {
+                    this.sortOrders[key] = 1;
+                }
+                if (order === 'down') {
+                    this.sortOrders[key] = -1;
+                }
+            }
+        }
+        
+        sortedByAsc(key) {
+            return this.sortKey == key && this.sortOrders[key] == 1;
+        }
+        
+        sortedByDesc(key) {
+            return this.sortKey == key && this.sortOrders[key] == -1;
+        }
+        
+        filter(data) {
+            let filterKey = this.filterKey && this.filterKey.toLowerCase();
+            if (filterKey) {
+                data = data.filter(function(item) {
+                    return Object.values(item).some(function(value) {
+                        return String(value).toLowerCase().indexOf(filterKey) > -1;
+                    });
+                });
+            }
+            if (this.sortKey) {
+                let sortKey = this.sortKey;
+                let order = this.sortOrders[sortKey];
+                data = data.sort(function(a, b) {
+                    a = a[sortKey];
+                    b = b[sortKey];
+                    return (a === b ? 0 : a > b ? 1 : -1) * order;
+                });
+            }
+            return data;
+        }
+        
+        filterBy(filter) {
+            this.filterKey = filter;
+        }
+        
+        updateFilter(event) {
+            this.filterKey = $(event.target).val();
+        }
+        
+        clearFilter(event) {
+            let form = $(event.target).closest("form");
+            let input = form.find("input");
+            input.val('');
+            this.filterKey = '';
+        }
+        
+        breakBeforeDots(text) {
+            return String(text).replace(/\./g, "&#x200b;.");
+        }
     }
-
-    TableController.prototype.filterBy = function(filter) {
-        this.filterKey = filter;
-    }
-    
-    TableController.prototype.updateFilter = function(event) {
-        this.filterKey = $(event.target).val();
-    }
-    
-    TableController.prototype.clearFilter = function(event) {
-        let form = $(event.target).closest("form");
-        let input = form.find("input");
-        input.val('');
-        this.filterKey = '';
-    }
-
-    TableController.prototype.breakBeforeDots = function(text) {
-        return String(text).replace(/\./g, "&#x200b;.")
-    }
-
-    JGPortal.TableController = TableController;
     
 })();
