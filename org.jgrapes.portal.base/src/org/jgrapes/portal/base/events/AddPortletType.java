@@ -50,7 +50,7 @@ import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
  * 
  * A portelt's JavaScript may (and probably must) make use of
  * the functions provided by the portal page. See the 
- * <a href="../../../../jsdoc/index.html">JavaScript
+ * <a href="../../../../../jsdoc/index.html">JavaScript
  * documentation of these functions</a> for details.
  * 
  * @startuml AddPortletTypeSeq.svg

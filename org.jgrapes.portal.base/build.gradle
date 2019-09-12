@@ -44,7 +44,7 @@ task documentationjs(type: NodeTask) {
 	new File(jsDocDestDir).mkdirs()
 	script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
 	args = ["build", "--format", "html", "--output", jsDocDestDir,
-		"resources/org/jgrapes/portal/functions.js"]
+		"resources/org/jgrapes/portal/base/functions.js"]
 }
 
 javadoc {
