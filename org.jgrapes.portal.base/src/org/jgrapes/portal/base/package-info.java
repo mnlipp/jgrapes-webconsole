@@ -214,10 +214,18 @@
  * 
  * Portlets are components that consume and produce events. They
  * don't have to implement a specific interface. Rather they have
- * exhibit a specific behaviour that can be derived from the
- * descritions above. The documentation of the base class
+ * exhibit a specific behavior that can be derived from the
+ * descriptions above. The documentation of the base class
  * {@link org.jgrapes.portal.base.AbstractPortlet} summarizes
  * the responsibilities of a portal component.
+ * 
+ * Portlets consist of (at least one) Java class and HTML generated
+ * by this class. Optionally, a portlet can contribute style information
+ * and JavaScript (see {@link org.jgrapes.portal.base.events.AddPortletType}).
+ * It may (and should) make use of the styles and 
+ * <a href="../../../../jsdoc/JGPortal.html">functions</a> provided by 
+ * the portal.
+ * 
  * 
  * @startuml PortalStructure.svg
  * skinparam packageStyle rectangle
