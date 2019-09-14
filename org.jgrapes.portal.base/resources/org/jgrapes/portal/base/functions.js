@@ -1170,5 +1170,135 @@ var JGPortal = {};
             return String(text).replace(/\./g, "&#x200b;.");
         }
     }
-    
+
+    /**
+     * Helps to manage options. The main addition to simply using
+     * a Set are the toggle functions and the support for temporarily
+     * disabling an option.
+     */
+    JGPortal.OptionsSet = class {
+
+        /**
+         * Creates a new option set.
+         */
+        constructor() {
+            this.enabled = new Map();
+            this.disabled = new Map();
+        }
+
+        /**
+         * Sets the option with the associated value.
+         * 
+         * @param {string} name - the option's name
+         * @param {string} value - the option's value
+         */
+        set(name, value) {
+            this.enabled.set(name, value);
+            this.disabled.delete(name);
+        }
+        
+        /**
+         * Returns the value of the given name.
+         * 
+         * @param {string} name - the option's name
+         */
+        get(name) {
+            return this.enabled.get(name);
+        }
+
+        /**
+         * Returns the names of all enabled options.
+         */
+        getEnabled() {
+            return this.enabled.keys();
+        }
+        
+        /**
+         * Returns the names of all disabled options.
+         */
+        getDisabled() {
+            return this.disabled.keys();
+        }
+
+        /**
+         * Returns the names of all options.
+         */
+        getAll() {
+            return (new Set([...this.enabled.keys(), ...this.disabled.keys()]))
+                .values();
+        }
+        
+        /**
+         * Clears the option set.
+         */
+        clear() {
+            this.enabled.clear();
+            this.disabled.clear();
+        }
+        
+        /**
+         * Deletes the option with the given name.
+         * 
+         * @param {string} name - the option's name
+         */
+        delete(name) {
+            this.enabled.delete(name);
+            this.disabled.delete(name);
+        }
+
+        /**
+         * Disables the option with the given name. The option
+         * and its value are kept and can be re-enabled.
+         * 
+         * @param {string} name - the option's name
+         */
+        disable(name) {
+            if (this.enabled.has(name)) {
+                this.disabled.set(name, this.enabled.get(name));
+                this.enabled.delete(name);
+            }
+        }
+        
+        /**
+         * Re-enables the option with the given name.
+         * 
+         * @param {string} name - the option's name
+         */
+        enable(name) {
+            if (this.disabled.has(name)) {
+                this.enabled.set(name, this.disabled.get(name));
+                this.disabled.delete(name);
+            }
+        }
+        
+        /**
+         * Toggles the option with the given name, i.e. enables
+         * it if it is disabled and disables it if it is enabled.
+         * 
+         * @param {string} name - the option's name
+         */
+        toggleEnabled(name) {
+            if (this.enabled.has(name)) {
+                this.disable(name);
+            } else {
+                this.enable(name);
+            }
+        }
+        
+        /**
+         * Sets the option with the given name if it is not
+         * set and deletes it if it is enabled.
+         * 
+         * @param {string} name - the option's name
+         * @param {string} value - the option's value
+         */
+        toggleIsSet(name, value) {
+            if (this.enabled.has(name)) {
+                this.enabled.delete(name);
+            } else {
+                this.enabled.set(name, value);
+            }
+        }
+    }
+
 })();
