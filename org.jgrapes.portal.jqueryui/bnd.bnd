@@ -15,12 +15,12 @@ Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)", \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)", \
     osgi.serviceloader; \
-        filter:="(osgi.serviceloader=org.jgrapes.portal.ThemeProvider)"; \
+        filter:="(osgi.serviceloader=org.jgrapes.portal.jqueryui.ThemeProvider)"; \
             cardinality:=multiple
 
 Provide-Capability: osgi.serviceloader; \
-    osgi.serviceloader=org.jgrapes.portal.ThemeProvider; \
-    uses:="org.jgrapes.portal"
+    osgi.serviceloader=org.jgrapes.portal.jqueryui.ThemeProvider; \
+    uses:="org.jgrapes.portal.jqueryui"
 
 Export-Package: \
 	org.jgrapes.portal.jqueryui,\
