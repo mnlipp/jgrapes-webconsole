@@ -144,8 +144,19 @@ var JQUIPortal = {
             let item = $('<li class="ui-menu-item">'
                     + '<div class="ui-menu-item-wrapper" data-portlet-type="' 
                     + portletType + '">' + displayName + '</div></li>');
-            item.find("div").data("render-modes", renderModes)
-            $("#addon-menu-list").append(item);
+            item.find("div").data("render-modes", renderModes);
+            let inserted = false;
+            $("#addon-menu-list").find(".ui-menu-item").each(function(index, el) {
+                if (displayName < $(el).find(".ui-menu-item-wrapper").text()) {
+                    $(el).before(item);
+                    inserted = true;
+                    return false;
+                }
+            });
+            if (!inserted) {
+                $("#addon-menu-list").append(item);
+            }
+
         }
         
         lastPortalLayout(previewLayout, tabsLayout, xtraInfo) {

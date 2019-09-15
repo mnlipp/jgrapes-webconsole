@@ -135,7 +135,17 @@ var B4UIPortal = {
                 self.sendAddPortlet($(this).data("portlet-type"),
                         $(this).data("render-modes"));
             });
-            $("#portalNavbarPortletList").append(item);
+            let inserted = false;
+            $("#portalNavbarPortletList").find(".dropdown-item").each(function(index, el) {
+                if (displayName < $(el).text()) {
+                    $(el).before(item);
+                    inserted = true;
+                    return false;
+                }
+            });
+            if (!inserted) {
+                $("#portalNavbarPortletList").append(item);
+            }
         }
         
         lastPortalLayout(previewLayout, tabsLayout, xtraInfo) {
