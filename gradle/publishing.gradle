@@ -112,8 +112,6 @@ task releaseToBintray {
     group = "publishing"
     
     dependsOn "releaseTag"
-    dependsOn "clean"
-    dependsOn "build"
     dependsOn "bintrayUpload"
 }
 

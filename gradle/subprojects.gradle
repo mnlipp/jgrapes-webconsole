@@ -35,6 +35,20 @@ jar {
     }
 }
 
+jar {
+    manifest {
+        inputs.property("gitDecriptor", { grgit.describe() })
+           
+        // Set Git revision information in the manifests of built bundles
+        attributes('Git-SHA': grgit.head().id)
+    }
+    doFirst {
+        manifest {
+            attributes('Git-Descriptor': inputs.properties['gitDecriptor'])
+        }
+    }
+}
+
 dependencies {
     compileOnly 'org.osgi:org.osgi.annotation:6.0.0'
     testCompile 'junit:junit:4.12', 'net.jodah:concurrentunit:0.4.2'
