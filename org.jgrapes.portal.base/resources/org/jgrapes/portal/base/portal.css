@@ -71,6 +71,16 @@ form:not(.form--noMarkupStyles) label > * {
 	display: inline-block;
 }
 
+form:not(.form--noMarkupStyles) label > input[type="radio"],
+form:not(.form--noMarkupStyles) label > input[type="checkbox"] {
+    vertical-align: middle;
+}
+
+form:not(.form--noMarkupStyles) input[type="radio"] + span,
+form:not(.form--noMarkupStyles) input[type="checkbox"] + span {
+    vertical-align: middle;
+}
+
 form:not(.form--noMarkupStyles) label textarea {
     vertical-align: top;
 }
