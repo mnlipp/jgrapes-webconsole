@@ -84,7 +84,7 @@ form:not(.form--noMarkupStyles) fieldset legend {
 	font-size: inherit;
 }
 
-form:not(.form--noMarkupStyles) fieldset {
+form:not(.form--noMarkupStyles) p ~ fieldset {
     margin-bottom: 1rem;	
 }
 
