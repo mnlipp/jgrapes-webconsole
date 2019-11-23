@@ -62,6 +62,11 @@ main {
 /*
  * # Bootstrap4 specific overrides for base portal definitions.
  */
+
+.block--paragraph {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
  
 span[role="button"] {
     color: var(--primary);
@@ -70,6 +75,10 @@ span[role="button"] {
 /* Also override (more specific) match in forms. */
 .form-group > .form-item span[role="button"] {
     color: var(--primary);
+}
+
+form:not(.form--noMarkupStyles) label {
+    margin-bottom: 0;
 }
 
 /* # Bootstrap4 like forms/input groups. */
@@ -90,10 +99,6 @@ form:not(.form--noMarkupStyles) p ~ fieldset {
 
 form:not(.form--noMarkupStyles) label.form-label--topAligned {
 	display: block;
-}
-
-form:not(.form--noMarkupStyles) label :first-child {
-	margin-bottom: 0.5rem;
 }
 
 form:not(.form--noMarkupStyles) li label {
