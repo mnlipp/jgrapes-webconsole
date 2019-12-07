@@ -5,6 +5,7 @@ rootProject.name = 'JGrapes-Portal'
 include 'org.jgrapes.portal.base'
 include 'org.jgrapes.portal.jqueryui'
 include 'org.jgrapes.portal.bootstrap4'
+include 'org.jgrapes.portal.vuejs'
 
 include 'org.jgrapes.portal.providers.fontawesome'
 include 'org.jgrapes.portal.providers.datatables'

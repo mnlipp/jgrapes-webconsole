@@ -1,0 +1,99 @@
+<!doctype html>
+
+<html lang="${locale.toLanguageTag()}">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Portal -->
+<link rel="icon" href="${renderSupport.portalResource('favicon.ico')}">
+<title>${_("portalTitle")}</title>
+
+<!-- CSS -->
+<link rel="stylesheet" 
+  href="${renderSupport.portalResource('lib/normalize.css')}">
+<link rel="stylesheet" 
+  href="${renderSupport.portalResource('jgp-components.css')}">
+<!-- Portal -->
+<link rel="stylesheet"
+  href="${renderSupport.portalBaseResource('portal' + minifiedExtension + '.css')}" />
+<link rel="stylesheet"
+  href="${renderSupport.portalResource('lib/fontawesome-free/css/all' + minifiedExtension + '.css')}" />
+<link rel="stylesheet"
+  href="${renderSupport.portalResource('portal-layout' + minifiedExtension + '.css')}" />
+<link rel="stylesheet"
+  href="${renderSupport.portalResource('portal-styling' + minifiedExtension + '.css')}" />
+
+<!-- Scripts(s) -->
+<script
+  src="${renderSupport.portalBaseResource('lib/jquery/jquery-3.3.1' + minifiedExtension + '.js')}"></script>
+
+</head>
+
+<body id="page-top" class="index portal-vuejs">
+
+  <#include "portal-header.ftl.html">
+
+  <main role="main">
+
+    <div id="app">
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <#include "portal-footer.ftl.html">
+
+<script type="module">
+import Vue from "${renderSupport.portalResource('lib/vue.esm.browser.js')}"
+import Vuex from "${renderSupport.portalResource('lib/vuex.esm.browser.js')}"
+import VueI18n from "${renderSupport.portalResource('lib/vue-i18n.esm.browser.js')}"
+import "${renderSupport.portalResource('jgp-components.js')}"
+import JGPortal from "${renderSupport.portalResource('jgportal.js')}"
+import VueJsPortal from "${renderSupport.portalResource('vuejsportal.js')}"
+
+Vue.use(Vuex);
+const store = new Vuex.Store({
+  state: {
+    localeMenuitems: [
+      // <#list supportedLanguages as l>
+      ['${l.label}', '${l.locale.toLanguageTag()}'],
+      // </#list>
+    ],
+    portlets: [],
+  },
+})
+
+Vue.use(VueI18n);
+const messages = {
+    // <#list supportedLanguages as l>
+    '${l.locale.toLanguageTag()}': {
+    },
+    // </#list>    
+};
+const i18n = new VueI18n({
+   locale: 'de',
+   fallbackLocale: 'en',
+   messages, 
+});
+
+new Vue({ el: 'header', store, i18n });
+new Vue({ el: 'main', store, i18n });
+new Vue({ el: 'footer', store, i18n });
+
+JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, 
+    ${portalSessionInactivityTimeout?c}, new VueJsPortal.Renderer({
+        ok: '${_("OK")}',
+        close: '${_("Close")}',
+        sessionSuspendedTitle: '${_("Portal Session Suspended")}',
+        sessionSuspendedMessage: '${_("portalSessionSuspendedMessage")}',
+        serverConnectionLost: '${_("serverConnectionLostMessage")}',
+        serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
+    }));
+
+</script>
+
+ 
+</body>
+</html>

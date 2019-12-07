@@ -61,6 +61,7 @@ import org.jgrapes.portal.base.PortalWeblet;
 import org.jgrapes.portal.base.PortletComponentFactory;
 import org.jgrapes.portal.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.portal.jqueryui.JQueryUiWeblet;
+import org.jgrapes.portal.vuejs.VueJsPortalWeblet;
 import org.jgrapes.util.PreferencesStore;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -135,6 +136,7 @@ public class HttpPortalDemo extends Component implements BundleActivator {
 
         createJQueryUiPortal();
         createBootstrap4Portal();
+        createVueJsPortal();
         Components.start(app);
     }
 
@@ -162,6 +164,27 @@ public class HttpPortalDemo extends Component implements BundleActivator {
         PortalWeblet portalWeblet
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
                 new URI("/b4portal/")))
+                .prependClassTemplateLoader(this.getClass())
+                .prependResourceBundleProvider(HttpPortalDemo.class)
+                .prependPortalResourceProvider(HttpPortalDemo.class);
+        Portal portal = portalWeblet.portal();
+        portalWeblet.setPortalSessionInactivityTimeout(300000);
+        portal.attach(new PortalLocalBackedKVStore(
+            portal, portalWeblet.prefix().getPath()));
+        portal.attach(new KVStoreBasedPortalPolicy(portal));
+        portal.attach(new NewPortalSessionPolicy(portal));
+        // Add all available page resource providers
+        portal.attach(new ComponentCollector<>(
+            PageResourceProviderFactory.class, portal));
+        // Add all available portlets
+        portal.attach(new ComponentCollector<>(
+            PortletComponentFactory.class, portal));
+    }
+
+    private void createVueJsPortal() throws URISyntaxException {
+        PortalWeblet portalWeblet
+            = app.attach(new VueJsPortalWeblet(app.channel(), Channel.SELF,
+                new URI("/vjportal/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(HttpPortalDemo.class)
                 .prependPortalResourceProvider(HttpPortalDemo.class);

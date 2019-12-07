@@ -1,0 +1,15 @@
+<header>
+
+  <!-- Top navigation -->
+  <span><#include "portal-brand.ftl.html"></span>
+  <jgp-pulldown-menu v-bind:id="'portlet-menu'" 
+    v-bind:label="'<span class=\'fas fa-puzzle-piece\'></span>'"
+    v-bind:items="this.$store.state.portlets"
+    v-bind:l10n="this.$t"
+    v-bind:action="(row) => alert(row)"></jgp-pulldown-menu>
+  <jgp-pulldown-menu v-bind:id="'language-selector'" 
+    v-bind:label="'<span class=\'fas fa-language\'></span>'"
+    v-bind:items="this.$store.state.localeMenuitems"
+    v-bind:action="(row) => alert(row)"></jgp-pulldown-menu>
+
+</header>
