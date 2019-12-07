@@ -18,7 +18,7 @@
 
 'use strict';
 
-import JGPortal from "./jgportal.js"
+import JGPortal from "../portal-base-resource/jgportal.js"
 
 /**
  * JGPortal establishes a namespace for the JavaScript functions
