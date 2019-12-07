@@ -49,22 +49,18 @@
 <!-- More... -->
 
 <!-- Portal -->
-<script
-  src="${renderSupport.portalBaseResource('functions' + minifiedExtension + '.js')}"></script>
-<script
-  src="${renderSupport.portalResource('functions' + minifiedExtension + '.js')}"></script>
-<script>
-  $( function() {
-    JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, 
-            ${portalSessionInactivityTimeout?c}, new B4UIPortal.Renderer({
-                ok: "${_("OK")}",
-                close: "${_("Close")}",
-                sessionSuspendedTitle: "${_("Portal Session Suspended")}",
-                sessionSuspendedMessage: "${_("portalSessionSuspendedMessage")}",
-                serverConnectionLost: "${_("serverConnectionLostMessage")}",
-                serverConnectionRestored: "${_("serverConnectionRestoredMessage")}",
-            }));
-  } );
+  <script type="module">
+  import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
+  import B4UIPortal from "${renderSupport.portalResource('b4uiportal.js')}"
+  JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, 
+     ${portalSessionInactivityTimeout?c}, new B4UIPortal.Renderer({
+        ok: "${_("OK")}",
+        close: "${_("Close")}",
+        sessionSuspendedTitle: "${_("Portal Session Suspended")}",
+        sessionSuspendedMessage: "${_("portalSessionSuspendedMessage")}",
+        serverConnectionLost: "${_("serverConnectionLostMessage")}",
+        serverConnectionRestored: "${_("serverConnectionRestoredMessage")}",
+     }));
   </script>
 
 </head>

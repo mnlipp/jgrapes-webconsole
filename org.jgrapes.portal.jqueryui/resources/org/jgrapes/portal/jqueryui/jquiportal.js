@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2016, 2018  Michael N. Lipp
+ * Copyright (C) 2016, 2019  Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 

@@ -1,14 +1,10 @@
-//createMapFile//resources/org/jgrapes/portal/bootstrap4/functions.js=true
 //createMapFile//resources/org/jgrapes/portal/bootstrap4/lib/lodash-4.17.4.js=true
 //createMapFile//resources/org/jgrapes/portal/jqueryui/functions.js=true
-//includeSource//resources/org/jgrapes/portal/bootstrap4/functions.js=true
 //includeSource//resources/org/jgrapes/portal/bootstrap4/lib/lodash-4.17.4.js=true
 //includeSource//resources/org/jgrapes/portal/jqueryui/functions.js=true
-//minifier//resources/org/jgrapes/portal/bootstrap4/functions.js=GoogleClosureComiler
 //minifier//resources/org/jgrapes/portal/bootstrap4/lib/lodash-4.17.4.js=GoogleClosureComiler
 //minifier//resources/org/jgrapes/portal/bootstrap4/portal.css=YuiCompressor
 //minifier//resources/org/jgrapes/portal/jqueryui/functions.js=GoogleClosureComiler
-//optWhitespaceOnly//resources/org/jgrapes/portal/bootstrap4/functions.js=optSimple
 //optWhitespaceOnly//resources/org/jgrapes/portal/bootstrap4/lib/lodash-4.17.4.js=optSimple
 //optWhitespaceOnly//resources/org/jgrapes/portal/jqueryui/functions.js=optSimple
 eclipse.preferences.version=1
