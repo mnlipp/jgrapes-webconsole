@@ -72,7 +72,7 @@ task jsdoc(type: NodeTask) {
 	script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
 	args = ["-c", "${rootProject.projectDir}/jsdoc.json",
         "--destination", jsDocDestDir,
-		"resources/org/jgrapes/portal/base/functions.js"]
+		"resources/org/jgrapes/portal/base/jgportal.js"]
 }
 
 javadoc {
