@@ -27,6 +27,9 @@
 export const JGPortal = {};
 export default JGPortal;
 
+// For backward compatibility
+window.JGPortal = JGPortal;
+
 /**
  * Easy access to logging.
  * 
