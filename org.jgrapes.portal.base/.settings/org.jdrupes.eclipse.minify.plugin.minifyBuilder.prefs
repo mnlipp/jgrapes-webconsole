@@ -1,6 +1,2 @@
-//createMapFile//resources/org/jgrapes/portal/base/functions.js=true
-//includeSource//resources/org/jgrapes/portal/base/functions.js=true
-//minifier//resources/org/jgrapes/portal/base/functions.js=GoogleClosureComiler
 //minifier//resources/org/jgrapes/portal/base/portal.css=YuiCompressor
-//optWhitespaceOnly//resources/org/jgrapes/portal/base/functions.js=optSimple
 eclipse.preferences.version=1
