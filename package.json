@@ -2,13 +2,13 @@
 	"devDependencies": {
 		"@fortawesome/fontawesome-free": "^5.11.2",
 		"jquery": "^3.4.1",
-		"jsdoc": "*",
+		"jsdoc": "^3.6.3",
 		"moment": "^2.24.0",
 		"normalize.css": "^8.0.1",
 		"vue": "^2.6.10",
 		"vue-i18n": "^8.15.1",
 		"vuex": "^3.1.2",
-		"webpack": "*",
-		"webpack-cli": "*"
+		"webpack": "^4.41.2",
+		"webpack-cli": "^3.3.10"
 	}
 }
