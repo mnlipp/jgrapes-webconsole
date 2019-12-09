@@ -64,7 +64,7 @@ artifacts {
 
 apply plugin: 'com.moowork.node'
 
-ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
+ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/portal/base/jsdoc"
 
 task jsdoc(type: NodeTask) {
 	dependsOn(':npmInstall')
@@ -81,7 +81,7 @@ javadoc {
     
     if (!isJitPackBuild) {
         // Does not work on jitpack
-        dependsOn jsdoc
+        finalizedBy jsdoc
     }
 
 	options.tagletPath = rootProject.configurations.javadocTaglets.files as List

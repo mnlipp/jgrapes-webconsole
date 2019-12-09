@@ -22,9 +22,11 @@
  * JGPortal establishes a namespace for the JavaScript functions
  * that are provided by the portal.
  * 
- * @module jgportal
+ * @module portal-base-resource/jgportal
  */
-export const JGPortal = {};
+ 
+/** The exported class used to access everything. */
+export class JGPortal {};
 export default JGPortal;
 
 // For backward compatibility
@@ -32,10 +34,13 @@ window.JGPortal = JGPortal;
 
 /**
  * Easy access to logging.
- * 
  * @memberof JGPortal
  */
-let log = {
+var log = {
+    /**
+     * Output debug message.
+     * @memberof log 
+     */
     debug: function(message) {
         if (console && console.debug) {
             console.debug(message)

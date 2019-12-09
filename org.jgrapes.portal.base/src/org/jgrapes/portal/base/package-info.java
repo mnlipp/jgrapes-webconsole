@@ -223,8 +223,8 @@
  * by this class. Optionally, a portlet can contribute style information
  * and JavaScript (see {@link org.jgrapes.portal.base.events.AddPortletType}).
  * It may (and should) make use of the styles and 
- * <a href="../../../../jsdoc/module-jgportal.html">functions</a> provided by 
- * the portal.
+ * <a href="jsdoc/module-portal-base-resource_jgportal.html">functions</a> 
+ * provided by the portal.
  * 
  * 
  * @startuml PortalStructure.svg
