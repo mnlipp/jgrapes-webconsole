@@ -59,80 +59,80 @@
  * # Markup mostly forms.
  */
 
-form:not(.form--noMarkupStyles) {
+form:not(.form--no-markup-styles) {
 	box-sizing: border-box;
 }
 
-form:not(.form--noMarkupStyles) * {
+form:not(.form--no-markup-styles) * {
     box-sizing: border-box;
 }
 
-form:not(.form--noMarkupStyles) label > * {
+form:not(.form--no-markup-styles) label > * {
 	display: inline-block;
 }
 
-form:not(.form--noMarkupStyles) label > input[type="radio"],
-form:not(.form--noMarkupStyles) label > input[type="checkbox"] {
+form:not(.form--no-markup-styles) label > input[type="radio"],
+form:not(.form--no-markup-styles) label > input[type="checkbox"] {
     vertical-align: middle;
 }
 
-form:not(.form--noMarkupStyles) input[type="radio"] + span,
-form:not(.form--noMarkupStyles) input[type="checkbox"] + span {
+form:not(.form--no-markup-styles) input[type="radio"] + span,
+form:not(.form--no-markup-styles) input[type="checkbox"] + span {
     vertical-align: middle;
 }
 
-form:not(.form--noMarkupStyles) label textarea {
+form:not(.form--no-markup-styles) label textarea {
     vertical-align: top;
 }
 
 /* div cannot be used in label context. */
-form:not(.form--noMarkupStyles) label.form-label--topAligned > :nth-child(2) {
+form:not(.form--no-markup-styles) label.form__label--topAligned > :nth-child(2) {
     display: block;
     width: 100%;
 }
 
-form:not(.form--noMarkupStyles) label.form-labeledInput--fullWidth {
+form:not(.form--no-markup-styles) label.form__label--fullWidth {
     display: flex;
     align-items: center;
 }
 
-form:not(.form--noMarkupStyles) label.form-labeledInput--fullWidth > :nth-child(1) {
+form:not(.form--no-markup-styles) label.form__label--fullWidth > :nth-child(1) {
     margin-right: 0.25em;
 }
 
-form:not(.form--noMarkupStyles) label.form-labeledInput--fullWidth > :nth-child(2) {
+form:not(.form--no-markup-styles) label.form__label--fullWidth > :nth-child(2) {
     flex-grow: 1;
 }
 
 /* Fieldsets are a different issue. */
-form:not(.form--noMarkupStyles) fieldset {
+form:not(.form--no-markup-styles) fieldset {
 	display: inline-block;
 }
 /* Use of unnumbered list to specify inputs. */
-form:not(.form--noMarkupStyles) fieldset ul {
+form:not(.form--no-markup-styles) fieldset ul {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-/* Use form-fieldset--horizontal to layout legend and inputs side-by-side. */
-form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal {
+/* Use form__fieldset--horizontal to layout legend and inputs side-by-side. */
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal {
 	display: inline-block;
 }
 	
-form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal > span {
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span {
 	display: inline-flex;
 }
 
-form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal > span > :not(legend) {
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span > :not(legend) {
 	margin-left: 0.25em
 }
 
-form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal > span > legend {
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span > legend {
     vertical-align: top;
 }
 
-form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal {
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal {
 	border-width: 0;
 	padding: 0;
 }
