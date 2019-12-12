@@ -34,35 +34,54 @@ window.JGPortal = JGPortal;
 
 /**
  * Easy access to logging.
- * @memberof JGPortal
  */
-var log = {
+JGPortal.Log = class Log {
+
     /**
-     * Output debug message.
-     * @memberof log 
+     * Output a debug message.
+     * @param {string} message the message to print
      */
-    debug: function(message) {
+    static debug (message) {
         if (console && console.debug) {
             console.debug(message)
         }
-    },
-    info: function(message) {
+    }
+    
+    /**
+     * Output an info message.
+     * @param {string} message the message to print
+     */
+    static info(message) {
         if (console && console.info) {
             console.info(message)
         }
-    },
-    warn: function(message) {
+    }
+    
+    /**
+     * Output a warn message.
+     * @param {string} message the message to print
+     */
+    static warn(message) {
         if (console && console.warn) {
             console.warn(message)
         }
-    },
-    error: function(message) {
+    }
+    
+    /**
+     * Output an error message.
+     * @param {string} message the message to print
+     */
+    static error(message) {
         if (console && console.error) {
             console.error(message)
         }
     }
-}
-JGPortal.log = log;
+};
+
+// For Backward compatibility
+JGPortal.log = JGPortal.Log;
+// Local access
+var log = JGPortal.Log;
 
 // ///////////////////
 // WebSocket "wrapper"
@@ -495,33 +514,63 @@ class ResourceManager {
 }
 
 /**
- * The renderer.
+ * A base class for implementing a portral renderer. The renderer
+ * provides the DOM, based on the initial DOM from the portal page.
  */
 JGPortal.Renderer = class {
 
     init() {
     }
 
+    /**
+     * Called from the portal when the connection to the server is lost.
+     * The default implementation prints a warning message to the console.
+     * Should be overridden by a funtion that displays a notification.
+     */
     connectionLost() {
-        log.warn("Not implemented!");
+        log.warn("Connection lost notification not implemented!");
     }
 
+    /**
+     * Called from the portal when the connection to the server is restored.
+     * The default implementation prints a warning message to the console.
+     * Should be overridden by a funtion that displays a notification.
+     */
     connectionRestored() {
-        log.warn("Not implemented!");
+        log.warn("Connection restored notification not implemented!");
     }
 
+    /**
+     * Called from the portal when the connection to the server is syspended.
+     * The default implementation prints a warning message to the console.
+     * Should be overridden by a funtion that displays a modal dialog.
+     */
     connectionSuspended(resume) {
-        log.warn("Not implemented!");
+        log.warn("Connection suspended dialog not implemented!");
     }
 
+    /**
+     * Called from the portal when the portal is configured.
+     * The default implementation prints a warning message to the console.
+     * Should be overridden by a funtion that displays a modal dialog.
+     */
     portalConfigured() {
-        log.warn("Not implemented!");
+        log.warn("Portal configured handling not implemented!");
     }
 
+    /**
+     * Called from the portal when a new portlet type is been added.
+     * @param {string} portletType the portlet type
+     * @param {string} displayName the display name
+     * @param {Array.string} renderModes the render modes
+     */
     addPortletType(portletType, displayName, renderModes) {
         log.warn("Not implemented!");
     }
 
+    /**
+     * Called from the portal when the preview lay is received.
+     */
     lastPortalLayout(previewLayout, tabsLayout, xtraInfo) {
         log.warn("Not implemented!");
     }
