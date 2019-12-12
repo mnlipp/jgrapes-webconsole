@@ -27,8 +27,7 @@
 
 <!-- Scripts(s) -->
 <script
-  src="${renderSupport.portalBaseResource('lib/jquery/jquery-3.3.1' + minifiedExtension + '.js')}"></script>
-
+  src="${renderSupport.portalBaseResource('lib/jquery' + minifiedExtension + '.js')}"></script>
 </head>
 
 <body id="page-top" class="index portal-vuejs">
@@ -37,8 +36,12 @@
 
   <main role="main">
 
-    <div id="app">
-    </div>
+  <jpg-tablist v-bind:tabs="this.$store.state.tabs"></jpg-tablist>
+  <div id="portalOverviewTab">
+    <p>
+      Hello.
+    </p>
+  </div>
 
   </main>
 
@@ -61,6 +64,8 @@ const store = new Vuex.Store({
       ['${l.label}', '${l.locale.toLanguageTag()}'],
       // </#list>
     ],
+    tabs: [["${_("Overview")}", "portalOverviewTab"],
+        ["Test", "test"]],
     portlets: [],
   },
 })

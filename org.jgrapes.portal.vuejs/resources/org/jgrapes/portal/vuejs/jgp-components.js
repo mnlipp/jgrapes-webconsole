@@ -63,5 +63,56 @@ Vue.component('jgp-pulldown-menu', {
             self.expanded = false;
         }
     });
-}
-})
+  }
+});
+
+Vue.component('jpg-tablist', {
+  props: {
+    id: String,
+    tabs: Array,
+    l10n: Function,
+  },
+  data: function () {
+    return {
+      selected: ""
+    }
+  },
+  methods: {
+    translate: function(raw) {
+        if (this.l10n) {
+            return this.l10n(raw);
+        }
+        return raw;
+    },
+    setupTabpanel: function(element) {
+        element.setAttribute("role", "tabpanel");
+        element.setAttribute("aria-labelledby", 
+            element.getAttribute('id') + '-tab');
+        if (element.getAttribute('id') === this.selected) {
+            element.removeAttribute("hidden");
+        } else {
+            element.setAttribute("hidden", "");
+        }
+        
+    }
+  },
+  template: `
+    <div id="portalTabs" role="tablist">
+      <button v-for="tab of tabs" 
+        v-bind:id="tab[1] + '-tab'" role="tab" 
+        v-bind:aria-selected="tab[1] == selected ? 'true' : 'false'"
+        v-bind:aria-controls="tab[1]">{{ translate(tab[0]) }}</button>
+    </div>
+  `,
+  mounted: function() {
+    this.selected = this.tabs[0][1];
+    for (let tab of this.tabs) {
+        let tabpanel = document.querySelector("#" + tab[1]);
+        if (tabpanel == null) {
+            continue;
+        }
+        this.setupTabpanel(tabpanel);
+    }
+  }
+});
+
