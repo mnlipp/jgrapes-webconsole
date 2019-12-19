@@ -89,7 +89,7 @@ public class AddPortletType extends PortalCommand {
     /**
      * Create a new event for the given portlet type.
      * 
-     * @param portletType a unique id for the portklet type (usually
+     * @param portletType a unique id for the portlet type (usually
      * the class name)
      */
     public AddPortletType(String portletType) {
