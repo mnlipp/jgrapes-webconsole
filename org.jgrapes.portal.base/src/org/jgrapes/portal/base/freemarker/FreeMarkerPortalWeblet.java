@@ -180,8 +180,8 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
                     return coll.compare(o1.getLabel(), o2.getLabel());
                 }
             };
-        LanguageInfo[] languages = supportedLocales().stream()
-            .map(lang -> new LanguageInfo(lang))
+        LanguageInfo[] languages = supportedLocales().entrySet().stream()
+            .map(entry -> new LanguageInfo(entry.getKey(), entry.getValue()))
             .sorted(comp).toArray(size -> new LanguageInfo[size]);
         model.put("supportedLanguages", languages);
 
@@ -241,14 +241,16 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
     */
     public static class LanguageInfo {
         private final Locale locale;
+        private final ResourceBundle bundle;
 
         /**
          * Instantiates a new language info.
          *
          * @param locale the locale
          */
-        public LanguageInfo(Locale locale) {
+        public LanguageInfo(Locale locale, ResourceBundle bundle) {
             this.locale = locale;
+            this.bundle = bundle;
         }
 
         /**
@@ -268,6 +270,15 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
         public String getLabel() {
             String str = locale.getDisplayName(locale);
             return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+        }
+
+        /**
+         * Gets the bundle.
+         *
+         * @return the bundle
+         */
+        public ResourceBundle getL10nBundle() {
+            return bundle;
         }
     }
 

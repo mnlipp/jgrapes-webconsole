@@ -124,6 +124,7 @@ public final class PortalSession extends DefaultIOSubchannel {
 
     private String portalSessionId;
     private final Portal portal;
+    private final Set<Locale> supportedLocales;
     private long timeout;
     private final Timer timeoutTimer;
     private boolean active = true;
@@ -177,20 +178,23 @@ public final class PortalSession extends DefaultIOSubchannel {
     /**
      * Lookup (and create if not found) the portal browserSession channel
      * for the given portal browserSession id.
-     * 
+     *
      * @param portalSessionId the browserSession id
-     * @param portal the portal that this session belongs to 
+     * @param portal the portal that this session belongs to
      * class' constructor if a new channel is created, usually 
      * the portal
+     * @param supportedLocales the locales supported by the portal
      * @param timeout the portal session timeout in milli seconds
      * @return the channel
      */
     /* default */ static PortalSession lookupOrCreate(
-            String portalSessionId, Portal portal, long timeout) {
+            String portalSessionId, Portal portal,
+            Set<Locale> supportedLocales, long timeout) {
         cleanUnused();
         return portalSessions.computeIfAbsent(portalSessionId,
             psi -> new WeakReference<>(new PortalSession(
-                portal, portalSessionId, timeout), unusedSessions))
+                portal, supportedLocales, portalSessionId, timeout),
+                unusedSessions))
             .get();
     }
 
@@ -209,10 +213,11 @@ public final class PortalSession extends DefaultIOSubchannel {
         return this;
     }
 
-    private PortalSession(Portal portal, String portalSessionId,
-            long timeout) {
+    private PortalSession(Portal portal, Set<Locale> supportedLocales,
+            String portalSessionId, long timeout) {
         super(portal.channel(), portal.newEventPipeline());
         this.portal = portal;
+        this.supportedLocales = supportedLocales;
         this.portalSessionId = portalSessionId;
         this.timeout = timeout;
         timeoutTimer = Components.schedule(
@@ -333,6 +338,15 @@ public final class PortalSession extends DefaultIOSubchannel {
      */
     public Session browserSession() {
         return browserSession;
+    }
+
+    /**
+     * Returns the supported locales.
+     *
+     * @return the set of locales supported by the portal
+     */
+    protected Set<Locale> supportedLocales() {
+        return supportedLocales;
     }
 
     /**

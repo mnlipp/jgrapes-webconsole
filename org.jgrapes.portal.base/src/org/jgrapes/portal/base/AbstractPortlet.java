@@ -267,6 +267,7 @@ public abstract class AbstractPortlet extends Component {
     private Duration refreshInterval;
     private Supplier<Event<?>> refreshEventSupplier;
     private Timer refreshTimer;
+    private Map<Locale, ResourceBundle> l10nBundles = new HashMap<>();
 
     /**
      * Creates a new component that listens for new events
@@ -384,6 +385,32 @@ public abstract class AbstractPortlet extends Component {
         }
         event.setResult(new ResourceByUrl(event, resourceUrl));
         event.stop();
+    }
+
+    /**
+     * Returns the bundles for the given locales. The default implementation 
+     * looks up the available bundles for the locales using the
+     * package name plus "l10n" as base name. Note that the bundle returned
+     * for a given locale may be fallback bundle.
+     *
+     * @param toGet the locales to get bundles for
+     * @return the map with locales and bundles
+     */
+    protected Map<Locale, ResourceBundle> l10nBundles(Set<Locale> toGet) {
+        Map<Locale, ResourceBundle> result = new HashMap<>();
+        for (Locale locale : toGet) {
+            ResourceBundle bundle = l10nBundles.get(locale);
+            if (bundle == null) {
+                bundle = ResourceBundle.getBundle(
+                    getClass().getPackage().getName() + ".l10n", locale,
+                    getClass().getClassLoader(),
+                    ResourceBundle.Control.getNoFallbackControl(
+                        ResourceBundle.Control.FORMAT_DEFAULT));
+                l10nBundles.put(locale, bundle);
+            }
+            result.put(locale, bundle);
+        }
+        return Collections.unmodifiableMap(result);
     }
 
     /**

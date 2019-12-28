@@ -25,13 +25,12 @@ import java.net.URISyntaxException;
 import java.nio.CharBuffer;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -97,7 +96,8 @@ public abstract class PortalWeblet extends Component {
     private final List<Class<?>> resourceClasses = new ArrayList<>();
     private final ResourceBundle.Control resourceControl
         = new PortalResourceBundleControl(resourceClasses);
-    private final Set<Locale> supportedLocales = new HashSet<>();
+    private final Map<Locale, ResourceBundle> supportedLocales
+        = new HashMap<>();
 
     /**
      * The class used in handler annotations to represent the 
@@ -321,7 +321,7 @@ public abstract class PortalWeblet extends Component {
             ResourceBundle bundle = ResourceBundle.getBundle("l10n", locale,
                 PortalWeblet.class.getClassLoader(), resourceControl);
             if (bundle.getLocale().equals(locale)) {
-                supportedLocales.add(locale);
+                supportedLocales.put(locale, bundle);
             }
         }
     }
@@ -338,11 +338,12 @@ public abstract class PortalWeblet extends Component {
     }
 
     /**
-     * Returns the supported locales.
+     * Returns the supported locales and their resource bundles.
      *
-     * @return the sets the
+     * @return the set of locales supported by the portal and their
+     * resource bundles
      */
-    protected Set<Locale> supportedLocales() {
+    protected Map<Locale, ResourceBundle> supportedLocales() {
         return supportedLocales;
     }
 
@@ -615,7 +616,7 @@ public abstract class PortalWeblet extends Component {
         if (session != null) {
             Selection selection = (Selection) session.get(Selection.class);
             if (selection != null) {
-                supportedLocales.stream()
+                supportedLocales.keySet().stream()
                     .filter(lang -> lang.equals(event.locale())).findFirst()
                     .ifPresent(lang -> selection.prefer(lang));
             }
@@ -659,7 +660,7 @@ public abstract class PortalWeblet extends Component {
             .flatMap(opsId -> PortalSession.lookup(opsId))
             .map(session -> session.replaceId(portalSessionIds[0]))
             .orElse(PortalSession.lookupOrCreate(portalSessionIds[0],
-                portal, psNetworkTimeout))
+                portal, supportedLocales.keySet(), psNetworkTimeout))
             .setUpstreamChannel(wsChannel)
             .setSession(browserSession);
         wsChannel.setAssociated(PortalSession.class, portalSession);
