@@ -57,7 +57,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
         });
 
         $("#language-menu").on("click", "[data-locale]", function() {
-            self.sendSetLocale($(this).data("locale"));
+            self.sendSetLocale($(this).data("locale"), true);
             $("#theme-menu").jqDropdown("hide");
         });
 

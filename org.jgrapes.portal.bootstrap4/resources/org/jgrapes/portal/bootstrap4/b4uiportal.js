@@ -45,7 +45,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         log.debug("Locking screen");
 
         $("#portalLanguageMenu").on("click", "[data-locale]", function() {
-            self.sendSetLocale($(this).data("locale"));
+            self.sendSetLocale($(this).data("locale"), true);
         });
 
         // Grid
