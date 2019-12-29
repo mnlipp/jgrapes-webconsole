@@ -630,7 +630,7 @@ JGPortal.Renderer = class {
      * Sends a notification that requests the rendering of a portlet.
      * 
      * @param {string} portletId the portlet id
-     * @param {string} modes the requested render mode(s)
+     * @param {string[]} modes the requested render mode(s)
      */
     sendRenderPortlet(portletId, modes) {
         thePortal.send("renderPortlet", portletId, modes);
@@ -640,6 +640,7 @@ JGPortal.Renderer = class {
      * Sends a notification that requests the addition of a portlet.
      * 
      * @param {string} portletType the type of the portlet to add
+     * @param {string[]} renderModes the requested render mode(s)
      */
     sendAddPortlet(portletType, renderModes) {
         thePortal.send("addPortlet", portletType, renderModes);
