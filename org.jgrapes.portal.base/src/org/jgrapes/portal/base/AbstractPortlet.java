@@ -391,7 +391,7 @@ public abstract class AbstractPortlet extends Component {
      * Returns the bundles for the given locales. The default implementation 
      * looks up the available bundles for the locales using the
      * package name plus "l10n" as base name. Note that the bundle returned
-     * for a given locale may be fallback bundle.
+     * for a given locale may be the fallback bundle.
      *
      * @param toGet the locales to get bundles for
      * @return the map with locales and bundles
