@@ -134,8 +134,8 @@ public class Portal extends Component {
             break;
         }
         case "setLocale": {
-            fire(new SetLocale(Locale.forLanguageTag(params.asString(0))),
-                channel);
+            fire(new SetLocale(Locale.forLanguageTag(params.asString(0)),
+                params.asBoolean(1)), channel);
             break;
         }
         case "notifyPortletModel": {

@@ -38,7 +38,9 @@ import org.jgrapes.portal.base.PortalWeblet;
  * Portal -> PortalWeblet: SetLocale
  * deactivate Portal
  * activate PortalWeblet
- * PortalWeblet -> Browser: "reload"
+ * opt reload requested
+ *     PortalWeblet -> Browser: "reload"
+ * end
  * deactivate PortalWeblet
  * 
  * @enduml
@@ -46,14 +48,16 @@ import org.jgrapes.portal.base.PortalWeblet;
 public class SetLocale extends Event<Void> {
 
     private final Locale locale;
+    private final boolean reload;
 
     /**
      * Creates a new event.
      * 
      * @param locale the locale to set
      */
-    public SetLocale(Locale locale) {
+    public SetLocale(Locale locale, boolean reload) {
         this.locale = locale;
+        this.reload = reload;
     }
 
     /**
@@ -64,4 +68,15 @@ public class SetLocale extends Event<Void> {
     public Locale locale() {
         return locale;
     }
+
+    /**
+     * Returns `true` if the portal needs to be reloaded after
+     * changing the locale.
+     *
+     * @return true, if reload is required
+     */
+    public boolean reload() {
+        return reload;
+    }
+
 }

@@ -621,7 +621,9 @@ public abstract class PortalWeblet extends Component {
                     .ifPresent(lang -> selection.prefer(lang));
             }
         }
-        channel.respond(new SimplePortalCommand("reload"));
+        if (event.reload()) {
+            channel.respond(new SimplePortalCommand("reload"));
+        }
     }
 
     /**

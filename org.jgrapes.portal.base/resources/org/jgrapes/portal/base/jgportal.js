@@ -622,8 +622,8 @@ JGPortal.Renderer = class {
      * 
      * @param {string} locale the id of the selected locale
      */
-    sendSetLocale(locale) {
-        thePortal.send("setLocale", locale);
+    sendSetLocale(locale, reload) {
+        thePortal.send("setLocale", locale, reload);
     };
 
     /**
