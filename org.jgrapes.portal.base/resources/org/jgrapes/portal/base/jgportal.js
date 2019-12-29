@@ -561,7 +561,7 @@ JGPortal.Renderer = class {
     /**
      * Called from the portal when a new portlet type is been added.
      * @param {string} portletType the portlet type
-     * @param {string} displayName the display name
+     * @param {Object} displayNames the display names by lang
      * @param {Array.string} renderModes the render modes
      */
     addPortletType(portletType, displayName, renderModes) {

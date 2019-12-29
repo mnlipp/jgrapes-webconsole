@@ -29,7 +29,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.jgrapes.core.Channel;
@@ -93,10 +92,10 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
     public void onPortalReady(PortalReady event, PortalSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
         // Add SysInfoPortlet resources to page
         portalSession.respond(new AddPortletType(type())
-            .setDisplayName(resourceBundle.getString("portletName"))
+            .setDisplayNames(
+                displayNames(portalSession.supportedLocales(), "portletName"))
             .addScript(new ScriptResource()
                 .setRequires(new String[] { "chartjs.org" })
                 .setScriptUri(event.renderSupport().portletResource(

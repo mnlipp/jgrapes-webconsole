@@ -118,10 +118,10 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
     public void onPortalReady(PortalReady event, PortalSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
         // Add MarkdownDisplayPortlet resources to page
         portalSession.respond(new AddPortletType(type())
-            .setDisplayName(resourceBundle.getString("portletName"))
+            .setDisplayNames(
+                displayNames(portalSession.supportedLocales(), "portletName"))
             .addScript(new ScriptResource()
                 .setRequires(new String[] { "markdown-it.github.io",
                     "github.com/markdown-it/markdown-it-abbr",

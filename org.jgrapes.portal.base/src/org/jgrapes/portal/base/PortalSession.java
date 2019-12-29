@@ -345,7 +345,7 @@ public final class PortalSession extends DefaultIOSubchannel {
      *
      * @return the set of locales supported by the portal
      */
-    protected Set<Locale> supportedLocales() {
+    public Set<Locale> supportedLocales() {
         return supportedLocales;
     }
 

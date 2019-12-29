@@ -26,7 +26,6 @@ import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.jdrupes.json.JsonBeanDecoder;
@@ -84,10 +83,10 @@ public class FormTestPortlet extends FreeMarkerPortlet {
     public void onPortalReady(PortalReady event, PortalSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
         // Add HelloWorldPortlet resources to page
         portalSession.respond(new AddPortletType(type())
-            .setDisplayName(resourceBundle.getString("portletName"))
+            .setDisplayNames(
+                displayNames(portalSession.supportedLocales(), "portletName"))
             .addRenderMode(RenderMode.View)
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().portletResource(type(),

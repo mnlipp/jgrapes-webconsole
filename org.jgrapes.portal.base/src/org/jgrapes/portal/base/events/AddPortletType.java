@@ -23,7 +23,11 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jdrupes.json.JsonArray;
 import org.jgrapes.portal.base.Portlet.RenderMode;
@@ -81,7 +85,7 @@ import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
 public class AddPortletType extends PortalCommand {
 
     private final String portletType;
-    private String displayName = "";
+    private Map<Locale, String> displayNames = Collections.emptyMap();
     private final List<URI> cssUris = new ArrayList<>();
     private final List<ScriptResource> scriptResources = new ArrayList<>();
     private final List<RenderMode> renderModes = new ArrayList<>();
@@ -106,23 +110,23 @@ public class AddPortletType extends PortalCommand {
     }
 
     /**
-     * Sets the display name.
+     * Sets the display names.
      * 
      * @param displayName the display name
      * @return the event for easy chaining
      */
-    public AddPortletType setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public AddPortletType setDisplayNames(Map<Locale, String> displayNames) {
+        this.displayNames = displayNames;
         return this;
     }
 
     /**
-     * Return the display name.
+     * Return the display names.
      * 
-     * @return the displayName
+     * @return the displayNames
      */
-    public String displayName() {
-        return displayName;
+    public Map<Locale, String> displayNames() {
+        return displayNames;
     }
 
     /**
@@ -196,7 +200,10 @@ public class AddPortletType extends PortalCommand {
         for (ScriptResource scriptResource : scriptResources()) {
             strArray.append(scriptResource.toJsonValue());
         }
-        toJson(writer, "addPortletType", portletType(), displayName(),
+        toJson(writer, "addPortletType", portletType(),
+            displayNames().entrySet().stream()
+                .collect(Collectors.toMap(e -> e.getKey().toLanguageTag(),
+                    e -> e.getValue())),
             Arrays.stream(cssUris()).map(
                 uri -> uri.toString()).toArray(String[]::new),
             strArray, renderModes().stream().map(RenderMode::name)

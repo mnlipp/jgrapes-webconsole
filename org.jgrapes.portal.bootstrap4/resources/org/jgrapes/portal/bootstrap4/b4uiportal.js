@@ -124,9 +124,11 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         $("#loader-overlay").fadeOut("slow");
     }
 
-    addPortletType(portletType, displayName, renderModes) {
+    addPortletType(portletType, displayNames, renderModes) {
         // Add to menu
         let self = this;
+        let lang = document.querySelector("html").getAttribute('lang');
+        let displayName = displayNames[lang];
         let item = $('<a class="dropdown-item" href="#" data-portlet-type="'
             + portletType + '">' + displayName + '</a>');
         item.data("render-modes", renderModes)

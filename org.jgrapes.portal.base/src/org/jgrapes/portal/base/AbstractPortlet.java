@@ -413,6 +413,16 @@ public abstract class AbstractPortlet extends Component {
         return Collections.unmodifiableMap(result);
     }
 
+    protected Map<Locale, String> displayNames(Set<Locale> locales,
+            String key) {
+        Map<Locale, String> result = new HashMap<>();
+        Map<Locale, ResourceBundle> bundles = l10nBundles(locales);
+        for (Map.Entry<Locale, ResourceBundle> entry : bundles.entrySet()) {
+            result.put(entry.getKey(), entry.getValue().getString(key));
+        }
+        return result;
+    }
+
     /**
      * Provides a resource bundle for localization.
      * The default implementation looks up a bundle using the
