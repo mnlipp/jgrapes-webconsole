@@ -157,9 +157,10 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
 
     updatePortletPreview(isNew, container, modes, content, foreground) {
         // Container is:
-        //     <div class='portlet portlet-preview' data-portlet-id='...' 
-        //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></div>"
+        //     <section class='portlet portlet-preview' data-portlet-id='...' 
+        //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>"
         let self = this;
+        container = $(container);
         let newContent = $(content);
         if (isNew) {
             container.addClass('card');
@@ -264,8 +265,10 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     updatePortletView(isNew, container, modes, content, foreground) {
-        // Container is "<div class="portlet portlet-view data-portlet-id='...'"></div>"
-
+        // Container is 
+        //     <article class="portlet portlet-view 
+        //              data-portlet-id='...'"></article>"
+        container = $(container);
         let newContent = $(content);
         this._styleSemantics(newContent);
         if (!isNew) {

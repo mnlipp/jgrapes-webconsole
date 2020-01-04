@@ -575,14 +575,50 @@ JGPortal.Renderer = class {
         log.warn("Not implemented!");
     }
 
+    /**
+     * Update the preview of the given portlet.
+     *
+     * @param {boolean} isNew `true` if it is a new portlet preview
+     * @param {HTMLElement} container the container for the preview,
+     * provided as:
+     * ```
+     * <section class='portlet portlet-preview' data-portlet-id='...' 
+     *      data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>
+     * ```
+     * @param {string[]} modes the supported portlet modes
+     * @param {string} content the preview content
+     * @param {boolean} foreground `true` if the preview (i.e. the overview
+     * plane) is to be made the active tab
+     */
     updatePortletPreview(isNew, container, modes, content, foreground) {
         log.warn("Not implemented!");
     }
 
+    /**
+     * Update the view of the given portlet.
+     *
+     * @param {boolean} isNew `true` if it is a new portlet view
+     * @param {HTMLElement} container the container for the view,
+     * provided as:
+     * ```
+     * <article class="portlet portlet-view 
+     *          data-portlet-id='...'"></article>"
+     * ```
+     * @param {string[]} modes the supported portlet modes
+     * @param {string} content the view content
+     * @param {boolean} foreground `true` if the view 
+     * is to be made the active tab
+     */
     updatePortletView(isNew, container, modes, content, foreground) {
         log.warn("Not implemented!");
     }
 
+    /**
+     * Called if a portlet is been removed.
+     *
+     * @param {NodeList} containers the existing containers for
+     * the preview or views 
+     */
     portletRemoved(containers) {
         log.warn("Not implemented!");
     }
@@ -669,20 +705,22 @@ JGPortal.Renderer = class {
     // Utility methods.
 
     /**
-     * Find the <code>div</code>s that display the preview or view of the
+     * Find the HTML elements that display the preview or view of the
      * portlet with the given id.
      * 
      * @param {string} portletId the portlet id
+     * @return {NodeList} the elements found
      */
-    findPortletRepresentations(portletId) {
+    findPortletContainers(portletId) {
         return $(".portlet[data-portlet-id='" + portletId + "']").get();
     };
 
     /**
-     * Find the <code>div</code> that displays the preview of the
+     * Find the HTML element that displays the preview of the
      * portlet with the given id.
      * 
      * @param {string} portletId the portlet id
+     * @return {HTMLElement} the HTML element
      */
     findPortletPreview(portletId) {
         let matches = $(".portlet-preview[data-portlet-id='" + portletId + "']");
@@ -700,10 +738,11 @@ JGPortal.Renderer = class {
     }
 
     /**
-     * Find the <code>div</code> that displays the view of the
+     * Find the HTML element that displays the view of the
      * portlet with the given id.
      * 
      * @param {string} portletId the portlet id
+     * @return {HTMLElement} the HTML element
      */
     findPortletView(portletId) {
         let matches = $(".portlet-view[data-portlet-id='" + portletId + "']");
@@ -836,7 +875,7 @@ class Portal {
             });
         this._webSocket.addMessageHandler('deletePortlet',
             function deletePortlet(portletId) {
-                let portletDisplays = self._renderer.findPortletRepresentations(portletId);
+                let portletDisplays = self._renderer.findPortletContainers(portletId);
                 if (portletDisplays.length > 0) {
                     self._renderer.portletRemoved(portletDisplays);
                 }
@@ -982,7 +1021,7 @@ class Portal {
         } else {
             container.removeClass('portlet-deleteable')
         }
-        this._renderer.updatePortletPreview(isNew, container, modes,
+        this._renderer.updatePortletPreview(isNew, container[0], modes,
             content, foreground);
         this._execOnLoad(container);
     };
@@ -994,7 +1033,7 @@ class Portal {
             container = this._viewTemplate.clone();
             container.attr("data-portlet-id", portletId);
         }
-        this._renderer.updatePortletView(isNew, container, modes,
+        this._renderer.updatePortletView(isNew, container[0], modes,
             content, foreground);
         this._execOnLoad(container);
     };

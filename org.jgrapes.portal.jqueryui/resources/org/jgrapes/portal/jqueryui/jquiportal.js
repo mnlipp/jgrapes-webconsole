@@ -167,8 +167,11 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     updatePortletPreview(isNew, container, modes, content, foreground) {
-        // Container is "<div class="portlet portlet-preview data-portlet-id='...'"></div>"
+        // Container is:
+        //     <section class='portlet portlet-preview' data-portlet-id='...' 
+        //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>"
         let self = this;
+        container = $(container);
         if (isNew) {
             container.addClass('ui-widget ui-widget-content ui-helper-clearfix ui-corner-all');
             container.append('<div class="portlet-header ui-widget-header"><span class="portlet-header-text"></span></div>'
@@ -271,8 +274,10 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     updatePortletView(isNew, container, modes, content, foreground) {
-        // Container is "<div class="portlet portlet-view data-portlet-id='...'"></div>"
-
+        // Container is 
+        //     <article class="portlet portlet-view 
+        //              data-portlet-id='...'"></article>"
+        container = $(container);
         let newContent = $(content);
         if (!isNew) {
             container.children().detach();
