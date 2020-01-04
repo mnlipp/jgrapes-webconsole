@@ -112,7 +112,7 @@ public class AddPortletType extends PortalCommand {
     /**
      * Sets the display names.
      * 
-     * @param displayName the display name
+     * @param displayNames the display names
      * @return the event for easy chaining
      */
     public AddPortletType setDisplayNames(Map<Locale, String> displayNames) {
