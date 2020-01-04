@@ -322,7 +322,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         */
     }
 
-    portletRemoved(containers) {
+    removePortletDisplays(containers) {
         containers.forEach(function(container) {
             container = $(container);
             if (container.hasClass('portlet-preview')) {
