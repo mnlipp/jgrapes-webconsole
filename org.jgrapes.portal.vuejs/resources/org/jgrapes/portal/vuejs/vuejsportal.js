@@ -185,7 +185,8 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         container = $(container);
         let newContent = $(content);
         if (isNew) {
-            container.append('<header class="ui-draggable-handle"></header><section></section>');
+            container.append('<header class="ui-draggable-handle"></header>'
+                + '<section class="portlet-content"></section>');
             this._setModeIcons(container, modes);
 
             // Get grid info

@@ -4,7 +4,5 @@
             src="${portletResource('globe.ico')}">
         <!-- World icon from http://apathae.deviantart.com/ -->
     </div>
-    <form>
-        <button class="HelloWorld-toggle ui-button ui-widget ui-corner-all">${_("ToggleWorld")}</button>
-    </form>
+    <button type="button" class="HelloWorld-toggle ui-button ui-widget ui-corner-all">${_("ToggleWorld")}</button>
 </div>

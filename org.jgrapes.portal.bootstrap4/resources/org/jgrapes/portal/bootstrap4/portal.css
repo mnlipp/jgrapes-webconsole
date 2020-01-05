@@ -72,6 +72,34 @@ span[role="button"] {
     color: var(--primary);
 }
 
+/* # UI Styles (markup based) */
+
+/* ## Button styling. */
+.portlet-content:not(.portlet--no-markup-styles) button[type="button"] {
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: .25rem;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .portlet-content:not(.portlet--no-markup-styles) button[type="button"] {
+        transition: none;
+    }
+}
+
 /* Also override (more specific) match in forms. */
 .form-group > .form-item span[role="button"] {
     color: var(--primary);
@@ -81,7 +109,7 @@ form:not(.form--no-markup-styles) label {
     margin-bottom: 0;
 }
 
-/* # Bootstrap4 like forms/input groups. */
+/* ## Bootstrap4 like forms/input groups. */
 
 /* Override Bootstrap4 style. */
 form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span > legend {

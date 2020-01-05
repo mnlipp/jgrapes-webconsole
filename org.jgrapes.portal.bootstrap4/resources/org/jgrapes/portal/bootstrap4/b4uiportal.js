@@ -166,7 +166,8 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             container.addClass('card');
             container.append('<h6 class="card-header portlet-preview-header '
                 + 'd-flex flex-row"></h6>'
-                + '<div class="card-body portlet-preview-content"></div>');
+                + '<div class="card-body portlet-content portlet-preview-content">'
+                + '</div>');
             this._setModeIcons(container, modes);
 
             // Get grid info

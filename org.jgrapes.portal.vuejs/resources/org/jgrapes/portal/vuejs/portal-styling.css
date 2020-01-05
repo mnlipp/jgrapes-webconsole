@@ -234,6 +234,34 @@ body > footer {
 }
 */
 
+/* # UI Styles (markup based) */
+
+/* ## Button styling. */
+.portlet-content:not(.portlet--no-markup-styles) button[type="button"] {
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: .25rem;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .portlet-content:not(.portlet--no-markup-styles) button[type="button"] {
+        transition: none;
+    }
+}
+
 /* ## Form styles */
 
 /* ### Plain form styles */
