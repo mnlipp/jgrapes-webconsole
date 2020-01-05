@@ -13,6 +13,8 @@
 <!-- CSS -->
 <link rel="stylesheet" 
   href="${renderSupport.portalResource('lib/normalize.css')}">
+<link rel="stylesheet"
+  href="${renderSupport.portalResource('lib/gridstack' + minifiedExtension + '.css')}" />
 <link rel="stylesheet" 
   href="${renderSupport.portalResource('jgp-components.css')}">
 <!-- Portal -->
@@ -28,6 +30,11 @@
 <!-- Scripts(s) -->
 <script
   src="${renderSupport.portalBaseResource('lib/jquery' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalResource('lib/jquery.ui.touch-punch-0.2.3' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.portalResource('lib/gridstack.all.js')}"></script>
+  
 </head>
 
 <body id="page-top" class="index portal-vuejs">
@@ -36,69 +43,57 @@
 
   <main role="main">
 
-  <jpg-tablist v-bind:tabs="this.$store.state.tabs"></jpg-tablist>
-  <div id="portalOverviewTab">
-    <p>
-      Hello.
-    </p>
+  <div class="portalVue">
+    <jpg-tablist id="portalTabs"></jpg-tablist>
   </div>
-
+  <div id="portalPanels">
+    <section id="portalOverviewPanel" hidden>
+      <div id="portalPreviews" class="grid-stack" role="grid">
+      </div>
+    </section>
+  </div>
+  
   </main>
 
   <!-- Footer -->
   <#include "portal-footer.ftl.html">
 
+<script type="text/javascript">
+  $('#testgs').gridstack();
+</script>
+
 <script type="module">
-import Vue from "${renderSupport.portalResource('lib/vue.esm.browser.js')}"
-import Vuex from "${renderSupport.portalResource('lib/vuex.esm.browser.js')}"
-import VueI18n from "${renderSupport.portalResource('lib/vue-i18n.esm.browser.js')}"
-import "${renderSupport.portalResource('jgp-components.js')}"
-import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
-import VueJsPortal from "${renderSupport.portalResource('vuejsportal.js')}"
+import Vue from "${renderSupport.portalResource('lib/vue.esm.browser.js')}";
+import Vuex from "${renderSupport.portalResource('lib/vuex.esm.browser.js')}";
+import "${renderSupport.portalResource('jgp-components.js')}";
+import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}";
+import VueJsPortal from "${renderSupport.portalResource('vuejsportal.js')}";
 
 Vue.use(Vuex);
-const store = new Vuex.Store({
-  state: {
-    localeMenuitems: [
-      // <#list supportedLanguages as l>
-      ['${l.label}', '${l.locale.toLanguageTag()}'],
-      // </#list>
-    ],
-    tabs: [["${_("Overview")}", "portalOverviewTab"],
-        ["Test", "test"]],
-    portlets: [],
-  },
-})
+Vue.prototype.$window = window;
 
-Vue.use(VueI18n);
-const messages = {
+const localeMenuitems = [
+  // <#list supportedLanguages as l>
+  ['${l.label}', '${l.locale.toLanguageTag()}'],
+  // </#list>
+];
+
+const portalMessages = {
     // <#list supportedLanguages as l>
     '${l.locale.toLanguageTag()}': {
+        // <#list l.l10nBundle.keys as key>
+        '${key}': '${l.l10nBundle.getString(key)}',
+        // </#list>
     },
     // </#list>    
 };
-const i18n = new VueI18n({
-   locale: 'de',
-   fallbackLocale: 'en',
-   messages, 
-});
 
-new Vue({ el: 'header', store, i18n });
-new Vue({ el: 'main', store, i18n });
-new Vue({ el: 'footer', store, i18n });
+const renderer = new VueJsPortal.Renderer(localeMenuitems, portalMessages);
 
 JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, 
-    ${portalSessionInactivityTimeout?c}, new VueJsPortal.Renderer({
-        ok: '${_("OK")}',
-        close: '${_("Close")}',
-        sessionSuspendedTitle: '${_("Portal Session Suspended")}',
-        sessionSuspendedMessage: '${_("portalSessionSuspendedMessage")}',
-        serverConnectionLost: '${_("serverConnectionLostMessage")}',
-        serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
-    }));
+    ${portalSessionInactivityTimeout?c}, renderer);
 
 </script>
-
  
 </body>
 </html>

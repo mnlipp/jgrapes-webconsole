@@ -37,19 +37,38 @@ Vue.component('jgp-pulldown-menu', {
         this.expanded = !this.expanded;
     },
     translate: function(raw) {
+        if (typeof(raw) === "function") {
+            return raw();
+        }
         if (this.l10n) {
             return this.l10n(raw);
         }
         return raw;
     }
   },
+  computed: {
+    sortedItems: function() {
+        let result = [];
+        for (let item of this.items) {
+            result.push([this.translate(item[0]), item]);
+        }
+        result.sort(function(a, b) {
+            return a[0].localeCompare(b[0]);
+        });
+        return result;
+    }    
+  },
   template: `
     <div v-bind:id="id" class="jgp-pulldown-menu pulldown-menu">
-      <button v-bind:aria-expanded="expanded ? 'true' : 'false'" 
+      <button type="button" aria-haspopup="true"
+        v-bind:aria-controls="id + '-menu'" 
+        v-bind:aria-expanded="expanded ? 'true' : 'false'" 
         v-on:click="toggle"><span v-html="label"></span></button>
-      <ul role="menu">
-      <template v-for="item in items">
-        <li role="none"><a role="menuitem" href="#">{{ translate(item[0]) }}</a></li>
+      <ul v-bind:id="id + 'menu'" role="menu">
+      <template v-for="item in sortedItems">
+        <li role="none"><button type="button" 
+          role="menuitem" v-on:click="action(item[1])"
+          >{{ item[0] }}</button></li>
       </template>
       </ul>
     </div>
@@ -69,45 +88,91 @@ Vue.component('jgp-pulldown-menu', {
 Vue.component('jpg-tablist', {
   props: {
     id: String,
-    tabs: Array,
+    initialTabs: Array,
     l10n: Function,
   },
   data: function () {
     return {
-      selected: ""
+      tabs: this.initialTabs || [],
+      selected: null
     }
   },
   methods: {
-    translate: function(raw) {
+    label: function(tab) {
+        if (tab.l10n) {
+            return tab.l10n(tab.label);
+        }
         if (this.l10n) {
-            return this.l10n(raw);
+            return this.l10n(tab.label);
         }
-        return raw;
+        return tab.label;
     },
-    setupTabpanel: function(element) {
-        element.setAttribute("role", "tabpanel");
-        element.setAttribute("aria-labelledby", 
-            element.getAttribute('id') + '-tab');
-        if (element.getAttribute('id') === this.selected) {
-            element.removeAttribute("hidden");
+    setupTabpanel: function(tabpanel) {
+        tabpanel.setAttribute("role", "tabpanel");
+        tabpanel.setAttribute("aria-labelledby", 
+            tabpanel.getAttribute('id') + '-tab');
+        if (tabpanel.getAttribute('id') === this.selected) {
+            tabpanel.removeAttribute("hidden");
         } else {
-            element.setAttribute("hidden", "");
+            tabpanel.setAttribute("hidden", "");
         }
-        
+    },
+    addTab(tab) {
+        this.tabs.push(tab);
+    },
+    removeTab(tabId) {
+        let prevTab = 0;
+        for (let i in this.tabs) {
+            if (this.tabs[i].id === tabId) {
+                this.tabs.splice(i, 1);
+                break;
+            }
+            prevTab = i;
+        }
+        if (this.tabs.length > 0) {
+            this.selectTab(this.tabs[prevTab].id);
+        }
+    },
+    selectTab: function(id) {
+        if (this.selected) {
+            let tabpanel = document.querySelector("#" + this.selected);
+            if (tabpanel) {
+                tabpanel.setAttribute("hidden", "");
+            }
+        }
+        this.selected=id;
+        let tabpanel = document.querySelector("#" + this.selected);
+        if (tabpanel) {
+            tabpanel.removeAttribute("hidden");
+        }
     }
   },
+  watch: {
+    tabs: function(newValue) {
+        if (this.selected === null && newValue.length > 0) {
+            this.selectTab(this.tabs[0].id);
+        }
+    },
+  },
   template: `
-    <div id="portalTabs" role="tablist">
-      <button v-for="tab of tabs" 
-        v-bind:id="tab[1] + '-tab'" role="tab" 
-        v-bind:aria-selected="tab[1] == selected ? 'true' : 'false'"
-        v-bind:aria-controls="tab[1]">{{ translate(tab[0]) }}</button>
+    <div v-bind:id="id" class="jgp-tablist" role="tablist">
+      <span v-for="tab of tabs" role="group"
+          v-bind:aria-selected="tab.id == selected ? 'true' : 'false'"
+          v-bind:aria-controls="tab.id">
+        <button type="button"  
+          v-bind:id="tab.id + '-tab'" role="tab" 
+          v-on:click="selectTab(tab.id)">{{ label(tab) }}</button><button
+        type="button" v-if="tab.removeCallback" class="fa fa-times"
+          v-on:click="tab.removeCallback()"></button>
+      </span>
     </div>
   `,
   mounted: function() {
-    this.selected = this.tabs[0][1];
+    if (this.tabs.length > 0) {
+        this.selected = this.tabs[0].id;
+    }
     for (let tab of this.tabs) {
-        let tabpanel = document.querySelector("#" + tab[1]);
+        let tabpanel = document.querySelector("#" + tab.id);
         if (tabpanel == null) {
             continue;
         }
