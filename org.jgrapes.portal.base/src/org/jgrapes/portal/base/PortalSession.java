@@ -80,27 +80,25 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * fired on the channel when the timeout occurs. Method
  * {@link #isConnected()} can be used to check the connection 
  * state.
- *   
+ *  
  * As a convenience, the {@link PortalSession} provides
  * direct access to the browser session, which can 
  * usually only be obtained from the HTTP event or WebSocket
  * channel by looking for an association of type {@link Session}.
- * It also provides access to the {@link Locale} as maintained
- * by the browser session.
  * 
  * @startuml PortalSession.svg
  * class PortalSession {
- *	-{static}Map<String,PortalSession> portalSessions
- *	+{static}findOrCreate(String portalSessionId, Manager component): PortalSession
+ *  -{static}Map<String,PortalSession> portalSessions
+ *  +{static}findOrCreate(String portalSessionId, Manager component): PortalSession
  *  +setTimeout(timeout: long): PortalSession
  *  +refresh(): void
- *	+setUpstreamChannel(IOSubchannel upstreamChannel): PortalSession
- *	+setSession(Session browserSession): PortalSession
- *	+upstreamChannel(): Optional<IOSubchannel>
- *	+portalSessionId(): String
- *	+browserSession(): Session
- *	+locale(): Locale
- *	+setLocale(Locale locale): void
+ *  +setUpstreamChannel(IOSubchannel upstreamChannel): PortalSession
+ *  +setSession(Session browserSession): PortalSession
+ *  +upstreamChannel(): Optional<IOSubchannel>
+ *  +portalSessionId(): String
+ *  +browserSession(): Session
+ *  +locale(): Locale
+ *  +setLocale(Locale locale): void
  * }
  * Interface IOSubchannel {
  * }
@@ -125,6 +123,7 @@ public final class PortalSession extends DefaultIOSubchannel {
     private String portalSessionId;
     private final Portal portal;
     private final Set<Locale> supportedLocales;
+    private Locale locale;
     private long timeout;
     private final Timer timeoutTimer;
     private boolean active = true;
@@ -311,6 +310,9 @@ public final class PortalSession extends DefaultIOSubchannel {
      */
     public PortalSession setSession(Session browserSession) {
         this.browserSession = browserSession;
+        if (locale == null) {
+            locale = browserSession.locale();
+        }
         return this;
     }
 
@@ -350,14 +352,24 @@ public final class PortalSession extends DefaultIOSubchannel {
     }
 
     /**
-     * Return the portal session's locale. The locale is obtained
-     * from the browser session.
+     * Return the portal session's locale. The locale is initialized
+     * from the browser session's locale.
      * 
      * @return the locale
      */
     public Locale locale() {
-        return browserSession == null ? Locale.getDefault()
-            : browserSession.locale();
+        return locale == null ? Locale.getDefault() : locale;
+    }
+
+    /**
+     * Sets the locale for this portal session.
+     *
+     * @param locale the locale
+     * @return the portal session
+     */
+    public PortalSession setLocale(Locale locale) {
+        this.locale = locale;
+        return this;
     }
 
     /*

@@ -74,7 +74,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
     public HelloWorldPortlet(Channel componentChannel) {
-        super(componentChannel, false);
+        super(componentChannel);
     }
 
     private String storagePath(Session session) {

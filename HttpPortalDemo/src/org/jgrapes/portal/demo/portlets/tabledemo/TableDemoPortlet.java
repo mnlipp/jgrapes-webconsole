@@ -62,7 +62,7 @@ public class TableDemoPortlet extends FreeMarkerPortlet {
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
     public TableDemoPortlet(Channel componentChannel) {
-        super(componentChannel, false);
+        super(componentChannel);
     }
 
     @Handler

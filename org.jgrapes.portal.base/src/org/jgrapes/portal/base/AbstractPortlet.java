@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2017-2018 Michael N. Lipp
+ * Copyright (C) 2017-2020 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -65,6 +65,7 @@ import org.jgrapes.portal.base.events.PortletResourceRequest;
 import org.jgrapes.portal.base.events.RenderPortlet;
 import org.jgrapes.portal.base.events.RenderPortletRequest;
 import org.jgrapes.portal.base.events.RenderPortletRequestBase;
+import org.jgrapes.portal.base.events.SetLocale;
 
 /**
  * Provides a base class for implementing portlet components.
@@ -274,11 +275,9 @@ public abstract class AbstractPortlet extends Component {
      * on the given channel.
      * 
      * @param channel the channel to listen on
-     * @param trackPortalSessions if set, track the relationship between
-     * portal sessions and portlet ids
      */
-    public AbstractPortlet(Channel channel, boolean trackPortalSessions) {
-        this(channel, null, trackPortalSessions);
+    public AbstractPortlet(Channel channel) {
+        this(channel, null);
     }
 
     /**
@@ -288,17 +287,12 @@ public abstract class AbstractPortlet extends Component {
      * @param channel the channel to listen on
      * @param channelReplacements the channel replacements (see
      * {@link Component})
-     * @param trackPortalSessions if set, track the relationship between
-     * portal sessions and portlet ids
      */
     public AbstractPortlet(Channel channel,
-            ChannelReplacements channelReplacements,
-            boolean trackPortalSessions) {
+            ChannelReplacements channelReplacements) {
         super(channel, channelReplacements);
-        if (trackPortalSessions) {
-            portletIdsByPortalSession = Collections.synchronizedMap(
-                new WeakHashMap<>());
-        }
+        portletIdsByPortalSession
+            = Collections.synchronizedMap(new WeakHashMap<>());
     }
 
     /**
@@ -461,11 +455,8 @@ public abstract class AbstractPortlet extends Component {
      */
     protected Map<PortalSession, Set<String>> portletIdsByPortalSession() {
         // Create copy to get a non-weak map.
-        if (portletIdsByPortalSession != null) {
-            return Collections.unmodifiableMap(
-                new HashMap<>(portletIdsByPortalSession));
-        }
-        return Collections.emptyMap();
+        return Collections
+            .unmodifiableMap(new HashMap<>(portletIdsByPortalSession));
     }
 
     /**
@@ -478,9 +469,6 @@ public abstract class AbstractPortlet extends Component {
      * @return the portal sessions
      */
     protected PortalSession[] trackedSessions() {
-        if (portletIdsByPortalSession == null) {
-            return new PortalSession[0];
-        }
         Set<PortalSession> sessions = new HashSet<>(
             portletIdsByPortalSession.keySet());
         return sessions.toArray(new PortalSession[0]);
@@ -496,27 +484,23 @@ public abstract class AbstractPortlet extends Component {
      * @return the set
      */
     protected Set<String> portletIds(PortalSession portalSession) {
-        if (portletIdsByPortalSession != null) {
-            return Collections.unmodifiableSet(
-                portletIdsByPortalSession.getOrDefault(
-                    portalSession, Collections.emptySet()));
-        }
-        return new HashSet<>();
+        return Collections.unmodifiableSet(
+            portletIdsByPortalSession.getOrDefault(
+                portalSession, Collections.emptySet()));
     }
 
     /**
-     * Track the given portlet from the given session if tracking is
-     * enabled.
+     * Track the given portlet from the given session. This is invoked by
+     * {@link #onAddPortletRequest(AddPortletRequest, PortalSession)} and
+     * needs only be used if {@link #onAddPortletRequest} is overridden.
      *
      * @param portalSession the portal session
      * @param portletId the portlet id
      */
     protected void trackPortlet(PortalSession portalSession, String portletId) {
-        if (portletIdsByPortalSession != null) {
-            portletIdsByPortalSession.computeIfAbsent(portalSession,
-                newKey -> ConcurrentHashMap.newKeySet()).add(portletId);
-            updateRefresh();
-        }
+        portletIdsByPortalSession.computeIfAbsent(portalSession,
+            newKey -> ConcurrentHashMap.newKeySet()).add(portletId);
+        updateRefresh();
     }
 
     /**
@@ -683,17 +667,15 @@ public abstract class AbstractPortlet extends Component {
         }
         String portletId = event.portletId();
         removeState(portalSession.browserSession(), portletId);
-        if (portletIdsByPortalSession != null) {
-            for (Iterator<PortalSession> psi = portletIdsByPortalSession
-                .keySet().iterator(); psi.hasNext();) {
-                Set<String> idSet = portletIdsByPortalSession.get(psi.next());
-                idSet.remove(portletId);
-                if (idSet.isEmpty()) {
-                    psi.remove();
-                }
+        for (Iterator<PortalSession> psi = portletIdsByPortalSession
+            .keySet().iterator(); psi.hasNext();) {
+            Set<String> idSet = portletIdsByPortalSession.get(psi.next());
+            idSet.remove(portletId);
+            if (idSet.isEmpty()) {
+                psi.remove();
             }
-            updateRefresh();
         }
+        updateRefresh();
         event.stop();
         doDeletePortlet(event, portalSession, event.portletId(),
             optPortletState.get());
@@ -764,6 +746,23 @@ public abstract class AbstractPortlet extends Component {
             Serializable portletState) throws Exception;
 
     /**
+     * 
+     * @param event the event
+     * @param portalSession the portal session
+     */
+    @Handler
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void onSetLocale(SetLocale event,
+            PortalSession portalSession) throws Exception {
+        statesFromSession(portalSession, Serializable.class);
+    }
+
+    protected boolean doSetLocale(SetLocale event, PortalSession channel,
+            Serializable portletState) throws Exception {
+        return false;
+    }
+
+    /**
      * Checks if the request applies to this component by calling
      * {@link #stateFromSession(Session, String, Class)}. If a model
      * is found, calls {@link #doNotifyPortletModel} with the state 
@@ -811,10 +810,8 @@ public abstract class AbstractPortlet extends Component {
      */
     @Handler
     public final void onClosed(Closed event, PortalSession portalSession) {
-        if (portletIdsByPortalSession != null) {
-            portletIdsByPortalSession.remove(portalSession);
-            updateRefresh();
-        }
+        portletIdsByPortalSession.remove(portalSession);
+        updateRefresh();
         afterOnClosed(event, portalSession);
     }
 

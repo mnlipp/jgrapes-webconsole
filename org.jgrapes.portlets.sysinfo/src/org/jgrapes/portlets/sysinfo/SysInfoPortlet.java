@@ -73,7 +73,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
      *            sends the event to
      */
     public SysInfoPortlet(Channel componentChannel) {
-        super(componentChannel, true);
+        super(componentChannel);
         setPeriodicRefresh(Duration.ofSeconds(1), () -> new Update());
     }
 

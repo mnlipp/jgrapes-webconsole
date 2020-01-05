@@ -70,7 +70,7 @@ public class FormTestPortlet extends FreeMarkerPortlet {
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
     public FormTestPortlet(Channel componentChannel) {
-        super(componentChannel, false);
+        super(componentChannel);
     }
 
     private String storagePath(Session session) {

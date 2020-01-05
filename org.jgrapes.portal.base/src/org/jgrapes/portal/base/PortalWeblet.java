@@ -613,6 +613,7 @@ public abstract class PortalWeblet extends Component {
     @Handler(channels = PortalChannel.class)
     public void onSetLocale(SetLocale event, PortalSession channel)
             throws InterruptedException, IOException {
+        channel.setLocale(event.locale());
         Session session = channel.browserSession();
         if (session != null) {
             Selection selection = (Selection) session.get(Selection.class);

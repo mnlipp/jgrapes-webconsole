@@ -76,12 +76,9 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
      * on the given channel.
      * 
      * @param componentChannel
-     * @param trackPortalSessions if set, track the relationship between
-     * portal sessions and portelt ids
      */
-    public FreeMarkerPortlet(Channel componentChannel,
-            boolean trackPortalSessions) {
-        super(componentChannel, trackPortalSessions);
+    public FreeMarkerPortlet(Channel componentChannel) {
+        super(componentChannel);
     }
 
     /**
@@ -91,13 +88,10 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
      * @param componentChannel
      * @param channelReplacements the channel replacements (see
      * {@link Component})
-     * @param trackPortalSessions if set, track the relationship between
-     * portal sessions and portelt ids
      */
     public FreeMarkerPortlet(Channel componentChannel,
-            ChannelReplacements channelReplacements,
-            boolean trackPortalSessions) {
-        super(componentChannel, channelReplacements, trackPortalSessions);
+            ChannelReplacements channelReplacements) {
+        super(componentChannel, channelReplacements);
     }
 
     /**
