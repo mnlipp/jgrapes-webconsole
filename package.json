@@ -1,6 +1,6 @@
 {
 	"devDependencies": {
-		"@fortawesome/fontawesome-free": "^5.11.2",
+		"@fortawesome/fontawesome-free": "^5.12.0",
 		"gridstack": "^0.5.5",
 		"install": "^0.13.0",
 		"jquery": "^3.4.1",
@@ -8,9 +8,9 @@
 		"moment": "^2.24.0",
 		"normalize.css": "^8.0.1",
 		"npm": "^6.13.4",
-		"vue": "^2.6.10",
+		"vue": "^2.6.11",
 		"vuex": "^3.1.2",
-		"webpack": "^4.41.2",
+		"webpack": "^4.41.5",
 		"webpack-cli": "^3.3.10"
 	}
 }
