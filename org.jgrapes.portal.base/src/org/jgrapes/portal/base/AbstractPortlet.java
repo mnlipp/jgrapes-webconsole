@@ -282,7 +282,7 @@ public abstract class AbstractPortlet extends Component {
     }
 
     /**
-     * Like {@link #AbstractPortlet(Channel, boolean)}, but supports
+     * Like {@link #AbstractPortlet(Channel)}, but supports
      * the specification of channel replacements.
      *
      * @param channel the channel to listen on

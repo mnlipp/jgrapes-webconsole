@@ -82,7 +82,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
     }
 
     /**
-     * Like {@link #FreeMarkerPortlet(Channel, boolean)}, but supports
+     * Like {@link #FreeMarkerPortlet(Channel)}, but supports
      * the specification of channel replacements.
      * 
      * @param componentChannel
