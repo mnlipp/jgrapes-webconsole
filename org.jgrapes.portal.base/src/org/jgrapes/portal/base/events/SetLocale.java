@@ -21,12 +21,10 @@ package org.jgrapes.portal.base.events;
 import java.util.Locale;
 
 import org.jgrapes.core.Event;
-import org.jgrapes.portal.base.PortalWeblet;
 
 /**
- * Signals that the locale for the portal has changed. This  event is
- * handled by the {@link PortalWeblet} but may, of course, also be
- * used by other components.
+ * Signals that the locale for the portal has changed. Should be handled
+ * by portlets that support localization by updating the representation.
  * 
  * ![Event Sequence](SetLocale.svg)
  * 
@@ -35,8 +33,12 @@ import org.jgrapes.portal.base.PortalWeblet;
  * 
  * Browser -> Portal: "setLocale"
  * activate Portal
- * Portal -> PortalWeblet: SetLocale
+ * loop for localized portlets
+ *     Portal -> Portlet: SetLocale
+ * end loop
  * deactivate Portal
+ * actor Framework
+ * Framework -> PortalWeblet: SetLocaleDone
  * activate PortalWeblet
  * opt reload requested
  *     PortalWeblet -> Browser: "reload"
@@ -48,7 +50,7 @@ import org.jgrapes.portal.base.PortalWeblet;
 public class SetLocale extends Event<Void> {
 
     private final Locale locale;
-    private final boolean reload;
+    private boolean reload;
 
     /**
      * Creates a new event.
@@ -58,6 +60,7 @@ public class SetLocale extends Event<Void> {
     public SetLocale(Locale locale, boolean reload) {
         this.locale = locale;
         this.reload = reload;
+        new SetLocaleCompleted(this);
     }
 
     /**
@@ -77,6 +80,19 @@ public class SetLocale extends Event<Void> {
      */
     public boolean reload() {
         return reload;
+    }
+
+    /**
+     * Sets the reload flag. Used by portlets that cannot dynamically
+     * update their content to the new locale.
+     * 
+     * For optimized behavior, portlets should check {@link #reload()}
+     * before generating events that update the content dynamically.
+     * Portlets that invoke this method 
+     * should define a handler with a higher priority. 
+     */
+    public void forceReload() {
+        this.reload = true;
     }
 
 }

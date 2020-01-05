@@ -66,6 +66,7 @@ import org.jgrapes.portal.base.events.PortalReady;
 import org.jgrapes.portal.base.events.PortletResourceRequest;
 import org.jgrapes.portal.base.events.ResourceRequestCompleted;
 import org.jgrapes.portal.base.events.SetLocale;
+import org.jgrapes.portal.base.events.SetLocaleCompleted;
 import org.jgrapes.portal.base.events.SimplePortalCommand;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 
@@ -602,7 +603,7 @@ public abstract class PortalWeblet extends Component {
     }
 
     /**
-     * Handles a change of Locale.
+     * Handles a change of Locale for the portal.
      *
      * @param event the event
      * @param channel the channel
@@ -622,6 +623,21 @@ public abstract class PortalWeblet extends Component {
             }
         }
         if (event.reload()) {
+            channel.respond(new SimplePortalCommand("reload"));
+        }
+    }
+
+    /**
+     * Sends a reload if the change of locale could not be handled by
+     * all portelts.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
+    @Handler(channels = PortalChannel.class)
+    public void onSetLocaleCompleted(SetLocaleCompleted event,
+            PortalSession channel) {
+        if (event.event().reload()) {
             channel.respond(new SimplePortalCommand("reload"));
         }
     }
