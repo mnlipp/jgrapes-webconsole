@@ -232,9 +232,9 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         let previewContent = container.children("section");
         previewContent.empty();
         previewContent.append(newContent);
-//        if (foreground) {
-//            $("#portalOverviewTab").tab('show');
-//        }
+        if (foreground) {
+            this._portalTabs().selectTab("portalOverviewPanel");
+        }
     }
 
     updatePortletView(isNew, container, modes, content, foreground) {
@@ -269,10 +269,10 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             });
             this._layoutChanged();
         }
-/*        if (foreground) {
-            this._activatePortletView(container);
+        if (foreground) {
+            this._portalTabs().selectTab(panelId);
         }
-*/    }
+    }
 
     _setModeIcons(portlet, modes) {
         let self = this;

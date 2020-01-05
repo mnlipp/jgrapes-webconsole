@@ -117,10 +117,10 @@ Vue.component('jpg-tablist', {
             tabpanel.setAttribute("hidden", "");
         }
     },
-    addTab(tab) {
+    addTab: function(tab) {
         this.tabs.push(tab);
     },
-    removeTab(tabId) {
+    removeTab: function(tabId) {
         let prevTab = 0;
         for (let i in this.tabs) {
             if (this.tabs[i].id === tabId) {
@@ -145,7 +145,7 @@ Vue.component('jpg-tablist', {
         if (tabpanel) {
             tabpanel.removeAttribute("hidden");
         }
-    }
+    },
   },
   watch: {
     tabs: function(newValue) {
