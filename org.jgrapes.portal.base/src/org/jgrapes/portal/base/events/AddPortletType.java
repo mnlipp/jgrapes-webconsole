@@ -88,7 +88,7 @@ public class AddPortletType extends PortalCommand {
     private Map<Locale, String> displayNames = Collections.emptyMap();
     private final List<URI> cssUris = new ArrayList<>();
     private final List<ScriptResource> scriptResources = new ArrayList<>();
-    private final List<RenderMode> renderModes = new ArrayList<>();
+    private List<RenderMode> renderModes;
 
     /**
      * Create a new event for the given portlet type.
@@ -139,6 +139,9 @@ public class AddPortletType extends PortalCommand {
      * @return the event for easy chaining
      */
     public AddPortletType addRenderMode(RenderMode mode) {
+        if (renderModes == null) {
+            renderModes = new ArrayList<>();
+        }
         renderModes.add(mode);
         return this;
     }
@@ -149,6 +152,9 @@ public class AddPortletType extends PortalCommand {
      * @return the result
      */
     public List<RenderMode> renderModes() {
+        if (renderModes == null) {
+            return Arrays.asList(RenderMode.Preview);
+        }
         return renderModes;
     }
 

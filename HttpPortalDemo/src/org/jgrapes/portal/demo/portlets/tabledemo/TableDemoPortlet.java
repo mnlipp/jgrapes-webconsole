@@ -128,30 +128,25 @@ public class TableDemoPortlet extends FreeMarkerPortlet {
             PortalSession channel, TableDemoModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        switch (event.preferredRenderMode()) {
-        case Preview:
-        case DeleteablePreview: {
+        if (event.renderPreview()) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-preview.ftl.html");
             channel.respond(new RenderPortletFromTemplate(event,
                 TableDemoPortlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, channel, portletModel))
+                    .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            break;
         }
-        case View: {
+        if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-view.ftl.html");
             channel.respond(new RenderPortletFromTemplate(event,
                 TableDemoPortlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, channel, portletModel))
+                    .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            break;
-        }
-        default:
-            break;
         }
     }
 

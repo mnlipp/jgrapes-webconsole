@@ -19,7 +19,6 @@
 package org.jgrapes.portal.base;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -265,13 +264,13 @@ public class KVStoreBasedPortalPolicy extends Component {
             for (String portletId : tabsLayout) {
                 fire(new RenderPortletRequest(
                     event.event().renderSupport(), portletId,
-                    Arrays.asList(new RenderMode[] { RenderMode.View })),
-                    channel);
+                    RenderMode.asSet(RenderMode.View)), channel);
             }
             for (String portletId : previewLayout) {
                 fire(new RenderPortletRequest(
                     event.event().renderSupport(), portletId,
-                    Arrays.asList(new RenderMode[] { RenderMode.Foreground })),
+                    RenderMode.asSet(RenderMode.Preview,
+                        RenderMode.Foreground)),
                     channel);
             }
         }

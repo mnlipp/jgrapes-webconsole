@@ -18,7 +18,7 @@
 
 package org.jgrapes.portal.base.events;
 
-import java.util.List;
+import java.util.Set;
 
 import org.jgrapes.core.Event;
 import org.jgrapes.portal.base.Portlet.RenderMode;
@@ -29,7 +29,7 @@ import org.jgrapes.portal.base.RenderSupport;
  */
 public abstract class RenderPortletRequestBase<T> extends Event<T> {
     private final RenderSupport renderSupport;
-    private final List<RenderMode> renderModes;
+    private final Set<RenderMode> renderModes;
 
     /**
      * Creates a new event.
@@ -38,7 +38,7 @@ public abstract class RenderPortletRequestBase<T> extends Event<T> {
      * @param renderModes the render modes
      */
     public RenderPortletRequestBase(
-            RenderSupport renderSupport, List<RenderMode> renderModes) {
+            RenderSupport renderSupport, Set<RenderMode> renderModes) {
         this.renderSupport = renderSupport;
         this.renderModes = renderModes;
     }
@@ -57,23 +57,23 @@ public abstract class RenderPortletRequestBase<T> extends Event<T> {
      * 
      * @return the render modes
      */
-    public List<RenderMode> renderModes() {
+    public Set<RenderMode> renderModes() {
         return renderModes;
     }
 
     /**
-     * Returns the preferred render mode.
+     * Shortcut for checking if {@link #renderModes()} contains
+     * {@link RenderMode#Preview} or {@link RenderMode#DeleteablePreview}.
      *
-     * @return the render mode
+     * @return true, if condition matched
      */
-    public RenderMode preferredRenderMode() {
-        return renderModes().stream()
-            .filter(mode -> mode != RenderMode.Foreground).findFirst()
-            .orElse(RenderMode.Preview);
+    public boolean renderPreview() {
+        return renderModes.contains(RenderMode.Preview)
+            || renderModes.contains(RenderMode.DeleteablePreview);
     }
 
     /**
-     * Indicates if portlet is to be put in foreground.
+     * Indicates if the portlet is to be put in the foreground.
      * 
      * @return the result
      */

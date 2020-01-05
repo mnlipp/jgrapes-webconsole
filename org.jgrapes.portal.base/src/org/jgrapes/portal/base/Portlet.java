@@ -39,7 +39,7 @@ public interface Portlet {
 
         /**
          * Utility method that creates a {@link Set} of render modes
-         * from anumerated values.
+         * from enumerated values.
          *
          * @param modes the modes
          * @return the sets the

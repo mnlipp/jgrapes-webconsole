@@ -610,7 +610,7 @@ public abstract class PortalWeblet extends Component {
      * @throws InterruptedException the interrupted exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    @Handler(channels = PortalChannel.class)
+    @Handler(channels = PortalChannel.class, priority = 10000)
     public void onSetLocale(SetLocale event, PortalSession channel)
             throws InterruptedException, IOException {
         channel.setLocale(event.locale());

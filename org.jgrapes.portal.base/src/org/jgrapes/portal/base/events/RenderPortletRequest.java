@@ -18,7 +18,7 @@
 
 package org.jgrapes.portal.base.events;
 
-import java.util.List;
+import java.util.Set;
 
 import org.jgrapes.portal.base.Portlet.RenderMode;
 import org.jgrapes.portal.base.RenderSupport;
@@ -61,7 +61,7 @@ public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
      * @param renderModes the render options
      */
     public RenderPortletRequest(RenderSupport renderSupport,
-            String portletId, List<RenderMode> renderModes) {
+            String portletId, Set<RenderMode> renderModes) {
         super(renderSupport, renderModes);
         this.portletId = portletId;
     }

@@ -54,6 +54,7 @@ import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.events.Closed;
+import org.jgrapes.portal.base.Portlet.RenderMode;
 import org.jgrapes.portal.base.events.AddPortletRequest;
 import org.jgrapes.portal.base.events.AddPortletType;
 import org.jgrapes.portal.base.events.DeletePortlet;
@@ -746,20 +747,57 @@ public abstract class AbstractPortlet extends Component {
             Serializable portletState) throws Exception;
 
     /**
+     * Invokes {@link #doSetLocale(SetLocale, PortalSession, String)}
+     * for each portlet in the portal session.
+     * 
+     * If the vent has the reload flag set, does nothing.
+     * 
+     * The default implementation fires a 
      * 
      * @param event the event
      * @param portalSession the portal session
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void onSetLocale(SetLocale event,
-            PortalSession portalSession) throws Exception {
-        statesFromSession(portalSession, Serializable.class);
+    public void onSetLocale(SetLocale event, PortalSession portalSession)
+            throws Exception {
+        if (event.reload()) {
+            return;
+        }
+        for (String portletId : portletIds(portalSession)) {
+            if (!doSetLocale(event, portalSession, portletId)) {
+                event.forceReload();
+                break;
+            }
+        }
     }
 
+    /**
+     * Called by {@link #onSetLocale(SetLocale, PortalSession)} for
+     * each portlet in the portal session. Derived classes must send
+     * events for updating the representation to match the new locale.
+     * 
+     * If the method returns `false` this indicates that the representation 
+     * cannot be updated without reloading the portal page.
+     * 
+     * The default implementation fires a {@link RenderPortletRequest}
+     * with modes {@link RenderMode#Preview} and {@link RenderMode#View},
+     * thus updating all possible representations. (Assuming that "Edit"
+     * and "Help" modes are represented with modal dialogs and therefore
+     * locale changes aren't possible while these are open.) 
+     *
+     * @param event the event
+     * @param channel the channel
+     * @param portletId the portlet id
+     * @return true, if the locale could be changed
+     * @throws Exception the exception
+     */
     protected boolean doSetLocale(SetLocale event, PortalSession channel,
-            Serializable portletState) throws Exception {
-        return false;
+            String portletId) throws Exception {
+        fire(new RenderPortletRequest(event.renderSupport(), portletId,
+            RenderMode.asSet(RenderMode.Preview, RenderMode.View)),
+            channel);
+        return true;
     }
 
     /**

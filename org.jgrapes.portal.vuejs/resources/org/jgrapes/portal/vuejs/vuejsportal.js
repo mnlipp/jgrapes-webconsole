@@ -243,12 +243,17 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         let self = this;
         container = $(container);
         let newContent = $(content);
+        let portletId = container.attr("data-portlet-id");
+        let panelId = "portlet-panel-" + portletId;
         if (!isNew) {
             container.children().detach();
             container.append(newContent);
+            for (let tab of this._portalTabs().tabs) {
+                if (tab.id === panelId) {
+                    tab.label = newContent.attr("data-portlet-title");
+                }
+            }
         } else {
-            let portletId = container.attr("data-portlet-id");
-            let panelId = "portlet-panel-" + portletId;
             container.attr("id", panelId);
             container.attr("hidden", "");
             container.append(newContent);

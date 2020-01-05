@@ -21,6 +21,7 @@ package org.jgrapes.portal.base.events;
 import java.util.Locale;
 
 import org.jgrapes.core.Event;
+import org.jgrapes.portal.base.RenderSupport;
 
 /**
  * Signals that the locale for the portal has changed. Should be handled
@@ -52,18 +53,32 @@ import org.jgrapes.core.Event;
  */
 public class SetLocale extends Event<Void> {
 
+    private RenderSupport renderSupport;
     private final Locale locale;
     private boolean reload;
 
     /**
      * Creates a new event.
-     * 
+     *
+     * @param renderSupport the render support
      * @param locale the locale to set
+     * @param reload the reload
      */
-    public SetLocale(Locale locale, boolean reload) {
+    public SetLocale(RenderSupport renderSupport, Locale locale,
+            boolean reload) {
+        this.renderSupport = renderSupport;
         this.locale = locale;
         this.reload = reload;
         new SetLocaleCompleted(this);
+    }
+
+    /**
+     * Returns the render support.
+     * 
+     * @return the render support
+     */
+    public RenderSupport renderSupport() {
+        return renderSupport;
     }
 
     /**

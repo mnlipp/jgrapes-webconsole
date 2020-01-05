@@ -151,33 +151,28 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
             PortalSession channel, HelloWorldModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        switch (event.preferredRenderMode()) {
-        case Preview:
-        case DeleteablePreview: {
+        if (event.renderPreview()) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
             channel.respond(new RenderPortletFromTemplate(event,
                 HelloWorldPortlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, channel, portletModel))
+                    .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            break;
         }
-        case View: {
+        if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
             channel.respond(new RenderPortletFromTemplate(event,
                 HelloWorldPortlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, channel, portletModel))
+                    .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
             channel.respond(new NotifyPortletView(type(),
                 portletModel.getPortletId(), "setWorldVisible",
                 portletModel.isWorldVisible()));
-            break;
-        }
-        default:
-            break;
         }
     }
 

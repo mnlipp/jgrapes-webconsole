@@ -244,6 +244,7 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
             PortalSession channel, PortletBaseModel portletModel) {
         final Map<String, Object> model
             = fmSessionModel(channel.browserSession());
+        model.put("locale", channel.locale());
         model.putAll(fmTypeModel(event.renderSupport()));
         model.putAll(fmPortletModel(event, channel, portletModel));
         return model;
@@ -315,7 +316,6 @@ public abstract class FreeMarkerPortlet extends AbstractPortlet {
                 Class<?> portletClass, String portletId, Template template,
                 Object dataModel) {
             super(portletClass, portletId);
-            setRenderMode(request.preferredRenderMode());
             // Start to prepare the content immediately and concurrently.
             content
                 = request.processedBy().map(procBy -> procBy.executorService())

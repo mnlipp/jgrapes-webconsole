@@ -157,9 +157,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
             PortalSession portalSession, SysInfoModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        switch (event.preferredRenderMode()) {
-        case Preview:
-        case DeleteablePreview: {
+        if (event.renderPreview()) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
@@ -169,20 +167,16 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
             updateView(portalSession, portletModel.getPortletId());
-            break;
         }
-        case View: {
+        if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
                 SysInfoPortlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, portalSession, portletModel))
+                    .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            break;
-        }
-        default:
-            break;
         }
     }
 

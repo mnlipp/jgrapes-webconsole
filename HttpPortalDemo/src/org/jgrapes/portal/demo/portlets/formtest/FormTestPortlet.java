@@ -145,19 +145,15 @@ public class FormTestPortlet extends FreeMarkerPortlet {
             PortalSession channel, FormTestModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        switch (event.preferredRenderMode()) {
-        case View: {
+        if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("FormTest-view.ftl.html");
             channel.respond(new RenderPortletFromTemplate(event,
                 FormTestPortlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, channel, portletModel))
+                    .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            break;
-        }
-        default:
-            break;
         }
     }
 

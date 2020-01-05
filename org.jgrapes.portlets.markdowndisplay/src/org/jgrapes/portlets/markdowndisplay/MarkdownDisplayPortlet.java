@@ -245,21 +245,18 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
             && !model.getViewContent().isEmpty()) {
             modes.add(RenderMode.View);
         }
-        switch (event.preferredRenderMode()) {
-        case Preview:
-        case DeleteablePreview: {
+        if (event.renderPreview()) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
                 MarkdownDisplayPortlet.class, model.getPortletId(),
                 tpl, fmModel(event, portalSession, model))
-                    .setRenderMode(event.preferredRenderMode())
+                    .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(modes)
                     .setForeground(event.isForeground()));
             updateView(portalSession, model);
-            break;
         }
-        case View: {
+        if (event.renderModes().contains(RenderMode.View)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-view.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
@@ -268,19 +265,14 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
                     .setRenderMode(RenderMode.View).setSupportedModes(modes)
                     .setForeground(event.isForeground()));
             updateView(portalSession, model);
-            break;
         }
-        case Edit: {
+        if (event.renderModes().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
                 MarkdownDisplayPortlet.class, model.getPortletId(),
                 tpl, fmModel(event, portalSession, model))
                     .setRenderMode(RenderMode.Edit).setSupportedModes(modes));
-            break;
-        }
-        default:
-            break;
         }
     }
 
