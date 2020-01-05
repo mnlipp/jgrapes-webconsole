@@ -33,8 +33,11 @@ import org.jgrapes.core.Event;
  * 
  * Browser -> Portal: "setLocale"
  * activate Portal
- * loop for localized portlets
- *     Portal -> Portlet: SetLocale
+ * activate PortalWeblet
+ * Portal -> PortalWeblet: SetLocale
+ * deactivate PortalWeblet
+ * loop for portlets with l10n support
+ *     Portal -> PortletComponent: SetLocale
  * end loop
  * deactivate Portal
  * actor Framework
