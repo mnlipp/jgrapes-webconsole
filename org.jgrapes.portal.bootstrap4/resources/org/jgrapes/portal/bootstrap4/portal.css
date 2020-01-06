@@ -72,6 +72,18 @@ span[role="button"] {
     color: var(--primary);
 }
 
+.portal-bootstrap4 .modal.show .modal-dialog {
+    -webkit-transform: inherit;
+    transform: translateX(-50%);
+}
+
+.portal-bootstrap4 .modal-dialog {
+    max-width: inherit;
+    margin: 1.75rem 0;
+    left: 50vw;
+    position: absolute;
+}
+
 /* # UI Styles (markup based) */
 
 /* ## Button styling. */
