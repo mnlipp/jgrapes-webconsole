@@ -836,7 +836,7 @@ class Portal {
         this._portletFunctionRegistry = {};
         this._previewTemplate = $('<section class="portlet portlet-preview"></section>');
         this._viewTemplate = $('<article class="portlet portlet-view portlet-content"></article>');
-        this._editTemplate = $('<div class="portlet portlet-edit portlet-content"></div>');
+        this._editTemplate = $('<div class="portlet portlet-edit"></div>');
         this._resourceManager = new ResourceManager(this);
         this._webSocket.addMessageHandler('addPageResources',
             function(cssUris, cssSource, scriptResources) {

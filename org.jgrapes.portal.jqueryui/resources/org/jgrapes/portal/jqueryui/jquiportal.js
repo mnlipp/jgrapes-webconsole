@@ -382,6 +382,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     showEditDialog(container, modes, content) {
         let self = this;
         container = $(container);
+        container.addClass("portlet-content");
         let dialogContent = $(content);
         container.append(dialogContent);
         container.dialog({

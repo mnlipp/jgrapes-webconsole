@@ -454,8 +454,6 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     showEditDialog(container, modes, content) {
         let self = this;
         container = $(container);
-        let dialogContent = $(content);
-        container.append(dialogContent);
         let dialog = $('<div class="modal" tabindex="-1" role="dialog">'
             + '<div class="modal-dialog modal-lg" role="document">'
             + '<div class="modal-content">'
@@ -464,7 +462,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             + ' alt="' + B4UIPortal.l10n.close + '">'
             + '<span aria-hidden="true">&times;</span>'
             + '</button></div>'
-            + '<div class="modal-body">'
+            + '<div class="modal-body portlet-content">'
             + '</div>'
             + '<div class="modal-footer">'
             + '<button type="button" class="btn btn-primary" data-dismiss="modal">'
@@ -473,10 +471,11 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             + '</div>'
             + '</div>'
             + '</div>');
-        dialog.find(".modal-body").append($(container));
+        dialog.find(".modal-body").append($(content));
         dialog.find(".btn-primary").on('click', function() {
             self.portal().execOnApply(container[0]);
         });
+        container.append(dialog);
         dialog.modal();
     }
 }
