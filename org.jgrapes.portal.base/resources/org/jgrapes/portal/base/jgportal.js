@@ -879,6 +879,9 @@ class Portal {
                     let container = self._editTemplate.clone();
                     container.attr("data-portlet-id", portletId);
                     self._renderer.showEditDialog(container[0], modes, content);
+                    if (!container[0].parentNode) {
+                        $("body").append(container);
+                    }
                     self._execOnLoad(container);
                 }
             });
@@ -1042,7 +1045,7 @@ class Portal {
                 obj = obj[segs.shift()];
             }
             if (obj && typeof obj === "function") {
-                obj.apply(null, [$(this)[0]]);
+                obj($(this)[0]);
             }
         });
     }
@@ -1051,10 +1054,12 @@ class Portal {
      * Invokes the functions defined in `data-jgp-on-apply`
      * attributes. Must be invoked by edit dialogs when 
      * they are closed.
+     * 
+     * @param {HTMLElement} container the container of the edit dialog
      */
-    execOnApply(content) {
-        content = $(content);
-        content.find("[data-jgp-on-apply]").each(function() {
+    execOnApply(container) {
+        container = $(container);
+        container.find("[data-jgp-on-apply]").each(function() {
             let onApply = $(this).data("jgp-on-apply");
             let segs = onApply.split(".");
             let obj = window;
@@ -1062,7 +1067,7 @@ class Portal {
                 obj = obj[segs.shift()];
             }
             if (obj && typeof obj === "function") {
-                obj.apply(null, [$(this)[0]]);
+                obj($(this)[0]);
             }
         });
     }
