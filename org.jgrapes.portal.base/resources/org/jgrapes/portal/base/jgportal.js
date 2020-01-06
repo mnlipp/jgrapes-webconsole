@@ -878,7 +878,7 @@ class Portal {
                 } else if (mode === "Edit") {
                     let container = self._editTemplate.clone();
                     container.attr("data-portlet-id", portletId);
-                    self._renderer.showEditDialog(container, modes, content);
+                    self._renderer.showEditDialog(container[0], modes, content);
                     self._execOnLoad(container);
                 }
             });

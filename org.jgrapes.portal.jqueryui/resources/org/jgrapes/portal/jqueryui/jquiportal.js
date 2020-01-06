@@ -380,6 +380,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     showEditDialog(container, modes, content) {
+        container = $(container);
         let dialogContent = $(content);
         container.append(dialogContent);
         container.dialog({

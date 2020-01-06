@@ -452,6 +452,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     showEditDialog(container, modes, content) {
+        container = $(container);
         let dialogContent = $(content);
         container.append(dialogContent);
         let dialog = $('<div class="modal" tabindex="-1" role="dialog">'
