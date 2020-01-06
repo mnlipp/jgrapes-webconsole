@@ -1004,20 +1004,6 @@ class Portal {
 
     // Portlet management
 
-    _execOnLoad(container) {
-        container.find("[data-jgp-on-load]").each(function() {
-            let onLoad = $(this).data("jgp-on-load");
-            let segs = onLoad.split(".");
-            let obj = window;
-            while (obj && segs.length > 0) {
-                obj = obj[segs.shift()];
-            }
-            if (obj && typeof obj === "function") {
-                obj.apply(null, [$(this)[0]]);
-            }
-        });
-    }
-
     _updatePreview(portletId, modes, mode, content, foreground) {
         let container = this._renderer.findPortletPreview(portletId);
         let isNew = !container;
@@ -1046,6 +1032,40 @@ class Portal {
             content, foreground);
         this._execOnLoad(container);
     };
+
+    _execOnLoad(container) {
+        container.find("[data-jgp-on-load]").each(function() {
+            let onLoad = $(this).data("jgp-on-load");
+            let segs = onLoad.split(".");
+            let obj = window;
+            while (obj && segs.length > 0) {
+                obj = obj[segs.shift()];
+            }
+            if (obj && typeof obj === "function") {
+                obj.apply(null, [$(this)[0]]);
+            }
+        });
+    }
+
+    /**
+     * Invokes the functions defined in `data-jgp-on-apply`
+     * attributes. Must be invoked by edit dialogs when 
+     * they are closed.
+     */
+    execOnApply(content) {
+        content = $(content);
+        content.find("[data-jgp-on-apply]").each(function() {
+            let onApply = $(this).data("jgp-on-apply");
+            let segs = onApply.split(".");
+            let obj = window;
+            while (obj && segs.length > 0) {
+                obj = obj[segs.shift()];
+            }
+            if (obj && typeof obj === "function") {
+                obj.apply(null, [$(this)[0]]);
+            }
+        });
+    }
 
     /**
      * Registers a portlet method that to be invoked if a

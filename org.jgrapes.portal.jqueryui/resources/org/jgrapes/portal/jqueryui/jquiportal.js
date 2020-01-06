@@ -380,6 +380,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     showEditDialog(container, modes, content) {
+        let self = this;
         container = $(container);
         let dialogContent = $(content);
         container.append(dialogContent);
@@ -387,7 +388,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             modal: true,
             width: "auto",
             close: function(event, ui) {
-                dialogContent.trigger("JGrapes.editDialog.apply", [container]);
+                self.portal().execOnApply(container[0]);
             }
         });
     }

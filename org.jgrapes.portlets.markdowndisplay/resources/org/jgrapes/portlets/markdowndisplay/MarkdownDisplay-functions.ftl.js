@@ -86,13 +86,16 @@ var orgJGrapesPortletsMarkdownDisplay = {
         }
         updateView();
         viewSource.on("keyup", function() { debounce(updateView); });
-        
-        // Close action
-        content.on("JGrapes.editDialog.apply", function(event, portlet) {
-            let portletId = portlet.attr("data-portlet-id");
-            JGPortal.notifyPortletModel(portletId, "update", titleSource.val(),
-                    previewSource.val(), viewSource.val());
-        })
+    }
+    
+    orgJGrapesPortletsMarkdownDisplay.apply = function(element) {
+        element = $(element);
+        let portletId = element.closest("[data-portlet-id]").attr("data-portlet-id");
+        let titleSource = element.find('.jgrapes-portlets-mdp-title-input');
+        let previewSource = element.find('.jgrapes-portlets-mdp-preview-input');
+        let viewSource = element.find('.jgrapes-portlets-mdp-view-input');
+        JGPortal.notifyPortletModel(portletId, "update", titleSource.val(),
+                previewSource.val(), viewSource.val());
     }
     
 })();

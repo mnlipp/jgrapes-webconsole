@@ -452,6 +452,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     showEditDialog(container, modes, content) {
+        let self = this;
         container = $(container);
         let dialogContent = $(content);
         container.append(dialogContent);
@@ -474,7 +475,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             + '</div>');
         dialog.find(".modal-body").append($(container));
         dialog.find(".btn-primary").on('click', function() {
-            dialogContent.trigger("JGrapes.editDialog.apply", [container]);
+            self.portal().execOnApply(container[0]);
         });
         dialog.modal();
     }
