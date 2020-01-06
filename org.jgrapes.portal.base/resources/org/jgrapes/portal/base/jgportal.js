@@ -1013,7 +1013,7 @@ class Portal {
                 obj = obj[segs.shift()];
             }
             if (obj && typeof obj === "function") {
-                obj.apply(null, [$(this)]);
+                obj.apply(null, [$(this)[0]]);
             }
         });
     }

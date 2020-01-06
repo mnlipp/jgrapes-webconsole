@@ -30,10 +30,16 @@ import java.util.concurrent.Future;
 import org.jgrapes.portal.base.Portlet.RenderMode;
 
 /**
- * A base class for portal commands Sent to the portal page for 
+ * A base class for portal rendering. Sent to the portal page for 
  * adding or updating a complete portlet representation. This class
  * maintains all required information except the actual content
  * (the HTML) which must be provided by the derived classes.
+ * 
+ * The HTML provided is searched for attributes `data-on-load`
+ * which must have as value the name of a function. When the
+ * HTML has been loaded, this function is invoked with the element
+ * containing the attribute as parameter.
+ * 
  */
 public abstract class RenderPortlet extends PortalCommand {
 

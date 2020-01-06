@@ -61,6 +61,7 @@ var orgJGrapesPortletsMarkdownDisplay = {
     }
     
     orgJGrapesPortletsMarkdownDisplay.init = function(content) {
+        content = $(content);
         // Title
         let titleSource = content.find('.jgrapes-portlets-mdp-title-input');
         
