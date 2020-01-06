@@ -4,6 +4,7 @@
 
 .jgrapes-portlets-mdp-form {
     display: block;
+    min-width: 80vw;
 }
 
 .jgrapes-portlets-mdp-form section > p:first-of-type {

@@ -356,8 +356,34 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
      * @param {string[]} modes the modes
      */
     updatePortletModes(portletId, modes) {
+        let portlet = this.findPortletPreview(portletId);
+        if (!portlet) {
+            return;
+        }
+        this._setModeIcons(portlet, modes);
     }
 
     showEditDialog(container, modes, content) {
+        let self = this;
+        let dialog = new (Vue.component('jgp-modal-dialog'))({
+            propsData: {
+                content: content,
+                contentClasses: ["portlet-content"],
+                onClose: function(applyChanges) {
+                    if (applyChanges) {
+                        self.portal().execOnApply(container);
+                    }
+                    container.parentNode.removeChild(container);
+                }
+            }
+        });
+        dialog.$mount();
+        let contentRoot = dialog.$el.querySelector(".portlet-content")
+            .querySelector("* > [title]");
+        if (contentRoot) {
+            dialog.title = contentRoot.getAttribute("title");
+        }
+        $(container).append(dialog.$el);
+        dialog.open();
     }
 }

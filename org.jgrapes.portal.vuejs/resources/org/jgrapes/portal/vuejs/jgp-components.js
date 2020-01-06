@@ -85,7 +85,7 @@ Vue.component('jgp-pulldown-menu', {
   }
 });
 
-Vue.component('jpg-tablist', {
+Vue.component('jgp-tablist', {
   props: {
     id: String,
     initialTabs: Array,
@@ -181,3 +181,62 @@ Vue.component('jpg-tablist', {
   }
 });
 
+Vue.component('jgp-modal-dialog', {
+  props: {
+    id: String,
+    title: String,
+    content: String,
+    contentClasses: Array,
+    closeLabel: String,
+    onClose: Function
+  },
+  data: function () {
+    return {
+      effectiveId: null,
+      isOpen: false
+    }
+  },
+  template: `
+    <div class="jgp-modal-dialog" :hidden="!isOpen">
+      <div :id="effectiveId" role="dialog" :aria-labelledby="effectiveId + '-label'" 
+        aria-modal="true">
+        <header :id="effectiveId + '-label'">
+          <p>{{ title }}</p>
+          <button type="button" class="fa fa-times" v-on:click="cancel()"></button>
+        </header>
+        <section v-if="content" v-html="content" :class="contentClasses"></section>
+        <section v-else :class="contentClasses"><slot></slot></section>
+        <footer>
+          <button type="button" v-on:click="close()">{{ closeLabel || "Okay" }}</button>
+        </footer>
+      </div>
+    </div>
+  `,
+  methods: {
+    open: function() {
+        this.isOpen = true;
+    },
+    cancel: function() {
+        if (this.onClose) {
+            (this.onClose)(false);
+        }
+        this.isOpen = false;
+    },
+    close: function() {
+        if (this.onClose) {
+            (this.onClose)(true);
+        }
+        this.isOpen = false;
+    }
+  },
+  created: function() {
+    if (this.id) {
+        this.effectiveId = id;
+        return;
+    }
+    if (!this.constructor.prototype.$instanceCounter) {
+        this.constructor.prototype.$instanceCounter = 0;
+    }
+    this.effectiveId = "jgp-modal-dialog-" + ++this.constructor.prototype.$instanceCounter;
+  }
+});

@@ -38,3 +38,21 @@
     right: auto;    
 }
 
+.jgp-modal-dialog {
+    position: fixed;
+    overflow-y: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.jgp-modal-dialog [role="dialog"] {
+    min-height: 100vh;
+    position: absolute;
+    top: 2rem;
+    left: 50vw;
+    transform: translateX(-50%);
+    min-width: calc(640px - (15px * 2));
+    min-height: auto;
+}

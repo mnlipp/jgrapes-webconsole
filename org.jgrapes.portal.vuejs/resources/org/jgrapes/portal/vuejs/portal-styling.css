@@ -159,6 +159,17 @@ body > footer {
     display: none;
 }
 
+.jgp-modal-dialog {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.jgp-modal-dialog [role="dialog"] {
+    padding: 15px;
+    background-color: rgb(var(--window-background));
+    border: 1px solid rgb(var(--panel-border));
+    border-radius: .25rem;
+}
+
 /* 
  * Portlet preview styling
  */
