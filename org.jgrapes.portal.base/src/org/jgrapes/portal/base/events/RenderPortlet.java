@@ -35,7 +35,7 @@ import org.jgrapes.portal.base.Portlet.RenderMode;
  * maintains all required information except the actual content
  * (the HTML) which must be provided by the derived classes.
  * 
- * The HTML provided is searched for attributes `data-on-load`
+ * The HTML provided is searched for attributes `data-jgp-on-load`
  * which must have as value the name of a function. When the
  * HTML has been loaded, this function is invoked with the element
  * containing the attribute as parameter.

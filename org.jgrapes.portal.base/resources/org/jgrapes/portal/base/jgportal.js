@@ -1005,8 +1005,8 @@ class Portal {
     // Portlet management
 
     _execOnLoad(container) {
-        container.find("[data-on-load]").each(function() {
-            let onLoad = $(this).data("onLoad");
+        container.find("[data-jgp-on-load]").each(function() {
+            let onLoad = $(this).data("jgp-on-load");
             let segs = onLoad.split(".");
             let obj = window;
             while (obj && segs.length > 0) {
