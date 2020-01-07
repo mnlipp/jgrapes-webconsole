@@ -19,7 +19,7 @@
 'use strict';
 
 import JGPortal from "../portal-base-resource/jgportal.js"
-import Vue from "./lib/vue.esm.browser.js";
+import Vue from "../page-resource/vue/vue.esm.browser.js";
 import Vuex from "./lib/vuex.esm.browser.js";
 
 /**

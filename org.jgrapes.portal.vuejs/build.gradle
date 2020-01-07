@@ -16,6 +16,7 @@ artifacts {
 
 dependencies {
     compile project(':org.jgrapes.portal.base')
+    runtimeOnly project(':org.jgrapes.portal.providers.vue')
     runtimeOnly project(':org.jgrapes.portal.providers.fontawesome')
 }
 
@@ -43,8 +44,6 @@ task prepareNpmLibs(type: Copy) {
     dependsOn(':npmInstall')
     into('build/generated/resources/org/jgrapes/portal/vuejs/lib')
     from file("${rootProject.projectDir}/node_modules/normalize.css/normalize.css")
-    from file("${rootProject.projectDir}/node_modules/vue/dist/vue.esm.browser.js")
-    from file("${rootProject.projectDir}/node_modules/vue/dist/vue.esm.browser.min.js")
     from file("${rootProject.projectDir}/node_modules/vuex/dist/vuex.esm.browser.js")
     from file("${rootProject.projectDir}/node_modules/vuex/dist/vuex.esm.browser.min.js")
     from file("${rootProject.projectDir}/node_modules/gridstack/dist/gridstack.css")

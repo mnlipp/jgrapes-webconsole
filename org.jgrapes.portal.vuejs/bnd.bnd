@@ -16,7 +16,8 @@ Export-Package: org.jgrapes.portal.vuejs
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)"
+    org.jgrapes.portal.page.resource;filter:=\
+        "(|(name=fontawesome-free)(name=vue))"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \
