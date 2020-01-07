@@ -1,0 +1,44 @@
+dependencies {
+	compile project(':org.jgrapes.portal.base')
+    runtimeOnly project(':org.jgrapes.portal.providers.jquery')
+}
+
+apply plugin: 'com.moowork.node'
+
+ext.releaseVersion = "0.0.0"
+ext.isSnapshot = true
+version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
+
+jar {
+    into('META-INF') {
+        from 'resources/META-INF'
+    }
+    into('.') {
+        from 'build/generated/resources'
+    }
+}
+
+task prepareNpmLibs(type: Copy) {
+    description '''
+    Helper task that copies the the libraries from the npm_modules 
+    directory into a package scoped subdirectory. The root is added 
+    to eclipse as resource directory thus making the files available 
+    as package scoped resources when running a process in eclipse.
+    '''
+    dependsOn(':npmInstall')
+    into('build/generated/resources/org/jgrapes/portal/providers/moment/moment')
+    from file("${rootProject.projectDir}/node_modules/moment/moment.js")
+    from file("${rootProject.projectDir}/node_modules/moment/min/moment.min.js")
+    from file("${rootProject.projectDir}/node_modules/moment/min/locales.js")
+    from file("${rootProject.projectDir}/node_modules/moment/min/locales.min.js")
+    from file("${rootProject.projectDir}/node_modules/moment/min/moment-with-locales.js")
+    from file("${rootProject.projectDir}/node_modules/moment/min/moment-with-locales.min.js")
+}
+
+processResources.dependsOn 'prepareNpmLibs'
+
+sourceSets.main.resources.srcDir 'build/generated/resources'
+
+eclipse {
+    autoBuildTasks prepareNpmLibs
+}

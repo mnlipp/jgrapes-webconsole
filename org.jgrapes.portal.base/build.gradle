@@ -15,6 +15,7 @@ dependencies {
     compile 'org.jdrupes.json:json:[2.0.0,2.1.0)'
     compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
     runtimeOnly project(':org.jgrapes.portal.providers.jquery')
+    runtimeOnly project(':org.jgrapes.portal.providers.moment')
 }
 
 ext.releaseVersion = "0.28.0"
@@ -28,38 +29,6 @@ jar {
     into('.') {
         from 'build/generated/resources'
     }
-}
-
-task prepareNpmLibs(type: Copy) {
-    description '''
-    Helper task that copies the the libraries from the npm_modules 
-    directory into a package scoped subdirectory. The root is added 
-    to eclipse as resource directory thus making the files available 
-    as package scoped resources when running a process in eclipse.
-    '''
-    dependsOn(':npmInstall')
-    into('build/generated/resources/org/jgrapes/portal/base/lib')
-    from file("${rootProject.projectDir}/node_modules/moment/min/moment-with-locales.js")
-    from file("${rootProject.projectDir}/node_modules/moment/min/moment-with-locales.min.js")
-}
-
-processResources.dependsOn 'prepareNpmLibs'
-
-sourceSets.main.resources.srcDir 'build/generated/resources'
-
-eclipse {
-    classpath {
-        file.whenMerged {
-            configurations.runtimeOnly.allDependencies.each { dep ->
-                if (dep instanceof org.gradle.api.artifacts.ProjectDependency) {
-                    def depPrj = dep.dependencyProject
-                    def depPrjPath = "/" + rootProject.relativePath(depPrj.file("."))
-                    entries.removeAll { it.kind == 'src' && it.path == depPrjPath }
-                }
-            }
-        }
-    }
-    autoBuildTasks prepareNpmLibs
 }
 
 task javadocJar(type: Jar) {

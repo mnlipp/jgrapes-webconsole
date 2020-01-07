@@ -1,7 +1,5 @@
 dependencies {
-	
 	compile project(':org.jgrapes.portal.base')
-	
 }
 
 ext.releaseVersion = "0.25.0"

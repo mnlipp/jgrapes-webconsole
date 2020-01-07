@@ -16,7 +16,7 @@ artifacts {
 
 dependencies {
     compile project(':org.jgrapes.portal.base')
-    compile project(':org.jgrapes.portal.providers.fontawesome')
+    runtimeOnly project(':org.jgrapes.portal.providers.fontawesome')
 }
 
 ext.releaseVersion = "0.0.1"
