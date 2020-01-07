@@ -1,19 +1,20 @@
 buildscript {
-	repositories {
-		jcenter()
-	}
-	dependencies {
-		classpath 'com.github.ksoichiro:gradle-web-resource-plugin:1.7.3'
-	}
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.ksoichiro:gradle-web-resource-plugin:1.7.3'
+    }
 }
 
 dependencies {
-	// BndPomRepository (3.5.0) cannot handle ranges without upper limit 
-	compile 'org.jgrapes:org.jgrapes.http:[1.1.1,2)'
-	compile 'org.jgrapes:org.jgrapes.util:[1.1.1,2)'
-//  compile 'com.github.mnlipp:jgrapes:master-SNAPSHOT'
-	compile 'org.jdrupes.json:json:[2.0.0,2.1.0)'
+    // BndPomRepository (3.5.0) cannot handle ranges without upper limit
+    compile 'org.jgrapes:org.jgrapes.http:[1.1.1,2)'
+    compile 'org.jgrapes:org.jgrapes.util:[1.1.1,2)'
+    //  compile 'com.github.mnlipp:jgrapes:master-SNAPSHOT'
+    compile 'org.jdrupes.json:json:[2.0.0,2.1.0)'
     compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
+    runtimeOnly project(':org.jgrapes.portal.providers.jquery')
 }
 
 ext.releaseVersion = "0.28.0"
@@ -38,9 +39,6 @@ task prepareNpmLibs(type: Copy) {
     '''
     dependsOn(':npmInstall')
     into('build/generated/resources/org/jgrapes/portal/base/lib')
-    from file("${rootProject.projectDir}/node_modules/jquery/dist/jquery.js")
-    from file("${rootProject.projectDir}/node_modules/jquery/dist/jquery.min.js")
-    from file("${rootProject.projectDir}/node_modules/jquery/dist/jquery.min.map")
     from file("${rootProject.projectDir}/node_modules/moment/min/moment-with-locales.js")
     from file("${rootProject.projectDir}/node_modules/moment/min/moment-with-locales.min.js")
 }
@@ -50,6 +48,17 @@ processResources.dependsOn 'prepareNpmLibs'
 sourceSets.main.resources.srcDir 'build/generated/resources'
 
 eclipse {
+    classpath {
+        file.whenMerged {
+            configurations.runtimeOnly.allDependencies.each { dep ->
+                if (dep instanceof org.gradle.api.artifacts.ProjectDependency) {
+                    def depPrj = dep.dependencyProject
+                    def depPrjPath = "/" + rootProject.relativePath(depPrj.file("."))
+                    entries.removeAll { it.kind == 'src' && it.path == depPrjPath }
+                }
+            }
+        }
+    }
     autoBuildTasks prepareNpmLibs
 }
 
@@ -67,42 +76,48 @@ apply plugin: 'com.moowork.node'
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/portal/base/jsdoc"
 
 task jsdoc(type: NodeTask) {
-	dependsOn(':npmInstall')
-	new File(jsDocDestDir).mkdirs()
-	script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
-	args = ["-c", "${rootProject.projectDir}/jsdoc.json",
-        "--destination", jsDocDestDir,
-		"resources/org/jgrapes/portal/base/jgportal.js"]
+    dependsOn(':npmInstall')
+    new File(jsDocDestDir).mkdirs()
+    script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
+    args = [
+        "-c",
+        "${rootProject.projectDir}/jsdoc.json",
+        "--destination",
+        jsDocDestDir,
+        "resources/org/jgrapes/portal/base/jgportal.js"
+    ]
 }
 
 javadoc {
     // Does not work on JitPack, no /usr/bin/dot
     enabled = JavaVersion.current().isJava8() && !isJitPackBuild
-    
+
     if (!isJitPackBuild) {
         // Does not work on jitpack
         finalizedBy jsdoc
     }
 
-	options.tagletPath = rootProject.configurations.javadocTaglets.files as List
-	options.taglets = ["org.jdrupes.taglets.plantUml.Taglet"]
-	
-	classpath = files(rootProject.subprojects.collect {project ->
-		project.sourceSets.main.compileClasspath})
-	source rootProject.subprojects.findAll({project -> 
+    options.tagletPath = rootProject.configurations.javadocTaglets.files as List
+    options.taglets = [
+        "org.jdrupes.taglets.plantUml.Taglet"
+    ]
+
+    classpath = files(rootProject.subprojects.collect {project ->
+        project.sourceSets.main.compileClasspath})
+    source rootProject.subprojects.findAll({project ->
         project.name.startsWith("org.jgrapes.") && project.name != "org.jgrapes.portal"}) \
 		.collect {project -> project.sourceSets.main.allJava }
-	options.addStringOption("doctitle", "JGrapes Portal ${project.version}")
-	options.addStringOption("overview", "${rootProject.rootDir}/overview.md")
-	inputs.file "${rootProject.rootDir}/overview.md"
-	options.addBooleanOption("use", true)
-	options.addBooleanOption("linksource", true)
+    options.addStringOption("doctitle", "JGrapes Portal ${project.version}")
+    options.addStringOption("overview", "${rootProject.rootDir}/overview.md")
+    inputs.file "${rootProject.rootDir}/overview.md"
+    options.addBooleanOption("use", true)
+    options.addBooleanOption("linksource", true)
     if (JavaVersion.current().isJava8()) {
         options.stylesheetFile(file("${rootProject.rootDir}/misc/stylesheet.css"))
     }
-	options.addStringOption("bottom", file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text)
-	options.links "https://docs.oracle.com/javase/8/docs/api/"
-	options.links "http://mnlipp.github.io/jgrapes/latest-release/javadoc/"
-	destinationDir = file("${rootProject.buildDir}/javadoc")
+    options.addStringOption("bottom", file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text)
+    options.links "https://docs.oracle.com/javase/8/docs/api/"
+    options.links "http://mnlipp.github.io/jgrapes/latest-release/javadoc/"
+    destinationDir = file("${rootProject.buildDir}/javadoc")
 }
 

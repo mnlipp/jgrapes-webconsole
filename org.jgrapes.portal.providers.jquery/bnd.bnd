@@ -1,29 +1,22 @@
-Bundle-Name: JGrapes HTTP Portal
-Bundle-SymbolicName: org.jgrapes.portal.base
-Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
+Bundle-Name: JGrapes Portal JQuery Provider
+Bundle-Copyright: Michael N. Lipp (c) 2020
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
-
-api_version = 0.0.0
+Export-Package: org.jgrapes.portal.providers.jquery
 
 -sources: true
 -runee: JavaSE-1.8
 
--dsannotations: 
-
-Export-Package: \
-	org.jgrapes.portal.base,\
-	org.jgrapes.portal.base.util,\
-	org.jgrapes.portal.base.events,\
-	org.jgrapes.portal.base.freemarker
-
 -includeresource: resources
 
 Require-Capability: \
-    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.portal.page.resource;filter:="(name=jquery)"
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+
+Provide-Capability: osgi.serviceloader; \
+    osgi.serviceloader=org.jgrapes.portal.base.PageResourceProviderFactory; \
+        uses:="org.jgrapes.portal.base,org.jgrapes.core", \
+    org.jgrapes.portal.page.resource;name:List<String>="jquery"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
     "The .classpath contains a library that will not be available during continuous integration:"
-	

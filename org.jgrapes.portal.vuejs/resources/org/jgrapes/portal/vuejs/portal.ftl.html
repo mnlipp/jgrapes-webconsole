@@ -29,7 +29,7 @@
 
 <!-- Scripts(s) -->
 <script
-  src="${renderSupport.portalBaseResource('lib/jquery' + minifiedExtension + '.js')}"></script>
+  src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"></script>
 <script
   src="${renderSupport.portalResource('lib/jquery.ui.touch-punch-0.2.3' + minifiedExtension + '.js')}"></script>
 <script
@@ -90,7 +90,7 @@ const portalMessages = {
 
 const renderer = new VueJsPortal.Renderer(localeMenuitems, portalMessages);
 
-JGPortal.init([], "${portalSessionId}", ${portalSessionRefreshInterval?c}, 
+JGPortal.init(["jquery"], "${portalSessionId}", ${portalSessionRefreshInterval?c}, 
     ${portalSessionInactivityTimeout?c}, renderer);
 
 </script>
