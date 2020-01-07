@@ -419,6 +419,9 @@ class ResourceManager {
             self._scriptResourceLoaded(scriptResource);
             return;
         }
+        if (!scriptResource.uri) {
+            return;
+        }
         // Asynchronous loading.
         script.src = scriptResource.uri;
         script.addEventListener('load', function(event) {
