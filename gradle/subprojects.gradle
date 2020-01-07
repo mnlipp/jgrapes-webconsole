@@ -29,7 +29,7 @@ if (project.file("bnd.bnd").exists()) {
 jar {
     manifest {
         attributes([
-            "Git-Descriptor": grgit.describe(),
+            "Git-Descriptor": (grgit.describe() ?: "(undefined)"),
             "Git-SHA": grgit.head().id
         ])
     }
