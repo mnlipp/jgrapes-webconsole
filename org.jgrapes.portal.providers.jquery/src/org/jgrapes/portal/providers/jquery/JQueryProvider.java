@@ -35,7 +35,7 @@ import org.jgrapes.portal.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.portal.base.events.PortalReady;
 
 /**
- * Provider for the [Vue.js](http://www.vuejs.org/) library.
+ * Provider for the [JQuery](https://jquery.com/) library.
  */
 public class JQueryProvider extends PageResourceProvider {
 
