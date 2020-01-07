@@ -356,10 +356,10 @@ class PortalWebSocket {
 
 class ResourceManager {
 
-    constructor(portal) {
+    constructor(portal, providedResources) {
         this._portal = portal;
         this._debugLoading = false;
-        this._providedScriptResources = new Set(); // Names, i.e. strings
+        this._providedScriptResources = new Set(providedResources); // Names, i.e. strings
         this._unresolvedScriptRequests = []; // ScriptResource objects
         this._loadingScripts = new Set(); // uris (src attribute)
         this._unlockMessageQueueAfterLoad = false;
@@ -837,7 +837,6 @@ class Portal {
         this._previewTemplate = $('<section class="portlet portlet-preview"></section>');
         this._viewTemplate = $('<article class="portlet portlet-view portlet-content"></article>');
         this._editTemplate = $('<div class="portlet portlet-edit"></div>');
-        this._resourceManager = new ResourceManager(this);
         this._webSocket.addMessageHandler('addPageResources',
             function(cssUris, cssSource, scriptResources) {
                 self._resourceManager.addPageResources(cssUris, cssSource, scriptResources);
@@ -943,8 +942,10 @@ class Portal {
             });
     }
 
-    init(portalSessionId, refreshInterval, inactivityTimeout, renderer) {
+    init(providedResources, portalSessionId, refreshInterval, 
+        inactivityTimeout, renderer) {
         sessionStorage.setItem("org.jgrapes.portal.base.sessionId", portalSessionId);
+        this._resourceManager = new ResourceManager(this, providedResources);
         this._sessionRefreshInterval = refreshInterval;
         this._sessionInactivityTimeout = inactivityTimeout;
         this._renderer = renderer;

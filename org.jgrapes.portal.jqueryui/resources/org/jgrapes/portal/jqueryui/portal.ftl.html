@@ -50,7 +50,7 @@
   <script type="module">
   import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
   import JQUIPortal from "${renderSupport.portalResource('jquiportal.js')}"
-  JGPortal.init("${portalSessionId}", ${portalSessionRefreshInterval?c}, 
+  JGPortal.init([], "${portalSessionId}", ${portalSessionRefreshInterval?c}, 
             ${portalSessionInactivityTimeout?c}, new JQUIPortal.Renderer());    
   </script>
   
