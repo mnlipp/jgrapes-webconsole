@@ -11,7 +11,7 @@ api_version = 0.0.0
 -dsannotations: 
 
 Require-Capability: \
-    org.jgrapes.portal.page.resource;filter:="(name=fontawesome.com)", \
+    org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)", \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)", \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)", \
     osgi.serviceloader; \
