@@ -4,8 +4,6 @@ dependencies {
 	
 }
 
-apply plugin: 'com.moowork.node'
-
 ext.releaseVersion = "0.0.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")

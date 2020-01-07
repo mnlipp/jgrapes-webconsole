@@ -68,6 +68,6 @@ public class FontAwesomeProvider extends PageResourceProvider {
             .useMinifiedResources() ? ".min" : "";
         portalSession.respond(new AddPageResources()
             .addCss(event.renderSupport().pageResource(
-                "fontawesome-free-5.2.0-web/css/all" + minExt + ".css")));
+                "fontawesome-free/css/all" + minExt + ".css")));
     }
 }
