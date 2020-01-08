@@ -201,6 +201,7 @@ body > footer {
     padding: 0;
     margin-left: 0.5rem;
     color: rgb(var(--primary));
+    background-color: transparent;
 }
 
 .portlet-preview > header button:hover {
