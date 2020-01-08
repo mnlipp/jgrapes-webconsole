@@ -55,7 +55,7 @@
   import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
   import B4UIPortal from "${renderSupport.portalResource('b4uiportal.js')}"
   JGPortal.init(["jquery", "moment", "moment-with-locales", 
-    "jquery-ui", "gridstack", "gridstack.jQueryUI"],
+    "lodash", "jquery-ui", "gridstack", "gridstack.jQueryUI"],
     "${portalSessionId}", parseInt("${portalSessionRefreshInterval?c}"),
     parseInt("${portalSessionInactivityTimeout?c}"), new B4UIPortal.Renderer({
       ok: '${_("OK")}',
