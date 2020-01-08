@@ -1,6 +1,5 @@
 dependencies {
 	compile project(':org.jgrapes.portal.base')
-    runtimeOnly project(':org.jgrapes.portal.providers.jquery')
 }
 
 apply plugin: 'com.moowork.node'

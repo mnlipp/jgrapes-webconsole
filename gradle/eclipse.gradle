@@ -8,15 +8,17 @@ eclipse {
         downloadSources = true
         
         if (project.name != "HttpPortalDemo") {
-            file.whenMerged {
-                configurations.runtimeOnly.allDependencies.each { dep ->
-                    if (dep instanceof org.gradle.api.artifacts.ProjectDependency) {
-                        def depPrj = dep.dependencyProject
-                        def depPrjPath = "/" + rootProject.relativePath(depPrj.file("."))
-                        entries.removeAll { it.kind == 'src' && it.path == depPrjPath }
-                    }
-                }
-            }
+//            file.whenMerged {
+//                configurations.runtimeOnly.allDependencies.each { dep ->
+//                    if (dep instanceof org.gradle.api.artifacts.ProjectDependency) {
+//                        def depPrj = dep.dependencyProject
+//                        def depPrjPath = "/" + rootProject.relativePath(depPrj.file("."))
+//                        entries.removeAll { it.kind == 'src' && it.path == depPrjPath }
+//                    }
+//                }
+//            }
+            plusConfigurations -= [ configurations.runtimeClasspath,
+                configurations.testRuntimeClasspath ]
         }
     }
     project {
