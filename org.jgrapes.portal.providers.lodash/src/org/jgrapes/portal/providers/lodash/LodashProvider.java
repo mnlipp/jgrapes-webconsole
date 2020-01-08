@@ -69,7 +69,7 @@ public class LodashProvider extends PageResourceProvider {
             .useMinifiedResources() ? ".min" : "";
         portalSession.respond(new AddPageResources()
             .addScriptResource(new ScriptResource()
-                .setProvides(new String[] { "jquery" })
+                .setProvides(new String[] { "lodash" })
                 .setScriptUri(event.renderSupport().pageResource(
                     "lodash/lodash" + minExt + ".js"))));
     }
