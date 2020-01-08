@@ -207,7 +207,16 @@ public class HttpPortalDemo extends Component implements BundleActivator {
         portal.attach(new NewPortalSessionPolicy(portal));
         // Add all available page resource providers
         portal.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, portal));
+            PageResourceProviderFactory.class, portal,
+            type -> {
+                switch (type) {
+                case "org.jgrapes.portal.providers.gridstack.GridstackProvider":
+                    return Arrays.asList(
+                        Components.mapOf("configuration", "CoreWithJQueryUI"));
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
         // Add all available portlets
         portal.attach(new ComponentCollector<>(
             PortletComponentFactory.class, portal));

@@ -32,8 +32,15 @@
   src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"></script>
 <script
   src="${renderSupport.pageResource('moment/moment-with-locales' + minifiedExtension + '.js')}"></script>
+<!-- Gridstack and prerequisites Lodash and JQueryUI () -->
 <script
-  src="${renderSupport.pageResource('gridstack/gridstack.all.js')}"></script>
+  src="${renderSupport.pageResource('lodash/lodash' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.pageResource('jquery-ui/jquery-ui' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.pageResource('gridstack/gridstack.js')}"></script>
+<script
+  src="${renderSupport.pageResource('gridstack/gridstack.jQueryUI.js')}"></script>
 <script
   src="${renderSupport.portalResource('lib/jquery.ui.touch-punch-0.2.3' + minifiedExtension + '.js')}"></script>
   
@@ -89,7 +96,7 @@ const portalMessages = {
 const renderer = new VueJsPortal.Renderer(localeMenuitems, portalMessages);
 
 JGPortal.init(["fontawesome-free", "jquery", "moment", "moment-with-locales",
-        "gridstack", "vue"],
+        "lodash", "jquery-ui", "gridstack", "gridstack.jQueryUI", "vue"],
     "${portalSessionId}", parseInt('${portalSessionRefreshInterval?c}'), 
     parseInt('${portalSessionInactivityTimeout?c}'), renderer);
 
