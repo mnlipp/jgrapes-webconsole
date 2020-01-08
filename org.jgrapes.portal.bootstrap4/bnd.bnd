@@ -16,7 +16,8 @@ Export-Package: org.jgrapes.portal.bootstrap4
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)"
+    org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)",\
+    org.jgrapes.portal.page.resource;filter:="(name=gridstack)"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

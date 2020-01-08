@@ -16,7 +16,7 @@
   href="${renderSupport.portalResource('lib/bootstrap-4.1.2/css/bootstrap' + minifiedExtension + '.css')}">
 <!-- Gridstack -->
 <link rel="stylesheet"
-  href="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack' + minifiedExtension + '.css')}" />
+  href="${renderSupport.pageResource('gridstack/gridstack' + minifiedExtension + '.css')}" />
 <!-- Portal -->
 <link rel="stylesheet"
   href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
@@ -30,14 +30,14 @@
 <!-- JQuery etc. -->
 <script
   src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"></script>
-  <script
-    src="${renderSupport.pageResource('moment/moment-with-locales' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.pageResource('moment/moment-with-locales' + minifiedExtension + '.js')}"></script>
 <script
   src="${renderSupport.portalResource('lib/popper-1.14.3/popper' + minifiedExtension + '.js')}"></script>
 <!-- Bootstrap 4 -->
 <script
   src="${renderSupport.portalResource('lib/bootstrap-4.1.2/js/bootstrap' + minifiedExtension + '.js')}"></script>
-<!-- Gridstack and prerequisites Lodash and JQueryUI () -->
+<!-- Gridstack and prerequisite JQueryUI () -->
 <script
   src="${renderSupport.portalResource('lib/lodash-4.17.4' + minifiedExtension + '.js')}"></script>
 <script
@@ -45,25 +45,26 @@
 <script
   src="${renderSupport.portalResource('lib/jquery.ui.touch-punch-0.2.3' + minifiedExtension + '.js')}"></script>
 <script
-  src="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack' + minifiedExtension + '.js')}"></script>
+  src="${renderSupport.pageResource('gridstack/gridstack.js')}"></script>
 <script
-  src="${renderSupport.portalResource('lib/gridstack.js-0.4.0/gridstack.jQueryUI' + minifiedExtension + '.js')}"></script>
+  src="${renderSupport.pageResource('gridstack/gridstack.jQueryUI.js')}"></script>
 <!-- More... -->
 
 <!-- Portal -->
   <script type="module">
   import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
   import B4UIPortal from "${renderSupport.portalResource('b4uiportal.js')}"
-  JGPortal.init(["jquery", "moment", "moment-with-locales"],
-     "${portalSessionId}", ${portalSessionRefreshInterval?c}, 
-     ${portalSessionInactivityTimeout?c}, new B4UIPortal.Renderer({
-        ok: "${_("OK")}",
-        close: "${_("Close")}",
-        sessionSuspendedTitle: "${_("Portal Session Suspended")}",
-        sessionSuspendedMessage: "${_("portalSessionSuspendedMessage")}",
-        serverConnectionLost: "${_("serverConnectionLostMessage")}",
-        serverConnectionRestored: "${_("serverConnectionRestoredMessage")}",
-     }));
+  JGPortal.init(["jquery", "moment", "moment-with-locales", 
+    "jquery-ui", "gridstack", "gridstack.jQueryUI"],
+    "${portalSessionId}", parseInt("${portalSessionRefreshInterval?c}"),
+    parseInt("${portalSessionInactivityTimeout?c}"), new B4UIPortal.Renderer({
+      ok: '${_("OK")}',
+      close: '${_("Close")}',
+      sessionSuspendedTitle: '${_("Portal Session Suspended")}',
+      sessionSuspendedMessage: '${_("portalSessionSuspendedMessage")}',
+      serverConnectionLost: '${_("serverConnectionLostMessage")}',
+      serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
+    }));
   </script>
 
 </head>

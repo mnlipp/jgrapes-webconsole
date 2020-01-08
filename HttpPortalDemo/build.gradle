@@ -20,8 +20,6 @@ dependencies {
     compile project(':org.jgrapes.portal.vuejs')
     compile project(':org.jgrapes.portal.bootstrap4')
     compile project(':org.jgrapes.portal.jqueryui')
-    runtimeOnly project(':org.jgrapes.portal.providers.jquery')
-    runtimeOnly project(':org.jgrapes.portal.providers.fontawesome')
     runtimeOnly project(':org.jgrapes.portal.providers.chartjs')
     runtimeOnly project(':org.jgrapes.portal.providers.datatables')
     runtimeOnly project(':org.jgrapes.portal.providers.markdownit')

@@ -32,6 +32,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -175,7 +177,16 @@ public class HttpPortalDemo extends Component implements BundleActivator {
         portal.attach(new NewPortalSessionPolicy(portal));
         // Add all available page resource providers
         portal.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, portal));
+            PageResourceProviderFactory.class, portal,
+            type -> {
+                switch (type) {
+                case "org.jgrapes.portal.providers.gridstack.GridstackProvider":
+                    return Arrays.asList(
+                        Components.mapOf("configuration", "CoreWithJQueryUI"));
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
         // Add all available portlets
         portal.attach(new ComponentCollector<>(
             PortletComponentFactory.class, portal));

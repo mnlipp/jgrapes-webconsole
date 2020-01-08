@@ -16,8 +16,9 @@ artifacts {
 
 dependencies {
     compile project(':org.jgrapes.portal.base')
-    runtimeOnly project(':org.jgrapes.portal.providers.vue')
     runtimeOnly project(':org.jgrapes.portal.providers.fontawesome')
+    runtimeOnly project(':org.jgrapes.portal.providers.gridstack')
+    runtimeOnly project(':org.jgrapes.portal.providers.vue')
 }
 
 ext.releaseVersion = "0.0.1"
@@ -33,7 +34,6 @@ jar {
     }
 }
 
-
 task prepareNpmLibs(type: Copy) {
     description '''
     Helper task that copies the the libraries from the npm_modules 
@@ -46,14 +46,6 @@ task prepareNpmLibs(type: Copy) {
     from file("${rootProject.projectDir}/node_modules/normalize.css/normalize.css")
     from file("${rootProject.projectDir}/node_modules/vuex/dist/vuex.esm.browser.js")
     from file("${rootProject.projectDir}/node_modules/vuex/dist/vuex.esm.browser.min.js")
-    from ("${rootProject.projectDir}/node_modules/gridstack/dist/") {
-        include '**/*'
-        exclude 'jquery-ui.*'
-    }
-    from ("${rootProject.projectDir}/node_modules/@fortawesome/") {
-        include 'fontawesome-free/css/all.*'
-        include 'fontawesome-free/webfonts/**'
-    }
 }
 
 processResources.dependsOn 'prepareNpmLibs'

@@ -14,7 +14,7 @@
 <link rel="stylesheet" 
   href="${renderSupport.portalResource('lib/normalize.css')}">
 <link rel="stylesheet"
-  href="${renderSupport.portalResource('lib/gridstack' + minifiedExtension + '.css')}" />
+  href="${renderSupport.pageResource('gridstack/gridstack' + minifiedExtension + '.css')}" />
 <link rel="stylesheet" 
   href="${renderSupport.portalResource('jgp-components.css')}">
 <!-- Portal -->
@@ -31,7 +31,9 @@
 <script
   src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"></script>
 <script
-  src="${renderSupport.portalResource('lib/gridstack.all.js')}"></script>
+  src="${renderSupport.pageResource('moment/moment-with-locales' + minifiedExtension + '.js')}"></script>
+<script
+  src="${renderSupport.pageResource('gridstack/gridstack.all.js')}"></script>
 <script
   src="${renderSupport.portalResource('lib/jquery.ui.touch-punch-0.2.3' + minifiedExtension + '.js')}"></script>
   
@@ -86,8 +88,10 @@ const portalMessages = {
 
 const renderer = new VueJsPortal.Renderer(localeMenuitems, portalMessages);
 
-JGPortal.init(["jquery"], "${portalSessionId}", ${portalSessionRefreshInterval?c}, 
-    ${portalSessionInactivityTimeout?c}, renderer);
+JGPortal.init(["fontawesome-free", "jquery", "moment", "moment-with-locales",
+        "gridstack", "vue"],
+    "${portalSessionId}", parseInt('${portalSessionRefreshInterval?c}'), 
+    parseInt('${portalSessionInactivityTimeout?c}'), renderer);
 
 </script>
  
