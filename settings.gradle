@@ -9,6 +9,7 @@ include 'org.jgrapes.portal.vuejs'
 
 include 'org.jgrapes.portal.providers.lodash'
 include 'org.jgrapes.portal.providers.jquery'
+include 'org.jgrapes.portal.providers.jqueryui'
 include 'org.jgrapes.portal.providers.moment'
 include 'org.jgrapes.portal.providers.fontawesome'
 include 'org.jgrapes.portal.providers.vue'

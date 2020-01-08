@@ -16,6 +16,7 @@ dependencies {
     compile project(':org.jgrapes.portal.base')
     runtimeOnly project(':org.jgrapes.portal.providers.fontawesome')
     runtimeOnly project(':org.jgrapes.portal.providers.lodash')
+    runtimeOnly project(':org.jgrapes.portal.providers.jqueryui')
     runtimeOnly project(':org.jgrapes.portal.providers.gridstack')
 }
 
