@@ -20,8 +20,8 @@ Export-Package: \
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.portal.page.resource;filter:=\
-        "(|(name=jquery)(name=moment))"
+    org.jgrapes.portal.page.resource;filter:="(name=jquery)",\
+    org.jgrapes.portal.page.resource;filter:="(name=moment)"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \
