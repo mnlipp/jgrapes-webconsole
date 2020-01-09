@@ -40,7 +40,7 @@ import org.jgrapes.portal.base.Portlet.RenderMode;
  * HTML has been loaded, this function is invoked with the element
  * containing the attribute as parameter.
  * 
- * The HTML elements of edit dialogs ({@link RenderMode.EDIT})
+ * The HTML elements of edit dialogs ({@link RenderMode#Edit})
  * can have an additional attribute `data-jgp-on-apply`
  * which must have as its value the name of a function. This
  * function is invoked when changes made in the form must be
