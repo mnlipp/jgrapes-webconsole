@@ -23,9 +23,7 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 
-import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 
@@ -34,6 +32,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
+import org.jgrapes.portal.base.AbstractPortlet.PortletBaseModel;
 import org.jgrapes.portal.base.PortalSession;
 import org.jgrapes.portal.base.Portlet.RenderMode;
 import org.jgrapes.portal.base.events.AddPortletRequest;
@@ -48,7 +47,7 @@ import org.jgrapes.portal.base.freemarker.FreeMarkerPortlet;
 /**
  * 
  */
-public class TableDemoPortlet extends FreeMarkerPortlet {
+public class TableDemoPortlet extends FreeMarkerPortlet<PortletBaseModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);
@@ -91,12 +90,11 @@ public class TableDemoPortlet extends FreeMarkerPortlet {
      * 
      * @see org.jgrapes.portal.AbstractPortlet#modelFromSession
      */
-    @SuppressWarnings("unchecked")
     @Override
-    protected <T extends Serializable> Optional<T> stateFromSession(
-            Session session, String portletId, Class<T> type) {
+    protected Optional<PortletBaseModel> stateFromSession(
+            Session session, String portletId) {
         if (portletId.startsWith(type() + "-")) {
-            return Optional.of((T) new TableDemoModel(portletId));
+            return Optional.of(new PortletBaseModel(portletId));
         }
         return Optional.empty();
     }
@@ -105,8 +103,8 @@ public class TableDemoPortlet extends FreeMarkerPortlet {
     public String doAddPortlet(AddPortletRequest event,
             PortalSession channel) throws Exception {
         String portletId = generatePortletId();
-        TableDemoModel portletModel = putInSession(
-            channel.browserSession(), new TableDemoModel(portletId));
+        PortletBaseModel portletModel = putInSession(
+            channel.browserSession(), new PortletBaseModel(portletId));
         renderPortlet(event, channel, portletModel);
         return portletId;
     }
@@ -119,13 +117,12 @@ public class TableDemoPortlet extends FreeMarkerPortlet {
     @Override
     protected void doRenderPortlet(RenderPortletRequest event,
             PortalSession channel, String portletId,
-            Serializable retrievedState) throws Exception {
-        TableDemoModel portletModel = (TableDemoModel) retrievedState;
+            PortletBaseModel portletModel) throws Exception {
         renderPortlet(event, channel, portletModel);
     }
 
     private void renderPortlet(RenderPortletRequestBase<?> event,
-            PortalSession channel, TableDemoModel portletModel)
+            PortalSession channel, PortletBaseModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderPreview()) {
@@ -158,23 +155,8 @@ public class TableDemoPortlet extends FreeMarkerPortlet {
     @Override
     protected void doDeletePortlet(DeletePortletRequest event,
             PortalSession channel, String portletId,
-            Serializable portletState) throws Exception {
+            PortletBaseModel portletState) throws Exception {
         channel.respond(new DeletePortlet(portletId));
-    }
-
-    @SuppressWarnings("serial")
-    public static class TableDemoModel extends PortletBaseModel {
-
-        /**
-         * Creates a new model with the given type and id.
-         * 
-         * @param portletId the portlet id
-         */
-        @ConstructorProperties({ "portletId" })
-        public TableDemoModel(String portletId) {
-            super(portletId);
-        }
-
     }
 
 }

@@ -23,9 +23,7 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 
-import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Set;
 
 import org.jdrupes.json.JsonBeanDecoder;
@@ -36,6 +34,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
+import org.jgrapes.portal.base.AbstractPortlet.PortletBaseModel;
 import org.jgrapes.portal.base.PortalSession;
 import org.jgrapes.portal.base.PortalUtils;
 import org.jgrapes.portal.base.Portlet.RenderMode;
@@ -56,7 +55,8 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
 /**
  * 
  */
-public class FormTestPortlet extends FreeMarkerPortlet {
+public class FormTestPortlet
+        extends FreeMarkerPortlet<PortletBaseModel> {
 
     private static final Set<RenderMode> MODES
         = RenderMode.asSet(RenderMode.View);
@@ -107,8 +107,8 @@ public class FormTestPortlet extends FreeMarkerPortlet {
             return;
         }
         for (String json : event.data().values()) {
-            FormTestModel model = JsonBeanDecoder.create(json)
-                .readObject(FormTestModel.class);
+            PortletBaseModel model = JsonBeanDecoder.create(json)
+                .readObject(PortletBaseModel.class);
             putInSession(channel.browserSession(), model);
         }
     }
@@ -117,8 +117,8 @@ public class FormTestPortlet extends FreeMarkerPortlet {
     public String doAddPortlet(AddPortletRequest event,
             PortalSession channel) throws Exception {
         String portletId = generatePortletId();
-        FormTestModel portletModel = putInSession(
-            channel.browserSession(), new FormTestModel(portletId));
+        PortletBaseModel portletModel = putInSession(
+            channel.browserSession(), new PortletBaseModel(portletId));
         String jsonState = JsonBeanEncoder.create()
             .writeObject(portletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
@@ -136,13 +136,12 @@ public class FormTestPortlet extends FreeMarkerPortlet {
     @Override
     protected void doRenderPortlet(RenderPortletRequest event,
             PortalSession channel, String portletId,
-            Serializable retrievedState) throws Exception {
-        FormTestModel portletModel = (FormTestModel) retrievedState;
+            PortletBaseModel portletModel) throws Exception {
         renderPortlet(event, channel, portletModel);
     }
 
     private void renderPortlet(RenderPortletRequestBase<?> event,
-            PortalSession channel, FormTestModel portletModel)
+            PortalSession channel, PortletBaseModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderModes().contains(RenderMode.View)) {
@@ -165,24 +164,10 @@ public class FormTestPortlet extends FreeMarkerPortlet {
     @Override
     protected void doDeletePortlet(DeletePortletRequest event,
             PortalSession channel, String portletId,
-            Serializable portletState) throws Exception {
+            PortletBaseModel portletState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
             storagePath(channel.browserSession()) + portletId));
         channel.respond(new DeletePortlet(portletId));
-    }
-
-    @SuppressWarnings("serial")
-    public static class FormTestModel extends PortletBaseModel {
-
-        /**
-         * Creates a new model with the given type and id.
-         * 
-         * @param portletId the portlet id
-         */
-        @ConstructorProperties({ "portletId" })
-        public FormTestModel(String portletId) {
-            super(portletId);
-        }
     }
 
 }

@@ -25,7 +25,6 @@ import freemarker.template.TemplateNotFoundException;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +41,7 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
+import org.jgrapes.portal.base.AbstractPortlet;
 import org.jgrapes.portal.base.PortalSession;
 import org.jgrapes.portal.base.PortalUtils;
 import org.jgrapes.portal.base.Portlet.RenderMode;
@@ -70,7 +70,8 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
  * an instance during startup by a portal policy.
  */
 @SuppressWarnings("PMD.DataClass")
-public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
+public class MarkdownDisplayPortlet
+        extends FreeMarkerPortlet<MarkdownDisplayPortlet.MarkdownDisplayModel> {
 
     /** Property for forcing a portlet id (used for singleton instaces). */
     public static final String PORTLET_ID = "PortletId";
@@ -230,8 +231,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
     @Override
     protected void doRenderPortlet(RenderPortletRequest event,
             PortalSession portalSession, String portletId,
-            Serializable retrievedState) throws Exception {
-        MarkdownDisplayModel model = (MarkdownDisplayModel) retrievedState;
+            MarkdownDisplayModel model) throws Exception {
         renderPortlet(event, portalSession, model);
     }
 
@@ -305,7 +305,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
     @Override
     protected void doDeletePortlet(DeletePortletRequest event,
             PortalSession channel, String portletId,
-            Serializable retrievedState) throws Exception {
+            MarkdownDisplayModel retrievedState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
             storagePath(channel.browserSession()) + portletId));
         channel.respond(new DeletePortlet(portletId));
@@ -318,7 +318,7 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
      */
     @Override
     protected void doNotifyPortletModel(NotifyPortletModel event,
-            PortalSession portalSession, Serializable portletState)
+            PortalSession portalSession, MarkdownDisplayModel portletState)
             throws Exception {
         event.stop();
         @SuppressWarnings("PMD.UseConcurrentHashMap")
@@ -347,8 +347,8 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
     @Handler
     public void onUpdatePortletModel(UpdatePortletModel event,
             PortalSession portalSession) {
-        stateFromSession(portalSession.browserSession(), event.portletId(),
-            MarkdownDisplayModel.class).ifPresent(model -> {
+        stateFromSession(portalSession.browserSession(), event.portletId())
+            .ifPresent(model -> {
                 event.ifPresent(TITLE,
                     (key, value) -> model.setTitle((String) value))
                     .ifPresent(PREVIEW_SOURCE,
@@ -379,7 +379,8 @@ public class MarkdownDisplayPortlet extends FreeMarkerPortlet {
      * The portlet's model.
      */
     @SuppressWarnings("serial")
-    public static class MarkdownDisplayModel extends PortletBaseModel {
+    public static class MarkdownDisplayModel
+            extends AbstractPortlet.PortletBaseModel {
 
         private String title = "";
         private String previewContent = "";

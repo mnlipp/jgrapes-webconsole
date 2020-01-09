@@ -30,6 +30,7 @@ import freemarker.template.TemplateModelException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.Collections;
@@ -62,7 +63,8 @@ import org.jgrapes.portal.base.events.RenderPortletRequestBase;
 /**
  * 
  */
-public abstract class FreeMarkerPortlet extends AbstractPortlet {
+public abstract class FreeMarkerPortlet<S extends Serializable>
+        extends AbstractPortlet<S> {
 
     @SuppressWarnings("PMD.VariableNamingConventions")
     private static final Pattern templatePattern

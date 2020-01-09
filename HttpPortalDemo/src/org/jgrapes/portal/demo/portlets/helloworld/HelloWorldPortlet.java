@@ -25,7 +25,6 @@ import freemarker.template.TemplateNotFoundException;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Set;
 
 import org.jdrupes.json.JsonBeanDecoder;
@@ -36,6 +35,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
+import org.jgrapes.portal.base.AbstractPortlet.PortletBaseModel;
 import org.jgrapes.portal.base.PortalSession;
 import org.jgrapes.portal.base.PortalUtils;
 import org.jgrapes.portal.base.Portlet.RenderMode;
@@ -60,7 +60,8 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
 /**
  * 
  */
-public class HelloWorldPortlet extends FreeMarkerPortlet {
+public class HelloWorldPortlet
+        extends FreeMarkerPortlet<HelloWorldPortlet.HelloWorldModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);
@@ -142,8 +143,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
     @Override
     protected void doRenderPortlet(RenderPortletRequest event,
             PortalSession channel, String portletId,
-            Serializable retrievedState) throws Exception {
-        HelloWorldModel portletModel = (HelloWorldModel) retrievedState;
+            HelloWorldModel portletModel) throws Exception {
         renderPortlet(event, channel, portletModel);
     }
 
@@ -184,7 +184,7 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
     @Override
     protected void doDeletePortlet(DeletePortletRequest event,
             PortalSession channel, String portletId,
-            Serializable portletState) throws Exception {
+            HelloWorldModel portletState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
             storagePath(channel.browserSession()) + portletId));
         channel.respond(new DeletePortlet(portletId));
@@ -197,10 +197,9 @@ public class HelloWorldPortlet extends FreeMarkerPortlet {
      */
     @Override
     protected void doNotifyPortletModel(NotifyPortletModel event,
-            PortalSession channel, Serializable portletState)
+            PortalSession channel, HelloWorldModel portletModel)
             throws Exception {
         event.stop();
-        HelloWorldModel portletModel = (HelloWorldModel) portletState;
         portletModel.setWorldVisible(!portletModel.isWorldVisible());
 
         String jsonState = JsonBeanEncoder.create()

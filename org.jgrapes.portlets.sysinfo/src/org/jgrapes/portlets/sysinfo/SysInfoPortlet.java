@@ -25,7 +25,6 @@ import freemarker.template.TemplateNotFoundException;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
@@ -36,6 +35,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
+import org.jgrapes.portal.base.AbstractPortlet;
 import org.jgrapes.portal.base.PortalSession;
 import org.jgrapes.portal.base.PortalUtils;
 import org.jgrapes.portal.base.Portlet.RenderMode;
@@ -54,7 +54,8 @@ import org.jgrapes.portal.base.freemarker.FreeMarkerPortlet;
 /**
  * 
  */
-public class SysInfoPortlet extends FreeMarkerPortlet {
+public class SysInfoPortlet
+        extends FreeMarkerPortlet<SysInfoPortlet.SysInfoModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);
@@ -119,12 +120,11 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
      * 
      * @see org.jgrapes.portal.AbstractPortlet#modelFromSession
      */
-    @SuppressWarnings("unchecked")
     @Override
-    protected <T extends Serializable> Optional<T> stateFromSession(
-            Session session, String portletId, Class<T> type) {
+    protected Optional<SysInfoModel> stateFromSession(
+            Session session, String portletId) {
         if (portletId.startsWith(type() + "-")) {
-            return Optional.of((T) new SysInfoModel(portletId));
+            return Optional.of(new SysInfoModel(portletId));
         }
         return Optional.empty();
     }
@@ -147,8 +147,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
     @Override
     protected void doRenderPortlet(RenderPortletRequest event,
             PortalSession portalSession, String portletId,
-            Serializable retrievedState) throws Exception {
-        SysInfoModel portletModel = (SysInfoModel) retrievedState;
+            SysInfoModel portletModel) throws Exception {
         renderPortlet(event, portalSession, portletModel);
     }
 
@@ -200,7 +199,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
     @Override
     protected void doDeletePortlet(DeletePortletRequest event,
             PortalSession portalSession, String portletId,
-            Serializable retrievedState) throws Exception {
+            SysInfoModel retrievedState) throws Exception {
         portalSession.respond(new DeletePortlet(portletId));
     }
 
@@ -221,7 +220,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
     @Override
     @SuppressWarnings("PMD.DoNotCallGarbageCollectionExplicitly")
     protected void doNotifyPortletModel(NotifyPortletModel event,
-            PortalSession portalSession, Serializable portletState)
+            PortalSession portalSession, SysInfoModel portletState)
             throws Exception {
         event.stop();
         System.gc();
@@ -234,7 +233,7 @@ public class SysInfoPortlet extends FreeMarkerPortlet {
      * The portlet's model.
      */
     @SuppressWarnings("serial")
-    public static class SysInfoModel extends PortletBaseModel {
+    public static class SysInfoModel extends AbstractPortlet.PortletBaseModel {
 
         /**
          * Creates a new model with the given type and id.
