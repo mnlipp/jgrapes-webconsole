@@ -20,5 +20,4 @@
  * Provides a component for adding the [Fontawesome](https://fontawesome.com/)
  * free web font to a portal.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.portal.providers.fontawesome;
