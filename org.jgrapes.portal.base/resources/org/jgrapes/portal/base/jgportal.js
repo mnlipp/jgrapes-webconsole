@@ -356,10 +356,18 @@ class PortalWebSocket {
 
 class ResourceManager {
 
-    constructor(portal, providedResources) {
+    constructor(portal) {
         this._portal = portal;
         this._debugLoading = false;
-        this._providedScriptResources = new Set(providedResources); // Names, i.e. strings
+        this._providedScriptResources = new Set(); // Names, i.e. strings
+        document.querySelectorAll("script[data-jgp-provides]").forEach(s => {
+            s.getAttribute("data-jgp-provides").split(",").forEach(
+                n => this._providedScriptResources.add(n.trim()));
+        });
+        if (this._debugLoading) {
+            log.debug(moment().format("HH:mm:ss.SSS") + ": Initially provided: "
+             + [...this._providedScriptResources].join(", "));
+        }
         this._unresolvedScriptRequests = []; // ScriptResource objects
         this._loadingScripts = new Set(); // uris (src attribute)
         this._unlockMessageQueueAfterLoad = false;
@@ -945,10 +953,9 @@ class Portal {
             });
     }
 
-    init(providedResources, portalSessionId, refreshInterval, 
-        inactivityTimeout, renderer) {
+    init(portalSessionId, refreshInterval, inactivityTimeout, renderer) {
         sessionStorage.setItem("org.jgrapes.portal.base.sessionId", portalSessionId);
-        this._resourceManager = new ResourceManager(this, providedResources);
+        this._resourceManager = new ResourceManager(this);
         this._sessionRefreshInterval = refreshInterval;
         this._sessionInactivityTimeout = inactivityTimeout;
         this._renderer = renderer;

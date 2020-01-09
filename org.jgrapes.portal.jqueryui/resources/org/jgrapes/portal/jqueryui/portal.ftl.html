@@ -40,9 +40,9 @@
   
   <!-- Scripts(s) --> 
   <!-- JQuery and portal base -->
-  <script
+  <script data-jgp-provides="jquery"
     src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"></script>
-  <script
+  <script data-jgp-provides="moment, moment-with-locales"
     src="${renderSupport.pageResource('moment/moment-with-locales' + minifiedExtension + '.js')}"></script>
   <!-- JQuery UI and extensions -->
   <script src="${renderSupport.portalResource('lib/jquery-ui-1.12.1/jquery-ui' + minifiedExtension + '.js')}"></script>
@@ -54,7 +54,7 @@
   <script type="module">
   import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
   import JQUIPortal from "${renderSupport.portalResource('jquiportal.js')}"
-  JGPortal.init(["jquery", "moment", "moment-with-locales"],
+  JGPortal.init(
     "${portalSessionId}", parseInt('${portalSessionRefreshInterval?c}'), 
     parseInt('${portalSessionInactivityTimeout?c}'), new JQUIPortal.Renderer());    
   </script>

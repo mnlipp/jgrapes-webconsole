@@ -28,7 +28,7 @@ import org.jgrapes.portal.base.RenderSupport;
 
 /**
  * An event that signals the request of a resource that is to be added
- * to the `<HEAD>` section of the page.
+ * to the `<head>` section of the page.
  *
  * Requests for such resources are usually
  * generated during portal boot. See the description of

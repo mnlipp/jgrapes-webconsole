@@ -28,9 +28,9 @@
 
 <!-- Scripts(s) -->
 <!-- JQuery etc. -->
-<script
+<script data-jgp-provides="jquery"
   src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"></script>
-<script
+<script data-jgp-provides="moment, moment-with-locales"
   src="${renderSupport.pageResource('moment/moment-with-locales' + minifiedExtension + '.js')}"></script>
 <script
   src="${renderSupport.portalResource('lib/popper-1.14.3/popper' + minifiedExtension + '.js')}"></script>
@@ -38,13 +38,13 @@
 <script
   src="${renderSupport.portalResource('lib/bootstrap-4.1.2/js/bootstrap' + minifiedExtension + '.js')}"></script>
 <!-- Gridstack and prerequisites Lodash and JQueryUI () -->
-<script
+<script data-jgp-provides="lodash"
   src="${renderSupport.pageResource('lodash/lodash' + minifiedExtension + '.js')}"></script>
-<script
+<script data-jgp-provides="jquery-ui"
   src="${renderSupport.pageResource('jquery-ui/jquery-ui' + minifiedExtension + '.js')}"></script>
-<script
+<script data-jgp-provides="gridstack"
   src="${renderSupport.pageResource('gridstack/gridstack.js')}"></script>
-<script
+<script data-jgp-provides="gridstack.jQueryUI"
   src="${renderSupport.pageResource('gridstack/gridstack.jQueryUI.js')}"></script>
 <script
   src="${renderSupport.portalResource('lib/jquery.ui.touch-punch-0.2.3' + minifiedExtension + '.js')}"></script>
@@ -54,9 +54,8 @@
   <script type="module">
   import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
   import B4UIPortal from "${renderSupport.portalResource('b4uiportal.js')}"
-  JGPortal.init(["jquery", "moment", "moment-with-locales", 
-    "lodash", "jquery-ui", "gridstack", "gridstack.jQueryUI"],
-    "${portalSessionId}", parseInt("${portalSessionRefreshInterval?c}"),
+  JGPortal.init("${portalSessionId}", 
+    parseInt("${portalSessionRefreshInterval?c}"),
     parseInt("${portalSessionInactivityTimeout?c}"), new B4UIPortal.Renderer({
       ok: '${_("OK")}',
       close: '${_("Close")}',

@@ -31,13 +31,16 @@ import java.util.stream.Collectors;
 
 import org.jdrupes.json.JsonArray;
 import org.jdrupes.json.JsonObject;
+import org.jgrapes.portal.base.PageResourceProvider;
+import org.jgrapes.portal.base.freemarker.FreeMarkerPortalWeblet;
 
 /**
  * Adds `<link .../>`, `<style>...</style>` or `<script ...></script>` nodes
- * to the portal's `<head>` node.
+ * to the portal's `<head>` node on behalf of components that provide
+ * such resources.
  * 
  * Adding resource references causes the browser to issue `GET` request that
- * (usually) refer to resources that must be provided by the component
+ * (usually) refer to resources that are then provided by the component
  * that created the {@link AddPageResources} event.
  * 
  * The sequence of events is shown in the diagram.
@@ -48,16 +51,35 @@ import org.jdrupes.json.JsonObject;
  * of the {@link PageResourceRequest}.
  * 
  * The `GET` request may also, of course, refer to a resource from 
- * another server.
+ * another server and thus not result in a {@link PageResourceRequest}.
  * 
  * Adding a `<script src=...></script>` node to a document's `<head>` 
- * causes the references JavaScript to be loaded asynchronously. This
- * can cause problems if an added library relies on another library
- * to be available. Script reosurces are therefore specified using
- * the {@link ScriptResource} class, which allows to specify dependencies
- * between resource. The code in the browser delays the addition of
- * a `<script>` node until all other script resources that is depends
- * on are loaded. 
+ * causes the referenced JavaScript to be loaded asynchronously. This
+ * can cause problems if a dynamically added library relies on another 
+ * library to be available. Script resources are therefore specified using
+ * the {@link ScriptResource} class, which allows to specify loading 
+ * dependencies between resources. The code in the browser delays the 
+ * addition of a `<script>` node until all other script resources that 
+ * it depends on are loaded.
+ * 
+ * Some libraries provided as page resources may already be required by the
+ * JavaScript portal code (especially by the resource manager that handles
+ * the delayed loading). They can therefore not be loaded by this
+ * mechanism, which depends on the portal code. Such page resources
+ * may be "pre-loaded" by adding the appropriate `script` element to the
+ * initial portal page. In order to make the pre-loading known to the
+ * resource manager, the `script` elements must carry an attribute
+ * `data-jgp-provides` with a comma separated list of JavaScript resource
+ * names provided by loading the script resource. The name(s) must match
+ * the name(s) used in the {@link AddPageResources} request generated
+ * by the {@link PageResourceProvider} for the pre-loaded resource(s).
+ * Here's an example (for a portal using the {@link FreeMarkerPortalWeblet}
+ * to generate the initial portal page):
+ * ```html
+ * {@code <}script data-jgp-provides="jquery"
+ *   src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"{@code >}
+ * {@code <}/script{@code >};
+ * ``` 
  * 
  * @startuml AddToHead.svg
  * hide footbox
