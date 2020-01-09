@@ -12,6 +12,10 @@ api_version = 0.0.0
 
 Require-Capability: \
     org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)", \
+    org.jgrapes.portal.page.resource;filter:="(name=jquery)", \
+    org.jgrapes.portal.page.resource;filter:="(name=moment)", \
+    org.jgrapes.portal.page.resource;filter:="(name=jquery-ui)", \
+    org.jgrapes.portal.page.resource;filter:="(name=jquery-ui.touch-punch)", \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)", \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)", \
     osgi.serviceloader; \

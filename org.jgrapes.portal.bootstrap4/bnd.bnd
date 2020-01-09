@@ -19,7 +19,8 @@ Require-Capability: \
     org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)",\
     org.jgrapes.portal.page.resource;filter:="(name=lodash)",\
     org.jgrapes.portal.page.resource;filter:="(name=jquery-ui)",\
-    org.jgrapes.portal.page.resource;filter:="(name=gridstack)"
+    org.jgrapes.portal.page.resource;filter:="(name=gridstack)",\
+    org.jgrapes.portal.page.resource;filter:="(name=jquery-ui.touch-punch)"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

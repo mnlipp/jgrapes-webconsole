@@ -15,6 +15,10 @@ artifacts {
 dependencies {
     compile project(':org.jgrapes.portal.base')
     runtimeOnly project(':org.jgrapes.portal.providers.fontawesome')
+    runtimeOnly project(':org.jgrapes.portal.providers.jquery')
+    runtimeOnly project(':org.jgrapes.portal.providers.moment')
+    runtimeOnly project(':org.jgrapes.portal.providers.jqueryui')
+    runtimeOnly project(':org.jgrapes.portal.providers.jquitouchpunch')
 }
 
 ext.releaseVersion = "0.28.0"

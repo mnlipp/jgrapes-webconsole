@@ -20,6 +20,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.portal.providers.lodash')
     runtimeOnly project(':org.jgrapes.portal.providers.jqueryui')
     runtimeOnly project(':org.jgrapes.portal.providers.gridstack')
+    runtimeOnly project(':org.jgrapes.portal.providers.jquitouchpunch')
     runtimeOnly project(':org.jgrapes.portal.providers.vue')
 }
 

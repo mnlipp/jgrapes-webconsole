@@ -18,6 +18,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.portal.providers.lodash')
     runtimeOnly project(':org.jgrapes.portal.providers.jqueryui')
     runtimeOnly project(':org.jgrapes.portal.providers.gridstack')
+    runtimeOnly project(':org.jgrapes.portal.providers.jquitouchpunch')
 }
 
 ext.releaseVersion = "0.28.0"
