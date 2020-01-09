@@ -69,8 +69,8 @@ public class ChartJsProvider extends PageResourceProvider {
             .useMinifiedResources() ? ".min" : "";
         portalSession.respond(new AddPageResources()
             .addScriptResource(new ScriptResource()
-                .setProvides(new String[] { "chartjs.org" })
+                .setProvides("chart.js")
                 .setScriptUri(event.renderSupport().pageResource(
-                    "chart-js-2.7.0/Chart" + minExt + ".js"))));
+                    "chart.js/Chart" + minExt + ".js"))));
     }
 }

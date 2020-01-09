@@ -98,7 +98,7 @@ public class SysInfoPortlet
             .setDisplayNames(
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addScript(new ScriptResource()
-                .setRequires(new String[] { "chartjs.org" })
+                .setRequires("chart.js")
                 .setScriptUri(event.renderSupport().portletResource(
                     type(), "SysInfo-functions.ftl.js")))
             .addCss(event.renderSupport(), PortalUtils.uriFromPath(
