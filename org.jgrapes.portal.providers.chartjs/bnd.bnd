@@ -15,7 +15,7 @@ Require-Capability: \
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.portal.base.PageResourceProviderFactory; \
         uses:="org.jgrapes.portal.base,org.jgrapes.core", \
-    org.jgrapes.portal.page.resource;name:List<String>="chartjs.org"
+    org.jgrapes.portal.page.resource;name:List<String>="chart.js"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \
