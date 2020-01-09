@@ -4,8 +4,6 @@ Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 Export-Package: org.jgrapes.portal.providers.chartjs
 
-api_version = 0.10.1.${tstamp}
-
 -sources: true
 -runee: JavaSE-1.8
 
