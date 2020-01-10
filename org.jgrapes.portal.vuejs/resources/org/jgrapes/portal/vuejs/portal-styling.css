@@ -274,6 +274,14 @@ body > footer {
     }
 }
 
+.portlet-content:not(.portlet--no-markup-styles) a {
+    color: rgb(var(--primary));
+}
+
+.portlet-content:not(.portlet--no-markup-styles) a:hover {
+    color: rgba(var(--primary), 0.9);
+}
+
 /* ## Form styles */
 
 /* ### Plain form styles */
@@ -325,12 +333,14 @@ form:not(.form--no-markup-styles) select:focus {
 
 /* ### Panel form styles */
 
-form:not(.form--no-markup-styles) label.form__label--panel:not(.form__label--fullWidth):not(.form__label--topAligned) {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel:not(.form__label--fullWidth):not(.form__label--topAligned) {
     display: inline-flex;
     align-items: stretch;
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel > * {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -338,30 +348,36 @@ form:not(.form--no-markup-styles) label.form__label--panel > * {
     border-color: #ced4da;
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel:not(.form__label--topAligned) > :not(:last-child) {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel:not(.form__label--topAligned) > :not(:last-child) {
     margin-right: -1px;
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel * {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel * {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel > :first-child {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel > :first-child {
     background-color: #e9ecef;
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel:not(.form__label--topAligned) > :first-child {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel:not(.form__label--topAligned) > :first-child {
     border-top-left-radius: .25rem;  
     border-bottom-left-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel:not(.form__label--topAligned) > :last-child {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel:not(.form__label--topAligned) > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel select {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel select {
     height: 100%;
     background: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%205'%3e%3cpath%20fill='%23343a40'%20d='M2%200L0%202h4zm0%205L0%203h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
     background-color: rgba(0, 0, 0, 0);
@@ -370,33 +386,39 @@ form:not(.form--no-markup-styles) label.form__label--panel select {
     -moz-appearance: none;
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel.form__label--topAligned {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel.form__label--topAligned {
     display: flex;
     align-items: stretch;
     flex-direction: column;
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel.form__label--topAligned > :not(:last-child) {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel.form__label--topAligned > :not(:last-child) {
     margin-bottom: -1px;
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel.form__label--topAligned > :first-child {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel.form__label--topAligned > :first-child {
     border-top-left-radius: .25rem;  
     border-top-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styles) label.form__label--panel.form__label--topAligned > :last-child {
+form:not(.form--no-markup-styles) 
+    label.form__label--panel.form__label--topAligned > :last-child {
     border-bottom-left-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) {
     display: inline-flex;
     align-items: stretch;
     flex-direction: column;
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > * {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -404,7 +426,8 @@ form:not(.form--no-markup-styles) fieldset.form__fieldset--panel:not(.form__fiel
     border-color: #ced4da;
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > legend {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > legend {
     width: 100%;
 }
 
@@ -420,25 +443,30 @@ form:not(.form--no-markup-styles) fieldset.form__fieldset--panel legend {
     background-color: #e9ecef;
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :not(:last-child) {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :not(:last-child) {
     margin-bottom: -1px;
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :first-child {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :first-child {
     border-top-left-radius: .25rem;  
     border-top-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :last-child {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :last-child {
     border-bottom-left-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :not(legend) {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :not(legend) {
     margin-left: -1px;
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel.form__fieldset--horizontal > span > * {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel.form__fieldset--horizontal > span > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -446,12 +474,14 @@ form:not(.form--no-markup-styles) fieldset.form__fieldset--panel.form__fieldset-
     border-color: #ced4da;
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :first-child {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :first-child {
     border-top-left-radius: .25rem;  
     border-bottom-left-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styles) fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :last-child {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
@@ -487,4 +517,12 @@ form:not(.form--no-markup-styles) button:hover {
     background-color: #0069d9;
     border-color: #0062cc;
     text-decoration: none;
+}
+
+form:not(.form--no-markup-styles) span[role="button"] {
+    color: rgb(var(--primary));
+}
+
+form:not(.form--no-markup-styles) span[role="button"]:hover {
+    color:rgba(var(--primary), 0.9);
 }
