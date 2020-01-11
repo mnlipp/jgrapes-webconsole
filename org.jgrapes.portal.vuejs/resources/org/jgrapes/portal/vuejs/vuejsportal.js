@@ -191,25 +191,25 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
 
             // Get grid info
             let portletId = container.attr("data-portlet-id");
-            let x = null;
-            let y = null;
-            let width = 4;
-            let height = 4;
+            let options = {}
             if (portletId in this._lastXtraInfo) {
-                x = this._lastXtraInfo[portletId][0];
-                y = this._lastXtraInfo[portletId][1];
-                width = this._lastXtraInfo[portletId][2];
-                height = this._lastXtraInfo[portletId][3];
+                options.x = this._lastXtraInfo[portletId][0];
+                options.y = this._lastXtraInfo[portletId][1];
+                options.width = this._lastXtraInfo[portletId][2];
+                options.height = this._lastXtraInfo[portletId][3];
             } else {
+                options.autoPosition = true;
+                options.width = 4;
+                options.height = 4;
                 if (newContent.attr("data-portlet-grid-columns")) {
-                    width = newContent.attr("data-portlet-grid-columns");
+                    options.width = newContent.attr("data-portlet-grid-columns");
                 }
                 if (newContent.attr("data-portlet-grid-rows")) {
-                    height = newContent.attr("data-portlet-grid-rows");
+                    options.height = newContent.attr("data-portlet-grid-rows");
                 }
                 if ($(window).width() < 1200) {
                     let winWidth = Math.max(320, $(window).width());
-                    width = Math.round(width + (12 - width) * (1 - (winWidth - 320) / (1200 - 320)));
+                    options.width = Math.round(width + (12 - width) * (1 - (winWidth - 320) / (1200 - 320)));
                 }
             }
 
@@ -221,7 +221,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
 
             // Finally add to grid
             let grid = $('#portalPreviews').data('gridstack');
-            grid.addWidget(gridItem, x, y, width, height, x == null || y == null);
+            grid.addWidget(gridItem, options);
 
             this._layoutChanged();
         }
