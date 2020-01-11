@@ -135,13 +135,13 @@ Vue.component('jgp-tablist', {
     },
     selectTab: function(id) {
         if (this.selected) {
-            let tabpanel = document.querySelector("#" + this.selected);
+            let tabpanel = document.querySelector("[id='" + this.selected + "']");
             if (tabpanel) {
                 tabpanel.setAttribute("hidden", "");
             }
         }
         this.selected=id;
-        let tabpanel = document.querySelector("#" + this.selected);
+        let tabpanel = document.querySelector("[id='" + this.selected + "']");
         if (tabpanel) {
             tabpanel.removeAttribute("hidden");
         }
@@ -171,7 +171,7 @@ Vue.component('jgp-tablist', {
         this.selected = this.tabs[0].id;
     }
     for (let tab of this.tabs) {
-        let tabpanel = document.querySelector("#" + tab.id);
+        let tabpanel = document.querySelector("[id='" + tab.id + "']");
         if (tabpanel == null) {
             continue;
         }
