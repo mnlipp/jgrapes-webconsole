@@ -64,7 +64,7 @@ Vue.component('jgp-pulldown-menu', {
         v-bind:aria-controls="id + '-menu'" 
         v-bind:aria-expanded="expanded ? 'true' : 'false'" 
         v-on:click="toggle"><span v-html="label"></span></button>
-      <ul v-bind:id="id + 'menu'" role="menu">
+      <ul v-bind:id="id + '-menu'" role="menu">
       <template v-for="item in sortedItems">
         <li role="none"><button type="button" 
           role="menuitem" v-on:click="action(item[1])"
