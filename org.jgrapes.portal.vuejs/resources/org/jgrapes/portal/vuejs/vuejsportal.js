@@ -193,6 +193,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             let portletId = container.attr("data-portlet-id");
             let options = {}
             if (portletId in this._lastXtraInfo) {
+                options.autoPosition = false;
                 options.x = this._lastXtraInfo[portletId][0];
                 options.y = this._lastXtraInfo[portletId][1];
                 options.width = this._lastXtraInfo[portletId][2];
