@@ -156,11 +156,10 @@ Vue.component('jgp-tablist', {
   },
   template: `
     <div v-bind:id="id" class="jgp-tablist" role="tablist">
-      <span v-for="tab of tabs" role="group"
+      <span v-for="tab of tabs" role="tab"
           v-bind:aria-selected="tab.id == selected ? 'true' : 'false'"
           v-bind:aria-controls="tab.id">
-        <button type="button"  
-          v-bind:id="tab.id + '-tab'" role="tab" 
+        <button v-bind:id="tab.id + '-tab'" type="button"  
           v-on:click="selectTab(tab.id)">{{ label(tab) }}</button><button
         type="button" v-if="tab.removeCallback" class="fa fa-times"
           v-on:click="tab.removeCallback()"></button>
@@ -197,7 +196,7 @@ Vue.component('jgp-modal-dialog', {
     }
   },
   template: `
-    <div class="jgp-modal-dialog" :hidden="!isOpen">
+    <div class="jgp-modal-dialog dialog__backdrop" :hidden="!isOpen">
       <div :id="effectiveId" role="dialog" :aria-labelledby="effectiveId + '-label'" 
         aria-modal="true">
         <header :id="effectiveId + '-label'">
