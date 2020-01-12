@@ -9,7 +9,8 @@ Export-Package: org.jgrapes.portal.providers.jgpvuecomponents
 -includeresource: resources
 
 Require-Capability: \
-    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
+    org.jgrapes.portal.page.resource;filter:="(name=vue)"
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.portal.base.PageResourceProviderFactory; \
