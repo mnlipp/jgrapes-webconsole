@@ -145,7 +145,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
 
         let tabsLayout = [];
         for (let tab of this._portalTabs().tabs) {
-            let panel = $("#" + tab.id);
+            let panel = $("[id='" + tab.id + "']");
             let portletId = panel.attr("data-portlet-id");
             if (portletId) {
                 tabsLayout.push(portletId);
@@ -263,7 +263,8 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             container.attr("hidden", "");
             container.append(newContent);
             let portalPanels = $("#portalPanels");
-            portalPanels.append(container);
+            // JQuery append seems to have a delay.
+            portalPanels[0].appendChild(container[0]);
             // Add to tab list
             this._portalTabs().addTab({ 
                 label: newContent.attr("data-portlet-title"), 

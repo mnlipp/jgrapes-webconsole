@@ -302,7 +302,8 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             container.attr("aria-labelledby", id + "-tab");
             container.append(newContent);
             let tabPanes = $("#portalTabPanes");
-            tabPanes.append(container);
+            // JQuery append seems to have a delay.
+            tabPanes[0].appendChild(container[0]);
             this._layoutChanged();
         }
         if (foreground) {
