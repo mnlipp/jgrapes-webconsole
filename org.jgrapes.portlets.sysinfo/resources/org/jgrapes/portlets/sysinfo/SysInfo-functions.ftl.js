@@ -50,9 +50,10 @@ var orgJGrapesPortletsSysInfo = {
                 let maxFormatted = "";
                 let totalFormatted = "";
                 let usedFormatted = "";
-                let portlet = $(JGPortal.renderer.findPortletPreview(portletId));
+                let portlet = JGPortal.renderer.findPortletPreview(portletId);
                 let lang = 'en';
-                if (portlet.length) {
+                if (portlet) {
+                    portlet = $(portlet);
                     lang = portlet.closest('[lang]').attr('lang') || 'en'
                     maxFormatted = JGPortal.renderer.formatMemorySize(params[1], 1, lang);
                     totalFormatted = JGPortal.renderer.formatMemorySize(params[2], 1, lang);
@@ -64,8 +65,9 @@ var orgJGrapesPortletsSysInfo = {
                     col = portlet.find(".usedMemory");
                     col.html(usedFormatted);
                 }
-                portlet = $(JGPortal.renderer.findPortletView(portletId));
-                if (portlet.length) {
+                portlet = JGPortal.renderer.findPortletView(portletId);
+                if (portlet) {
+                    portlet = $(portlet);
                     let col = portlet.find(".maxMemory");
                     col.html(maxFormatted);
                     col = portlet.find(".totalMemory");
