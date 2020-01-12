@@ -954,6 +954,7 @@ class Portal {
     }
 
     init(portalSessionId, refreshInterval, inactivityTimeout, renderer) {
+        log.debug("JGPortal: Initializing portal...");
         sessionStorage.setItem("org.jgrapes.portal.base.sessionId", portalSessionId);
         this._resourceManager = new ResourceManager(this);
         this._sessionRefreshInterval = refreshInterval;
@@ -965,10 +966,12 @@ class Portal {
         this._webSocket.connect();
 
         // More initialization.
+        log.debug("JGPortal: Initializing renderer...");
         this._renderer.init();
 
         // With everything prepared, send portal ready
         this.send("portalReady");
+        log.debug("JGPortal: PortalReady sent.");
     }
 
     get isConfigured() {
