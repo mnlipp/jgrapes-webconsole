@@ -90,6 +90,10 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             disableOneColumnMode: true,
         };
         $('#portalPreviews').gridstack(options);
+        self._previewGrid = $('#portalPreviews').data('gridstack');
+        if (!self._previewGrid) {
+            log.error("VueJsPortal: Creating preview grid failed.")
+        }
         $('#portalPreviews').on('change', function(event, items) {
             self._layoutChanged();
         });
@@ -221,8 +225,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             gridItem.append(container);
 
             // Finally add to grid
-            let grid = $('#portalPreviews').data('gridstack');
-            grid.addWidget(gridItem, options);
+            this._previewGrid.addWidget(gridItem, options);
 
             this._layoutChanged();
         }
@@ -313,9 +316,8 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         containers.forEach(function(container) {
             container = $(container);
             if (container.hasClass('portlet-preview')) {
-                let grid = $('#portalPreviews').data('gridstack');
                 let gridItem = container.closest(".grid-stack-item");
-                grid.removeWidget(gridItem);
+                self._previewGrid.removeWidget(gridItem);
             }
             if (container.hasClass('portlet-view')) {
                 let panelId = container.attr("id");
