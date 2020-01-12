@@ -20,7 +20,7 @@
 
 import JGPortal from "../portal-base-resource/jgportal.js"
 import Vue from "../page-resource/vue/vue.esm.browser.js";
-import Vuex from "./lib/vuex.esm.browser.js";
+import Vuex from "../page-resource/vuex/vuex.esm.browser.js";
 
 /**
  * JGPortal establishes a namespace for the JavaScript functions

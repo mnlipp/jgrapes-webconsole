@@ -16,12 +16,13 @@ artifacts {
 
 dependencies {
     compile project(':org.jgrapes.portal.base')
+    runtimeOnly project(':org.jgrapes.portal.providers.vue')
+    runtimeOnly project(':org.jgrapes.portal.providers.vuex')
     runtimeOnly project(':org.jgrapes.portal.providers.fontawesome')
     runtimeOnly project(':org.jgrapes.portal.providers.lodash')
     runtimeOnly project(':org.jgrapes.portal.providers.jqueryui')
     runtimeOnly project(':org.jgrapes.portal.providers.gridstack')
     runtimeOnly project(':org.jgrapes.portal.providers.jquitouchpunch')
-    runtimeOnly project(':org.jgrapes.portal.providers.vue')
 }
 
 ext.releaseVersion = "0.0.0"

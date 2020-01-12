@@ -17,6 +17,7 @@ Export-Package: org.jgrapes.portal.vuejs
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
     org.jgrapes.portal.page.resource;filter:="(name=vue)",\
+    org.jgrapes.portal.page.resource;filter:="(name=vuex)",\
     org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)",\
     org.jgrapes.portal.page.resource;filter:="(name=lodash)",\
     org.jgrapes.portal.page.resource;filter:="(name=jquery-ui)",\
