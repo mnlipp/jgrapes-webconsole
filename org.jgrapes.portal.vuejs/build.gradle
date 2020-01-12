@@ -18,6 +18,7 @@ dependencies {
     compile project(':org.jgrapes.portal.base')
     runtimeOnly project(':org.jgrapes.portal.providers.vue')
     runtimeOnly project(':org.jgrapes.portal.providers.vuex')
+    runtimeOnly project(':org.jgrapes.portal.providers.jgpvuecomponents')
     runtimeOnly project(':org.jgrapes.portal.providers.fontawesome')
     runtimeOnly project(':org.jgrapes.portal.providers.lodash')
     runtimeOnly project(':org.jgrapes.portal.providers.jqueryui')

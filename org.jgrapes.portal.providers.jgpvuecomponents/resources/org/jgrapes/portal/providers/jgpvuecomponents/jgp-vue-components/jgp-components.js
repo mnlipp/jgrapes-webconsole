@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from "../page-resource/vue/vue.esm.browser.js"
+import Vue from "../vue/vue.esm.browser.js"
 
 Vue.component('jgp-pulldown-menu', {
   props: {
