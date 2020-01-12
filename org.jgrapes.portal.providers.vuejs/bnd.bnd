@@ -1,4 +1,4 @@
-Bundle-Name: JGrapes Portal Vue.js Provider
+Bundle-Name: JGrapes Portal Vue.js (non-module) Provider
 Bundle-SymbolicName: org.jgrapes.portal.providers.vuejs
 Bundle-Copyright: Michael N. Lipp (c) 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
