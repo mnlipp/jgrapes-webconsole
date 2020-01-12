@@ -1,4 +1,5 @@
-<div data-portlet-title="${_("portletName")}" class="jgrapes-portlets-sysinfo-view">
+<div data-portlet-title="${_("portletName")}" class="jgrapes-portlets-sysinfo-view"
+  data-jgp-on-load="orgJGrapesPortletsSysInfo.initMemoryChart">
   <form>
     <button class="GarbageCollection-action ui-button ui-widget ui-corner-all">
       <span class="fa fa-trash-alt"></span>${_("Garbage Collection")}</button>
@@ -43,7 +44,3 @@
   </div>
   
 </div>
-
-<script>
-    orgJGrapesPortletsSysInfo.initMemoryChart($( '[data-portlet-id="${portlet.portletId}"] .memoryChart' ));
-</script>

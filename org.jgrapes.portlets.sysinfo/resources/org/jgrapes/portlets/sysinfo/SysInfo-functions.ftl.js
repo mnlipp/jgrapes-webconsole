@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2016, 2018  Michael N. Lipp
+ * Copyright (C) 2016, 2020  Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -50,9 +50,9 @@ var orgJGrapesPortletsSysInfo = {
                 let maxFormatted = "";
                 let totalFormatted = "";
                 let usedFormatted = "";
-                let portlet = JGPortal.renderer.findPortletPreview(portletId);
+                let portlet = $(JGPortal.renderer.findPortletPreview(portletId));
                 let lang = 'en';
-                if (portlet) {
+                if (portlet.length) {
                     lang = portlet.closest('[lang]').attr('lang') || 'en'
                     maxFormatted = JGPortal.renderer.formatMemorySize(params[1], 1, lang);
                     totalFormatted = JGPortal.renderer.formatMemorySize(params[2], 1, lang);
@@ -64,8 +64,8 @@ var orgJGrapesPortletsSysInfo = {
                     col = portlet.find(".usedMemory");
                     col.html(usedFormatted);
                 }
-                portlet = JGPortal.renderer.findPortletView(portletId);
-                if (portlet) {
+                portlet = $(JGPortal.renderer.findPortletView(portletId));
+                if (portlet.length) {
                     let col = portlet.find(".maxMemory");
                     col.html(maxFormatted);
                     col = portlet.find(".totalMemory");
@@ -75,16 +75,19 @@ var orgJGrapesPortletsSysInfo = {
                     let chartCanvas = portlet.find(".memoryChart");
                     if (portlet.find(".memoryChart").parent(":hidden").length === 0) {
                         let chart = chartCanvas.data('chartjs-chart');
-                        moment.locale(lang);
-                        chart.update(0);
+                        if (chart) {
+                            moment.locale(lang);
+                            chart.update(0);
+                        }
                     }
                 }
             });
 
-    orgJGrapesPortletsSysInfo.initMemoryChart = function(chartCanvas) {
-        var ctx = chartCanvas[0].getContext('2d');
+    orgJGrapesPortletsSysInfo.initMemoryChart = function(content) {
+        let chartCanvas = $(content).find(".memoryChart");
+        let ctx = chartCanvas[0].getContext('2d');
         let lang = chartCanvas.closest('[lang]').attr('lang') || 'en'
-        var chart = new Chart(ctx, {
+        let chart = new Chart(ctx, {
             // The type of chart we want to create
             type: 'line',
 
@@ -97,7 +100,7 @@ var orgJGrapesPortletsSysInfo = {
                     borderWidth: 2,
                     pointRadius: 1,
                     borderColor: "rgba(255,0,0,1)",
-                    label: "${_("maxMemory")}",
+                    label: '${_("maxMemory")}',
                     data: maxMemoryData,
                 },{
                     lineTension: 0,
@@ -105,7 +108,7 @@ var orgJGrapesPortletsSysInfo = {
                     borderWidth: 2,
                     pointRadius: 1,
                     borderColor: "rgba(255,165,0,1)",
-                    label: "${_("totalMemory")}",
+                    label: '${_("totalMemory")}',
                     data: totalMemoryData,
                 },{
                     lineTension: 0,
@@ -113,7 +116,7 @@ var orgJGrapesPortletsSysInfo = {
                     borderWidth: 2,
                     pointRadius: 1,
                     borderColor: "rgba(0,255,0,1)",
-                    label: "${_("usedMemory")}",
+                    label: '${_("usedMemory")}',
                     data: usedMemoryData,
                 }]
             },
