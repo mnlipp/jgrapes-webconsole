@@ -40,13 +40,13 @@ var orgJGrapesPortletsMarkdownDisplay = {
                 let portlet = JGPortal.renderer.findPortletPreview(portletId);
                 if (portlet) {
                     JGPortal.renderer.updatePortletModes(portletId, params[3]);
-                    let content = portlet.find(".jgrapes-markdownportlet-content");
+                    let content = $(portlet).find(".jgrapes-markdownportlet-content");
                     content.empty();
                     content.append(mdProc.render(params[1]));
                 }
                 portlet = JGPortal.renderer.findPortletView(portletId);
                 if (portlet) {
-                    let content = portlet.find(".jgrapes-markdownportlet-content");
+                    let content = $(portlet).find(".jgrapes-markdownportlet-content");
                     content.empty();
                     content.append(mdProc.render(params[2]));
                 }
