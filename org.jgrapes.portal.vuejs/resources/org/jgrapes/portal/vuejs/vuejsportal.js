@@ -342,8 +342,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
     updatePortletTitle(portletId, title) {
         let preview = this.findPortletPreview(portletId);
         if (preview) {
-            preview = $(preview);
-            let portletHeader = preview.children("section:first-child > header");
+            let portletHeader = $(preview).children("section:first-child > header");
             portletHeader.children("p:first-child").text(title);
         }
         for (let tab of this._portalTabs().tabs) {
@@ -364,7 +363,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         if (!portlet) {
             return;
         }
-        this._setModeIcons(portlet, modes);
+        this._setModeIcons($(portlet), modes);
     }
 
     showEditDialog(container, modes, content) {

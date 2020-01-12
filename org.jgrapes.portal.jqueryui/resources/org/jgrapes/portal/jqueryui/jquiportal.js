@@ -257,7 +257,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
                 let portletId = icon.closest(".portlet").attr("data-portlet-id");
                 let portletView = self.findPortletView(portletId);
                 if (portletView) {
-                    self._activatePortletView(portletView);
+                    self._activatePortletView($(portletView));
                 } else {
                     self.sendRenderPortlet(portletId, ["View", "Foreground"]);
                 }
@@ -376,7 +376,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
         if (!portlet) {
             return;
         }
-        this._setModeIcons(portlet, modes);
+        this._setModeIcons($(portlet), modes);
     }
 
     showEditDialog(container, modes, content) {

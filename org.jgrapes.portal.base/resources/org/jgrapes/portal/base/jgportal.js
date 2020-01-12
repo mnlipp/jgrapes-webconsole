@@ -745,7 +745,7 @@ JGPortal.Renderer = class {
     findPortletPreview(portletId) {
         let matches = $(".portlet-preview[data-portlet-id='" + portletId + "']");
         if (matches.length === 1) {
-            return $(matches[0]);
+            return matches[0];
         }
         return null;
     };
@@ -767,7 +767,7 @@ JGPortal.Renderer = class {
     findPortletView(portletId) {
         let matches = $(".portlet-view[data-portlet-id='" + portletId + "']");
         if (matches.length === 1) {
-            return $(matches[0]);
+            return matches[0];
         }
         return null;
     };
@@ -1029,8 +1029,10 @@ class Portal {
             container.attr("data-portlet-id", portletId);
         }
         if (mode === "DeleteablePreview") {
+            container = $(container);
             container.addClass('portlet-deleteable')
         } else {
+            container = $(container);
             container.removeClass('portlet-deleteable')
         }
         this._renderer.updatePortletPreview(isNew, container[0], modes,
@@ -1044,6 +1046,8 @@ class Portal {
         if (isNew) {
             container = this._viewTemplate.clone();
             container.attr("data-portlet-id", portletId);
+        } else {
+            container = $(container);
         }
         this._renderer.updatePortletView(isNew, container[0], modes,
             content, foreground);

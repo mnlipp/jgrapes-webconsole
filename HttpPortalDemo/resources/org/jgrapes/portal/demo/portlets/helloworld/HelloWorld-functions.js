@@ -29,7 +29,7 @@
             "org.jgrapes.portal.demo.portlets.helloworld.HelloWorldPortlet",
             "setWorldVisible", function(portletId, params) {
                 let portlet = JGPortal.renderer.findPortletView(portletId);
-                let image = portlet.find(".helloWorldIcon");
+                let image = $(portlet).find(".helloWorldIcon");
                 let state = params[0]; 
                 if (params[0]) {
                     image.show();
