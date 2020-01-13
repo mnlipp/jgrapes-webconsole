@@ -195,7 +195,10 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
                 }
                 if ($(window).width() < 1200) {
                     let winWidth = Math.max(320, $(window).width());
-                    options.width = Math.round(width + (12 - width) * (1 - (winWidth - 320) / (1200 - 320)));
+                    let width = options.width;
+                    width = Math.round(width + (12 - width) 
+                        * (1 - (winWidth - 320) / (1200 - 320)));
+                    options.width = width;
                 }
             }
 
