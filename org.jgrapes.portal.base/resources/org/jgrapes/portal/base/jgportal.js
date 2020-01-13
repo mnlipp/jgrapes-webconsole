@@ -740,21 +740,22 @@ JGPortal.Renderer = class {
      * portlet with the given id.
      * 
      * @param {string} portletId the portlet id
-     * @return {HTMLElement} the HTML element
+     * @return {HTMLElement} the HTML element or null
      */
     findPortletPreview(portletId) {
-        let matches = $(".portlet-preview[data-portlet-id='" + portletId + "']");
-        if (matches.length === 1) {
-            return matches[0];
-        }
-        return null;
+        return document.querySelector(
+            ".portlet-preview[data-portlet-id='" + portletId + "']");
     };
 
+    /**
+     * Return the ids of all portlets displayed as preview.
+     *
+     * @return {string[]}
+     */
     findPreviewIds() {
-        let ids = $(".portlet-preview[data-portlet-id]").map(function() {
-            return $(this).attr("data-portlet-id");
-        }).get();
-        return ids;
+        return Array.from(
+            document.querySelectorAll(".portlet-preview[data-portlet-id]"),
+            node => node.getAttribute("data-portlet-id"));
     }
 
     /**
@@ -765,18 +766,19 @@ JGPortal.Renderer = class {
      * @return {HTMLElement} the HTML element
      */
     findPortletView(portletId) {
-        let matches = $(".portlet-view[data-portlet-id='" + portletId + "']");
-        if (matches.length === 1) {
-            return matches[0];
-        }
-        return null;
+        return document.querySelector(
+            ".portlet-view[data-portlet-id='" + portletId + "']");
     };
 
+    /**
+     * Return the ids of all portlets displayed as view.
+     *
+     * @return {string[]}
+     */
     findViewIds() {
-        let ids = $(".portlet-view[data-portlet-id]").map(function() {
-            return $(this).attr("data-portlet-id");
-        }).get();
-        return ids;
+        return Array.from(
+            document.querySelectorAll(".portlet-view[data-portlet-id]"),
+            node => node.getAttribute("data-portlet-id"));
     }
 
     /**
@@ -1063,7 +1065,7 @@ class Portal {
                 obj = obj[segs.shift()];
             }
             if (obj && typeof obj === "function") {
-                obj($(this)[0]);
+                obj(this);
             }
         });
     }
