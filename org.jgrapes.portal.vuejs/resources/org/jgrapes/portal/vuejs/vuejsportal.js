@@ -330,6 +330,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
                 _this._layoutChanged();
             }
         });
+        this._portalTabs().selectTab("portalOverviewPanel");
         this._layoutChanged();
     }
 
