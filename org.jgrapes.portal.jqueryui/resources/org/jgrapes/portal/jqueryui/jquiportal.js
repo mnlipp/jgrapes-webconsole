@@ -42,7 +42,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     init() {
-        let self = this;
+        let _this = this;
         log.debug("Locking screen");
         $("body").faLoading({
             icon: "fa-circle-o-notch",
@@ -52,17 +52,17 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
 
         // Top bar
         $("#theme-menu").on("click", "[data-theme-id]", function() {
-            self.send("setTheme", $(this).data("theme-id"));
+            _this.send("setTheme", $(this).data("theme-id"));
             $("#theme-menu").jqDropdown("hide");
         });
 
         $("#language-menu").on("click", "[data-locale]", function() {
-            self.sendSetLocale($(this).data("locale"), true);
+            _this.sendSetLocale($(this).data("locale"), true);
             $("#theme-menu").jqDropdown("hide");
         });
 
         $("#addon-menu").on("click", "[data-portlet-type]", function() {
-            self.sendAddPortlet($(this).data("portlet-type"),
+            _this.sendAddPortlet($(this).data("portlet-type"),
                 $(this).data("render-modes"));
             $("#theme-menu").jqDropdown("hide");
         });
@@ -78,7 +78,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             var panelId = $(this).closest("li").remove().attr("aria-controls");
             $("#" + panelId).remove();
             tabs.tabs("refresh");
-            self._layoutChanged();
+            _this._layoutChanged();
         });
 
         // Dialogs
@@ -96,7 +96,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             handle: ".portlet-header",
             cancel: ".portlet-toggle",
             placeholder: "portlet-placeholder ui-corner-all",
-            stop: function(event, ui) { self._layoutChanged(); }
+            stop: function(event, ui) { _this._layoutChanged(); }
         });
     }
 
@@ -170,7 +170,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
         // Container is:
         //     <section class='portlet portlet-preview' data-portlet-id='...' 
         //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>"
-        let self = this;
+        let _this = this;
         container = $(container);
         if (isNew) {
             container.addClass('ui-widget ui-widget-content ui-helper-clearfix ui-corner-all');
@@ -185,12 +185,12 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             // Hack to check if portletId is in
             // lastPreviewLayout
             let portletId = container.attr("data-portlet-id");
-            if (self._isBefore(self._lastPreviewLayout, portletId, portletId)) {
+            if (_this._isBefore(_this._lastPreviewLayout, portletId, portletId)) {
                 previewArea.find(".portlet").each(
                     function(portletIndex) {
                         let item = $(this);
                         let itemId = item.attr("data-portlet-id");
-                        if (!self._isBefore(self._lastPreviewLayout,
+                        if (!_this._isBefore(_this._lastPreviewLayout,
                             itemId, portletId)) {
                             item.before(portlet);
                             inserted = true;
@@ -231,7 +231,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     _setModeIcons(portlet, modes) {
-        let self = this;
+        let _this = this;
         let portletHeader = portlet.find(".portlet-header");
         portletHeader.find(".ui-icon").remove();
         if (modes.includes("Edit")) {
@@ -239,7 +239,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             portletHeader.find(".portlet-edit").on("click", function() {
                 let icon = $(this);
                 let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                self.sendRenderPortlet(portletId, ["Edit", "Foreground"]);
+                _this.sendRenderPortlet(portletId, ["Edit", "Foreground"]);
             });
         }
         if (modes.includes("DeleteablePreview")) {
@@ -247,7 +247,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             portletHeader.find(".portlet-delete").on("click", function() {
                 let icon = $(this);
                 let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                self.sendDeletePortlet(portletId);
+                _this.sendDeletePortlet(portletId);
             });
         }
         if (modes.includes("View")) {
@@ -255,11 +255,11 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             portletHeader.find(".portlet-expand").on("click", function() {
                 let icon = $(this);
                 let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                let portletView = self.findPortletView(portletId);
+                let portletView = _this.findPortletView(portletId);
                 if (portletView) {
-                    self._activatePortletView($(portletView));
+                    _this._activatePortletView($(portletView));
                 } else {
-                    self.sendRenderPortlet(portletId, ["View", "Foreground"]);
+                    _this.sendRenderPortlet(portletId, ["View", "Foreground"]);
                 }
             });
         }
@@ -380,7 +380,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     showEditDialog(container, modes, content) {
-        let self = this;
+        let _this = this;
         container = $(container);
         container.addClass("portlet-content");
         let dialogContent = $(content);
@@ -389,7 +389,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             modal: true,
             width: "auto",
             close: function(event, ui) {
-                self.portal().execOnApply(container[0]);
+                _this.portal().execOnApply(container[0]);
             }
         });
     }
@@ -483,7 +483,7 @@ $.widget("ui.notification", {
     },
 
     _create: function() {
-        let self = this;
+        let _this = this;
         this._isOpen = false;
         if (this.options.destroyOnClose === null) {
             this.options.destroyOnClose = this.options.autoOpen;
@@ -509,7 +509,7 @@ $.widget("ui.notification", {
             showLabel: false,
         });
         button.on("click", function() {
-            self.close();
+            _this.close();
         });
         widget.append(button);
 
@@ -528,8 +528,8 @@ $.widget("ui.notification", {
         // Optional auto close
         this._autoCloseTimer = null;
         if (this.options.autoClose) {
-            self._autoCloseTimer = setTimeout(function() {
-                self.close();
+            _this._autoCloseTimer = setTimeout(function() {
+                _this.close();
             }, this.options.autoClose);
         }
 
@@ -553,14 +553,14 @@ $.widget("ui.notification", {
     },
 
     close: function() {
-        let self = this;
+        let _this = this;
         if (this._autoCloseTimer) {
             clearTimeout(this._autoCloseTimer);
         }
         this._isOpen = false;
         this._hide(this.widget(), this.options.hide, function() {
-            if (self.options.destroyOnClose) {
-                self.destroy();
+            if (_this.options.destroyOnClose) {
+                _this.destroy();
             }
         });
     },

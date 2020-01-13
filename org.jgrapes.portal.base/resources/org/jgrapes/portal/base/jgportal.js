@@ -139,19 +139,19 @@ class PortalWebSocket {
         log.debug("Creating WebSocket for " + location);
         this._ws = new WebSocket(location);
         log.debug("Created WebSocket with readyState " + this._ws.readyState);
-        let self = this;
+        let _this = this;
         this._ws.onopen = function() {
             log.debug("OnOpen called for WebSocket.");
-            if (self._connectionLost) {
-                self._connectionLost = false;
-                self._portal.connectionRestored();
+            if (_this._connectionLost) {
+                _this._connectionLost = false;
+                _this._portal.connectionRestored();
             }
-            self._drainSendQueue();
-            if (self._initialConnect) {
-                self._initialConnect = false;
+            _this._drainSendQueue();
+            if (_this._initialConnect) {
+                _this._initialConnect = false;
             } else {
                 // Make sure to get any lost updates
-                let renderer = self._portal._renderer;
+                let renderer = _this._portal._renderer;
                 renderer.findPreviewIds().forEach(function(id) {
                     renderer.sendRenderPortlet(id, ["Preview"]);
                 });
@@ -159,38 +159,38 @@ class PortalWebSocket {
                     renderer.sendRenderPortlet(id, ["View"]);
                 });
             }
-            self._refreshTimer = setInterval(function() {
-                if (self._sendQueue.length == 0) {
-                    self._inactivity += self._portal.sessionRefreshInterval;
-                    if (self._portal.sessionInactivityTimeout > 0 &&
-                        self._inactivity >= self._portal.sessionInactivityTimeout) {
-                        self.close();
-                        self._portal.connectionSuspended(function() {
-                            self.connect();
+            _this._refreshTimer = setInterval(function() {
+                if (_this._sendQueue.length == 0) {
+                    _this._inactivity += _this._portal.sessionRefreshInterval;
+                    if (_this._portal.sessionInactivityTimeout > 0 &&
+                        _this._inactivity >= _this._portal.sessionInactivityTimeout) {
+                        _this.close();
+                        _this._portal.connectionSuspended(function() {
+                            _this.connect();
                         });
                         return;
                     }
-                    self._send({
+                    _this._send({
                         "jsonrpc": "2.0", "method": "keepAlive",
                         "params": []
                     });
                 }
-            }, self._portal.sessionRefreshInterval);
+            }, _this._portal.sessionRefreshInterval);
         }
         this._ws.onclose = function(event) {
             log.debug("OnClose called for WebSocket (reconnect: " +
-                self._connectRequested + ").");
-            if (self._refreshTimer !== null) {
-                clearInterval(self._refreshTimer);
-                self._refreshTimer = null;
+                _this._connectRequested + ").");
+            if (_this._refreshTimer !== null) {
+                clearInterval(_this._refreshTimer);
+                _this._refreshTimer = null;
             }
-            if (self._connectRequested) {
+            if (_this._connectRequested) {
                 // Not an intended disconnect
-                if (!self._connectionLost) {
-                    self._portal.connectionLost();
-                    self._connectionLost = true;
+                if (!_this._connectionLost) {
+                    _this._portal.connectionLost();
+                    _this._connectionLost = true;
                 }
-                self._initiateReconnect();
+                _this._initiateReconnect();
             }
         }
         // "onClose" is called even if the initial connection fails,
@@ -207,9 +207,9 @@ class PortalWebSocket {
                 log.error(event.data);
                 return;
             }
-            self._recvQueue.push(msg);
-            if (self._recvQueue.length === 1) {
-                self._handleMessages();
+            _this._recvQueue.push(msg);
+            if (_this._recvQueue.length === 1) {
+                _this._handleMessages();
             }
         }
     }
@@ -219,12 +219,12 @@ class PortalWebSocket {
      */
     connect() {
         this._connectRequested = true;
-        let self = this;
+        let _this = this;
         $(window).on('beforeunload', function() {
             log.debug("Closing WebSocket due to page unload");
             // Internal connect, don't send disconnect
-            self._connectRequested = false;
-            self._ws.close();
+            _this._connectRequested = false;
+            _this._ws.close();
         });
         this._connect();
     }
@@ -245,10 +245,10 @@ class PortalWebSocket {
 
     _initiateReconnect() {
         if (!this._reconnectTimer) {
-            let self = this;
+            let _this = this;
             this._reconnectTimer = setTimeout(function() {
-                self._reconnectTimer = null;
-                self._connect();
+                _this._reconnectTimer = null;
+                _this._connect();
             }, 1000);
         }
     }
@@ -382,8 +382,8 @@ class ResourceManager {
     }
 
     _mayBeStartScriptLoad(scriptResource) {
-        let self = this;
-        if (self._debugLoading) {
+        let _this = this;
+        if (_this._debugLoading) {
             if (scriptResource.provides.length > 0) {
                 scriptResource.id = scriptResource.provides.join("/");
             } else if (scriptResource.uri) {
@@ -395,23 +395,23 @@ class ResourceManager {
         let stillRequired = scriptResource.requires;
         scriptResource.requires = [];
         stillRequired.forEach(function(required) {
-            if (!self._providedScriptResources.has(required)) {
+            if (!_this._providedScriptResources.has(required)) {
                 scriptResource.requires.push(required);
             }
         });
         if (scriptResource.requires.length > 0) {
-            self._loadingMsg(function() {
+            _this._loadingMsg(function() {
                 return "Not (yet) loading: " + scriptResource.id
                     + ", missing: " + scriptResource.requires.join(", ")
             });
-            self._unresolvedScriptRequests.push(scriptResource);
+            _this._unresolvedScriptRequests.push(scriptResource);
             return;
         }
         this._startScriptLoad(scriptResource);
     }
 
     _startScriptLoad(scriptResource) {
-        let self = this;
+        let _this = this;
         let head = $("head").get()[0];
         let script = document.createElement("script");
         if (scriptResource.id) {
@@ -424,7 +424,7 @@ class ResourceManager {
             // Script source is part of request, add and proceed as if loaded.
             script.text = scriptResource.source;
             head.appendChild(script);
-            self._scriptResourceLoaded(scriptResource);
+            _this._scriptResourceLoaded(scriptResource);
             return;
         }
         if (!scriptResource.uri) {
@@ -434,33 +434,33 @@ class ResourceManager {
         script.src = scriptResource.uri;
         script.addEventListener('load', function(event) {
             // Remove this from loading
-            self._loadingScripts.delete(script.src);
-            self._scriptResourceLoaded(scriptResource);
+            _this._loadingScripts.delete(script.src);
+            _this._scriptResourceLoaded(scriptResource);
         });
         // Put on script load queue to indicate load in progress
-        self._loadingMsg(function() { return "Loading: " + scriptResource.id });
-        self._loadingScripts.add(script.src);
+        _this._loadingMsg(function() { return "Loading: " + scriptResource.id });
+        _this._loadingScripts.add(script.src);
         if (this._loadingTimeoutHandler === null) {
             this._loadingTimeoutHandler = setInterval(
                 function() {
                     log.warn("Still waiting for: "
-                        + Array.from(self._loadingScripts).join(", "));
+                        + Array.from(_this._loadingScripts).join(", "));
                 }, 5000)
         }
         head.appendChild(script);
     }
 
     _scriptResourceLoaded(scriptResource) {
-        let self = this;
+        let _this = this;
         // Whatever it provides is now provided
         this._loadingMsg(function() { return "Loaded: " + scriptResource.id });
         scriptResource.provides.forEach(function(res) {
-            self._providedScriptResources.add(res);
+            _this._providedScriptResources.add(res);
         });
         // Re-evaluate
         let nowProvided = new Set(scriptResource.provides);
-        let stillUnresolved = self._unresolvedScriptRequests;
-        self._unresolvedScriptRequests = [];
+        let stillUnresolved = _this._unresolvedScriptRequests;
+        _this._unresolvedScriptRequests = [];
         stillUnresolved.forEach(function(reqRes) {
             // Still required by this unresolved resource
             let stillRequired = reqRes.requires;
@@ -472,21 +472,21 @@ class ResourceManager {
                 }
             });
             if (reqRes.requires.length == 0) {
-                self._startScriptLoad(reqRes);
+                _this._startScriptLoad(reqRes);
             } else {
                 // Back to still unresolved
-                self._unresolvedScriptRequests.push(reqRes);
+                _this._unresolvedScriptRequests.push(reqRes);
             }
         });
         // All done?
-        if (self._loadingScripts.size == 0) {
+        if (_this._loadingScripts.size == 0) {
             if (this._loadingTimeoutHandler !== null) {
                 clearInterval(this._loadingTimeoutHandler);
                 this._loadingTimeoutHandler = null;
             }
-            if (self._unlockMessageQueueAfterLoad) {
-                self._loadingMsg(function() { return "All loaded, unlocking message queue." });
-                self._portal.unlockMessageQueue();
+            if (_this._unlockMessageQueueAfterLoad) {
+                _this._loadingMsg(function() { return "All loaded, unlocking message queue." });
+                _this._portal.unlockMessageQueue();
             }
         }
     }
@@ -840,7 +840,7 @@ JGPortal.Renderer = class {
 class Portal {
 
     constructor() {
-        let self = this;
+        let _this = this;
         this._isConfigured = false;
         this._sessionRefreshInterval = 0;
         this._sessionInactivityTimeout = 0;
@@ -852,23 +852,23 @@ class Portal {
         this._editTemplate = $('<div class="portlet portlet-edit"></div>');
         this._webSocket.addMessageHandler('addPageResources',
             function(cssUris, cssSource, scriptResources) {
-                self._resourceManager.addPageResources(cssUris, cssSource, scriptResources);
+                _this._resourceManager.addPageResources(cssUris, cssSource, scriptResources);
             });
         this._webSocket.addMessageHandler('addPortletType',
             function(portletType, displayNames, cssUris, scriptResources,
                 renderModes) {
-                self._resourceManager.addPageResources(cssUris, null, scriptResources);
-                self._renderer.addPortletType(portletType, displayNames, renderModes);
+                _this._resourceManager.addPageResources(cssUris, null, scriptResources);
+                _this._renderer.addPortletType(portletType, displayNames, renderModes);
             });
         this._webSocket.addMessageHandler('lastPortalLayout',
             function(previewLayout, tabsLayout, xtraInfo) {
                 // Should we wait with further actions?
-                self._resourceManager.lockWhileLoading();
-                self._renderer.lastPortalLayout(previewLayout, tabsLayout, xtraInfo);
+                _this._resourceManager.lockWhileLoading();
+                _this._renderer.lastPortalLayout(previewLayout, tabsLayout, xtraInfo);
             });
         this._webSocket.addMessageHandler('notifyPortletView',
             function notifyPortletView(portletClass, portletId, method, params) {
-                let classRegistry = self._portletFunctionRegistry[portletClass];
+                let classRegistry = _this._portletFunctionRegistry[portletClass];
                 if (classRegistry) {
                     let f = classRegistry[method];
                     if (f) {
@@ -878,35 +878,35 @@ class Portal {
             });
         this._webSocket.addMessageHandler('portalConfigured',
             function portalConfigured() {
-                self._isConfigured = true;
-                self._renderer.portalConfigured();
+                _this._isConfigured = true;
+                _this._renderer.portalConfigured();
             });
         this._webSocket.addMessageHandler('updatePortlet',
             function(portletId, mode, modes, content, foreground) {
                 if (mode === "Preview" || mode === "DeleteablePreview") {
-                    self._updatePreview(portletId, modes, mode, content, foreground);
+                    _this._updatePreview(portletId, modes, mode, content, foreground);
                 } else if (mode === "View") {
-                    self._updateView(portletId, modes, content, foreground);
+                    _this._updateView(portletId, modes, content, foreground);
                 } else if (mode === "Edit") {
-                    let container = self._editTemplate.clone();
+                    let container = _this._editTemplate.clone();
                     container.attr("data-portlet-id", portletId);
-                    self._renderer.showEditDialog(container[0], modes, content);
+                    _this._renderer.showEditDialog(container[0], modes, content);
                     if (!container[0].parentNode) {
                         $("body").append(container);
                     }
-                    self._execOnLoad(container);
+                    _this._execOnLoad(container);
                 }
             });
         this._webSocket.addMessageHandler('deletePortlet',
             function deletePortlet(portletId) {
-                let portletDisplays = self._renderer.findPortletContainers(portletId);
+                let portletDisplays = _this._renderer.findPortletContainers(portletId);
                 if (portletDisplays.length > 0) {
-                    self._renderer.removePortletDisplays(portletDisplays);
+                    _this._renderer.removePortletDisplays(portletDisplays);
                 }
             });
         this._webSocket.addMessageHandler('displayNotification',
             function(content, options) {
-                self._renderer.notification(content, options);
+                _this._renderer.notification(content, options);
             });
         this._webSocket.addMessageHandler('retrieveLocalData',
             function retrieveLocalData(path) {
@@ -929,7 +929,7 @@ class Portal {
                 } catch (e) {
                     log.error(e);
                 }
-                self._webSocket.send({
+                _this._webSocket.send({
                     "jsonrpc": "2.0", "method": "retrievedLocalData",
                     "params": [result]
                 });

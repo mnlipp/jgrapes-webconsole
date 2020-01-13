@@ -41,11 +41,11 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     init() {
-        let self = this;
+        let _this = this;
         log.debug("Locking screen");
 
         $("#portalLanguageMenu").on("click", "[data-locale]", function() {
-            self.sendSetLocale($(this).data("locale"), true);
+            _this.sendSetLocale($(this).data("locale"), true);
         });
 
         // Grid
@@ -57,12 +57,12 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             disableOneColumnMode: true,
         };
         $('#portalPreviews').gridstack(options);
-        self._previewGrid = $('#portalPreviews').data('gridstack');
-        if (!self._previewGrid) {
+        _this._previewGrid = $('#portalPreviews').data('gridstack');
+        if (!_this._previewGrid) {
             log.error("VueJsPortal: Creating preview grid failed.")
         }
         $('#portalPreviews').on('change', function(event, items) {
-            self._layoutChanged();
+            _this._layoutChanged();
         });
 
         // Tabs
@@ -73,7 +73,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             var tabId = $(this).closest("li").remove().attr("data-portlet-tab");
             $("#" + tabId + "-pane").remove();
             $("#portalOverviewTab").tab('show');
-            self._layoutChanged();
+            _this._layoutChanged();
         });
 
     }
@@ -130,14 +130,14 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
 
     addPortletType(portletType, displayNames, renderModes) {
         // Add to menu
-        let self = this;
+        let _this = this;
         let lang = document.querySelector("html").getAttribute('lang');
         let displayName = displayNames[lang];
         let item = $('<a class="dropdown-item" href="#" data-portlet-type="'
             + portletType + '">' + displayName + '</a>');
         item.data("render-modes", renderModes)
         item.on('click', function(e) {
-            self.sendAddPortlet($(this).data("portlet-type"),
+            _this.sendAddPortlet($(this).data("portlet-type"),
                 $(this).data("render-modes"));
         });
         let inserted = false;
@@ -163,7 +163,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         // Container is:
         //     <section class='portlet portlet-preview' data-portlet-id='...' 
         //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>"
-        let self = this;
+        let _this = this;
         container = $(container);
         let newContent = $(content);
         if (isNew) {
@@ -206,7 +206,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             gridItem.append(container);
 
             // Finally add to grid
-            self._previewGrid.addWidget(gridItem, options);
+            _this._previewGrid.addWidget(gridItem, options);
 
             this._layoutChanged();
         }
@@ -224,7 +224,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     _setModeIcons(portlet, modes) {
-        let self = this;
+        let _this = this;
         let portletHeader = portlet.find(".portlet-preview-header");
         portletHeader.find(".portlet-preview-icon").remove();
         if (modes.includes("Edit")) {
@@ -234,7 +234,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             portletHeader.find(".portlet-edit").on("click", function() {
                 let icon = $(this);
                 let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                self.sendRenderPortlet(portletId, ["Edit", "Foreground"]);
+                _this.sendRenderPortlet(portletId, ["Edit", "Foreground"]);
             });
         }
         if (modes.includes("DeleteablePreview")) {
@@ -244,7 +244,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             portletHeader.find(".portlet-delete").on("click", function() {
                 let icon = $(this);
                 let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                self.sendDeletePortlet(portletId);
+                _this.sendDeletePortlet(portletId);
             });
         }
         if (modes.includes("View")) {
@@ -254,11 +254,11 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             portletHeader.find(".portlet-expand").on("click", function() {
                 let icon = $(this);
                 let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                let portletView = self.findPortletView(portletId);
+                let portletView = _this.findPortletView(portletId);
                 if (portletView) {
-                    self._activatePortletView($(portletView));
+                    _this._activatePortletView($(portletView));
                 } else {
-                    self.sendRenderPortlet(portletId, ["View", "Foreground"]);
+                    _this.sendRenderPortlet(portletId, ["View", "Foreground"]);
                 }
             });
         }
@@ -329,11 +329,12 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     removePortletDisplays(containers) {
+        let _this = this;
         containers.forEach(function(container) {
             container = $(container);
             if (container.hasClass('portlet-preview')) {
                 let gridItem = container.closest(".grid-stack-item");
-                self._previewGrid.removeWidget(gridItem);
+                _this._previewGrid.removeWidget(gridItem);
             }
             if (container.hasClass('portlet-view')) {
                 $("#portalOverviewTab").tab('show');
@@ -456,7 +457,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     showEditDialog(container, modes, content) {
-        let self = this;
+        let _this = this;
         container = $(container);
         let dialog = $('<div class="modal" tabindex="-1" role="dialog">'
             + '<div class="modal-dialog modal-lg" role="document">'
@@ -477,7 +478,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             + '</div>');
         dialog.find(".modal-body").append($(content));
         dialog.find(".btn-primary").on('click', function() {
-            self.portal().execOnApply(container[0]);
+            _this.portal().execOnApply(container[0]);
         });
         container.append(dialog);
         dialog.modal();

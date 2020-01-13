@@ -40,13 +40,13 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         this._lastPreviewLayout = [];
         this._lastTabsLayout = [];
         this._lastXtraInfo = {};
-        let self = this;
+        let _this = this;
         // Make renderer available
         Vue.prototype.$portalRenderer = this;
         
         // Prepare portal i18n
         this._l10nMessages = l10nMessages;
-        window.portalL10n = function(key) { return self.translate(key) };
+        window.portalL10n = function(key) { return _this.translate(key) };
         
         // Prepare Vuex Store
         let initialLang = document.querySelector("html")
@@ -61,7 +61,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
                 lang(state, lang) {
                     state.lang = lang;
                     document.querySelector("html").setAttribute('lang', lang);
-                    self.portal().setLocale(lang, false);
+                    _this.portal().setLocale(lang, false);
                 },
                 addPortletType(state, item) {
                     state.portletTypes.push(item);
@@ -71,7 +71,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
     }
     
     init() {
-        let self = this;
+        let _this = this;
         // Start Vue
         let store = this._vuexStore;
         new Vue({ el: 'header', store });
@@ -90,12 +90,12 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             disableOneColumnMode: true,
         };
         $('#portalPreviews').gridstack(options);
-        self._previewGrid = $('#portalPreviews').data('gridstack');
-        if (!self._previewGrid) {
+        _this._previewGrid = $('#portalPreviews').data('gridstack');
+        if (!_this._previewGrid) {
             log.error("VueJsPortal: Creating preview grid failed.")
         }
         $('#portalPreviews').on('change', function(event, items) {
-            self._layoutChanged();
+            _this._layoutChanged();
         });
     }
 
@@ -156,11 +156,11 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
 
     addPortletType(portletType, displayNames, renderModes) {
         // Add to menu
-        let self = this;
+        let _this = this;
         let label = function() {
-            return displayNames[self._vuexStore.state.lang];
+            return displayNames[_this._vuexStore.state.lang];
         };
-        self._vuexStore.commit('addPortletType', [label, portletType, renderModes]);
+        _this._vuexStore.commit('addPortletType', [label, portletType, renderModes]);
     }
     
     connectionLost() {
@@ -185,7 +185,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         // Container is:
         //     <section class='portlet portlet-preview' data-portlet-id='...' 
         //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>"
-        let self = this;
+        let _this = this;
         container = $(container);
         let newContent = $(content);
         if (isNew) {
@@ -245,7 +245,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         // Container is 
         //     <article class="portlet portlet-view 
         //              data-portlet-id='...'"></article>"
-        let self = this;
+        let _this = this;
         container = $(container);
         let newContent = $(content);
         let portletId = container.attr("data-portlet-id");
@@ -270,7 +270,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
                 label: newContent.attr("data-portlet-title"), 
                 id: panelId, 
                 l10n: window.portalL10n,
-                removeCallback: function() { self.portal().removeView(portletId); }
+                removeCallback: function() { _this.portal().removeView(portletId); }
             });
             this._layoutChanged();
         }
@@ -280,7 +280,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     _setModeIcons(portlet, modes) {
-        let self = this;
+        let _this = this;
         let portletHeader = portlet.children("header");
         portletHeader.find("button").remove();
         if (modes.includes("Edit")) {
@@ -288,7 +288,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             button.on("click", function() {
                 let button = $(this);
                 let portletId = button.closest(".portlet").attr("data-portlet-id");
-                self.portal().renderPortlet(portletId, ["Edit", "Foreground"]);
+                _this.portal().renderPortlet(portletId, ["Edit", "Foreground"]);
             });
             portletHeader.append(button);
         }
@@ -297,7 +297,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             button.on("click", function() {
                 let button = $(this);
                 let portletId = button.closest(".portlet").attr("data-portlet-id");
-                self.portal().removePreview(portletId);
+                _this.portal().removePreview(portletId);
             });
             portletHeader.append(button);
         }
@@ -306,25 +306,25 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             button.on("click", function() {
                 let button = $(this);
                 let portletId = button.closest(".portlet").attr("data-portlet-id");
-                self.portal().renderPortlet(portletId, ["View", "Foreground"]);
+                _this.portal().renderPortlet(portletId, ["View", "Foreground"]);
             });
             portletHeader.append(button);
         }
     }
 
     removePortletDisplays(containers) {
-        let self = this;
+        let _this = this;
         containers.forEach(function(container) {
             container = $(container);
             if (container.hasClass('portlet-preview')) {
                 let gridItem = container.closest(".grid-stack-item");
-                self._previewGrid.removeWidget(gridItem);
+                _this._previewGrid.removeWidget(gridItem);
             }
             if (container.hasClass('portlet-view')) {
                 let panelId = container.attr("id");
-                self._portalTabs().removeTab(panelId);
+                _this._portalTabs().removeTab(panelId);
                 container.remove();
-                self._layoutChanged();
+                _this._layoutChanged();
             }
         });
         this._layoutChanged();
@@ -367,14 +367,14 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     showEditDialog(container, modes, content) {
-        let self = this;
+        let _this = this;
         let dialog = new (Vue.component('jgp-modal-dialog'))({
             propsData: {
                 content: content,
                 contentClasses: ["portlet-content"],
                 onClose: function(applyChanges) {
                     if (applyChanges) {
-                        self.portal().execOnApply(container);
+                        _this.portal().execOnApply(container);
                     }
                     container.parentNode.removeChild(container);
                 }
