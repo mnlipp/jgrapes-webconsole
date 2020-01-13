@@ -141,7 +141,7 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     addPortletType(portletType, displayNames, renderModes) {
         // Add to menu
         let lang = document.querySelector("html").getAttribute('lang');
-        let displayName = displayNames[lang];
+        let displayName = JGPortal.forLang(displayNames, lang);
         let item = $('<li class="ui-menu-item">'
             + '<div class="ui-menu-item-wrapper" data-portlet-type="'
             + portletType + '">' + displayName + '</div></li>');
