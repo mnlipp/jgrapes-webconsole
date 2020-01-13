@@ -1312,6 +1312,32 @@ JGPortal.findPortletView = function(...params) {
 }
 
 /**
+ * Finds the lang specific item in a map of items by language.
+ * The function first tests for a property as specified by lang,
+ * then removes any trailing "-..." from lang and tries again.
+ * If not successful, it tests for an entry using "en" and finally
+ * returns "{}". 
+ * 
+ * @param {Object} items the messages by language identifier
+ * @param {string} lang the language identifier
+ * @return {Object}
+ * @memberof JGPortal
+ */
+JGPortal.forLang = function(items, lang) {
+    if (lang in items) {
+        return items[lang];
+    }
+    let dashPos = lang.lastIndexOf("-");
+    if (dashPos > 0) {
+        return JGPortal.forLang(items, lang.substring(0, dashPos));
+    }
+    if (lang != "en") {
+        return JGPortal.forLang(items, "en");
+    }
+    return {};
+}
+
+/**
  * Returns the data (`data-*` Attribute) of the specified
  * element with the given key. If it does not exist, it
  * set to the value provided by the supplier function.
