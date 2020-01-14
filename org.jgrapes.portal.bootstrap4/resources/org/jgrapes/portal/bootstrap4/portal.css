@@ -63,11 +63,6 @@ main {
  * # Bootstrap4 specific overrides for base portal definitions.
  */
 
-.block--paragraph {
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
- 
 span[role="button"] {
     color: var(--primary);
 }

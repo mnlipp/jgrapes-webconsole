@@ -234,98 +234,106 @@
 
   <h3>Plain</h3>
 
-  <form class="block--paragraph">
-    <label>
-      <span>Name</span>
-      <input type="text">
-      <span class="form-item">
-        <span role="button" class="fas fa-backspace"></span>
-      </span>
-    </label>
-    <label>
-      <span>Choose</span>
-      <select id="${_id('Input4')}">
-        <option selected>Open this select menu</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-      </select>
-    </label>
-    <fieldset class="form__fieldset--horizontal">
-      <span>
-        <legend>Title</legend>
+  <p>
+    <form>
+      <label>
+        <span>Name</span>
+        <input type="text">
+        <span class="form-item">
+          <span role="button" class="fas fa-backspace"></span>
+        </span>
+      </label>
+      <label>
+        <span>Choose</span>
+        <select id="${_id('Input4')}">
+          <option selected>Open this select menu</option>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+      </label>
+      <fieldset class="form__fieldset--horizontal">
+        <span>
+          <legend>Title</legend>
+          <span>
+            <label>
+              <input type="radio" name="title" value="M.">
+              <span>Mister</span>
+            </label>
+            <label>
+              <input type="radio" name="title" value="Ms.">
+              <span>Miss</span>
+            </label>
+          </span>
+        </span>
+      </fieldset>
+      <fieldset class="form__fieldset--horizontal">
         <span>
           <label>
-            <input type="radio" name="title" value="M.">
-            <span>Mister</span>
-          </label>
-          <label>
-            <input type="radio" name="title" value="Ms.">
-            <span>Miss</span>
+            <input type="checkbox" name="remember" value="remember">
+            <span>Remember me</span>
           </label>
         </span>
-      </span>
-    </fieldset>
-    <fieldset class="form__fieldset--horizontal">
-      <span>
-        <label>
-          <input type="checkbox" name="remember" value="remember">
-          <span>Remember me</span>
-        </label>
-      </span>
-    </fieldset>
-  </form>
+      </fieldset>
+    </form>
+  </p>
 
   <h3>As panel</h3>
 
-  <form class="block--paragraph">
-    <label class="form__label--panel">
-      <span>Name</span>
-      <input type="text">
-      <span class="form-item">
-        <span role="button" class="fas fa-backspace"></span>
-      </span>
-    </label>
-    <label class="form__label--panel">
-      <span>Choose</span>
-      <select id="${_id('Input4')}">
-        <option selected>Open this select menu</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-      </select>
-    </label>
-    
-    <fieldset class="form__fieldset--horizontal form__fieldset--panel">
-      <span>
-        <legend>Title</legend>
-        <span>
-          <label>
-            <input type="radio" name="title" value="M.">
-            <span>Mister</span>
-          </label>
-          <label>
-            <input type="radio" name="title" value="Ms.">
-            <span>Miss</span>
-          </label>
+  <p>
+  <form>
+      <label class="form__label--panel">
+        <span>Name</span>
+        <input type="text">
+        <span class="form-item">
+          <span role="button" class="fas fa-backspace"></span>
         </span>
-      </span>
-    </fieldset>
-  </form>
+      </label>
+      <label class="form__label--panel">
+        <span>Choose</span>
+        <select id="${_id('Input4')}">
+          <option selected>Open this select menu</option>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+      </label>
+    
+      <fieldset class="form__fieldset--horizontal form__fieldset--panel">
+        <span>
+          <legend>Title</legend>
+          <span>
+            <label>
+              <input type="radio" name="title" value="M.">
+              <span>Mister</span>
+            </label>
+            <label>
+              <input type="radio" name="title" value="Ms.">
+              <span>Miss</span>
+            </label>
+          </span>
+        </span>
+      </fieldset>
+    </form>
+  </p>
 
-  <form class="block--paragraph">
-    <label class="form__label--panel">
-      <span>Name</span>
-      <textarea></textarea>
-    </label>
-  </form>
+  <p>
+    <form>
+      <label class="form__label--panel">
+        <span>Name</span>
+        <textarea></textarea>
+      </label>
+    </form>
+  </p>
 
-  <form class="block--paragraph">
-    <label class="form__label--panel form__label--full-width">
-      <span>Name</span>
-      <input type="text">
-    </label>
-  </form>
+  <p>
+    <form>
+      <label class="form__label--panel form__label--full-width">
+        <span>Name</span>
+        <input type="text">
+      </label>
+    </form>
+  </p>
 
 <h2>Vertical as panel</h2>
 
