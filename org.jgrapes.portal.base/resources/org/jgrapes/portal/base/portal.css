@@ -67,15 +67,27 @@ form:not(.form--no-markup-styles) * {
     box-sizing: border-box;
 }
 
+form:not(.form--no-markup-styles) input,
+form:not(.form--no-markup-styles) textarea,
+form:not(.form--no-markup-styles) select {
+    position: relative; /* Puts element on top of the others. */
+}
+
+form:not(.form--no-markup-styles) fieldset {
+    display: inline-block;
+}
+
+/* Use of unnumbered list to specify inputs. */
+form:not(.form--no-markup-styles) fieldset ul {
+    list-style: none;
+}
+
 form:not(.form--no-markup-styles) label > * {
 	display: inline-block;
 }
 
 form:not(.form--no-markup-styles) label > input[type="radio"],
-form:not(.form--no-markup-styles) label > input[type="checkbox"] {
-    vertical-align: middle;
-}
-
+form:not(.form--no-markup-styles) label > input[type="checkbox"],
 form:not(.form--no-markup-styles) input[type="radio"] + span,
 form:not(.form--no-markup-styles) input[type="checkbox"] + span {
     vertical-align: middle;
@@ -85,47 +97,13 @@ form:not(.form--no-markup-styles) label textarea {
     vertical-align: top;
 }
 
-/* div cannot be used in label context. */
-form:not(.form--no-markup-styles) label.form__label--topAligned > :nth-child(2) {
-    display: block;
-    width: 100%;
-}
-
-form:not(.form--no-markup-styles) label.form__label--fullWidth {
-    display: flex;
-    align-items: center;
-}
-
-form:not(.form--no-markup-styles) label.form__label--fullWidth > :nth-child(1) {
-    margin-right: 0.25em;
-}
-
-form:not(.form--no-markup-styles) label.form__label--fullWidth > :nth-child(2) {
-    flex-grow: 1;
-}
-
-/* Fieldsets are a different issue. */
-form:not(.form--no-markup-styles) fieldset {
-	display: inline-block;
-}
-/* Use of unnumbered list to specify inputs. */
-form:not(.form--no-markup-styles) fieldset ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
 /* Use form__fieldset--horizontal to layout legend and inputs side-by-side. */
 form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal {
-	display: inline-block;
+    display: inline-block;
 }
-	
+    
 form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span {
-	display: inline-flex;
-}
-
-form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span > :not(legend) {
-	margin-left: 0.25em
+    display: inline-flex;
 }
 
 form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span > legend {
@@ -133,15 +111,35 @@ form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span > l
 }
 
 form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal {
-	border-width: 0;
-	padding: 0;
+    border-width: 0;
+    padding: 0;
 }
 
-/*
- * # Miscellaneous
- */
-span[role="button"] {
-    cursor: pointer;
+form:not(.form--no-markup-styles) label.form__label--full-width {
+    display: flex;
+    align-items: center;
+}
+
+form:not(.form--no-markup-styles) label.form__label--full-width > :nth-child(2) {
+    flex-grow: 1;
+}
+
+form:not(.form--no-markup-styles) label.form__label--top-aligned {
+    display: block;
+}
+
+/* div cannot be used in label context. */
+form:not(.form--no-markup-styles) label.form__label--top-aligned > :nth-child(2) {
+    display: block;
+    width: 100%;
+}
+
+form:not(.form--no-markup-styles) label.form__label--top-aligned > :nth-child(1) {
+    margin-right: 0.25em;
+}
+
+form:not(.form--no-markup-styles) label.form__label--top-aligned > :nth-child(2) {
+    flex-grow: 1;
 }
 
 /* # Deprecated, kept for backward compatibility. */

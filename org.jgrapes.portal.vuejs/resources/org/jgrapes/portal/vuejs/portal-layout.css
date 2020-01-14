@@ -133,49 +133,6 @@ body > header > :first-child {
 
 /* ### Plain form styles */
 
-form:not(.form--no-markup-styles) input,
-form:not(.form--no-markup-styles) textarea,
-form:not(.form--no-markup-styles) select {
-    position: relative; /* Puts element on top of the others. */
-}
-
-form:not(.form--no-markup-styles) fieldset ul {
-    list-style: none;
-}
-
-form:not(.form--no-markup-styles) input[type="radio"] + span, 
-form:not(.form--no-markup-styles) input[type="checkbox"] + span,
-form:not(.form--no-markup-styles) label > input[type="radio"], 
-form:not(.form--no-markup-styles) label > input[type="checkbox"] {
-    vertical-align: middle;
-}
-
-form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal {
-    display: inline-block;
-}
-
-form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span {
-    display: inline-flex;
-}
-
-form:not(.form--no-markup-styles) label.form__label--fullWidth {
-    display: flex;
-    align-items: center;
-}
-
-form:not(.form--no-markup-styles) label.form__label--fullWidth > :nth-child(2) {
-    flex-grow: 1;
-}
-
-form:not(.form--no-markup-styles) label.form__label--topAligned {
-    display: block;
-}
-
-form:not(.form--no-markup-styles) label.form__label--topAligned > :nth-child(2) {
-    display: block;
-    width: 100%;
-}
-
 /* ### Panel form styles */
 
 form:not(.form--no-markup-styles) 
@@ -196,13 +153,13 @@ form:not(.form--no-markup-styles)
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel:not(.form__label--fullWidth):not(.form__label--topAligned) {
+    label.form__label--panel:not(.form__label--full-width):not(.form__label--top-aligned) {
     display: inline-flex;
     align-items: stretch;
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel.form__label--topAligned {
+    label.form__label--panel.form__label--top-aligned {
     display: flex;
     align-items: stretch;
     flex-direction: column;

@@ -404,7 +404,7 @@ form:not(.form--no-markup-styles)
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--fullWidth > :nth-child(1) {
+    label.form__label--full-width > :nth-child(1) {
     margin-right: .25em;
 }
 
@@ -420,7 +420,7 @@ form:not(.form--no-markup-styles)
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel:not(.form__label--topAligned) > :not(:last-child) {
+    label.form__label--panel:not(.form__label--top-aligned) > :not(:last-child) {
     margin-right: -1px;
 }
 
@@ -436,13 +436,13 @@ form:not(.form--no-markup-styles)
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel:not(.form__label--topAligned) > :first-child {
+    label.form__label--panel:not(.form__label--top-aligned) > :first-child {
     border-top-left-radius: .25rem;  
     border-bottom-left-radius: .25rem;  
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel:not(.form__label--topAligned) > :last-child {
+    label.form__label--panel:not(.form__label--top-aligned) > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
@@ -458,18 +458,18 @@ form:not(.form--no-markup-styles)
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel.form__label--topAligned > :not(:last-child) {
+    label.form__label--panel.form__label--top-aligned > :not(:last-child) {
     margin-bottom: -1px;
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel.form__label--topAligned > :first-child {
+    label.form__label--panel.form__label--top-aligned > :first-child {
     border-top-left-radius: .25rem;  
     border-top-right-radius: .25rem;  
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel.form__label--topAligned > :last-child {
+    label.form__label--panel.form__label--top-aligned > :last-child {
     border-bottom-left-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
