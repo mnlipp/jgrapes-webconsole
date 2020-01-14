@@ -158,7 +158,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         // Add to menu
         let _this = this;
         let label = function() {
-            return displayNames[_this._vuexStore.state.lang];
+            return JGPortal.forLang(displayNames, _this._vuexStore.state.lang) || "Portlet";
         };
         _this._vuexStore.commit('addPortletType', [label, portletType, renderModes]);
     }
