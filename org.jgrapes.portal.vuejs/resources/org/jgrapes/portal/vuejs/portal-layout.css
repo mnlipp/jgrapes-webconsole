@@ -127,71 +127,84 @@ body > header > :first-child {
     100% { transform: rotate(360deg); }
 }
 
-/*
- * # Bootstrap4 specific overrides for base portal definitions.
- */
-
-.block--paragraph {
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
- 
-span[role="button"] {
-    color: var(--primary);
-}
-
-/* Also override (more specific) match in forms. */
-.form-group > .form-item span[role="button"] {
-    color: var(--primary);
-}
-
-form:not(.form--noMarkupStyles) label {
-    margin-bottom: 0;
-}
-
 /* # Bootstrap4 like forms/input groups. */
 
-/* Override Bootstrap4 style. */
-form:not(.form--noMarkupStyles) fieldset.form-fieldset--horizontal > span > legend {
-	width: auto;
-	font-size: inherit;
-}
-
-form:not(.form--noMarkupStyles) fieldset legend {
-	font-size: inherit;
-}
-
-form:not(.form--noMarkupStyles) p ~ fieldset {
-    margin-bottom: 1rem;	
-}
-
-form:not(.form--noMarkupStyles) label.form-label--topAligned {
-	display: block;
-}
-
-form:not(.form--noMarkupStyles) li label {
-    margin-bottom: 0;
-}
-
-form:not(.form--noMarkupStyles) li label :first-child {
-    margin-bottom: 0rem;
-}
-
-
-/* ## Form styles */
+/* ## Form styles (layout) */
 
 /* ### Plain form styles */
 
-form:not(.form--noMarkupStyles) input,
-form:not(.form--noMarkupStyles) textarea,
-form:not(.form--noMarkupStyles) select {
+form:not(.form--no-markup-styles) input,
+form:not(.form--no-markup-styles) textarea,
+form:not(.form--no-markup-styles) select {
     position: relative; /* Puts element on top of the others. */
+}
+
+form:not(.form--no-markup-styles) fieldset ul {
+    list-style: none;
+}
+
+form:not(.form--no-markup-styles) input[type="radio"] + span, 
+form:not(.form--no-markup-styles) input[type="checkbox"] + span,
+form:not(.form--no-markup-styles) label > input[type="radio"], 
+form:not(.form--no-markup-styles) label > input[type="checkbox"] {
+    vertical-align: middle;
+}
+
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal {
+    display: inline-block;
+}
+
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span {
+    display: inline-flex;
+}
+
+form:not(.form--no-markup-styles) label.form__label--fullWidth {
+    display: flex;
+    align-items: center;
+}
+
+form:not(.form--no-markup-styles) label.form__label--fullWidth > :nth-child(2) {
+    flex-grow: 1;
+}
+
+form:not(.form--no-markup-styles) label.form__label--topAligned {
+    display: block;
+}
+
+form:not(.form--no-markup-styles) label.form__label--topAligned > :nth-child(2) {
+    display: block;
+    width: 100%;
 }
 
 /* ### Panel form styles */
 
-form:not(.form--noMarkupStyles) label.form-labeledInput--panel:not(.form-labeledInput--fullWidth):not(.form-label--topAligned) {
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) {
     display: inline-flex;
     align-items: stretch;
+    flex-direction: column;
+}
+
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel legend {
+    display: inline-block;
+}
+
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > legend {
+    width: 100%;
+}
+
+form:not(.form--no-markup-styles) 
+    label.form__label--panel:not(.form__label--fullWidth):not(.form__label--topAligned) {
+    display: inline-flex;
+    align-items: stretch;
+}
+
+form:not(.form--no-markup-styles) 
+    label.form__label--panel.form__label--topAligned {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
 }
 

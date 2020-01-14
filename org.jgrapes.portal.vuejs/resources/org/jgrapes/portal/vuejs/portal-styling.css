@@ -262,6 +262,13 @@ body > footer {
 
 /* # Portlet Styling */
 
+/* ## General */
+
+.block--paragraph {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
 /* ## Portlet Preview Styling */
 
 .portlet-preview {
@@ -301,6 +308,7 @@ body > footer {
 /* ## Portlet Content UI Styles (markup based) */
 
 /* ### Button styling. */
+
 .portlet-content:not(.portlet-content--no-markup-styles) 
     button[type="button"] {
     display: inline-block;
@@ -324,6 +332,16 @@ body > footer {
     }
 }
 
+.portlet-content:not(.portlet-content--no-markup-styles) 
+    span[role=button] {
+    color: rgb(var(--primary));
+}
+
+.portlet-content:not(.portlet-content--no-markup-styles) 
+    span[role=button]:hover {
+    transform: scale(1.25);
+}
+
 .portlet-content:not(.portlet-content--no-markup-styles) a {
     color: rgb(var(--primary));
 }
@@ -341,6 +359,11 @@ form:not(.form--no-markup-styles) fieldset {
     padding: 0;
     margin: 0;
     border: 0;
+}
+
+form:not(.form--no-markup-styles) fieldset ul {
+    margin: 0;
+    padding: 0;
 }
 
 form:not(.form--no-markup-styles) label input,
@@ -367,12 +390,6 @@ form:not(.form--no-markup-styles) label:not(.form__label--panel) textarea {
     }
 }
 
-form:not(.form--no-markup-styles) input,
-form:not(.form--no-markup-styles) textarea,
-form:not(.form--no-markup-styles) select {
-    position: relative; /* Puts element on top of the others. */
-}
-
 form:not(.form--no-markup-styles) input:focus,
 form:not(.form--no-markup-styles) textarea:focus,
 form:not(.form--no-markup-styles) select:focus {
@@ -381,13 +398,17 @@ form:not(.form--no-markup-styles) select:focus {
     box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
 }
 
-/* ## Panel form styles */
+form:not(.form--no-markup-styles) 
+    fieldset.form__fieldset--horizontal > span > :not(legend) {
+    margin-left: .25em;
+}
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel:not(.form__label--fullWidth):not(.form__label--topAligned) {
-    display: inline-flex;
-    align-items: stretch;
+    label.form__label--fullWidth > :nth-child(1) {
+    margin-right: .25em;
 }
+
+/* ## Panel form styles */
 
 form:not(.form--no-markup-styles) 
     label.form__label--panel > * {
@@ -437,13 +458,6 @@ form:not(.form--no-markup-styles)
 }
 
 form:not(.form--no-markup-styles) 
-    label.form__label--panel.form__label--topAligned {
-    display: flex;
-    align-items: stretch;
-    flex-direction: column;
-}
-
-form:not(.form--no-markup-styles) 
     label.form__label--panel.form__label--topAligned > :not(:last-child) {
     margin-bottom: -1px;
 }
@@ -461,13 +475,6 @@ form:not(.form--no-markup-styles)
 }
 
 form:not(.form--no-markup-styles) 
-    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) {
-    display: inline-flex;
-    align-items: stretch;
-    flex-direction: column;
-}
-
-form:not(.form--no-markup-styles) 
     fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > * {
     line-height: 1.5;
     padding: .375rem .75rem;
@@ -476,18 +483,12 @@ form:not(.form--no-markup-styles)
     border-color: #ced4da;
 }
 
-form:not(.form--no-markup-styles) 
-    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > legend {
-    width: 100%;
-}
-
 form:not(.form--no-markup-styles) fieldset.form__fieldset--panel * {
     margin-top: 0;
     margin-bottom: 0;
 }
 
 form:not(.form--no-markup-styles) fieldset.form__fieldset--panel legend {
-    display: inline-block;
     line-height: 1.5;
     padding: .375rem .75rem;
     background-color: #e9ecef;
