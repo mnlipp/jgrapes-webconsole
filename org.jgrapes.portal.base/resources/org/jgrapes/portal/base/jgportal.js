@@ -1315,8 +1315,8 @@ JGPortal.findPortletView = function(...params) {
  * Finds the lang specific item in a map of items by language.
  * The function first tests for a property as specified by lang,
  * then removes any trailing "-..." from lang and tries again.
- * If not successful, it tests for an entry using "en" and finally
- * returns "{}". 
+ * If not successful, it tests for an entry using "en" and 
+ * if still no match is found it returns null. 
  * 
  * @param {Object} items the messages by language identifier
  * @param {string} lang the language identifier
@@ -1334,7 +1334,7 @@ JGPortal.forLang = function(items, lang) {
     if (lang != "en") {
         return JGPortal.forLang(items, "en");
     }
-    return {};
+    return null;
 }
 
 /**
