@@ -110,6 +110,13 @@ body > footer {
     text-align: center;
 }
 
+/* Flow content cannot be put inside a paragraph, but somtimes
+ * you want it to have the margins of a paragraph. */
+.flow-content--paragraph {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
 /* ## JGP Component styling */
 
 /*
