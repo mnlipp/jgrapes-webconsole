@@ -97,33 +97,32 @@ form:not(.form--no-markup-styles) label textarea {
     vertical-align: top;
 }
 
-/* Use form__fieldset--horizontal to layout legend and inputs side-by-side.
- * For horizontal layout, fieldset needs a nested span because you cannot 
- * fieldset's display property. */
-form:not(.form--no-markup-styles) 
-    fieldset.form__fieldset--horizontal > span {
-    display: inline-flex;
-    align-items: flex-start;
+/* Use form__fieldset--horizontal to layout legend and inputs side-by-side. */
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal {
+    display: inline-block;
+    vertical-align: middle;
 }
     
-form:not(.form--no-markup-styles) 
-    fieldset.form__fieldset--horizontal > span > :not(:first-child) {
-    margin-left: 0.25rem;
-}
-
-form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal label, 
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal label,
 form:not(.form--no-markup-styles) label.form__label--horizontal {
     display: inline-flex;
     align-items: center;
+    vertical-align: middle;
 }
     
-form:not(.form--no-markup-styles) 
-    fieldset.form__fieldset--horizontal label > :not(:first-child), 
-form:not(.form--no-markup-styles) 
-    label.form__label--horizontal > :not(:first-child) {
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal label > :not(:first-child),
+form:not(.form--no-markup-styles) label.form__label--horizontal > :not(:first-child) {
     margin-left: 0.25rem;
 }
     
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span {
+    display: inline-flex;
+}
+
+form:not(.form--no-markup-styles) fieldset.form__fieldset--horizontal > span > legend {
+    display: inline;
+}
+
 form:not(.form--no-markup-styles) label.form__label--full-width {
     display: flex;
     align-items: center;
