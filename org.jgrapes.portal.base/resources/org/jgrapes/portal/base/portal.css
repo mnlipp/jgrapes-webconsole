@@ -103,9 +103,7 @@ form:not(.form--no-markup-styles) label textarea {
 form:not(.form--no-markup-styles) 
     fieldset.form__fieldset--horizontal > span {
     display: inline-flex;
-    align-items: top;
-    border-width: 0;
-    padding: 0;
+    align-items: flex-start;
 }
     
 form:not(.form--no-markup-styles) 
