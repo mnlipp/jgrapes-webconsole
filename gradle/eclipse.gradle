@@ -7,7 +7,7 @@ eclipse {
         downloadJavadoc = true
         downloadSources = true
         
-        if (project.name != "HttpPortalDemo") {
+        if (project.name != "WebConsoleDemo") {
 //            file.whenMerged {
 //                configurations.runtimeOnly.allDependencies.each { dep ->
 //                    if (dep instanceof org.gradle.api.artifacts.ProjectDependency) {
@@ -37,7 +37,7 @@ eclipse {
     }
     jdt {
         if (project.name.startsWith("org.jgrapes.")
-            || project.name == 'HttpPortalDemo') {
+            || project.name == 'WebConsoleDemo') {
             sourceCompatibility = 1.8
             targetCompatibility = 1.8
             javaRuntimeName = "JavaSE-1.8"

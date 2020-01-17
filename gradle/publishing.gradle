@@ -73,8 +73,8 @@ bintray {
         repo = "jgrapes"
         name = "org.jgrapes:" + project.name
         licenses = ['AGPL-V3']
-        vcsUrl = 'https://github.com/mnlipp/jgrapes-portal.git'
-        githubRepo = 'mnlipp/jgrapes-portal'
+        vcsUrl = 'https://github.com/mnlipp/jgrapes-webconsole.git'
+        githubRepo = 'mnlipp/jgrapes-webconsole'
         githubReleaseNotesFile = 'README.md'
         version {
             gpg {

@@ -1,0 +1,3 @@
+org.jgrapes.webcon.demo.webcomp.helloworld.HelloWorldPortletFactory
+org.jgrapes.webcon.demo.webcomp.tabledemo.TableDemoPortletFactory
+org.jgrapes.webcon.demo.webcomp.formtest.FormTestPortletFactory

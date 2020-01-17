@@ -1,4 +1,4 @@
-if (project.name != "HttpPortalDemo") {
+if (project.name != "WebConsoleDemo") {
         
     dependencies {
         // Use gradle mechanims to get the artifact to baseline against.

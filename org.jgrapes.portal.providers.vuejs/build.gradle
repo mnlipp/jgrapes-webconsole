@@ -1,7 +1,0 @@
-dependencies {
-	compile project(':org.jgrapes.portal.base')
-}
-
-ext.releaseVersion = "0.26.0"
-ext.isSnapshot = true
-version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")

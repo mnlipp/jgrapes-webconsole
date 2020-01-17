@@ -78,7 +78,7 @@ gitPublish {
 	branch = 'gh-pages'
 	contents {
 		from("${buildDir}/javadoc") {
-			into 'javadoc-portal'
+			into 'javadoc-webconsole'
 		}
 	}
 	preserve { include '**/*' }
@@ -86,8 +86,8 @@ gitPublish {
 }
 
 // Until https://github.com/ajoberstar/gradle-git-publish/issues/41 is fixed
-tasks.gitPublishCopy.dependsOn(":org.jgrapes.portal.base:javadoc")
-tasks.gitPublishCopy.dependsOn(":org.jgrapes.portal.base:jsdoc")
+tasks.gitPublishCopy.dependsOn(":org.jgrapes.webcon.base:javadoc")
+tasks.gitPublishCopy.dependsOn(":org.jgrapes.webcon.base:jsdoc")
 
 task stage {
     description = 'To be executed by travis, build and update JavaDoc.'
