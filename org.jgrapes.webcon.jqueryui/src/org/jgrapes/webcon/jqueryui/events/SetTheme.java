@@ -19,11 +19,11 @@
 package org.jgrapes.webcon.jqueryui.events;
 
 import org.jgrapes.core.Event;
-import org.jgrapes.webcon.base.PortalWeblet;
+import org.jgrapes.webcon.base.ConsoleWeblet;
 
 /**
  * Signals that the theme for the portal has changed. This  event is
- * handled by the {@link PortalWeblet} but may, of course, also be
+ * handled by the {@link ConsoleWeblet} but may, of course, also be
  * used by other components.
  * 
  * ![Event Sequence](SetTheme.svg)
@@ -31,13 +31,13 @@ import org.jgrapes.webcon.base.PortalWeblet;
  * @startuml SetTheme.svg
  * hide footbox
  * 
- * Browser -> Portal: "settheme"
- * activate Portal
- * Portal -> PortalWeblet: SetTheme
- * deactivate Portal
- * activate PortalWeblet
- * PortalWeblet -> Browser: "reload"
- * deactivate PortalWeblet
+ * Browser -> WebConsole: "settheme"
+ * activate WebConsole
+ * WebConsole -> ConsoleWeblet: SetTheme
+ * deactivate WebConsole
+ * activate ConsoleWeblet
+ * ConsoleWeblet -> Browser: "reload"
+ * deactivate ConsoleWeblet
  * 
  * @enduml
  */

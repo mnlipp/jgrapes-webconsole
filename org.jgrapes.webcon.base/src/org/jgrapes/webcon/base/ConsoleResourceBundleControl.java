@@ -33,7 +33,7 @@ import java.util.ResourceBundle.Control;
  * A {@link Control} that implements a special lookup
  * algorithm. See {@link #newBundle}. 
  */
-public class PortalResourceBundleControl extends Control {
+public class ConsoleResourceBundleControl extends Control {
 
     private final List<Class<?>> clses;
 
@@ -42,7 +42,7 @@ public class PortalResourceBundleControl extends Control {
      *
      * @param clses the classes to use
      */
-    public PortalResourceBundleControl(List<Class<?>> clses) {
+    public ConsoleResourceBundleControl(List<Class<?>> clses) {
         super();
         this.clses = clses;
     }
@@ -106,7 +106,7 @@ public class PortalResourceBundleControl extends Control {
             props.load(inStream);
             inStream.close();
             if (bundle == null) {
-                bundle = new PortalResourceBundle(props);
+                bundle = new ConsoleResourceBundle(props);
             }
         }
         return bundle;

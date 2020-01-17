@@ -32,22 +32,22 @@ import org.jgrapes.webcon.base.RenderSupport;
  * @startuml SetLocale.svg
  * hide footbox
  * 
- * Browser -> Portal: "setLocale"
- * activate Portal
- * activate PortalWeblet
- * Portal -> PortalWeblet: SetLocale
- * deactivate PortalWeblet
+ * Browser -> WebConsole: "setLocale"
+ * activate WebConsole
+ * activate ConsoleWeblet
+ * WebConsole -> ConsoleWeblet: SetLocale
+ * deactivate ConsoleWeblet
  * loop for portlets with l10n support
- *     Portal -> PortletComponent: SetLocale
+ *     WebConsole -> PortletComponent: SetLocale
  * end loop
- * deactivate Portal
+ * deactivate WebConsole
  * actor Framework
- * Framework -> PortalWeblet: SetLocaleDone
- * activate PortalWeblet
+ * Framework -> ConsoleWeblet: SetLocaleDone
+ * activate ConsoleWeblet
  * opt reload requested
- *     PortalWeblet -> Browser: "reload"
+ *     ConsoleWeblet -> Browser: "reload"
  * end
- * deactivate PortalWeblet
+ * deactivate ConsoleWeblet
  * 
  * @enduml
  */

@@ -18,23 +18,38 @@
 
 package org.jgrapes.webcon.base.events;
 
-import org.jgrapes.core.Channel;
-import org.jgrapes.core.CompletionEvent;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
- * This event is the completed event for the {@link PortalPrepared}
- * event.
+ * A notification (as defined by the JSON RPC specification) to be sent to
+ * the portlet view (the browser).
  */
-public class PortalConfigured extends CompletionEvent<PortalPrepared> {
+public class DeleteComponent extends ConsoleCommand {
+
+    private final String portletId;
 
     /**
-     * Instantiates a new event.
-     *
-     * @param monitoredEvent the monitored event
-     * @param channels the channels
+     * Creates a new event.
+     *  
+     * @param portletId the portlet (view) that should be deleted
      */
-    public PortalConfigured(PortalPrepared monitoredEvent,
-            Channel... channels) {
-        super(monitoredEvent, channels);
+    public DeleteComponent(String portletId) {
+        this.portletId = portletId;
     }
+
+    /**
+     * Returns the portlet id.
+     * 
+     * @return the portlet id
+     */
+    public String portletId() {
+        return portletId;
+    }
+
+    @Override
+    public void toJson(Writer writer) throws IOException {
+        toJson(writer, "deletePortlet", portletId());
+    }
+
 }

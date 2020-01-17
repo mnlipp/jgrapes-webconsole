@@ -21,15 +21,15 @@ package org.jgrapes.webcon.demo;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.webcon.base.PortalSession;
-import org.jgrapes.webcon.base.events.PortalConfigured;
-import org.jgrapes.webcon.base.events.PortalReady;
-import org.jgrapes.webcon.base.events.RenderPortlet;
+import org.jgrapes.webcon.base.ConsoleSession;
+import org.jgrapes.webcon.base.events.ConsoleConfigured;
+import org.jgrapes.webcon.base.events.ConsoleReady;
+import org.jgrapes.webcon.base.events.RenderComponent;
 
 /**
  * 
  */
-public class NewPortalSessionPolicy extends Component {
+public class NewConsoleSessionPolicy extends Component {
 
     private final String renderedFlagName = getClass().getName() + ".rendered";
 
@@ -37,7 +37,7 @@ public class NewPortalSessionPolicy extends Component {
      * Creates a new component with its channel set to
      * itself.
      */
-    public NewPortalSessionPolicy() {
+    public NewConsoleSessionPolicy() {
     }
 
     /**
@@ -45,35 +45,35 @@ public class NewPortalSessionPolicy extends Component {
      * 
      * @param componentChannel
      */
-    public NewPortalSessionPolicy(Channel componentChannel) {
+    public NewConsoleSessionPolicy(Channel componentChannel) {
         super(componentChannel);
     }
 
     @Handler
-    public void onPortalReady(PortalReady event, PortalSession portalsession) {
+    public void onPortalReady(ConsoleReady event, ConsoleSession portalsession) {
         portalsession.browserSession().put(renderedFlagName, false);
     }
 
     @Handler
-    public void onRenderPortlet(RenderPortlet event,
-            PortalSession portalsession) {
+    public void onRenderPortlet(RenderComponent event,
+            ConsoleSession portalsession) {
         portalsession.browserSession().put(renderedFlagName, true);
     }
 
     @Handler
-    public void onPortalConfigured(PortalConfigured event,
-            PortalSession portalSession)
+    public void onPortalConfigured(ConsoleConfigured event,
+            ConsoleSession portalSession)
             throws InterruptedException {
         if ((Boolean) portalSession.browserSession().getOrDefault(
             renderedFlagName, false)) {
             return;
         }
-//        fire(new AddPortletRequest(event.event().event().renderSupport(),
+//        fire(new AddComponentRequest(event.event().event().renderSupport(),
 //            MarkdownDisplayPortlet.class.getName(),
-//            Portlet.RenderMode.Preview)
-//                .addProperty(MarkdownDisplayPortlet.TITLE, "Demo Portal")
+//            ConsoleComponent.RenderMode.Preview)
+//                .addProperty(MarkdownDisplayPortlet.TITLE, "Demo WebConsole")
 //                .addProperty(MarkdownDisplayPortlet.PREVIEW_SOURCE,
-//                    "A Demo Portal")
+//                    "A Demo WebConsole")
 //                .addProperty(MarkdownDisplayPortlet.EDITABLE_BY,
 //                    Collections.EMPTY_SET),
 //            portalSession);

@@ -21,13 +21,13 @@ package org.jgrapes.webcon.base.events;
 import java.util.Set;
 
 import org.jgrapes.core.Event;
+import org.jgrapes.webcon.base.ConsoleComponent.RenderMode;
 import org.jgrapes.webcon.base.RenderSupport;
-import org.jgrapes.webcon.base.Portlet.RenderMode;
 
 /**
  * The base class for events that result in a portlet being rendered.
  */
-public abstract class RenderPortletRequestBase<T> extends Event<T> {
+public abstract class RenderComponentRequestBase<T> extends Event<T> {
     private final RenderSupport renderSupport;
     private final Set<RenderMode> renderModes;
 
@@ -37,7 +37,7 @@ public abstract class RenderPortletRequestBase<T> extends Event<T> {
      * @param renderSupport the render support
      * @param renderModes the render modes
      */
-    public RenderPortletRequestBase(
+    public RenderComponentRequestBase(
             RenderSupport renderSupport, Set<RenderMode> renderModes) {
         this.renderSupport = renderSupport;
         this.renderModes = renderModes;

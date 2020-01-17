@@ -49,8 +49,8 @@ public class StylingInfo {
      * Returns the styling information. The method looks for an entry
      * with key "style" in properties first. If no entry is found,
      * it searches through the anchestors of this component for
-     * a component of type {@link PortalWeblet} and returns 
-     * the result of invoking {@link PortalWeblet#styling()}.
+     * a component of type {@link ConsoleWeblet} and returns 
+     * the result of invoking {@link ConsoleWeblet#styling()}.
      * Else it returns "standard".
      *
      * @return the result
@@ -73,8 +73,8 @@ public class StylingInfo {
                 }
                 // Component is in tree, cache result.
                 styling = "standard";
-                if (portal instanceof PortalWeblet) {
-                    styling = ((PortalWeblet) portal).styling();
+                if (portal instanceof ConsoleWeblet) {
+                    styling = ((ConsoleWeblet) portal).styling();
                     break;
                 }
             }

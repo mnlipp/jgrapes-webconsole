@@ -20,8 +20,8 @@ package org.jgrapes.webcon.base;
 
 import java.net.URI;
 
+import org.jgrapes.webcon.base.events.ComponentResourceRequest;
 import org.jgrapes.webcon.base.events.PageResourceRequest;
-import org.jgrapes.webcon.base.events.PortletResourceRequest;
 
 /**
  * Provides support for creating URIs in the portal scope that
@@ -45,7 +45,7 @@ public interface RenderSupport {
      * @return the resulting URI
      */
     default URI portalBaseResource(String path) {
-        return portalBaseResource(PortalUtils.uriFromPath(path));
+        return portalBaseResource(WebConsoleUtils.uriFromPath(path));
     }
 
     /**
@@ -64,7 +64,7 @@ public interface RenderSupport {
      * @return the resulting URI
      */
     default URI portalResource(String path) {
-        return portalResource(PortalUtils.uriFromPath(path));
+        return portalResource(WebConsoleUtils.uriFromPath(path));
     }
 
     /**
@@ -86,17 +86,17 @@ public interface RenderSupport {
      * @return the resulting URI
      */
     default URI pageResource(String path) {
-        return pageResource(PortalUtils.uriFromPath(path));
+        return pageResource(WebConsoleUtils.uriFromPath(path));
     }
 
     /**
      * Create a reference to a resource provided by a portlet
      * of the given type. Requesting the resulting URI results
-     * in a {@link PortletResourceRequest}.
+     * in a {@link ComponentResourceRequest}.
      * 
      * @param portletType the portlet type
      * @param uri the URI made available as 
-     * {@link PortletResourceRequest#resourceUri()}
+     * {@link ComponentResourceRequest#resourceUri()}
      * @return the resulting URI
      */
     URI portletResource(String portletType, URI uri);
@@ -110,7 +110,7 @@ public interface RenderSupport {
      * @return the resulting URI
      */
     default URI portletResource(String portletType, String path) {
-        return portletResource(portletType, PortalUtils.uriFromPath(path));
+        return portletResource(portletType, WebConsoleUtils.uriFromPath(path));
     }
 
     /**

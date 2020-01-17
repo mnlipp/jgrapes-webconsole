@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jgrapes.core.Components;
-import org.jgrapes.webcon.base.PortalUtils;
+import org.jgrapes.webcon.base.WebConsoleUtils;
 
 import static org.junit.Assert.*;
 
@@ -17,7 +17,7 @@ public class QueryUtilTests {
     @Test
     public void testAsMap() throws URISyntaxException {
         URI uri = new URI("/test?p1=hello&p2=world&p2=all&p3=%21");
-        Map<String, List<String>> map = PortalUtils.queryAsMap(uri);
+        Map<String, List<String>> map = WebConsoleUtils.queryAsMap(uri);
         assertEquals(3, map.size());
         assertEquals("hello", map.get("p1").get(0));
         assertEquals(2, map.get("p2").size());
@@ -29,9 +29,9 @@ public class QueryUtilTests {
     @Test
     public void testMergeAbs() throws URISyntaxException {
         URI uri = new URI("/test/it?p2=world&p2=all");
-        uri = PortalUtils.mergeQuery(uri,
+        uri = WebConsoleUtils.mergeQuery(uri,
             Components.mapOf("p1", "hello", "p3", "!"));
-        Map<String, List<String>> map = PortalUtils.queryAsMap(uri);
+        Map<String, List<String>> map = WebConsoleUtils.queryAsMap(uri);
         assertEquals("/test/it", uri.getPath());
         assertEquals(3, map.size());
         assertEquals("hello", map.get("p1").get(0));
@@ -44,9 +44,9 @@ public class QueryUtilTests {
     @Test
     public void testMergeRel() throws URISyntaxException {
         URI uri = new URI("test/it?p2=world&p2=all");
-        uri = PortalUtils.mergeQuery(uri,
+        uri = WebConsoleUtils.mergeQuery(uri,
             Components.mapOf("p1", "hello", "p3", "!"));
-        Map<String, List<String>> map = PortalUtils.queryAsMap(uri);
+        Map<String, List<String>> map = WebConsoleUtils.queryAsMap(uri);
         assertEquals("test/it", uri.getPath());
         assertEquals(3, map.size());
         assertEquals("hello", map.get("p1").get(0));
@@ -59,9 +59,9 @@ public class QueryUtilTests {
     @Test
     public void testMergeFrag() throws URISyntaxException {
         URI uri = new URI("test/it?p2=world&p2=all#frag");
-        uri = PortalUtils.mergeQuery(uri,
+        uri = WebConsoleUtils.mergeQuery(uri,
             Components.mapOf("p1", "hello", "p3", "!"));
-        Map<String, List<String>> map = PortalUtils.queryAsMap(uri);
+        Map<String, List<String>> map = WebConsoleUtils.queryAsMap(uri);
         assertEquals("test/it", uri.getPath());
         assertEquals("frag", uri.getFragment());
         assertEquals(3, map.size());

@@ -25,13 +25,13 @@ import org.jgrapes.webcon.base.RenderSupport;
 /**
  * Signals the successful loading of the portal structure
  * in the browser. Portlets should respond to this event by
- * adding their types (using {@link AddPortletType} events).
+ * adding their types (using {@link AddComponentType} events).
  * 
- * After the portal ready event has been processed, a {@link PortalPrepared}
+ * After the portal ready event has been processed, a {@link ConsolePrepared}
  * event is generated as its {@link CompletionEvent}. All further action is 
- * triggered by the {@link PortalPrepared} event.
+ * triggered by the {@link ConsolePrepared} event.
  */
-public class PortalReady extends Event<Void> {
+public class ConsoleReady extends Event<Void> {
 
     private final RenderSupport renderSupport;
 
@@ -40,8 +40,8 @@ public class PortalReady extends Event<Void> {
      * 
      * @param renderSupport the render support for generating responses
      */
-    public PortalReady(RenderSupport renderSupport) {
-        new PortalPrepared(this);
+    public ConsoleReady(RenderSupport renderSupport) {
+        new ConsolePrepared(this);
         this.renderSupport = renderSupport;
     }
 

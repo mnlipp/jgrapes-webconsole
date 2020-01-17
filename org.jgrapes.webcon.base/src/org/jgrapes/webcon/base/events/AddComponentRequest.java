@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.jgrapes.webcon.base.ConsoleComponent.RenderMode;
 import org.jgrapes.webcon.base.RenderSupport;
-import org.jgrapes.webcon.base.Portlet.RenderMode;
 
 /**
  * Sent to the portal (server) if a new portlet instance of a given 
  * type should be added to the portal page. The portal server usually 
- * responds with a {@link RenderPortlet} event that has as payload the
+ * responds with a {@link RenderComponent} event that has as payload the
  * HTML that displays the portlet on the portal page.
  * 
  * Properties may be passed with the event. The interpretation
@@ -45,21 +45,21 @@ import org.jgrapes.webcon.base.Portlet.RenderMode;
  * @startuml AddPortletRequestSeq.svg
  * hide footbox
  * 
- * Browser -> Portal: "addPortlet"
- * activate Portal
- * Portal -> Portlet: AddPortletRequest
- * deactivate Portal
- * activate Portlet
- * Portlet -> Portal: RenderPortlet
- * deactivate Portlet
- * activate Portal
- * Portal -> Browser: "renderPortlet"
- * deactivate Portal
+ * Browser -> WebConsole: "addPortlet"
+ * activate WebConsole
+ * WebConsole -> ConsoleComponent: AddComponentRequest
+ * deactivate WebConsole
+ * activate ConsoleComponent
+ * ConsoleComponent -> WebConsole: RenderComponent
+ * deactivate ConsoleComponent
+ * activate WebConsole
+ * WebConsole -> Browser: "renderPortlet"
+ * deactivate WebConsole
  * 
  * @enduml
  * 
  */
-public class AddPortletRequest extends RenderPortletRequestBase<String> {
+public class AddComponentRequest extends RenderComponentRequestBase<String> {
 
     private final String portletType;
     private boolean foreground = true;
@@ -72,7 +72,7 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
      * @param portletType the type of the portlet
      * @param renderModes the render modes
      */
-    public AddPortletRequest(RenderSupport renderSupport, String portletType,
+    public AddComponentRequest(RenderSupport renderSupport, String portletType,
             Set<RenderMode> renderModes) {
         super(renderSupport, renderModes);
         this.portletType = portletType;
@@ -86,7 +86,7 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
      * @param renderModes the render modes
      * @param properties optional values for properties of the portlet instance
      */
-    public AddPortletRequest(RenderSupport renderSupport, String portletType,
+    public AddComponentRequest(RenderSupport renderSupport, String portletType,
             Set<RenderMode> renderModes, Map<?, ?> properties) {
         super(renderSupport, renderModes);
         this.portletType = portletType;
@@ -103,7 +103,7 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
      * @param foreground the foreground
      * @return the event for easy chaining
      */
-    public AddPortletRequest setForeground(boolean foreground) {
+    public AddComponentRequest setForeground(boolean foreground) {
         this.foreground = foreground;
         return this;
     }
@@ -138,7 +138,7 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
      * @param value the property value
      * @return the event for easy chaining
      */
-    public AddPortletRequest addProperty(Object key, Object value) {
+    public AddComponentRequest addProperty(Object key, Object value) {
         properties().put(key, value);
         return this;
     }
@@ -150,7 +150,7 @@ public class AddPortletRequest extends RenderPortletRequestBase<String> {
      * @param key the property key
      * @param action the action to perform
      */
-    public AddPortletRequest ifPresent(
+    public AddComponentRequest ifPresent(
             Object key, BiConsumer<Object, Object> action) {
         if (properties().containsKey(key)) {
             action.accept(key, properties().get(key));

@@ -29,22 +29,22 @@ import org.jgrapes.core.Event;
  * Sent to a portlet to update some of its properties. The interpretation
  * of the properties is completely dependent on the handling portlet.
  * 
- * This event has a close relationship to the {@link NotifyPortletModel}
+ * This event has a close relationship to the {@link NotifyComponentModel}
  * event. The latter is used by portlet's functions to send information
  * from the portal page to the portlet model. It passes the information 
  * as a {@link JsonArray}. The interpretation of this information is only 
- * known by the portlet. The {@link UpdatePortletModel} event should be 
+ * known by the portlet. The {@link UpdateComponentModel} event should be 
  * used to to pass information within the application, i.e. on the server
  * side.
  * 
  * Depending on the information passed, it may be good practice to 
  * write an event handler for the portlet that converts a 
- * {@link NotifyPortletModel} to a {@link UpdatePortletModel} that is
+ * {@link NotifyComponentModel} to a {@link UpdateComponentModel} that is
  * fired on its channel instead of handling it immediately. This allows 
  * events sent from the portal page and from other components in the 
  * application to be handled in a uniform way.
  */
-public class UpdatePortletModel extends Event<Void> {
+public class UpdateComponentModel extends Event<Void> {
 
     private String portletId;
     private Map<Object, Object> properties;
@@ -55,7 +55,7 @@ public class UpdatePortletModel extends Event<Void> {
      * @param portletId the id of the portlet
      * @param properties the properties to update
      */
-    public UpdatePortletModel(String portletId, Map<?, ?> properties) {
+    public UpdateComponentModel(String portletId, Map<?, ?> properties) {
         this.portletId = portletId;
         @SuppressWarnings("unchecked")
         Map<Object, Object> props = (Map<Object, Object>) properties;
@@ -69,7 +69,7 @@ public class UpdatePortletModel extends Event<Void> {
      *
      * @param portletId the portlet id
      */
-    public UpdatePortletModel(String portletId) {
+    public UpdateComponentModel(String portletId) {
         this(portletId, new HashMap<>());
     }
 
@@ -101,7 +101,7 @@ public class UpdatePortletModel extends Event<Void> {
      * @param value the property value
      * @return the event for easy chaining
      */
-    public UpdatePortletModel addPreference(Object key, Object value) {
+    public UpdateComponentModel addPreference(Object key, Object value) {
         properties().put(key, value);
         return this;
     }
@@ -113,7 +113,7 @@ public class UpdatePortletModel extends Event<Void> {
      * @param key the property key
      * @param action the action to perform
      */
-    public UpdatePortletModel ifPresent(
+    public UpdateComponentModel ifPresent(
             Object key, BiConsumer<Object, Object> action) {
         if (properties().containsKey(key)) {
             action.accept(key, properties().get(key));

@@ -37,15 +37,15 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webcon.base.Portlet.RenderMode;
-import org.jgrapes.webcon.base.events.LastPortalLayout;
-import org.jgrapes.webcon.base.events.PortalLayoutChanged;
-import org.jgrapes.webcon.base.events.PortalPrepared;
-import org.jgrapes.webcon.base.events.PortalReady;
-import org.jgrapes.webcon.base.events.RenderPortletRequest;
+import org.jgrapes.webcon.base.ConsoleComponent.RenderMode;
+import org.jgrapes.webcon.base.events.ConsoleLayoutChanged;
+import org.jgrapes.webcon.base.events.ConsolePrepared;
+import org.jgrapes.webcon.base.events.ConsoleReady;
+import org.jgrapes.webcon.base.events.LastConsoleLayout;
+import org.jgrapes.webcon.base.events.RenderComponentRequest;
 
 /**
- * A component that restores the portal layout,
+ * A component that restores the console layout
  * using key/value events for persisting the data between sessions.
  * 
  * ![Boot Event Sequence](KVPPBootSeq.svg)
@@ -66,52 +66,52 @@ import org.jgrapes.webcon.base.events.RenderPortletRequest;
  * @startuml KVPPBootSeq.svg
  * hide footbox
  * 
- * Browser -> Portal: "portalReady"
- * activate Portal
- * Portal -> KVStoreBasedPortalPolicy: PortalReady
- * deactivate Portal
- * activate KVStoreBasedPortalPolicy
- * KVStoreBasedPortalPolicy -> "KV Store": KeyValueStoreQuery
+ * Browser -> WebConsole: "portalReady"
+ * activate WebConsole
+ * WebConsole -> KVStoreBasedConsolePolicy: ConsoleReady
+ * deactivate WebConsole
+ * activate KVStoreBasedConsolePolicy
+ * KVStoreBasedConsolePolicy -> "KV Store": KeyValueStoreQuery
  * activate "KV Store"
- * "KV Store" -> KVStoreBasedPortalPolicy: KeyValueStoreData
+ * "KV Store" -> KVStoreBasedConsolePolicy: KeyValueStoreData
  * deactivate "KV Store"
- * deactivate KVStoreBasedPortalPolicy
+ * deactivate KVStoreBasedConsolePolicy
  * 
  * actor System
- * System -> KVStoreBasedPortalPolicy: PortalPrepared
- * activate KVStoreBasedPortalPolicy
- * KVStoreBasedPortalPolicy -> Portal: LastPortalLayout
- * activate Portal
- * Portal -> Browser: "lastPortalLayout"
- * deactivate Portal
+ * System -> KVStoreBasedConsolePolicy: ConsolePrepared
+ * activate KVStoreBasedConsolePolicy
+ * KVStoreBasedConsolePolicy -> WebConsole: LastConsoleLayout
+ * activate WebConsole
+ * WebConsole -> Browser: "lastPortalLayout"
+ * deactivate WebConsole
  * loop for all portlets to be displayed
- *     KVStoreBasedPortalPolicy -> PortletX: RenderPortletRequest
+ *     KVStoreBasedConsolePolicy -> PortletX: RenderComponentRequest
  *     activate PortletX
- *     PortletX -> Portal: RenderPortlet
+ *     PortletX -> WebConsole: RenderComponent
  *     deactivate PortletX
- *     activate Portal
- *     Portal -> Browser: "renderPortlet"
- *     deactivate Portal
+ *     activate WebConsole
+ *     WebConsole -> Browser: "renderPortlet"
+ *     deactivate WebConsole
  * end
- * deactivate KVStoreBasedPortalPolicy
+ * deactivate KVStoreBasedConsolePolicy
  * 
- * Browser -> Portal: "portalLayout"
- * activate Portal
- * Portal -> KVStoreBasedPortalPolicy: PortalLayoutChanged
- * deactivate Portal
- * activate KVStoreBasedPortalPolicy
- * KVStoreBasedPortalPolicy -> "KV Store": KeyValueStoreUpdate
- * deactivate KVStoreBasedPortalPolicy
+ * Browser -> WebConsole: "portalLayout"
+ * activate WebConsole
+ * WebConsole -> KVStoreBasedConsolePolicy: ConsoleLayoutChanged
+ * deactivate WebConsole
+ * activate KVStoreBasedConsolePolicy
+ * KVStoreBasedConsolePolicy -> "KV Store": KeyValueStoreUpdate
+ * deactivate KVStoreBasedConsolePolicy
  * 
  * @enduml
  */
-public class KVStoreBasedPortalPolicy extends Component {
+public class KVStoreBasedConsolePolicy extends Component {
 
     /**
      * Creates a new component with its channel set to
      * itself.
      */
-    public KVStoreBasedPortalPolicy() {
+    public KVStoreBasedConsolePolicy() {
         // Everything done by super.
     }
 
@@ -120,12 +120,12 @@ public class KVStoreBasedPortalPolicy extends Component {
      * 
      * @param componentChannel
      */
-    public KVStoreBasedPortalPolicy(Channel componentChannel) {
+    public KVStoreBasedConsolePolicy(Channel componentChannel) {
         super(componentChannel);
     }
 
     /**
-     * Intercept the {@link PortalReady} event. Request the 
+     * Intercept the {@link ConsoleReady} event. Request the 
      * session data from the key/value store and resume.
      * 
      * @param event
@@ -133,7 +133,7 @@ public class KVStoreBasedPortalPolicy extends Component {
      * @throws InterruptedException
      */
     @Handler
-    public void onPortalReady(PortalReady event, PortalSession channel)
+    public void onPortalReady(ConsoleReady event, ConsoleSession channel)
             throws InterruptedException {
         PortalSessionDataStore sessionDs = channel.associated(
             PortalSessionDataStore.class,
@@ -150,7 +150,7 @@ public class KVStoreBasedPortalPolicy extends Component {
      */
     @Handler
     public void onKeyValueStoreData(
-            KeyValueStoreData event, PortalSession channel)
+            KeyValueStoreData event, ConsoleSession channel)
             throws JsonDecodeException {
         Optional<PortalSessionDataStore> optSessionDs
             = channel.associated(PortalSessionDataStore.class);
@@ -167,7 +167,7 @@ public class KVStoreBasedPortalPolicy extends Component {
      */
     @Handler
     public void onPortalPrepared(
-            PortalPrepared event, PortalSession channel) {
+            ConsolePrepared event, ConsoleSession channel) {
         channel.associated(PortalSessionDataStore.class).ifPresent(
             psess -> psess.onPortalPrepared(event, channel));
     }
@@ -180,8 +180,8 @@ public class KVStoreBasedPortalPolicy extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onPortalLayoutChanged(PortalLayoutChanged event,
-            PortalSession channel) throws IOException {
+    public void onPortalLayoutChanged(ConsoleLayoutChanged event,
+            ConsoleSession channel) throws IOException {
         Optional<PortalSessionDataStore> optDs = channel.associated(
             PortalSessionDataStore.class);
         if (optDs.isPresent()) {
@@ -200,12 +200,12 @@ public class KVStoreBasedPortalPolicy extends Component {
 
         public PortalSessionDataStore(Session session) {
             storagePath = "/"
-                + PortalUtils.userFromSession(session)
+                + WebConsoleUtils.userFromSession(session)
                     .map(UserPrincipal::toString).orElse("")
-                + "/" + KVStoreBasedPortalPolicy.class.getName();
+                + "/" + KVStoreBasedConsolePolicy.class.getName();
         }
 
-        public void onPortalReady(PortalReady event, IOSubchannel channel)
+        public void onPortalReady(ConsoleReady event, IOSubchannel channel)
                 throws InterruptedException {
             if (persisted != null) {
                 return;
@@ -234,7 +234,7 @@ public class KVStoreBasedPortalPolicy extends Component {
         @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
             "PMD.AvoidInstantiatingObjectsInLoops" })
         public void onPortalPrepared(
-                PortalPrepared event, IOSubchannel channel) {
+                ConsolePrepared event, IOSubchannel channel) {
             if (persisted == null) {
                 // Retrieval was not successful
                 persisted = new HashMap<>();
@@ -257,17 +257,17 @@ public class KVStoreBasedPortalPolicy extends Component {
                 });
 
             // Update layout
-            channel.respond(new LastPortalLayout(
+            channel.respond(new LastConsoleLayout(
                 previewLayout, tabsLayout, xtraInfo));
 
             // Restore portlets
             for (String portletId : tabsLayout) {
-                fire(new RenderPortletRequest(
+                fire(new RenderComponentRequest(
                     event.event().renderSupport(), portletId,
                     RenderMode.asSet(RenderMode.View)), channel);
             }
             for (String portletId : previewLayout) {
-                fire(new RenderPortletRequest(
+                fire(new RenderComponentRequest(
                     event.event().renderSupport(), portletId,
                     RenderMode.asSet(RenderMode.Preview,
                         RenderMode.Foreground)),
@@ -275,7 +275,7 @@ public class KVStoreBasedPortalPolicy extends Component {
             }
         }
 
-        public void onPortalLayoutChanged(PortalLayoutChanged event,
+        public void onPortalLayoutChanged(ConsoleLayoutChanged event,
                 IOSubchannel channel) throws IOException {
             persisted.put("previewLayout", event.previewLayout());
             persisted.put("tabsLayout", event.tabsLayout());

@@ -74,19 +74,19 @@ import org.jgrapes.webcon.base.ResourceResult;
  * @startuml ResourceResponseSeq.svg
  * hide footbox
  * 
- * activate Portal
+ * activate WebConsole
  * actor Framework
- * Portal -> ResourceProvider: ResourceRequest
+ * WebConsole -> ResourceProvider: ResourceRequest
  * activate ResourceProvider
  * deactivate ResourceProvider
- * deactivate Portal
- * Framework -> Portal: ResourceRequestCompleted
- * activate Portal
- * Portal -> Browser: "Response Header"
+ * deactivate WebConsole
+ * Framework -> WebConsole: ResourceRequestCompleted
+ * activate WebConsole
+ * WebConsole -> Browser: "Response Header"
  * loop until end of data
- *     Portal -> Browser: Output
- *     Portal -> Browser: "Response body"
- *     deactivate Portal
+ *     WebConsole -> Browser: Output
+ *     WebConsole -> Browser: "Response body"
+ *     deactivate WebConsole
  * end loop
  * deactivate ResourceProvider
  * deactivate Browser
@@ -95,17 +95,17 @@ import org.jgrapes.webcon.base.ResourceResult;
  * @startuml ResourceResponseSelfSeq.svg
  * hide footbox
  * 
- * activate Portal
+ * activate WebConsole
  * actor Framework
- * Portal -> ResourceProvider: ResourceRequest
+ * WebConsole -> ResourceProvider: ResourceRequest
  * activate ResourceProvider
- * Framework -> Portal: ResourceRequestCompleted
- * deactivate Portal
+ * Framework -> WebConsole: ResourceRequestCompleted
+ * deactivate WebConsole
  * ResourceProvider -> Browser: "Response Header"
  * loop until end of data
  *     ResourceProvider -> Browser: Output
  *     ResourceProvider -> Browser: "Response body"
- *     deactivate Portal
+ *     deactivate WebConsole
  * end loop
  * deactivate ResourceProvider
  * deactivate Browser

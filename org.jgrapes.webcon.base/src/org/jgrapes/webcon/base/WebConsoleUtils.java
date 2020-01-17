@@ -37,9 +37,9 @@ import org.jgrapes.http.Session;
 /**
  * 
  */
-public final class PortalUtils {
+public final class WebConsoleUtils {
 
-    private PortalUtils() {
+    private WebConsoleUtils() {
     }
 
     /**
@@ -110,8 +110,8 @@ public final class PortalUtils {
         String newQuery = oldQuery.entrySet().stream()
             .map(entry -> entry.getValue().stream()
                 .map(
-                    value -> PortalUtils.isoEncode(entry.getKey()) + "="
-                        + PortalUtils.isoEncode(value))
+                    value -> WebConsoleUtils.isoEncode(entry.getKey()) + "="
+                        + WebConsoleUtils.isoEncode(value))
                 .collect(Collectors.joining("&")))
             .collect(Collectors.joining("&"));
         // When constructing the new URI, we cannot pass the newQuery

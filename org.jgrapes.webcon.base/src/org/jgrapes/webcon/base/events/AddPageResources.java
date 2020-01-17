@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import org.jdrupes.json.JsonArray;
 import org.jdrupes.json.JsonObject;
 import org.jgrapes.webcon.base.PageResourceProvider;
-import org.jgrapes.webcon.base.freemarker.FreeMarkerPortalWeblet;
+import org.jgrapes.webcon.base.freemarker.FreeMarkerConsoleWeblet;
 
 /**
  * Adds `<link .../>`, `<style>...</style>` or `<script ...></script>` nodes
@@ -45,7 +45,7 @@ import org.jgrapes.webcon.base.freemarker.FreeMarkerPortalWeblet;
  * 
  * The sequence of events is shown in the diagram.
  * 
- * ![Portal Ready Event Sequence](AddToHead.svg)
+ * ![WebConsole Ready Event Sequence](AddToHead.svg)
  * 
  * See {@link ResourceRequest} for details about the processing
  * of the {@link PageResourceRequest}.
@@ -73,7 +73,7 @@ import org.jgrapes.webcon.base.freemarker.FreeMarkerPortalWeblet;
  * names provided by loading the script resource. The name(s) must match
  * the name(s) used in the {@link AddPageResources} request generated
  * by the {@link PageResourceProvider} for the pre-loaded resource(s).
- * Here's an example (for a portal using the {@link FreeMarkerPortalWeblet}
+ * Here's an example (for a portal using the {@link FreeMarkerConsoleWeblet}
  * to generate the initial portal page):
  * ```html
  * {@code <}script data-jgp-provides="jquery"
@@ -85,26 +85,26 @@ import org.jgrapes.webcon.base.freemarker.FreeMarkerPortalWeblet;
  * hide footbox
  * 
  * activate Browser
- * Browser -> Portal: "portalReady"
+ * Browser -> WebConsole: "portalReady"
  * deactivate Browser
- * activate Portal
- * Portal -> PageResourceProvider: PortalReady 
+ * activate WebConsole
+ * WebConsole -> PageResourceProvider: ConsoleReady 
  * activate PageResourceProvider
- * PageResourceProvider -> Portal: AddPageResources
+ * PageResourceProvider -> WebConsole: AddPageResources
  * deactivate PageResourceProvider
- * Portal -> Browser: "addPageResource"
- * deactivate Portal
+ * WebConsole -> Browser: "addPageResource"
+ * deactivate WebConsole
  * activate Browser
- * deactivate Portal
- * Browser -> Portal: "GET <page resource URI>"
- * activate Portal
- * Portal -> PageResourceProvider: PageResourceRequest
- * deactivate Portal
+ * deactivate WebConsole
+ * Browser -> WebConsole: "GET <page resource URI>"
+ * activate WebConsole
+ * WebConsole -> PageResourceProvider: PageResourceRequest
+ * deactivate WebConsole
  * activate PageResourceProvider
  * deactivate PageResourceProvider
  * @enduml
  */
-public class AddPageResources extends PortalCommand {
+public class AddPageResources extends ConsoleCommand {
 
     private final List<ScriptResource> scriptResources = new ArrayList<>();
     private final List<URI> cssUris = new ArrayList<>();

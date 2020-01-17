@@ -28,14 +28,14 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.webcon.base.ConsoleSession;
 import org.jgrapes.webcon.base.PageResourceProvider;
-import org.jgrapes.webcon.base.PortalSession;
 import org.jgrapes.webcon.base.events.AddPageResources;
-import org.jgrapes.webcon.base.events.PortalReady;
 import org.jgrapes.webcon.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webcon.base.events.ConsoleReady;
 
 /**
- * Provider for the JGrapes Portal Components.
+ * Provider for the JGrapes WebConsole Components.
  */
 public class JgpComponentsProvider extends PageResourceProvider {
 
@@ -52,7 +52,7 @@ public class JgpComponentsProvider extends PageResourceProvider {
     }
 
     /**
-     * On {@link PortalReady}, fire the appropriate {@link AddPageResources}.
+     * On {@link ConsoleReady}, fire the appropriate {@link AddPageResources}.
      *
      * @param event the event
      * @param portalSession the portal session
@@ -62,7 +62,7 @@ public class JgpComponentsProvider extends PageResourceProvider {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    public void onPortalReady(PortalReady event, PortalSession portalSession)
+    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         portalSession.respond(new AddPageResources()

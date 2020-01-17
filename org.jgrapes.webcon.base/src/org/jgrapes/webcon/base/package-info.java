@@ -22,30 +22,30 @@
  * 
  * [TOC formatted]
  *
- * Portal Components
+ * WebConsole Components
  * -----------------
  *
- * ### Portal and PortalWeblet 
+ * ### WebConsole and ConsoleWeblet 
  * 
- * The {@link org.jgrapes.webcon.base.Portal} component 
+ * The {@link org.jgrapes.webcon.base.WebConsole} component 
  * is conceptually the main component of the portal. It exchanges events 
  * with the portlets and helper components, using a channel that is 
  * independent of the channel used for the communication with the browser.
  *
- * The {@link org.jgrapes.webcon.base.Portal} component is automatically
+ * The {@link org.jgrapes.webcon.base.WebConsole} component is automatically
  * instantiated as a child component of a 
- * {@link org.jgrapes.webcon.base.PortalWeblet} which handles the 
+ * {@link org.jgrapes.webcon.base.ConsoleWeblet} which handles the 
  * communication with the {@link org.jgrapes.http.HttpServer} and thus
  * with the browser. You can think of the 
- * {@link org.jgrapes.webcon.base.PortalWeblet}/{@link org.jgrapes.webcon.base.Portal}
+ * {@link org.jgrapes.webcon.base.ConsoleWeblet}/{@link org.jgrapes.webcon.base.WebConsole}
  * pair as a gateway that translates the Input/Output related events on the 
  * HTTP/WebSocket side to portal/portlet related events on the portlet side and 
  * vice versa.
  * 
- * ![Portal Structure](PortalStructure.svg)
+ * ![WebConsole Structure](PortalStructure.svg)
  * 
  * In the browser, the portal is implemented as a single page 
- * application. The {@link org.jgrapes.webcon.base.PortalWeblet} provides
+ * application. The {@link org.jgrapes.webcon.base.ConsoleWeblet} provides
  * an initial HTML document that implements the basic structure of
  * the portal. Aside from additional HTTP requests for static resources
  * like JavaScript libraries, CSS, images etc. all information is
@@ -67,13 +67,13 @@
  * 
  * ### Portlets
  * 
- * Portlet components represent available portlet types. If a 
+ * ConsoleComponent components represent available portlet types. If a 
  * portlet is actually used (instantiated) in the portal, and state
  * is associated with this instance or instances have to be tracked,
  * the portlet has to create and maintain a server side representation
  * of the instance. How this is done is completely up to the portlet. 
  * A common approach, which is supported by the portlet base class 
- * {@link org.jgrapes.webcon.base.AbstractPortlet}, is shown in the 
+ * {@link org.jgrapes.webcon.base.AbstractComponent}, is shown in the 
  * diagram above. 
  * 
  * Using this approach, the portlet creates a portlet data object 
@@ -91,12 +91,12 @@
  * to its display on the portal page will be discussed later, after
  * all components and their interactions have been introduced.
  * 
- * ### Portal Policies
+ * ### WebConsole Policies
  * 
- * Portal policy components are responsible for establishing the initial
+ * WebConsole policy components are responsible for establishing the initial
  * set of portlets shown after the portal page has loaded. Usually,
  * there will be a portal policy component that restores the layout from the
- * previous session. {@link org.jgrapes.webcon.base.KVStoreBasedPortalPolicy}
+ * previous session. {@link org.jgrapes.webcon.base.KVStoreBasedConsolePolicy}
  * is an example of such a component.
  * 
  * There can be more than one portal policy component. A common use case
@@ -104,10 +104,10 @@
  * and another component that ensures that the portal is not empty when
  * a new session is initially created. The demo includes such a component.
  * 
- * Portal Session Startup
+ * WebConsole Session Startup
  * ----------------------
  * 
- * ### Portal Page Loading
+ * ### WebConsole Page Loading
  * 
  * The following diagram shows the start of a portal session 
  * up to the exchange of the first messages on the web socket connection.
@@ -117,36 +117,36 @@
  * After the portal page has loaded and the web socket connection has been
  * established, all information is exchanged using 
  * [JSON RPC notifications](http://www.jsonrpc.org/specification#notification). 
- * The {@link org.jgrapes.webcon.base.PortalWeblet} processes 
+ * The {@link org.jgrapes.webcon.base.ConsoleWeblet} processes 
  * {@link org.jgrapes.io.events.Input} events with serialized JSON RPC 
  * data from the web socket channel until the complete JSON RPC notification 
  * has been received. The notification
  * (a {@link org.jgrapes.webcon.base.events.JsonInput} from the servers point 
  * of view) is then fired on the associated
- * {@link org.jgrapes.webcon.base.PortalSession} channel, which allows it to 
+ * {@link org.jgrapes.webcon.base.ConsoleSession} channel, which allows it to 
  * be intercepted by additional components. Usually, however, it is 
- * handled by the {@link org.jgrapes.webcon.base.Portal} that converts it 
+ * handled by the {@link org.jgrapes.webcon.base.WebConsole} that converts it 
  * to a higher level event that is again fired on the
- * {@link org.jgrapes.webcon.base.PortalSession} channel.
+ * {@link org.jgrapes.webcon.base.ConsoleSession} channel.
  * 
  * Components such as portlets or portal policies respond by sending 
- * {@link org.jgrapes.webcon.base.events.PortalCommand}s on the
- * {@link org.jgrapes.webcon.base.PortalSession} channel as responses.
- * The {@link org.jgrapes.webcon.base.events.PortalCommand}s are handled 
- * by the {@link org.jgrapes.webcon.base.PortalWeblet} which serializes 
+ * {@link org.jgrapes.webcon.base.events.ConsoleCommand}s on the
+ * {@link org.jgrapes.webcon.base.ConsoleSession} channel as responses.
+ * The {@link org.jgrapes.webcon.base.events.ConsoleCommand}s are handled 
+ * by the {@link org.jgrapes.webcon.base.ConsoleWeblet} which serializes 
  * the data and sends it to the websocket using 
  * {@link org.jgrapes.io.events.Output} events.
  * 
- * ### Portal Session Preparation and Configuration
+ * ### WebConsole Session Preparation and Configuration
  * 
  * The diagram below shows the complete mandatory sequence of events 
  * following the portal ready message. The diagram uses a 
  * simplified version of the sequence diagram that combines the 
- * {@link org.jgrapes.webcon.base.PortalWeblet} and the 
- * {@link org.jgrapes.webcon.base.Portal} into a single object and leaves out the
+ * {@link org.jgrapes.webcon.base.ConsoleWeblet} and the 
+ * {@link org.jgrapes.webcon.base.WebConsole} into a single object and leaves out the
  * details about the JSON serialization/deserialization.
  * 
- * ![Portal Ready Event Sequence](PortalReadySeq.svg)
+ * ![WebConsole Ready Event Sequence](PortalReadySeq.svg)
  * 
  * The remaining part of this section provides an overview of the 
  * preparation and configuration sequence. Detailed information 
@@ -159,46 +159,46 @@
  * The preparation sequence starts with 
  * {@link org.jgrapes.webcon.base.events.AddPageResources} events fired 
  * by the {@link org.jgrapes.webcon.base.PageResourceProvider} components
- * in response to the {@link org.jgrapes.webcon.base.events.PortalReady} event.
+ * in response to the {@link org.jgrapes.webcon.base.events.ConsoleReady} event.
  * These cause the portal page to load additional, global resources.
  * 
  * In parallel (also in response to the 
- * {@link org.jgrapes.webcon.base.events.PortalReady} event), each portlet 
- * component fires an {@link org.jgrapes.webcon.base.events.AddPortletType} event.
+ * {@link org.jgrapes.webcon.base.events.ConsoleReady} event), each portlet 
+ * component fires an {@link org.jgrapes.webcon.base.events.AddComponentType} event.
  * This cause the portal page in the browser to register the portlet type 
  * in the portal's menu of instantiable portlets and to load any additionally 
  * required resources.
  * 
  * When all previously mentioned events have
  * been processed, the portal is considered prepared for usage and a
- * {@link org.jgrapes.webcon.base.events.PortalPrepared} event is generated
+ * {@link org.jgrapes.webcon.base.events.ConsolePrepared} event is generated
  * (by the framework as {@link org.jgrapes.core.CompletionEvent} of the
- * {@link org.jgrapes.webcon.base.events.PortalReady} event). This causes
+ * {@link org.jgrapes.webcon.base.events.ConsoleReady} event). This causes
  * the portal policy to send the last known layout to the portal page
  * in the browser and to send 
- * {@link org.jgrapes.webcon.base.events.RenderPortletRequest} events 
+ * {@link org.jgrapes.webcon.base.events.RenderComponentRequest} events 
  * for all portlets (portlet instances) in that last known layout.
  * These are the same events as those sent by the browser
  * when the user adds a new portlet instance to the portal page.
  * The portal policy thus "replays" the creation of the portlets.
  * 
- * As completion event of the {@link org.jgrapes.webcon.base.events.PortalPrepared}
+ * As completion event of the {@link org.jgrapes.webcon.base.events.ConsolePrepared}
  * event, the framework generates a 
- * {@link org.jgrapes.webcon.base.events.PortalConfigured} event which is sent to
+ * {@link org.jgrapes.webcon.base.events.ConsoleConfigured} event which is sent to
  * the portal, indicating that it is now ready for use.
  * 
- * Portal Session Use
+ * WebConsole Session Use
  * ------------------
  * 
  * After the portal session has been configured, the system usually
  * waits for input from the user. Changes of the layout of the
  * portal page result in events such as 
- * {@link org.jgrapes.webcon.base.events.AddPortletRequest},
- * {@link org.jgrapes.webcon.base.events.DeletePortletRequest} and
- * {@link org.jgrapes.webcon.base.events.RenderPortletRequest}.
+ * {@link org.jgrapes.webcon.base.events.AddComponentRequest},
+ * {@link org.jgrapes.webcon.base.events.DeleteComponentRequest} and
+ * {@link org.jgrapes.webcon.base.events.RenderComponentRequest}.
  * 
  * Actions on portlets trigger JSON messages that result in
- * {@link org.jgrapes.webcon.base.events.NotifyPortletModel} events
+ * {@link org.jgrapes.webcon.base.events.NotifyComponentModel} events
  * that are processed by the respective portlet component. If,
  * due to the results of the action, the representation of the
  * portlet on the portal page must be updated, the portlet 
@@ -209,19 +209,19 @@
  * can also be sent unsolicitedly by portlet components if
  * the model data changes independent of user actions.
  * 
- * Writing a Portlet
+ * Writing a ConsoleComponent
  * -----------------
  * 
  * Portlets are components that consume and produce events. They
  * don't have to implement a specific interface. Rather they have
  * exhibit a specific behavior that can be derived from the
  * descriptions above. The documentation of the base class
- * {@link org.jgrapes.webcon.base.AbstractPortlet} summarizes
+ * {@link org.jgrapes.webcon.base.AbstractComponent} summarizes
  * the responsibilities of a portal component.
  * 
  * Portlets consist of (at least one) Java class and HTML generated
  * by this class. Optionally, a portlet can contribute style information
- * and JavaScript (see {@link org.jgrapes.webcon.base.events.AddPortletType}).
+ * and JavaScript (see {@link org.jgrapes.webcon.base.events.AddComponentType}).
  * It may (and should) make use of the styles and 
  * <a href="jsdoc/module-portal-base-resource_jgportal.html">functions</a> 
  * provided by the portal.
@@ -233,19 +233,19 @@
  * 
  * component Browser
  * 
- * package "Conceptual Portal\n(Portal Gateway)" {
- *    class Portal
- * 	  class PortalWeblet
+ * package "Conceptual WebConsole\n(WebConsole Gateway)" {
+ *    class WebConsole
+ * 	  class ConsoleWeblet
  * 
- *    Portal "1" -left- "1" PortalWeblet
+ *    WebConsole "1" -left- "1" ConsoleWeblet
  * }
  * 
- * PortalWeblet "*" -left- "*" Browser
+ * ConsoleWeblet "*" -left- "*" Browser
  * 
  * together {
  * 
- *   Portal "1" -right- "1" PortletB
- *   Portal "1" -right- "1" PortletA
+ *   WebConsole "1" -right- "1" PortletB
+ *   WebConsole "1" -right- "1" PortletA
  * 
  *   class PortletAData {
  *     -portletId: String
@@ -263,98 +263,98 @@
  *   PortletBData "*" -up-* "1" Session
  * }
  * 
- * Portal "1" -down- "*" PageResourceProvider
- * Portal "1" -down- "*" PortalPolicy
+ * WebConsole "1" -down- "*" PageResourceProvider
+ * WebConsole "1" -down- "*" PortalPolicy
  * 
  * @enduml
  * 
  * @startuml PortalBootSeq.svg
  * hide footbox
  * 
- * Browser -> PortalWeblet: "GET <portal URL>"
- * activate PortalWeblet
- * PortalWeblet -> Browser: "HTML document"
- * deactivate PortalWeblet
+ * Browser -> ConsoleWeblet: "GET <portal URL>"
+ * activate ConsoleWeblet
+ * ConsoleWeblet -> Browser: "HTML document"
+ * deactivate ConsoleWeblet
  * activate Browser
- * Browser -> PortalWeblet: "GET <resource1 URL>"
- * activate PortalWeblet
- * PortalWeblet -> Browser: Resource
- * deactivate PortalWeblet
- * Browser -> PortalWeblet: "GET <resource2 URL>"
- * activate PortalWeblet
- * PortalWeblet -> Browser: Resource
- * deactivate PortalWeblet
- * Browser -> PortalWeblet: "GET <Upgrade to WebSocket>"
- * activate PortalWeblet
+ * Browser -> ConsoleWeblet: "GET <resource1 URL>"
+ * activate ConsoleWeblet
+ * ConsoleWeblet -> Browser: Resource
+ * deactivate ConsoleWeblet
+ * Browser -> ConsoleWeblet: "GET <resource2 URL>"
+ * activate ConsoleWeblet
+ * ConsoleWeblet -> Browser: Resource
+ * deactivate ConsoleWeblet
+ * Browser -> ConsoleWeblet: "GET <Upgrade to WebSocket>"
+ * activate ConsoleWeblet
  * loop while request data
- *     Browser -> PortalWeblet: Input (JSON RPC)
+ *     Browser -> ConsoleWeblet: Input (JSON RPC)
  * end
  * deactivate Browser
- * PortalWeblet -> Portal: JsonInput("portalReady")
- * deactivate PortalWeblet
- * activate Portal
- * Portal -> PortalPolicy: PortalReady
- * deactivate Portal
+ * ConsoleWeblet -> WebConsole: JsonInput("portalReady")
+ * deactivate ConsoleWeblet
+ * activate WebConsole
+ * WebConsole -> PortalPolicy: ConsoleReady
+ * deactivate WebConsole
  * activate PortalPolicy
- * PortalPolicy -> PortalWeblet: LastPortalLayout
+ * PortalPolicy -> ConsoleWeblet: LastConsoleLayout
  * deactivate PortalPolicy
- * activate PortalWeblet
+ * activate ConsoleWeblet
  * loop while request data
- *     PortalWeblet -> Browser: Output (JSON RPC)
+ *     ConsoleWeblet -> Browser: Output (JSON RPC)
  * end
- * deactivate PortalWeblet
+ * deactivate ConsoleWeblet
  * @enduml
  * 
  * @startuml PortalReadySeq.svg
  * hide footbox
  * 
- * Browser -> Portal: "portalReady"
- * activate Portal
+ * Browser -> WebConsole: "portalReady"
+ * activate WebConsole
  * 
  * par
  * 
  *     loop for all page resource providers
- *         Portal -> PageResourceProviderX: PortalReady
+ *         WebConsole -> PageResourceProviderX: ConsoleReady
  *         activate PageResourceProviderX
- *         PageResourceProviderX -> Portal: AddPageResources
+ *         PageResourceProviderX -> WebConsole: AddPageResources
  *         deactivate PageResourceProviderX
- *         activate Portal
- *         Portal -> Browser: "addPageResources"
- *         deactivate Portal
+ *         activate WebConsole
+ *         WebConsole -> Browser: "addPageResources"
+ *         deactivate WebConsole
  *     end
  * 
  *     loop for all portlets
- *         Portal -> PortletX: PortalReady
+ *         WebConsole -> PortletX: ConsoleReady
  *         activate PortletX
- *         PortletX -> Portal: AddPortletType 
+ *         PortletX -> WebConsole: AddComponentType 
  *         deactivate PortletX
- *         activate Portal
- *         Portal -> Browser: "addPortletType"
- *         deactivate Portal
+ *         activate WebConsole
+ *         WebConsole -> Browser: "addPortletType"
+ *         deactivate WebConsole
  *     end
  * 
  * end
  * 
  * actor Framework
- * Framework -> PortalPolicy: PortalPrepared
- * deactivate Portal
+ * Framework -> PortalPolicy: ConsolePrepared
+ * deactivate WebConsole
  * activate PortalPolicy
- * PortalPolicy -> Portal: LastPortalLayout
- * Portal -> Browser: "lastPortalLayout"
+ * PortalPolicy -> WebConsole: LastConsoleLayout
+ * WebConsole -> Browser: "lastPortalLayout"
  * loop for all portlets to be displayed
- *     PortalPolicy -> PortletX: RenderPortletRequest
+ *     PortalPolicy -> PortletX: RenderComponentRequest
  *     activate PortletX
- *     PortletX -> Portal: RenderPortlet
+ *     PortletX -> WebConsole: RenderComponent
  *     deactivate PortletX
- *     activate Portal
- *     Portal -> Browser: "renderPortlet"
- *     deactivate Portal
+ *     activate WebConsole
+ *     WebConsole -> Browser: "renderPortlet"
+ *     deactivate WebConsole
  * end
  * deactivate PortalPolicy
- * Framework -> Portal: PortalConfigured
- * activate Portal
- * Portal -> Browser: "portalConfigured"
- * deactivate Portal
+ * Framework -> WebConsole: ConsoleConfigured
+ * activate WebConsole
+ * WebConsole -> Browser: "portalConfigured"
+ * deactivate WebConsole
  * 
  * @enduml
  */

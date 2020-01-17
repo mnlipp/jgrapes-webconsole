@@ -20,13 +20,13 @@ package org.jgrapes.webcon.base.events;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.CompletionEvent;
-import org.jgrapes.webcon.base.PortalWeblet;
+import org.jgrapes.webcon.base.ConsoleWeblet;
 
 /**
  * Indicates that the processing of a {@link SetLocale} event has been 
  * completed.
  * 
- * This  event is handled by the {@link PortalWeblet} which
+ * This  event is handled by the {@link ConsoleWeblet} which
  * checks if a reload is required and triggers it.
  */
 public class SetLocaleCompleted extends CompletionEvent<SetLocale> {

@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jdrupes.json.JsonArray;
+import org.jgrapes.webcon.base.ConsoleComponent.RenderMode;
 import org.jgrapes.webcon.base.RenderSupport;
-import org.jgrapes.webcon.base.Portlet.RenderMode;
 import org.jgrapes.webcon.base.events.AddPageResources.ScriptResource;
 
 /**
@@ -42,15 +42,15 @@ import org.jgrapes.webcon.base.events.AddPageResources.ScriptResource;
  * 
  * This in turn causes the browser to issue `GET` requests that
  * (usually) refer to the portlet's resources. These requests are
- * converted to {@link PortletResourceRequest}s by the portal and
+ * converted to {@link ComponentResourceRequest}s by the portal and
  * sent to the portlets, which must respond to the requests.
  * 
  * The sequence of events is shown in the diagram.
  * 
- * ![Portal Ready Event Sequence](AddPortletTypeSeq.svg)
+ * ![WebConsole Ready Event Sequence](AddPortletTypeSeq.svg)
  * 
  * See {@link ResourceRequest} for details about the processing
- * of the {@link PortletResourceRequest}.
+ * of the {@link ComponentResourceRequest}.
  * 
  * A portelt's JavaScript may (and probably must) make use of
  * the functions provided by the portal page. See the 
@@ -61,28 +61,28 @@ import org.jgrapes.webcon.base.events.AddPageResources.ScriptResource;
  * hide footbox
  * 
  * activate Browser
- * Browser -> Portal: "portalReady"
+ * Browser -> WebConsole: "portalReady"
  * deactivate Browser
- * activate Portal
- * Portal -> PortletX: PortalReady 
- * deactivate Portal
+ * activate WebConsole
+ * WebConsole -> PortletX: ConsoleReady 
+ * deactivate WebConsole
  * activate PortletX
- * PortletX -> Portal: AddPortletType 
+ * PortletX -> WebConsole: AddComponentType 
  * deactivate PortletX
- * activate Portal
- * Portal -> Browser: "addPortletType"
+ * activate WebConsole
+ * WebConsole -> Browser: "addPortletType"
  * activate Browser
- * deactivate Portal
- * Browser -> Portal: "GET <portlet resource URI>"
- * activate Portal
- * Portal -> PortletX: PortletResourceRequest
+ * deactivate WebConsole
+ * Browser -> WebConsole: "GET <portlet resource URI>"
+ * activate WebConsole
+ * WebConsole -> PortletX: ComponentResourceRequest
  * deactivate Browser
  * activate PortletX
  * deactivate PortletX
  * 
  * @enduml
  */
-public class AddPortletType extends PortalCommand {
+public class AddComponentType extends ConsoleCommand {
 
     private final String portletType;
     private Map<Locale, String> displayNames = Collections.emptyMap();
@@ -96,7 +96,7 @@ public class AddPortletType extends PortalCommand {
      * @param portletType a unique id for the portlet type (usually
      * the class name)
      */
-    public AddPortletType(String portletType) {
+    public AddComponentType(String portletType) {
         this.portletType = portletType;
     }
 
@@ -115,7 +115,7 @@ public class AddPortletType extends PortalCommand {
      * @param displayNames the display names
      * @return the event for easy chaining
      */
-    public AddPortletType setDisplayNames(Map<Locale, String> displayNames) {
+    public AddComponentType setDisplayNames(Map<Locale, String> displayNames) {
         this.displayNames = displayNames;
         return this;
     }
@@ -138,7 +138,7 @@ public class AddPortletType extends PortalCommand {
      * @param mode the mode
      * @return the event for easy chaining
      */
-    public AddPortletType addRenderMode(RenderMode mode) {
+    public AddComponentType addRenderMode(RenderMode mode) {
         if (renderModes == null) {
             renderModes = new ArrayList<>();
         }
@@ -164,7 +164,7 @@ public class AddPortletType extends PortalCommand {
      * @param scriptResource the script resource
      * @return the event for easy chaining
      */
-    public AddPortletType addScript(ScriptResource scriptResource) {
+    public AddComponentType addScript(ScriptResource scriptResource) {
         scriptResources.add(scriptResource);
         return this;
     }
@@ -177,7 +177,7 @@ public class AddPortletType extends PortalCommand {
      * @param uri the URI
      * @return the event for easy chaining
      */
-    public AddPortletType addCss(RenderSupport renderSupport, URI uri) {
+    public AddComponentType addCss(RenderSupport renderSupport, URI uri) {
         cssUris.add(renderSupport.portletResource(portletType(), uri));
         return this;
     }

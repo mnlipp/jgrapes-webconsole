@@ -25,11 +25,11 @@ import java.util.List;
 import org.jdrupes.json.JsonObject;
 
 /**
- * Sent by the server to the browser in response to {@link PortalPrepared} 
+ * Sent by the server to the browser in response to {@link ConsolePrepared} 
  * (see this event's description for details). The provided information
  * enables the portal to restore portlets to their previous positions.
  */
-public class LastPortalLayout extends PortalCommand {
+public class LastConsoleLayout extends ConsoleCommand {
 
     private final List<String> previewLayout;
     private final List<String> tabsLayout;
@@ -39,7 +39,7 @@ public class LastPortalLayout extends PortalCommand {
      * @param previewLayout
      * @param tabsLayout
      */
-    public LastPortalLayout(List<String> previewLayout,
+    public LastConsoleLayout(List<String> previewLayout,
             List<String> tabsLayout, JsonObject xtraInfo) {
         this.previewLayout = previewLayout;
         this.tabsLayout = tabsLayout;

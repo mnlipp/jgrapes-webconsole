@@ -55,12 +55,12 @@ import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.util.ByteBufferOutputStream;
-import org.jgrapes.webcon.base.PortalWeblet;
+import org.jgrapes.webcon.base.ConsoleWeblet;
 
 /**
  * 
  */
-public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
+public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
 
     public static final String UTF_8 = "utf-8";
     /**
@@ -76,13 +76,13 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
      * @param portalPrefix the portal prefix
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public FreeMarkerPortalWeblet(Channel webletChannel, Channel portalChannel,
+    public FreeMarkerConsoleWeblet(Channel webletChannel, Channel portalChannel,
             URI portalPrefix) {
         super(webletChannel, portalChannel, portalPrefix);
         freeMarkerConfig = new Configuration(Configuration.VERSION_2_3_26);
         List<TemplateLoader> loaders = new ArrayList<>();
         Class<?> clazz = getClass();
-        while (!clazz.equals(FreeMarkerPortalWeblet.class)) {
+        while (!clazz.equals(FreeMarkerConsoleWeblet.class)) {
             loaders.add(new ClassTemplateLoader(clazz.getClassLoader(),
                 clazz.getPackage().getName().replace('.', '/')));
             clazz = clazz.getSuperclass();
@@ -103,7 +103,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
      * @param path the path
      * @return the free marker portal weblet
      */
-    public FreeMarkerPortalWeblet
+    public FreeMarkerConsoleWeblet
             prependClassTemplateLoader(ClassLoader classloader, String path) {
         List<TemplateLoader> loaders = new ArrayList<>();
         loaders.add(new ClassTemplateLoader(classloader, path));
@@ -125,7 +125,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
      * @param clazz the clazz
      * @return the free marker portal weblet
      */
-    public FreeMarkerPortalWeblet prependClassTemplateLoader(Class<?> clazz) {
+    public FreeMarkerConsoleWeblet prependClassTemplateLoader(Class<?> clazz) {
         return prependClassTemplateLoader(clazz.getClassLoader(),
             clazz.getPackage().getName().replace('.', '/'));
     }
@@ -163,7 +163,7 @@ public abstract class FreeMarkerPortalWeblet extends PortalWeblet {
     protected Map<String, Object> expandPortalModel(
             Map<String, Object> model, Request.In.Get event,
             UUID portalSessionId) {
-        // Portal Session UUID
+        // WebConsole Session UUID
         model.put("portalSessionId", portalSessionId.toString());
 
         // Add locale

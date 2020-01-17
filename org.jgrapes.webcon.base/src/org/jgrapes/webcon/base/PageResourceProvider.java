@@ -27,14 +27,14 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.webcon.base.events.AddPageResources;
+import org.jgrapes.webcon.base.events.ConsoleReady;
 import org.jgrapes.webcon.base.events.PageResourceRequest;
-import org.jgrapes.webcon.base.events.PortalReady;
 
 /**
  * Base class for implementing components that add resources to
  * the `<HEAD>` section of the portal page.
  * 
- * A derived class must implement a handler for {@link PortalReady}
+ * A derived class must implement a handler for {@link ConsoleReady}
  * that generates an {@link AddPageResources} event. This
  * will, in turn, result in a {@link PageResourceRequest} that must
  * be handled by the derived class' 

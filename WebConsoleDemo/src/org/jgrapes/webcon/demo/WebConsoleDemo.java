@@ -56,12 +56,12 @@ import org.jgrapes.io.util.PermitsPool;
 import org.jgrapes.net.SslCodec;
 import org.jgrapes.net.TcpServer;
 import org.jgrapes.util.PreferencesStore;
-import org.jgrapes.webcon.base.KVStoreBasedPortalPolicy;
+import org.jgrapes.webcon.base.BrowserLocalBackedKVStore;
+import org.jgrapes.webcon.base.ConsoleWeblet;
+import org.jgrapes.webcon.base.KVStoreBasedConsolePolicy;
 import org.jgrapes.webcon.base.PageResourceProviderFactory;
-import org.jgrapes.webcon.base.Portal;
-import org.jgrapes.webcon.base.PortalLocalBackedKVStore;
-import org.jgrapes.webcon.base.PortalWeblet;
 import org.jgrapes.webcon.base.PortletComponentFactory;
+import org.jgrapes.webcon.base.WebConsole;
 import org.jgrapes.webcon.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.webcon.jqueryui.JQueryUiWeblet;
 import org.jgrapes.webcon.vuejs.VueJsPortalWeblet;
@@ -143,17 +143,17 @@ public class WebConsoleDemo extends Component implements BundleActivator {
     }
 
     private void createJQueryUiPortal() throws URISyntaxException {
-        PortalWeblet portalWeblet
+        ConsoleWeblet portalWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
                 new URI("/jqportal/")))
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependPortalResourceProvider(WebConsoleDemo.class);
-        Portal portal = portalWeblet.portal();
+        WebConsole portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
-        portal.attach(new PortalLocalBackedKVStore(
+        portal.attach(new BrowserLocalBackedKVStore(
             portal, portalWeblet.prefix().getPath()));
-        portal.attach(new KVStoreBasedPortalPolicy(portal));
-        portal.attach(new NewPortalSessionPolicy(portal));
+        portal.attach(new KVStoreBasedConsolePolicy(portal));
+        portal.attach(new NewConsoleSessionPolicy(portal));
         // Add all available page resource providers
         portal.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, portal));
@@ -163,18 +163,18 @@ public class WebConsoleDemo extends Component implements BundleActivator {
     }
 
     private void createBootstrap4Portal() throws URISyntaxException {
-        PortalWeblet portalWeblet
+        ConsoleWeblet portalWeblet
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
                 new URI("/b4portal/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependPortalResourceProvider(WebConsoleDemo.class);
-        Portal portal = portalWeblet.portal();
+        WebConsole portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
-        portal.attach(new PortalLocalBackedKVStore(
+        portal.attach(new BrowserLocalBackedKVStore(
             portal, portalWeblet.prefix().getPath()));
-        portal.attach(new KVStoreBasedPortalPolicy(portal));
-        portal.attach(new NewPortalSessionPolicy(portal));
+        portal.attach(new KVStoreBasedConsolePolicy(portal));
+        portal.attach(new NewConsoleSessionPolicy(portal));
         // Add all available page resource providers
         portal.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, portal,
@@ -193,18 +193,18 @@ public class WebConsoleDemo extends Component implements BundleActivator {
     }
 
     private void createVueJsPortal() throws URISyntaxException {
-        PortalWeblet portalWeblet
+        ConsoleWeblet portalWeblet
             = app.attach(new VueJsPortalWeblet(app.channel(), Channel.SELF,
                 new URI("/vjportal/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependPortalResourceProvider(WebConsoleDemo.class);
-        Portal portal = portalWeblet.portal();
+        WebConsole portal = portalWeblet.portal();
         portalWeblet.setPortalSessionInactivityTimeout(300000);
-        portal.attach(new PortalLocalBackedKVStore(
+        portal.attach(new BrowserLocalBackedKVStore(
             portal, portalWeblet.prefix().getPath()));
-        portal.attach(new KVStoreBasedPortalPolicy(portal));
-        portal.attach(new NewPortalSessionPolicy(portal));
+        portal.attach(new KVStoreBasedConsolePolicy(portal));
+        portal.attach(new NewConsoleSessionPolicy(portal));
         // Add all available page resource providers
         portal.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, portal,

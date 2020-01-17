@@ -23,17 +23,17 @@ import java.net.URI;
 import org.jgrapes.core.Channel;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
-import org.jgrapes.webcon.base.Portal;
-import org.jgrapes.webcon.base.freemarker.FreeMarkerPortalWeblet;
+import org.jgrapes.webcon.base.WebConsole;
+import org.jgrapes.webcon.base.freemarker.FreeMarkerConsoleWeblet;
 
 /**
  * Provides resources using {@link Request}/{@link Response}
  * events. Some resource requests (page resource, portlet resource)
- * are forwarded via the {@link Portal} component to the portlets.
+ * are forwarded via the {@link WebConsole} component to the portlets.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods" })
-public class Bootstrap4Weblet extends FreeMarkerPortalWeblet {
+public class Bootstrap4Weblet extends FreeMarkerConsoleWeblet {
 
     /**
      * Instantiates a new Bootstrap 3 UI weblet.

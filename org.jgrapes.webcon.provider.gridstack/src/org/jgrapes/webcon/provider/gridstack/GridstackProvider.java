@@ -30,11 +30,11 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.webcon.base.ConsoleSession;
 import org.jgrapes.webcon.base.PageResourceProvider;
-import org.jgrapes.webcon.base.PortalSession;
 import org.jgrapes.webcon.base.events.AddPageResources;
-import org.jgrapes.webcon.base.events.PortalReady;
 import org.jgrapes.webcon.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webcon.base.events.ConsoleReady;
 
 /**
  * Provider for the [Gridstack.js](http://gridstackjs.com/) library.
@@ -73,7 +73,7 @@ public class GridstackProvider extends PageResourceProvider {
     }
 
     /**
-     * On {@link PortalReady}, fire the appropriate {@link AddPageResources}.
+     * On {@link ConsoleReady}, fire the appropriate {@link AddPageResources}.
      *
      * @param event the event
      * @param portalSession the portal session
@@ -83,7 +83,7 @@ public class GridstackProvider extends PageResourceProvider {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    public void onPortalReady(PortalReady event, PortalSession portalSession)
+    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()

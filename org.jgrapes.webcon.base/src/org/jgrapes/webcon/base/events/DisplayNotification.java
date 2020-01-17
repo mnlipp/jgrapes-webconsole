@@ -30,7 +30,7 @@ import java.util.Map;
  * The event triggers the creation of a notification widget in the
  * portal page. 
  */
-public class DisplayNotification extends PortalCommand {
+public class DisplayNotification extends ConsoleCommand {
 
     private String content;
     private Map<String, Object> options;

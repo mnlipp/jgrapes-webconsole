@@ -42,7 +42,7 @@ import org.jgrapes.webcon.base.events.JsonInput;
 public class WebSocketInputReader extends Thread {
 
     private final WeakReference<EventPipeline> pipelineRef;
-    private final WeakReference<PortalSession> channelRef;
+    private final WeakReference<ConsoleSession> channelRef;
     private PipedWriter decodeIn;
     private Reader jsonSource;
 
@@ -95,7 +95,7 @@ public class WebSocketInputReader extends Thread {
      * @param portalChannel the portal channel
      */
     public WebSocketInputReader(EventPipeline wsInPipeline,
-            PortalSession portalChannel) {
+            ConsoleSession portalChannel) {
         pipelineRef
             = new WebSocketInputReader.RefWithThread<>(wsInPipeline, this);
         channelRef
@@ -156,12 +156,12 @@ public class WebSocketInputReader extends Thread {
                 break;
             }
             // Fully decoded JSON available.
-            PortalSession portalSession = channelRef.get();
+            ConsoleSession portalSession = channelRef.get();
             EventPipeline eventPipeline = pipelineRef.get();
             if (eventPipeline == null || portalSession == null) {
                 break;
             }
-            // Portal session established, check for special disconnect
+            // WebConsole session established, check for special disconnect
             if ("disconnect".equals(rpc.method())
                 && portalSession.portalSessionId().equals(
                     rpc.params().asString(0))) {

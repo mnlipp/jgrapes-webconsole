@@ -35,27 +35,27 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
-import org.jgrapes.webcon.base.AbstractPortlet;
-import org.jgrapes.webcon.base.PortalSession;
-import org.jgrapes.webcon.base.PortalUtils;
-import org.jgrapes.webcon.base.Portlet.RenderMode;
-import org.jgrapes.webcon.base.events.AddPortletRequest;
-import org.jgrapes.webcon.base.events.AddPortletType;
-import org.jgrapes.webcon.base.events.DeletePortlet;
-import org.jgrapes.webcon.base.events.DeletePortletRequest;
-import org.jgrapes.webcon.base.events.NotifyPortletModel;
-import org.jgrapes.webcon.base.events.NotifyPortletView;
-import org.jgrapes.webcon.base.events.PortalReady;
-import org.jgrapes.webcon.base.events.RenderPortletRequest;
-import org.jgrapes.webcon.base.events.RenderPortletRequestBase;
+import org.jgrapes.webcon.base.AbstractComponent;
+import org.jgrapes.webcon.base.ConsoleComponent.RenderMode;
+import org.jgrapes.webcon.base.ConsoleSession;
+import org.jgrapes.webcon.base.WebConsoleUtils;
+import org.jgrapes.webcon.base.events.AddComponentRequest;
+import org.jgrapes.webcon.base.events.AddComponentType;
 import org.jgrapes.webcon.base.events.AddPageResources.ScriptResource;
-import org.jgrapes.webcon.base.freemarker.FreeMarkerPortlet;
+import org.jgrapes.webcon.base.events.ConsoleReady;
+import org.jgrapes.webcon.base.events.DeleteComponent;
+import org.jgrapes.webcon.base.events.DeleteComponentRequest;
+import org.jgrapes.webcon.base.events.NotifyComponentModel;
+import org.jgrapes.webcon.base.events.NotifyPortletView;
+import org.jgrapes.webcon.base.events.RenderComponentRequest;
+import org.jgrapes.webcon.base.events.RenderComponentRequestBase;
+import org.jgrapes.webcon.base.freemarker.FreeMarkerComponent;
 
 /**
  * 
  */
 public class SysInfoPortlet
-        extends FreeMarkerPortlet<SysInfoPortlet.SysInfoModel> {
+        extends FreeMarkerComponent<SysInfoPortlet.SysInfoModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);
@@ -79,7 +79,7 @@ public class SysInfoPortlet
     }
 
     /**
-     * On {@link PortalReady}, fire the {@link AddPortletType}.
+     * On {@link ConsoleReady}, fire the {@link AddComponentType}.
      *
      * @param event the event
      * @param portalSession the portal session
@@ -90,18 +90,18 @@ public class SysInfoPortlet
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onPortalReady(PortalReady event, PortalSession portalSession)
+    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add SysInfoPortlet resources to page
-        portalSession.respond(new AddPortletType(type())
+        portalSession.respond(new AddComponentType(type())
             .setDisplayNames(
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addScript(new ScriptResource()
                 .setRequires("chart.js")
                 .setScriptUri(event.renderSupport().portletResource(
                     type(), "SysInfo-functions.ftl.js")))
-            .addCss(event.renderSupport(), PortalUtils.uriFromPath(
+            .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "SysInfo-style.css")));
     }
 
@@ -130,8 +130,8 @@ public class SysInfoPortlet
     }
 
     @Override
-    public String doAddPortlet(AddPortletRequest event,
-            PortalSession portalSession) throws Exception {
+    public String doAddPortlet(AddComponentRequest event,
+            ConsoleSession portalSession) throws Exception {
         String portletId = generatePortletId();
         SysInfoModel portletModel = putInSession(
             portalSession.browserSession(), new SysInfoModel(portletId));
@@ -145,15 +145,15 @@ public class SysInfoPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderPortletRequest event,
-            PortalSession portalSession, String portletId,
+    protected void doRenderPortlet(RenderComponentRequest event,
+            ConsoleSession portalSession, String portletId,
             SysInfoModel portletModel) throws Exception {
         renderPortlet(event, portalSession, portletModel);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private void renderPortlet(RenderPortletRequestBase<?> event,
-            PortalSession portalSession, SysInfoModel portletModel)
+    private void renderPortlet(RenderComponentRequestBase<?> event,
+            ConsoleSession portalSession, SysInfoModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderPreview()) {
@@ -179,7 +179,7 @@ public class SysInfoPortlet
         }
     }
 
-    private void updateView(PortalSession portalSession, String portletId) {
+    private void updateView(ConsoleSession portalSession, String portletId) {
         if (!portalSession.isConnected()) {
             return;
         }
@@ -197,10 +197,10 @@ public class SysInfoPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeletePortletRequest event,
-            PortalSession portalSession, String portletId,
+    protected void doDeletePortlet(DeleteComponentRequest event,
+            ConsoleSession portalSession, String portletId,
             SysInfoModel retrievedState) throws Exception {
-        portalSession.respond(new DeletePortlet(portletId));
+        portalSession.respond(new DeleteComponent(portletId));
     }
 
     /**
@@ -211,7 +211,7 @@ public class SysInfoPortlet
      * @param portalSession the portal session
      */
     @Handler
-    public void onUpdate(Update event, PortalSession portalSession) {
+    public void onUpdate(Update event, ConsoleSession portalSession) {
         for (String portletId : portletIds(portalSession)) {
             updateView(portalSession, portletId);
         }
@@ -219,8 +219,8 @@ public class SysInfoPortlet
 
     @Override
     @SuppressWarnings("PMD.DoNotCallGarbageCollectionExplicitly")
-    protected void doNotifyPortletModel(NotifyPortletModel event,
-            PortalSession portalSession, SysInfoModel portletState)
+    protected void doNotifyPortletModel(NotifyComponentModel event,
+            ConsoleSession portalSession, SysInfoModel portletState)
             throws Exception {
         event.stop();
         System.gc();
@@ -233,7 +233,8 @@ public class SysInfoPortlet
      * The portlet's model.
      */
     @SuppressWarnings("serial")
-    public static class SysInfoModel extends AbstractPortlet.PortletBaseModel {
+    public static class SysInfoModel
+            extends AbstractComponent.PortletBaseModel {
 
         /**
          * Creates a new model with the given type and id.

@@ -61,30 +61,30 @@ import org.jgrapes.io.events.Output;
 import org.jgrapes.io.util.CharBufferWriter;
 import org.jgrapes.io.util.LinkedIOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreQuery;
+import org.jgrapes.webcon.base.events.ComponentResourceRequest;
+import org.jgrapes.webcon.base.events.ConsoleCommand;
+import org.jgrapes.webcon.base.events.ConsoleReady;
 import org.jgrapes.webcon.base.events.PageResourceRequest;
-import org.jgrapes.webcon.base.events.PortalCommand;
-import org.jgrapes.webcon.base.events.PortalReady;
-import org.jgrapes.webcon.base.events.PortletResourceRequest;
 import org.jgrapes.webcon.base.events.ResourceRequestCompleted;
 import org.jgrapes.webcon.base.events.SetLocale;
 import org.jgrapes.webcon.base.events.SetLocaleCompleted;
-import org.jgrapes.webcon.base.events.SimplePortalCommand;
+import org.jgrapes.webcon.base.events.SimpleConsoleCommand;
 
 /**
  * Provides resources using {@link Request}/{@link Response}
  * events. Some resource requests (page resource, portlet resource)
- * are forwarded via the {@link Portal} component to the portlets.
+ * are forwarded via the {@link WebConsole} component to the portlets.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods" })
-public abstract class PortalWeblet extends Component {
+public abstract class ConsoleWeblet extends Component {
 
     private static final String PORTAL_SESSION_IDS
-        = PortalWeblet.class.getName() + ".portalSessionId";
+        = ConsoleWeblet.class.getName() + ".portalSessionId";
     private static final String UTF_8 = "utf-8";
 
     private URI prefix;
-    private final Portal portal;
+    private final WebConsole portal;
     private ResourcePattern requestPattern;
 
     private final RenderSupport renderSupport = new RenderSupportImpl();
@@ -96,7 +96,7 @@ public abstract class PortalWeblet extends Component {
     private List<Class<?>> portalResourceSearchSeq;
     private final List<Class<?>> resourceClasses = new ArrayList<>();
     private final ResourceBundle.Control resourceControl
-        = new PortalResourceBundleControl(resourceClasses);
+        = new ConsoleResourceBundleControl(resourceClasses);
     private final Map<Locale, ResourceBundle> supportedLocales
         = new HashMap<>();
 
@@ -115,9 +115,9 @@ public abstract class PortalWeblet extends Component {
      * @param portalPrefix the portal prefix
      */
     @SuppressWarnings("PMD.UseStringBufferForStringAppends")
-    public PortalWeblet(Channel webletChannel, Channel portalChannel,
+    public ConsoleWeblet(Channel webletChannel, Channel portalChannel,
             URI portalPrefix) {
-        this(webletChannel, new Portal(portalChannel));
+        this(webletChannel, new WebConsole(portalChannel));
 
         prefix = URI.create(portalPrefix.getPath().endsWith("/")
             ? portalPrefix.getPath()
@@ -145,7 +145,7 @@ public abstract class PortalWeblet extends Component {
                 0, prefix.getPath().length() - 1));
     }
 
-    private PortalWeblet(Channel webletChannel, Portal portal) {
+    private ConsoleWeblet(Channel webletChannel, WebConsole portal) {
         super(webletChannel, ChannelReplacements.create()
             .add(PortalChannel.class, portal.channel()));
         this.portal = portal;
@@ -155,7 +155,7 @@ public abstract class PortalWeblet extends Component {
     /**
      * Return the list of classes that form the current portal
      * weblet implementation. This consists of all classes from
-     * `getClass()` up to `PortalWeblet.class`. 
+     * `getClass()` up to `ConsoleWeblet.class`. 
      *
      * @return the list
      */
@@ -165,7 +165,7 @@ public abstract class PortalWeblet extends Component {
         Class<?> derivative = getClass();
         while (true) {
             result.add(derivative);
-            if (derivative.equals(PortalWeblet.class)) {
+            if (derivative.equals(ConsoleWeblet.class)) {
                 break;
             }
             derivative = derivative.getSuperclass();
@@ -191,11 +191,11 @@ public abstract class PortalWeblet extends Component {
     }
 
     /**
-     * Returns the automatically generated {@link Portal} component.
+     * Returns the automatically generated {@link WebConsole} component.
      *
      * @return the portal
      */
-    public Portal portal() {
+    public WebConsole portal() {
         return portal;
     }
 
@@ -207,7 +207,7 @@ public abstract class PortalWeblet extends Component {
      * @param timeout the timeout in milli seconds
      * @return the portal view for easy chaining
      */
-    public PortalWeblet setPortalSessionNetworkTimeout(long timeout) {
+    public ConsoleWeblet setPortalSessionNetworkTimeout(long timeout) {
         psNetworkTimeout = timeout;
         return this;
     }
@@ -230,7 +230,7 @@ public abstract class PortalWeblet extends Component {
      * @param interval the interval in milliseconds
      * @return the portal view for easy chaining
      */
-    public PortalWeblet setPortalSessionRefreshInterval(long interval) {
+    public ConsoleWeblet setPortalSessionRefreshInterval(long interval) {
         psRefreshInterval = interval;
         return this;
     }
@@ -253,7 +253,7 @@ public abstract class PortalWeblet extends Component {
      * @param timeout the timeout in milliseconds
      * @return the portal view for easy chaining
      */
-    public PortalWeblet setPortalSessionInactivityTimeout(long timeout) {
+    public ConsoleWeblet setPortalSessionInactivityTimeout(long timeout) {
         psInactivityTimeout = timeout;
         return this;
     }
@@ -296,14 +296,14 @@ public abstract class PortalWeblet extends Component {
 
     /**
      * Prepends a class to the list of classes used to lookup portal
-     * resources. See {@link PortalResourceBundleControl#newBundle}.
+     * resources. See {@link ConsoleResourceBundleControl#newBundle}.
      * Affects the content of the resource bundle returned by
      * {@link #portalResourceBundle(Locale)}. 
      * 
      * @param cls the class to prepend.
      * @return the portal weblet for easy chaining
      */
-    public PortalWeblet prependResourceBundleProvider(Class<?> cls) {
+    public ConsoleWeblet prependResourceBundleProvider(Class<?> cls) {
         resourceClasses.add(0, cls);
         updateSupportedLocales();
         return this;
@@ -314,13 +314,13 @@ public abstract class PortalWeblet extends Component {
      */
     protected final void updateSupportedLocales() {
         supportedLocales.clear();
-        ResourceBundle.clearCache(PortalWeblet.class.getClassLoader());
+        ResourceBundle.clearCache(ConsoleWeblet.class.getClassLoader());
         for (Locale locale : Locale.getAvailableLocales()) {
             if (locale.getLanguage().equals("")) {
                 continue;
             }
             ResourceBundle bundle = ResourceBundle.getBundle("l10n", locale,
-                PortalWeblet.class.getClassLoader(), resourceControl);
+                ConsoleWeblet.class.getClassLoader(), resourceControl);
             if (bundle.getLocale().equals(locale)) {
                 supportedLocales.put(locale, bundle);
             }
@@ -335,7 +335,7 @@ public abstract class PortalWeblet extends Component {
      */
     public ResourceBundle portalResourceBundle(Locale locale) {
         return ResourceBundle.getBundle("l10n", locale,
-            PortalWeblet.class.getClassLoader(), resourceControl);
+            ConsoleWeblet.class.getClassLoader(), resourceControl);
     }
 
     /**
@@ -422,7 +422,7 @@ public abstract class PortalWeblet extends Component {
             return;
         case "portal-base-resource":
             ResponseCreationSupport.sendStaticContent(event, channel,
-                path -> PortalWeblet.class.getResource(requestParts[1]),
+                path -> ConsoleWeblet.class.getResource(requestParts[1]),
                 null);
             return;
         case "page-resource":
@@ -480,7 +480,7 @@ public abstract class PortalWeblet extends Component {
      * @param cls the class to prepend
      * @return the portal weblet for easy chaining
      */
-    public PortalWeblet prependPortalResourceProvider(Class<?> cls) {
+    public ConsoleWeblet prependPortalResourceProvider(Class<?> cls) {
         portalResourceSearchSeq.add(0, cls);
         return this;
     }
@@ -489,7 +489,7 @@ public abstract class PortalWeblet extends Component {
             String resource) throws InterruptedException {
         // Send events to providers on portal's channel
         PageResourceRequest pageResourceRequest = new PageResourceRequest(
-            PortalUtils.uriFromPath(resource),
+            WebConsoleUtils.uriFromPath(resource),
             event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
                 Converters.DATE_TIME).orElse(null),
             event.httpRequest(), channel, event.associated(Session.class).get(),
@@ -506,15 +506,16 @@ public abstract class PortalWeblet extends Component {
             String resPath = resource.getPath();
             int sep = resPath.indexOf('/');
             // Send events to portlets on portal's channel
-            PortletResourceRequest portletRequest = new PortletResourceRequest(
-                resPath.substring(0, sep),
-                new URI(null, null, resPath.substring(sep + 1),
-                    event.requestUri().getQuery(),
-                    event.requestUri().getFragment()),
-                event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
-                    Converters.DATE_TIME).orElse(null),
-                event.httpRequest(), channel,
-                event.associated(Session.class).get(), renderSupport());
+            ComponentResourceRequest portletRequest
+                = new ComponentResourceRequest(
+                    resPath.substring(0, sep),
+                    new URI(null, null, resPath.substring(sep + 1),
+                        event.requestUri().getQuery(),
+                        event.requestUri().getFragment()),
+                    event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
+                        Converters.DATE_TIME).orElse(null),
+                    event.httpRequest(), channel,
+                    event.associated(Session.class).get(), renderSupport());
             // Make session available (associate with event, this is not
             // a websocket request).
             event.associated(Session.class).ifPresent(
@@ -611,7 +612,7 @@ public abstract class PortalWeblet extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(channels = PortalChannel.class, priority = 10000)
-    public void onSetLocale(SetLocale event, PortalSession channel)
+    public void onSetLocale(SetLocale event, ConsoleSession channel)
             throws InterruptedException, IOException {
         channel.setLocale(event.locale());
         Session session = channel.browserSession();
@@ -624,7 +625,7 @@ public abstract class PortalWeblet extends Component {
             }
         }
         if (event.reload()) {
-            channel.respond(new SimplePortalCommand("reload"));
+            channel.respond(new SimpleConsoleCommand("reload"));
         }
     }
 
@@ -637,9 +638,9 @@ public abstract class PortalWeblet extends Component {
      */
     @Handler(channels = PortalChannel.class)
     public void onSetLocaleCompleted(SetLocaleCompleted event,
-            PortalSession channel) {
+            ConsoleSession channel) {
         if (event.event().reload()) {
-            channel.respond(new SimplePortalCommand("reload"));
+            channel.respond(new SimpleConsoleCommand("reload"));
         }
     }
 
@@ -665,7 +666,7 @@ public abstract class PortalWeblet extends Component {
             @SuppressWarnings("resource")
             CharBufferWriter out = new CharBufferWriter(wsChannel,
                 wsChannel.responsePipeline()).suppressClose();
-            new SimplePortalCommand("reload").toJson(out);
+            new SimpleConsoleCommand("reload").toJson(out);
             out.close();
             event.stop();
             return;
@@ -675,14 +676,14 @@ public abstract class PortalWeblet extends Component {
         final Session browserSession
             = wsChannel.associated(Session.class).get();
         // Reuse old portal session if still available
-        PortalSession portalSession = Optional.ofNullable(portalSessionIds[1])
-            .flatMap(opsId -> PortalSession.lookup(opsId))
+        ConsoleSession portalSession = Optional.ofNullable(portalSessionIds[1])
+            .flatMap(opsId -> ConsoleSession.lookup(opsId))
             .map(session -> session.replaceId(portalSessionIds[0]))
-            .orElse(PortalSession.lookupOrCreate(portalSessionIds[0],
+            .orElse(ConsoleSession.lookupOrCreate(portalSessionIds[0],
                 portal, supportedLocales.keySet(), psNetworkTimeout))
             .setUpstreamChannel(wsChannel)
             .setSession(browserSession);
-        wsChannel.setAssociated(PortalSession.class, portalSession);
+        wsChannel.setAssociated(ConsoleSession.class, portalSession);
         // Channel now used as JSON input
         wsChannel.setAssociated(this, new WebSocketInputReader(
             event.processedBy().get(), portalSession));
@@ -725,7 +726,7 @@ public abstract class PortalWeblet extends Component {
             wsChannel.setAssociated(this, null);
             optWsInputReader.get().close();
         }
-        wsChannel.associated(PortalSession.class).ifPresent(session -> {
+        wsChannel.associated(ConsoleSession.class).ifPresent(session -> {
             // Restore channel to normal mode, see onPortalReady
             session.responsePipeline().restrictEventSource(null);
             session.disconnected();
@@ -733,15 +734,16 @@ public abstract class PortalWeblet extends Component {
     }
 
     /**
-     * Handles the {@link PortalReady} event.
+     * Handles the {@link ConsoleReady} event.
      *
      * @param event the event
      * @param portalSession the portal session
      */
     @Handler(channels = PortalChannel.class)
-    public void onPortalReady(PortalReady event, PortalSession portalSession) {
+    public void onPortalReady(ConsoleReady event,
+            ConsoleSession portalSession) {
         String principal
-            = PortalUtils.userFromSession(portalSession.browserSession())
+            = WebConsoleUtils.userFromSession(portalSession.browserSession())
                 .map(UserPrincipal::toString).orElse("");
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             "/" + principal + "/themeProvider", portalSession);
@@ -758,7 +760,7 @@ public abstract class PortalWeblet extends Component {
      */
     @Handler(channels = PortalChannel.class, priority = -1000)
     public void onPortalCommand(
-            PortalCommand event, PortalSession channel)
+            ConsoleCommand event, ConsoleSession channel)
             throws InterruptedException, IOException {
         IOSubchannel upstream = channel.upstreamChannel();
         @SuppressWarnings("resource")
@@ -769,7 +771,7 @@ public abstract class PortalWeblet extends Component {
 
     /**
      * The channel used to send {@link PageResourceRequest}s and
-     * {@link PortletResourceRequest}s to the portlets (via the
+     * {@link ComponentResourceRequest}s to the portlets (via the
      * portal).
      */
     public class PortalResourceChannel extends LinkedIOSubchannel {
@@ -795,13 +797,14 @@ public abstract class PortalWeblet extends Component {
         @Override
         public URI portalBaseResource(URI uri) {
             return prefix
-                .resolve(PortalUtils.uriFromPath("portal-base-resource/"))
+                .resolve(WebConsoleUtils.uriFromPath("portal-base-resource/"))
                 .resolve(uri);
         }
 
         @Override
         public URI portalResource(URI uri) {
-            return prefix.resolve(PortalUtils.uriFromPath("portal-resource/"))
+            return prefix
+                .resolve(WebConsoleUtils.uriFromPath("portal-resource/"))
                 .resolve(uri);
         }
 
@@ -815,7 +818,7 @@ public abstract class PortalWeblet extends Component {
          */
         @Override
         public URI portletResource(String portletType, URI uri) {
-            return prefix.resolve(PortalUtils.uriFromPath(
+            return prefix.resolve(WebConsoleUtils.uriFromPath(
                 "portlet-resource/" + portletType + "/")).resolve(uri);
         }
 
@@ -827,7 +830,7 @@ public abstract class PortalWeblet extends Component {
          */
         @Override
         public URI pageResource(URI uri) {
-            return prefix.resolve(PortalUtils.uriFromPath(
+            return prefix.resolve(WebConsoleUtils.uriFromPath(
                 "page-resource/")).resolve(uri);
         }
 

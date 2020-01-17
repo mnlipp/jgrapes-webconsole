@@ -18,16 +18,41 @@
 
 package org.jgrapes.webcon.base.events;
 
+import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Event;
 import org.jgrapes.webcon.base.RenderSupport;
 
 /**
- * A request to delete a portlet instance.
+ * A decoded notification (as defined by the JSON RPC specification) that
+ * invokes a method on a portlet model. Usually, though not necessarily,
+ * the portlet component responds by sending a
+ * {@link NotifyPortletView} to update the portlet representation.
+ * 
+ * ![Event Sequence](NotifyPortletModelSeq.svg)
+ * 
+ * @startuml NotifyPortletModelSeq.svg
+ * hide footbox
+ * 
+ * Browser -> WebConsole: "notifyPortletModel"
+ * activate WebConsole
+ * WebConsole -> ConsoleComponent: NotifyComponentModel
+ * deactivate WebConsole
+ * activate ConsoleComponent
+ * ConsoleComponent -> WebConsole: NotifyPortletView
+ * deactivate ConsoleComponent
+ * activate WebConsole
+ * WebConsole -> Browser: "notifyPortletView"
+ * deactivate WebConsole
+ * 
+ * @enduml
  */
-public class DeletePortletRequest extends Event<Void> {
+@SuppressWarnings("PMD.DataClass")
+public class NotifyComponentModel extends Event<Void> {
 
     private final RenderSupport renderSupport;
     private final String portletId;
+    private final String method;
+    private final JsonArray params;
 
     /**
      * Creates a new event.
@@ -36,11 +61,15 @@ public class DeletePortletRequest extends Event<Void> {
      * the response requires it
      * @param portletId the portlet model that the notification is 
      * directed at 
+     * @param method the method to be executed
+     * @param params parameters
      */
-    public DeletePortletRequest(RenderSupport renderSupport,
-            String portletId) {
+    public NotifyComponentModel(RenderSupport renderSupport,
+            String portletId, String method, JsonArray params) {
         this.renderSupport = renderSupport;
         this.portletId = portletId;
+        this.method = method;
+        this.params = params;
     }
 
     /**
@@ -61,4 +90,21 @@ public class DeletePortletRequest extends Event<Void> {
         return portletId;
     }
 
+    /**
+     * Returns the method.
+     * 
+     * @return the method
+     */
+    public String method() {
+        return method;
+    }
+
+    /**
+     * Returns the parameters.
+     * 
+     * @return the parameters
+     */
+    public JsonArray params() {
+        return params;
+    }
 }

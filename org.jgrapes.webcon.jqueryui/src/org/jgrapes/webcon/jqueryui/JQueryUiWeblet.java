@@ -38,25 +38,25 @@ import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webcon.base.Portal;
-import org.jgrapes.webcon.base.PortalSession;
-import org.jgrapes.webcon.base.PortalUtils;
+import org.jgrapes.webcon.base.ConsoleSession;
 import org.jgrapes.webcon.base.ResourceNotFoundException;
 import org.jgrapes.webcon.base.UserPrincipal;
+import org.jgrapes.webcon.base.WebConsole;
+import org.jgrapes.webcon.base.WebConsoleUtils;
 import org.jgrapes.webcon.base.events.JsonInput;
-import org.jgrapes.webcon.base.events.SimplePortalCommand;
-import org.jgrapes.webcon.base.freemarker.FreeMarkerPortalWeblet;
+import org.jgrapes.webcon.base.events.SimpleConsoleCommand;
+import org.jgrapes.webcon.base.freemarker.FreeMarkerConsoleWeblet;
 import org.jgrapes.webcon.jqueryui.events.SetTheme;
 import org.jgrapes.webcon.jqueryui.themes.base.Provider;
 
 /**
  * Provides resources using {@link Request}/{@link Response}
  * events. Some resource requests (page resource, portlet resource)
- * are forwarded via the {@link Portal} component to the portlets.
+ * are forwarded via the {@link WebConsole} component to the portlets.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods" })
-public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
+public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 
     private ServiceLoader<ThemeProvider> themeLoader;
     private final ThemeProvider baseTheme;
@@ -181,7 +181,7 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @Handler(channels = PortalChannel.class)
-    public void onJsonInput(JsonInput event, PortalSession channel)
+    public void onJsonInput(JsonInput event, ConsoleSession channel)
             throws InterruptedException, IOException {
         // Send events to portlets on portal's channel
         JsonArray params = event.request().params();
@@ -205,7 +205,7 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(channels = PortalChannel.class)
-    public void onSetTheme(SetTheme event, PortalSession channel)
+    public void onSetTheme(SetTheme event, ConsoleSession channel)
             throws InterruptedException, IOException {
         ThemeProvider themeProvider = StreamSupport
             .stream(themeLoader().spliterator(), false)
@@ -213,11 +213,11 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
             .orElse(baseTheme);
         channel.browserSession().put("themeProvider", themeProvider.themeId());
         channel.respond(new KeyValueStoreUpdate().update(
-            "/" + PortalUtils.userFromSession(channel.browserSession())
+            "/" + WebConsoleUtils.userFromSession(channel.browserSession())
                 .map(UserPrincipal::toString).orElse("")
                 + "/themeProvider",
             themeProvider.themeId())).get();
-        channel.respond(new SimplePortalCommand("reload"));
+        channel.respond(new SimpleConsoleCommand("reload"));
     }
 
     /**
@@ -289,7 +289,7 @@ public class JQueryUiWeblet extends FreeMarkerPortalWeblet {
 //
 //    /**
 //     * The channel used to send {@link PageResourceRequest}s and
-//     * {@link PortletResourceRequest}s to the portlets (via the
+//     * {@link ComponentResourceRequest}s to the portlets (via the
 //     * portal).
 //     */
 //    public class PortalResourceChannel extends LinkedIOSubchannel {

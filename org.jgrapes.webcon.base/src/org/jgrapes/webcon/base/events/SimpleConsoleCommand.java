@@ -26,10 +26,10 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 
 /**
- * A {@link PortalCommand} created directly from the JSON RPC method
+ * A {@link ConsoleCommand} created directly from the JSON RPC method
  * name and parameters.
  */
-public class SimplePortalCommand extends PortalCommand {
+public class SimpleConsoleCommand extends ConsoleCommand {
 
     private String method;
     private Object[] params;
@@ -40,7 +40,7 @@ public class SimplePortalCommand extends PortalCommand {
      * @param method the method
      * @param parameters the parameterss
      */
-    public SimplePortalCommand(String method, Object... parameters) {
+    public SimpleConsoleCommand(String method, Object... parameters) {
         this.method = method;
         this.params = Arrays.copyOf(parameters, parameters.length);
     }
@@ -50,7 +50,7 @@ public class SimplePortalCommand extends PortalCommand {
      *
      * @param method the method
      */
-    public SimplePortalCommand(String method) {
+    public SimpleConsoleCommand(String method) {
         this(method, new Object[0]);
     }
 

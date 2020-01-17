@@ -49,21 +49,21 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * connection between the browser and the server is lost, 
  * the portal code in the browser tries to establish a 
  * new websocket connection to the same, already
- * existing {@link PortalSession}. The {@link PortalSession} 
+ * existing {@link ConsoleSession}. The {@link ConsoleSession} 
  * object is thus independent of the websocket connection 
  * that handles the actual transfer of notifications.
  * 
- * ![Portal Session](PortalSession.svg)
+ * ![WebConsole Session](ConsoleSession.svg)
  * 
  * Because there is no reliable way to be notified when a
- * window in a browser closes, {@link PortalSession}s are
+ * window in a browser closes, {@link ConsoleSession}s are
  * discarded automatically unless {@link #refresh()} is called
  * before the timeout occurs.
  * 
- * {@link PortalSession} implements the {@link IOSubchannel}
+ * {@link ConsoleSession} implements the {@link IOSubchannel}
  * interface. This allows the instances to be used as channels
  * for exchanging portal session scoped events with the 
- * {@link Portal} component. The upstream channel
+ * {@link WebConsole} component. The upstream channel
  * (see {@link #upstreamChannel()}) is the channel of the
  * WebSocket. It may be unavailable if the connection has
  * been interrupted and not (yet) re-established.
@@ -81,19 +81,19 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * {@link #isConnected()} can be used to check the connection 
  * state.
  *  
- * As a convenience, the {@link PortalSession} provides
+ * As a convenience, the {@link ConsoleSession} provides
  * direct access to the browser session, which can 
  * usually only be obtained from the HTTP event or WebSocket
  * channel by looking for an association of type {@link Session}.
  * 
- * @startuml PortalSession.svg
- * class PortalSession {
- *  -{static}Map<String,PortalSession> portalSessions
- *  +{static}findOrCreate(String portalSessionId, Manager component): PortalSession
- *  +setTimeout(timeout: long): PortalSession
+ * @startuml ConsoleSession.svg
+ * class ConsoleSession {
+ *  -{static}Map<String,ConsoleSession> portalSessions
+ *  +{static}findOrCreate(String portalSessionId, Manager component): ConsoleSession
+ *  +setTimeout(timeout: long): ConsoleSession
  *  +refresh(): void
- *  +setUpstreamChannel(IOSubchannel upstreamChannel): PortalSession
- *  +setSession(Session browserSession): PortalSession
+ *  +setUpstreamChannel(IOSubchannel upstreamChannel): ConsoleSession
+ *  +setSession(Session browserSession): ConsoleSession
  *  +upstreamChannel(): Optional<IOSubchannel>
  *  +portalSessionId(): String
  *  +browserSession(): Session
@@ -102,26 +102,26 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * }
  * Interface IOSubchannel {
  * }
- * IOSubchannel <|.. PortalSession
+ * IOSubchannel <|.. ConsoleSession
  *
- * PortalSession "1" *-- "*" PortalSession : maintains
+ * ConsoleSession "1" *-- "*" ConsoleSession : maintains
  * 
  * package org.jgrapes.http {
  *     class Session
  * }
  * 
- * PortalSession "*" -up-> "1" Session: browser session
+ * ConsoleSession "*" -up-> "1" Session: browser session
  * @enduml
  */
-public final class PortalSession extends DefaultIOSubchannel {
+public final class ConsoleSession extends DefaultIOSubchannel {
 
-    private static Map<String, WeakReference<PortalSession>> portalSessions
+    private static Map<String, WeakReference<ConsoleSession>> portalSessions
         = new ConcurrentHashMap<>();
-    private static ReferenceQueue<PortalSession> unusedSessions
+    private static ReferenceQueue<ConsoleSession> unusedSessions
         = new ReferenceQueue<>();
 
     private String portalSessionId;
-    private final Portal portal;
+    private final WebConsole portal;
     private final Set<Locale> supportedLocales;
     private Locale locale;
     private long timeout;
@@ -133,7 +133,7 @@ public final class PortalSession extends DefaultIOSubchannel {
 
     private static void cleanUnused() {
         while (true) {
-            Reference<? extends PortalSession> unused = unusedSessions.poll();
+            Reference<? extends ConsoleSession> unused = unusedSessions.poll();
             if (unused == null) {
                 break;
             }
@@ -148,7 +148,7 @@ public final class PortalSession extends DefaultIOSubchannel {
      * @param portalSessionId the portal session id
      * @return the channel
      */
-    /* default */ static Optional<PortalSession>
+    /* default */ static Optional<ConsoleSession>
             lookup(String portalSessionId) {
         cleanUnused();
         return Optional.ofNullable(portalSessions.get(portalSessionId))
@@ -162,11 +162,11 @@ public final class PortalSession extends DefaultIOSubchannel {
      * @param portal the portal
      * @return the sets the
      */
-    public static Set<PortalSession> byPortal(Portal portal) {
+    public static Set<ConsoleSession> byPortal(WebConsole portal) {
         cleanUnused();
-        Set<PortalSession> result = new HashSet<>();
-        for (WeakReference<PortalSession> psr : portalSessions.values()) {
-            PortalSession psess = psr.get();
+        Set<ConsoleSession> result = new HashSet<>();
+        for (WeakReference<ConsoleSession> psr : portalSessions.values()) {
+            ConsoleSession psess = psr.get();
             if (psess.portal.equals(portal)) {
                 result.add(psess);
             }
@@ -186,12 +186,12 @@ public final class PortalSession extends DefaultIOSubchannel {
      * @param timeout the portal session timeout in milli seconds
      * @return the channel
      */
-    /* default */ static PortalSession lookupOrCreate(
-            String portalSessionId, Portal portal,
+    /* default */ static ConsoleSession lookupOrCreate(
+            String portalSessionId, WebConsole portal,
             Set<Locale> supportedLocales, long timeout) {
         cleanUnused();
         return portalSessions.computeIfAbsent(portalSessionId,
-            psi -> new WeakReference<>(new PortalSession(
+            psi -> new WeakReference<>(new ConsoleSession(
                 portal, supportedLocales, portalSessionId, timeout),
                 unusedSessions))
             .get();
@@ -203,7 +203,7 @@ public final class PortalSession extends DefaultIOSubchannel {
      * @param newPortalSessionId the new portal session id
      * @return the portal session
      */
-    /* default */ PortalSession replaceId(String newPortalSessionId) {
+    /* default */ ConsoleSession replaceId(String newPortalSessionId) {
         portalSessions.remove(portalSessionId);
         portalSessionId = newPortalSessionId;
         portalSessions.put(portalSessionId, new WeakReference<>(
@@ -212,7 +212,7 @@ public final class PortalSession extends DefaultIOSubchannel {
         return this;
     }
 
-    private PortalSession(Portal portal, Set<Locale> supportedLocales,
+    private ConsoleSession(WebConsole portal, Set<Locale> supportedLocales,
             String portalSessionId, long timeout) {
         super(portal.channel(), portal.newEventPipeline());
         this.portal = portal;
@@ -224,13 +224,13 @@ public final class PortalSession extends DefaultIOSubchannel {
     }
 
     /**
-     * Changes the timeout for this {@link PortalSession} to the
+     * Changes the timeout for this {@link ConsoleSession} to the
      * given value.
      * 
      * @param timeout the timeout in milli seconds
      * @return the portal session for easy chaining
      */
-    public PortalSession setTimeout(long timeout) {
+    public ConsoleSession setTimeout(long timeout) {
         this.timeout = timeout;
         timeoutTimer.reschedule(Duration.ofMillis(timeout));
         return this;
@@ -246,7 +246,7 @@ public final class PortalSession extends DefaultIOSubchannel {
     }
 
     /**
-     * Resets the {@link PortalSession}'s timeout.
+     * Resets the {@link ConsoleSession}'s timeout.
      */
     public void refresh() {
         timeoutTimer.reschedule(Duration.ofMillis(timeout));
@@ -286,13 +286,13 @@ public final class PortalSession extends DefaultIOSubchannel {
 
     /**
      * Sets or updates the upstream channel. This method should only
-     * be invoked by the creator of the {@link PortalSession}, by default
-     * the {@link PortalWeblet}.
+     * be invoked by the creator of the {@link ConsoleSession}, by default
+     * the {@link ConsoleWeblet}.
      * 
      * @param upstreamChannel the upstream channel (WebSocket connection)
      * @return the portal session for easy chaining
      */
-    public PortalSession setUpstreamChannel(IOSubchannel upstreamChannel) {
+    public ConsoleSession setUpstreamChannel(IOSubchannel upstreamChannel) {
         if (upstreamChannel == null) {
             throw new IllegalArgumentException();
         }
@@ -302,13 +302,13 @@ public final class PortalSession extends DefaultIOSubchannel {
 
     /**
      * Sets or updates associated browser session. This method should only
-     * be invoked by the creator of the {@link PortalSession}, by default
-     * the {@link PortalWeblet}.
+     * be invoked by the creator of the {@link ConsoleSession}, by default
+     * the {@link ConsoleWeblet}.
      * 
      * @param browserSession the browser session
      * @return the portal session for easy chaining
      */
-    public PortalSession setSession(Session browserSession) {
+    public ConsoleSession setSession(Session browserSession) {
         this.browserSession = browserSession;
         if (locale == null) {
             locale = browserSession.locale();
@@ -367,7 +367,7 @@ public final class PortalSession extends DefaultIOSubchannel {
      * @param locale the locale
      * @return the portal session
      */
-    public PortalSession setLocale(Locale locale) {
+    public ConsoleSession setLocale(Locale locale) {
         this.locale = locale;
         return this;
     }

@@ -20,13 +20,13 @@ package org.jgrapes.webcon.base.events;
 
 import java.util.Set;
 
+import org.jgrapes.webcon.base.ConsoleComponent.RenderMode;
 import org.jgrapes.webcon.base.RenderSupport;
-import org.jgrapes.webcon.base.Portlet.RenderMode;
 
 /**
  * Sent to the portal (server) if an existing portlet instance 
  * should be updated. The portal server usually responds with 
- * a {@link RenderPortlet} event that has as payload the
+ * a {@link RenderComponent} event that has as payload the
  * HTML that displays the portlet on the portal page.
  * 
  * ![Event Sequence](RenderPortletRequestSeq.svg)
@@ -36,20 +36,21 @@ import org.jgrapes.webcon.base.Portlet.RenderMode;
  * @startuml RenderPortletRequestSeq.svg
  * hide footbox
  * 
- * Browser -> Portal: "renderPortletRequest"
- * activate Portal
- * Portal -> Portlet: RenderPortletRequest
- * deactivate Portal
- * activate Portlet
- * Portlet -> Portal: RenderPortlet
- * deactivate Portlet
- * activate Portal
- * Portal -> Browser: "renderPortlet"
- * deactivate Portal
+ * Browser -> WebConsole: "renderPortletRequest"
+ * activate WebConsole
+ * WebConsole -> ConsoleComponent: RenderComponentRequest
+ * deactivate WebConsole
+ * activate ConsoleComponent
+ * ConsoleComponent -> WebConsole: RenderComponent
+ * deactivate ConsoleComponent
+ * activate WebConsole
+ * WebConsole -> Browser: "renderPortlet"
+ * deactivate WebConsole
  * 
  * @enduml
  */
-public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
+public class RenderComponentRequest
+        extends RenderComponentRequestBase<Boolean> {
 
     private final String portletId;
 
@@ -60,7 +61,7 @@ public class RenderPortletRequest extends RenderPortletRequestBase<Boolean> {
      * @param portletId the portlet to be updated
      * @param renderModes the render options
      */
-    public RenderPortletRequest(RenderSupport renderSupport,
+    public RenderComponentRequest(RenderSupport renderSupport,
             String portletId, Set<RenderMode> renderModes) {
         super(renderSupport, renderModes);
         this.portletId = portletId;

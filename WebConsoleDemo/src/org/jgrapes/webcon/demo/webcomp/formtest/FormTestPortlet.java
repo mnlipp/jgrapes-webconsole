@@ -37,26 +37,26 @@ import org.jgrapes.http.Session;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webcon.base.PortalSession;
-import org.jgrapes.webcon.base.PortalUtils;
+import org.jgrapes.webcon.base.AbstractComponent.PortletBaseModel;
+import org.jgrapes.webcon.base.ConsoleComponent.RenderMode;
+import org.jgrapes.webcon.base.ConsoleSession;
 import org.jgrapes.webcon.base.UserPrincipal;
-import org.jgrapes.webcon.base.AbstractPortlet.PortletBaseModel;
-import org.jgrapes.webcon.base.Portlet.RenderMode;
-import org.jgrapes.webcon.base.events.AddPortletRequest;
-import org.jgrapes.webcon.base.events.AddPortletType;
-import org.jgrapes.webcon.base.events.DeletePortlet;
-import org.jgrapes.webcon.base.events.DeletePortletRequest;
-import org.jgrapes.webcon.base.events.PortalReady;
-import org.jgrapes.webcon.base.events.RenderPortletRequest;
-import org.jgrapes.webcon.base.events.RenderPortletRequestBase;
+import org.jgrapes.webcon.base.WebConsoleUtils;
+import org.jgrapes.webcon.base.events.AddComponentRequest;
+import org.jgrapes.webcon.base.events.AddComponentType;
 import org.jgrapes.webcon.base.events.AddPageResources.ScriptResource;
-import org.jgrapes.webcon.base.freemarker.FreeMarkerPortlet;
+import org.jgrapes.webcon.base.events.ConsoleReady;
+import org.jgrapes.webcon.base.events.DeleteComponent;
+import org.jgrapes.webcon.base.events.DeleteComponentRequest;
+import org.jgrapes.webcon.base.events.RenderComponentRequest;
+import org.jgrapes.webcon.base.events.RenderComponentRequestBase;
+import org.jgrapes.webcon.base.freemarker.FreeMarkerComponent;
 
 /**
  * 
  */
 public class FormTestPortlet
-        extends FreeMarkerPortlet<PortletBaseModel> {
+        extends FreeMarkerComponent<PortletBaseModel> {
 
     private static final Set<RenderMode> MODES
         = RenderMode.asSet(RenderMode.View);
@@ -74,24 +74,24 @@ public class FormTestPortlet
     }
 
     private String storagePath(Session session) {
-        return "/" + PortalUtils.userFromSession(session)
+        return "/" + WebConsoleUtils.userFromSession(session)
             .map(UserPrincipal::toString).orElse("")
             + "/portlets/" + FormTestPortlet.class.getName() + "/";
     }
 
     @Handler
-    public void onPortalReady(PortalReady event, PortalSession portalSession)
+    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldPortlet resources to page
-        portalSession.respond(new AddPortletType(type())
+        portalSession.respond(new AddComponentType(type())
             .setDisplayNames(
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addRenderMode(RenderMode.View)
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().portletResource(type(),
                     "FormTest-functions.js")))
-            .addCss(event.renderSupport(), PortalUtils.uriFromPath(
+            .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "FormTest-style.css")));
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             storagePath(portalSession.browserSession()), portalSession);
@@ -100,7 +100,7 @@ public class FormTestPortlet
 
     @Handler
     public void onKeyValueStoreData(
-            KeyValueStoreData event, PortalSession channel)
+            KeyValueStoreData event, ConsoleSession channel)
             throws JsonDecodeException {
         if (!event.event().query()
             .equals(storagePath(channel.browserSession()))) {
@@ -114,8 +114,8 @@ public class FormTestPortlet
     }
 
     @Override
-    public String doAddPortlet(AddPortletRequest event,
-            PortalSession channel) throws Exception {
+    public String doAddPortlet(AddComponentRequest event,
+            ConsoleSession channel) throws Exception {
         String portletId = generatePortletId();
         PortletBaseModel portletModel = putInSession(
             channel.browserSession(), new PortletBaseModel(portletId));
@@ -134,14 +134,14 @@ public class FormTestPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderPortletRequest event,
-            PortalSession channel, String portletId,
+    protected void doRenderPortlet(RenderComponentRequest event,
+            ConsoleSession channel, String portletId,
             PortletBaseModel portletModel) throws Exception {
         renderPortlet(event, channel, portletModel);
     }
 
-    private void renderPortlet(RenderPortletRequestBase<?> event,
-            PortalSession channel, PortletBaseModel portletModel)
+    private void renderPortlet(RenderComponentRequestBase<?> event,
+            ConsoleSession channel, PortletBaseModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderModes().contains(RenderMode.View)) {
@@ -162,12 +162,12 @@ public class FormTestPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeletePortletRequest event,
-            PortalSession channel, String portletId,
+    protected void doDeletePortlet(DeleteComponentRequest event,
+            ConsoleSession channel, String portletId,
             PortletBaseModel portletState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
             storagePath(channel.browserSession()) + portletId));
-        channel.respond(new DeletePortlet(portletId));
+        channel.respond(new DeleteComponent(portletId));
     }
 
 }

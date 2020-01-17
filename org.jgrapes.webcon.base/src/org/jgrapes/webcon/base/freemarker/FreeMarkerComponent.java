@@ -50,21 +50,21 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.webcon.base.AbstractPortlet;
-import org.jgrapes.webcon.base.PortalSession;
+import org.jgrapes.webcon.base.AbstractComponent;
+import org.jgrapes.webcon.base.AbstractComponent.PortletBaseModel;
+import org.jgrapes.webcon.base.ConsoleSession;
 import org.jgrapes.webcon.base.RenderSupport;
 import org.jgrapes.webcon.base.ResourceByGenerator;
-import org.jgrapes.webcon.base.AbstractPortlet.PortletBaseModel;
-import org.jgrapes.webcon.base.events.PortletResourceRequest;
-import org.jgrapes.webcon.base.events.RenderPortlet;
-import org.jgrapes.webcon.base.events.RenderPortletRequest;
-import org.jgrapes.webcon.base.events.RenderPortletRequestBase;
+import org.jgrapes.webcon.base.events.ComponentResourceRequest;
+import org.jgrapes.webcon.base.events.RenderComponent;
+import org.jgrapes.webcon.base.events.RenderComponentRequest;
+import org.jgrapes.webcon.base.events.RenderComponentRequestBase;
 
 /**
  * 
  */
-public abstract class FreeMarkerPortlet<S extends Serializable>
-        extends AbstractPortlet<S> {
+public abstract class FreeMarkerComponent<S extends Serializable>
+        extends AbstractComponent<S> {
 
     @SuppressWarnings("PMD.VariableNamingConventions")
     private static final Pattern templatePattern
@@ -79,19 +79,19 @@ public abstract class FreeMarkerPortlet<S extends Serializable>
      * 
      * @param componentChannel
      */
-    public FreeMarkerPortlet(Channel componentChannel) {
+    public FreeMarkerComponent(Channel componentChannel) {
         super(componentChannel);
     }
 
     /**
-     * Like {@link #FreeMarkerPortlet(Channel)}, but supports
+     * Like {@link #FreeMarkerComponent(Channel)}, but supports
      * the specification of channel replacements.
      * 
      * @param componentChannel
      * @param channelReplacements the channel replacements (see
      * {@link Component})
      */
-    public FreeMarkerPortlet(Channel componentChannel,
+    public FreeMarkerComponent(Channel componentChannel,
             ChannelReplacements channelReplacements) {
         super(componentChannel, channelReplacements);
     }
@@ -144,7 +144,7 @@ public abstract class FreeMarkerPortlet<S extends Serializable>
                         throw new TemplateModelException("Not a string.");
                     }
                     return renderSupport.portletResource(
-                        FreeMarkerPortlet.this.getClass().getName(),
+                        FreeMarkerComponent.this.getClass().getName(),
                         ((SimpleScalar) args.get(0)).getAsString())
                         .getRawPath();
                 }
@@ -199,7 +199,7 @@ public abstract class FreeMarkerPortlet<S extends Serializable>
      * Build a freemarker model for the current request.
      * 
      * This model provides:
-     *  * The `event` property (of type {@link RenderPortletRequest}).
+     *  * The `event` property (of type {@link RenderComponentRequest}).
      *  * The `portlet` property (of type {@link PortletBaseModel}).
      *  * The function `_Id(String base)` that creates a unique
      *    id for an HTML element by appending the portlet id to the 
@@ -211,7 +211,7 @@ public abstract class FreeMarkerPortlet<S extends Serializable>
      * @return the model
      */
     protected Map<String, Object> fmPortletModel(
-            RenderPortletRequestBase<?> event,
+            RenderComponentRequestBase<?> event,
             IOSubchannel channel, PortletBaseModel portletModel) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
@@ -242,8 +242,8 @@ public abstract class FreeMarkerPortlet<S extends Serializable>
      * @param portletModel the portlet model
      * @return the model
      */
-    protected Map<String, Object> fmModel(RenderPortletRequestBase<?> event,
-            PortalSession channel, PortletBaseModel portletModel) {
+    protected Map<String, Object> fmModel(RenderComponentRequestBase<?> event,
+            ConsoleSession channel, PortletBaseModel portletModel) {
         final Map<String, Object> model
             = fmSessionModel(channel.browserSession());
         model.put("locale", channel.locale());
@@ -264,7 +264,7 @@ public abstract class FreeMarkerPortlet<S extends Serializable>
      * @param channel the channel
      */
     @Override
-    protected void doGetResource(PortletResourceRequest event,
+    protected void doGetResource(ComponentResourceRequest event,
             IOSubchannel channel) {
         if (!templatePattern.matcher(event.resourceUri().getPath()).matches()) {
             super.doGetResource(event, channel);
@@ -301,7 +301,7 @@ public abstract class FreeMarkerPortlet<S extends Serializable>
     /**
      * Specifies how to render portlet content using a template.
      */
-    public static class RenderPortletFromTemplate extends RenderPortlet {
+    public static class RenderPortletFromTemplate extends RenderComponent {
 
         private final Future<String> content;
 
@@ -314,7 +314,7 @@ public abstract class FreeMarkerPortlet<S extends Serializable>
          * @param template the template
          * @param dataModel the data model
          */
-        public RenderPortletFromTemplate(RenderPortletRequestBase<?> request,
+        public RenderPortletFromTemplate(RenderComponentRequestBase<?> request,
                 Class<?> portletClass, String portletId, Template template,
                 Object dataModel) {
             super(portletClass, portletId);

@@ -23,9 +23,9 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
- * Contains the result from {@link PortalResourceBundleControl#newBundle}.
+ * Contains the result from {@link ConsoleResourceBundleControl#newBundle}.
  */
-public class PortalResourceBundle extends ResourceBundle {
+public class ConsoleResourceBundle extends ResourceBundle {
 
     private final Properties properties;
 
@@ -34,7 +34,7 @@ public class PortalResourceBundle extends ResourceBundle {
      *
      * @param properties the properties
      */
-    public PortalResourceBundle(Properties properties) {
+    public ConsoleResourceBundle(Properties properties) {
         super();
         this.properties = properties;
     }
