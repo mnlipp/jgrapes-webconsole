@@ -1,0 +1,6 @@
+//createMapFile//resources/org/jgrapes/portal/jqueryui/functions.js=true
+//includeSource//resources/org/jgrapes/portal/jqueryui/functions.js=true
+//minifier//resources/org/jgrapes/portal/jqueryui/functions.js=GoogleClosureComiler
+//minifier//resources/org/jgrapes/webconsole/bootstrap4/portal.css=YuiCompressor
+//optWhitespaceOnly//resources/org/jgrapes/portal/jqueryui/functions.js=optSimple
+eclipse.preferences.version=1

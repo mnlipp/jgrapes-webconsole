@@ -1,4 +1,4 @@
-if (project.name != "org.jgrapes.webcon.base") {
+if (project.name != "org.jgrapes.webconsole.base") {
     task javadocJar(type: Jar) {
         from ("${project.rootDir}/misc/javadoc-redirect")
         classifier "javadoc"

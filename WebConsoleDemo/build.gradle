@@ -17,15 +17,15 @@ repositories {
 dependencies {
 
     compile 'org.osgi:osgi.core:6.0.0'
-    compile project(':org.jgrapes.webcon.vuejs')
-    compile project(':org.jgrapes.webcon.bootstrap4')
-    compile project(':org.jgrapes.webcon.jqueryui')
-    runtimeOnly project(':org.jgrapes.webcon.provider.chartjs')
-    runtimeOnly project(':org.jgrapes.webcon.provider.datatables')
-    runtimeOnly project(':org.jgrapes.webcon.provider.markdownit')
-    runtimeOnly project(':org.jgrapes.webcon.provider.vuejs')
-    runtimeOnly project(':org.jgrapes.webcomp.sysinfo')
-    runtimeOnly project(':org.jgrapes.webcomp.markdowndisplay')
+    compile project(':org.jgrapes.webconsole.vuejs')
+    compile project(':org.jgrapes.webconsole.bootstrap4')
+    compile project(':org.jgrapes.webconsole.jqueryui')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.datatables')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.vuejs')
+    runtimeOnly project(':org.jgrapes.webconlet.sysinfo')
+    runtimeOnly project(':org.jgrapes.webconlet.markdowndisplay')
     runtimeOnly 'org.jgrapes:org.jgrapes.portal.jqueryui.themes.blacktie:0.18.0'
     runtimeOnly 'org.jgrapes:org.jgrapes.portal.jqueryui.themes.blitzer:0.18.0'
     runtimeOnly 'org.jgrapes:org.jgrapes.portal.jqueryui.themes.cupertino:0.18.0'

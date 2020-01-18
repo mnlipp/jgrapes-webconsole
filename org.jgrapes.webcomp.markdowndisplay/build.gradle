@@ -1,9 +1,0 @@
-dependencies {
-	
-	compile project(':org.jgrapes.webcon.base')
-	
-}
-
-ext.releaseVersion = "0.28.0"
-ext.isSnapshot = true
-version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")

@@ -30,7 +30,7 @@
     osgi.identity;filter:='(osgi.identity=org.jgrapes.portal.providers.chartjs)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.portal.providers.datatables)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.portal.providers.markdownit)',\
-    osgi.identity;filter:='(osgi.identity=org.jgrapes.webcon.demo.webcomp.helloworld)',\
+    osgi.identity;filter:='(osgi.identity=org.jgrapes.webconsole.demo.conlet.helloworld)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.portlets.sysinfo)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.portlets.markdowndisplay)'
 -runprogramargs: -console

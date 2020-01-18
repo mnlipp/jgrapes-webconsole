@@ -1,0 +1,32 @@
+Bundle-Name: JGrapes Bootstrap 4 Portal
+Bundle-SymbolicName: org.jgrapes.webconsole.vuejs
+Bundle-Copyright: Michael N. Lipp (c) 2018
+Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
+
+api_version = 0.0.0
+
+-sources: true
+-runee: JavaSE-1.8
+
+-dsannotations: 
+
+Export-Package: org.jgrapes.webconsole.vuejs
+
+-includeresource: resources
+
+Require-Capability: \
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
+    org.jgrapes.portal.page.resource;filter:="(name=vue)",\
+    org.jgrapes.portal.page.resource;filter:="(name=vuex)",\
+    org.jgrapes.portal.page.resource;filter:="(name=jgp-vue-components)",\
+    org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)",\
+    org.jgrapes.portal.page.resource;filter:="(name=lodash)",\
+    org.jgrapes.portal.page.resource;filter:="(name=jquery-ui)",\
+    org.jgrapes.portal.page.resource;filter:="(name=gridstack)",\
+    org.jgrapes.portal.page.resource;filter:="(name=jquery-ui.touch-punch)"
+
+-fixupmessages: \
+    "Found source folder 'resources' that is not on bnd's source path 'src'", \
+    "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
+    "The .classpath contains a library that will not be available during continuous integration:"
+	

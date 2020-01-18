@@ -1,0 +1,3 @@
+org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldPortletFactory
+org.jgrapes.webconsole.demo.conlet.tabledemo.TableDemoPortletFactory
+org.jgrapes.webconsole.demo.conlet.formtest.FormTestPortletFactory

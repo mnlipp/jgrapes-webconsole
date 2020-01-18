@@ -1,0 +1,45 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.github.ksoichiro:gradle-web-resource-plugin:1.7.3'
+	}
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
+dependencies {
+    compile project(':org.jgrapes.webconsole.base')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.lodash')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.gridstack')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
+}
+
+ext.releaseVersion = "0.28.0"
+ext.isSnapshot = true
+version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
+
+jar {
+    into('META-INF') {
+        from 'resources/META-INF'
+    }
+}
+
+apply plugin: 'com.moowork.node'
+
+ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
+
+task jsdoc(type: NodeTask) {
+    dependsOn(':npmInstall')
+    new File(jsDocDestDir).mkdirs()
+    script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
+    args = ["-c", "${rootProject.projectDir}/jsdoc.json",
+        "--destination", jsDocDestDir,
+        "resources/org/jgrapes/webconsole/bootstrap4/b4uiportal.js"]
+}

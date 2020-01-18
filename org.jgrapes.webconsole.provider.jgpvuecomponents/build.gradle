@@ -1,0 +1,17 @@
+dependencies {
+	
+	compile project(':org.jgrapes.webconsole.base')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
+    
+}
+
+ext.releaseVersion = "0.0.0"
+ext.isSnapshot = true
+version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
+
+jar {
+    into('META-INF') {
+        from 'resources/META-INF'
+    }
+}
+
