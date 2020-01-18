@@ -43,13 +43,13 @@ public class DeleteConlet extends ConsoleCommand {
      * 
      * @return the portlet id
      */
-    public String portletId() {
+    public String conletId() {
         return portletId;
     }
 
     @Override
     public void toJson(Writer writer) throws IOException {
-        toJson(writer, "deletePortlet", portletId());
+        toJson(writer, "deletePortlet", conletId());
     }
 
 }

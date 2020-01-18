@@ -32,7 +32,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
-import org.jgrapes.webconsole.base.AbstractConlet.PortletBaseModel;
+import org.jgrapes.webconsole.base.AbstractConlet.ConletBaseModel;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
@@ -47,7 +47,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
 /**
  * 
  */
-public class TableDemoConlet extends FreeMarkerComponent<PortletBaseModel> {
+public class TableDemoConlet extends FreeMarkerComponent<ConletBaseModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);
@@ -65,7 +65,7 @@ public class TableDemoConlet extends FreeMarkerComponent<PortletBaseModel> {
     }
 
     @Handler
-    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
@@ -81,8 +81,8 @@ public class TableDemoConlet extends FreeMarkerComponent<PortletBaseModel> {
      * @see org.jgrapes.portal.AbstractPortlet#generatePortletId()
      */
     @Override
-    protected String generatePortletId() {
-        return type() + "-" + super.generatePortletId();
+    protected String generateConletId() {
+        return type() + "-" + super.generateConletId();
     }
 
     /*
@@ -91,21 +91,21 @@ public class TableDemoConlet extends FreeMarkerComponent<PortletBaseModel> {
      * @see org.jgrapes.portal.AbstractPortlet#modelFromSession
      */
     @Override
-    protected Optional<PortletBaseModel> stateFromSession(
+    protected Optional<ConletBaseModel> stateFromSession(
             Session session, String portletId) {
         if (portletId.startsWith(type() + "-")) {
-            return Optional.of(new PortletBaseModel(portletId));
+            return Optional.of(new ConletBaseModel(portletId));
         }
         return Optional.empty();
     }
 
     @Override
-    public String doAddPortlet(AddConletRequest event,
+    public String doAddConlet(AddConletRequest event,
             ConsoleSession channel) throws Exception {
-        String portletId = generatePortletId();
-        PortletBaseModel portletModel = putInSession(
-            channel.browserSession(), new PortletBaseModel(portletId));
-        renderPortlet(event, channel, portletModel);
+        String portletId = generateConletId();
+        ConletBaseModel conletModel = putInSession(
+            channel.browserSession(), new ConletBaseModel(portletId));
+        renderConlet(event, channel, conletModel);
         return portletId;
     }
 
@@ -115,21 +115,21 @@ public class TableDemoConlet extends FreeMarkerComponent<PortletBaseModel> {
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderConletRequest event,
+    protected void doRenderConlet(RenderConletRequest event,
             ConsoleSession channel, String portletId,
-            PortletBaseModel portletModel) throws Exception {
-        renderPortlet(event, channel, portletModel);
+            ConletBaseModel conletModel) throws Exception {
+        renderConlet(event, channel, conletModel);
     }
 
-    private void renderPortlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, PortletBaseModel portletModel)
+    private void renderConlet(RenderConletRequestBase<?> event,
+            ConsoleSession channel, ConletBaseModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderPreview()) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-preview.ftl.html");
             channel.respond(new RenderPortletFromTemplate(event,
-                TableDemoConlet.class, portletModel.getPortletId(),
+                TableDemoConlet.class, portletModel.getConletId(),
                 tpl, fmModel(event, channel, portletModel))
                     .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(MODES)
@@ -139,7 +139,7 @@ public class TableDemoConlet extends FreeMarkerComponent<PortletBaseModel> {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-view.ftl.html");
             channel.respond(new RenderPortletFromTemplate(event,
-                TableDemoConlet.class, portletModel.getPortletId(),
+                TableDemoConlet.class, portletModel.getConletId(),
                 tpl, fmModel(event, channel, portletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
@@ -153,9 +153,9 @@ public class TableDemoConlet extends FreeMarkerComponent<PortletBaseModel> {
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeleteConletRequest event,
+    protected void doDeleteConlet(DeleteConletRequest event,
             ConsoleSession channel, String portletId,
-            PortletBaseModel portletState) throws Exception {
+            ConletBaseModel portletState) throws Exception {
         channel.respond(new DeleteConlet(portletId));
     }
 

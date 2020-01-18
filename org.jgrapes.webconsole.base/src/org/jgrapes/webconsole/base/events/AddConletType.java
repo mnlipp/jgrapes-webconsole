@@ -105,7 +105,7 @@ public class AddConletType extends ConsoleCommand {
      * 
      * @return the portlet type
      */
-    public String portletType() {
+    public String conletType() {
         return portletType;
     }
 
@@ -178,7 +178,7 @@ public class AddConletType extends ConsoleCommand {
      * @return the event for easy chaining
      */
     public AddConletType addCss(RenderSupport renderSupport, URI uri) {
-        cssUris.add(renderSupport.portletResource(portletType(), uri));
+        cssUris.add(renderSupport.conletResource(conletType(), uri));
         return this;
     }
 
@@ -206,7 +206,7 @@ public class AddConletType extends ConsoleCommand {
         for (ScriptResource scriptResource : scriptResources()) {
             strArray.append(scriptResource.toJsonValue());
         }
-        toJson(writer, "addPortletType", portletType(),
+        toJson(writer, "addPortletType", conletType(),
             displayNames().entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getKey().toLanguageTag(),
                     e -> e.getValue())),

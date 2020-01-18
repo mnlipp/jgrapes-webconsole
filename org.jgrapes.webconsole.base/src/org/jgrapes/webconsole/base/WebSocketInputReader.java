@@ -163,7 +163,7 @@ public class WebSocketInputReader extends Thread {
             }
             // WebConsole session established, check for special disconnect
             if ("disconnect".equals(rpc.method())
-                && portalSession.portalSessionId().equals(
+                && portalSession.consoleSessionId().equals(
                     rpc.params().asString(0))) {
                 portalSession.discard();
                 return;

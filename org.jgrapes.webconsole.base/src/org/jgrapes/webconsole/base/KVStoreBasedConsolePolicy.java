@@ -133,12 +133,12 @@ public class KVStoreBasedConsolePolicy extends Component {
      * @throws InterruptedException
      */
     @Handler
-    public void onPortalReady(ConsoleReady event, ConsoleSession channel)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession channel)
             throws InterruptedException {
-        PortalSessionDataStore sessionDs = channel.associated(
-            PortalSessionDataStore.class,
-            () -> new PortalSessionDataStore(channel.browserSession()));
-        sessionDs.onPortalReady(event, channel);
+        ConsoleSessionDataStore sessionDs = channel.associated(
+            ConsoleSessionDataStore.class,
+            () -> new ConsoleSessionDataStore(channel.browserSession()));
+        sessionDs.onConsoleReady(event, channel);
     }
 
     /**
@@ -152,8 +152,8 @@ public class KVStoreBasedConsolePolicy extends Component {
     public void onKeyValueStoreData(
             KeyValueStoreData event, ConsoleSession channel)
             throws JsonDecodeException {
-        Optional<PortalSessionDataStore> optSessionDs
-            = channel.associated(PortalSessionDataStore.class);
+        Optional<ConsoleSessionDataStore> optSessionDs
+            = channel.associated(ConsoleSessionDataStore.class);
         if (optSessionDs.isPresent()) {
             optSessionDs.get().onKeyValueStoreData(event, channel);
         }
@@ -166,10 +166,10 @@ public class KVStoreBasedConsolePolicy extends Component {
      * @param channel the channel
      */
     @Handler
-    public void onPortalPrepared(
+    public void onConsolePrepared(
             ConsolePrepared event, ConsoleSession channel) {
-        channel.associated(PortalSessionDataStore.class).ifPresent(
-            psess -> psess.onPortalPrepared(event, channel));
+        channel.associated(ConsoleSessionDataStore.class).ifPresent(
+            psess -> psess.onConsolePrepared(event, channel));
     }
 
     /**
@@ -180,12 +180,12 @@ public class KVStoreBasedConsolePolicy extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onPortalLayoutChanged(ConsoleLayoutChanged event,
+    public void onConsoleLayoutChanged(ConsoleLayoutChanged event,
             ConsoleSession channel) throws IOException {
-        Optional<PortalSessionDataStore> optDs = channel.associated(
-            PortalSessionDataStore.class);
+        Optional<ConsoleSessionDataStore> optDs = channel.associated(
+            ConsoleSessionDataStore.class);
         if (optDs.isPresent()) {
-            optDs.get().onPortalLayoutChanged(event, channel);
+            optDs.get().onConsoleLayoutChanged(event, channel);
         }
     }
 
@@ -193,19 +193,19 @@ public class KVStoreBasedConsolePolicy extends Component {
      * Stores the data for the portal session.
      */
     @SuppressWarnings("PMD.CommentRequired")
-    private class PortalSessionDataStore {
+    private class ConsoleSessionDataStore {
 
         private final String storagePath;
         private Map<String, Object> persisted;
 
-        public PortalSessionDataStore(Session session) {
+        public ConsoleSessionDataStore(Session session) {
             storagePath = "/"
                 + WebConsoleUtils.userFromSession(session)
                     .map(UserPrincipal::toString).orElse("")
                 + "/" + KVStoreBasedConsolePolicy.class.getName();
         }
 
-        public void onPortalReady(ConsoleReady event, IOSubchannel channel)
+        public void onConsoleReady(ConsoleReady event, IOSubchannel channel)
                 throws InterruptedException {
             if (persisted != null) {
                 return;
@@ -233,7 +233,7 @@ public class KVStoreBasedConsolePolicy extends Component {
 
         @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
             "PMD.AvoidInstantiatingObjectsInLoops" })
-        public void onPortalPrepared(
+        public void onConsolePrepared(
                 ConsolePrepared event, IOSubchannel channel) {
             if (persisted == null) {
                 // Retrieval was not successful
@@ -275,7 +275,7 @@ public class KVStoreBasedConsolePolicy extends Component {
             }
         }
 
-        public void onPortalLayoutChanged(ConsoleLayoutChanged event,
+        public void onConsoleLayoutChanged(ConsoleLayoutChanged event,
                 IOSubchannel channel) throws IOException {
             persisted.put("previewLayout", event.previewLayout());
             persisted.put("tabsLayout", event.tabsLayout());

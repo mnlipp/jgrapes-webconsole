@@ -37,7 +37,7 @@ import org.jgrapes.http.Session;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webconsole.base.AbstractConlet.PortletBaseModel;
+import org.jgrapes.webconsole.base.AbstractConlet.ConletBaseModel;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.UserPrincipal;
@@ -56,7 +56,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
  * 
  */
 public class FormTestConlet
-        extends FreeMarkerComponent<PortletBaseModel> {
+        extends FreeMarkerComponent<ConletBaseModel> {
 
     private static final Set<RenderMode> MODES
         = RenderMode.asSet(RenderMode.View);
@@ -80,7 +80,7 @@ public class FormTestConlet
     }
 
     @Handler
-    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
@@ -89,7 +89,7 @@ public class FormTestConlet
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addRenderMode(RenderMode.View)
             .addScript(new ScriptResource().setScriptUri(
-                event.renderSupport().portletResource(type(),
+                event.renderSupport().conletResource(type(),
                     "FormTest-functions.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "FormTest-style.css")));
@@ -107,25 +107,25 @@ public class FormTestConlet
             return;
         }
         for (String json : event.data().values()) {
-            PortletBaseModel model = JsonBeanDecoder.create(json)
-                .readObject(PortletBaseModel.class);
+            ConletBaseModel model = JsonBeanDecoder.create(json)
+                .readObject(ConletBaseModel.class);
             putInSession(channel.browserSession(), model);
         }
     }
 
     @Override
-    public String doAddPortlet(AddConletRequest event,
+    public String doAddConlet(AddConletRequest event,
             ConsoleSession channel) throws Exception {
-        String portletId = generatePortletId();
-        PortletBaseModel portletModel = putInSession(
-            channel.browserSession(), new PortletBaseModel(portletId));
+        String conletId = generateConletId();
+        ConletBaseModel conletModel = putInSession(
+            channel.browserSession(), new ConletBaseModel(conletId));
         String jsonState = JsonBeanEncoder.create()
-            .writeObject(portletModel).toJson();
+            .writeObject(conletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + portletModel.getPortletId(),
+            storagePath(channel.browserSession()) + conletModel.getConletId(),
             jsonState));
-        renderPortlet(event, channel, portletModel);
-        return portletId;
+        renderConlet(event, channel, conletModel);
+        return conletId;
     }
 
     /*
@@ -134,21 +134,21 @@ public class FormTestConlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderConletRequest event,
+    protected void doRenderConlet(RenderConletRequest event,
             ConsoleSession channel, String portletId,
-            PortletBaseModel portletModel) throws Exception {
-        renderPortlet(event, channel, portletModel);
+            ConletBaseModel conletModel) throws Exception {
+        renderConlet(event, channel, conletModel);
     }
 
-    private void renderPortlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, PortletBaseModel portletModel)
+    private void renderConlet(RenderConletRequestBase<?> event,
+            ConsoleSession channel, ConletBaseModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("FormTest-view.ftl.html");
             channel.respond(new RenderPortletFromTemplate(event,
-                FormTestConlet.class, portletModel.getPortletId(),
+                FormTestConlet.class, portletModel.getConletId(),
                 tpl, fmModel(event, channel, portletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
@@ -162,9 +162,9 @@ public class FormTestConlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeleteConletRequest event,
+    protected void doDeleteConlet(DeleteConletRequest event,
             ConsoleSession channel, String portletId,
-            PortletBaseModel portletState) throws Exception {
+            ConletBaseModel portletState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
             storagePath(channel.browserSession()) + portletId));
         channel.respond(new DeleteConlet(portletId));

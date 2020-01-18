@@ -7,12 +7,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Portal -->
-<link rel="icon" href="${renderSupport.portalResource('favicon.ico')}">
+<link rel="icon" href="${renderSupport.consoleResource('favicon.ico')}">
 <title>${_("portalTitle")}</title>
 
 <!-- CSS -->
 <link rel="stylesheet" 
-  href="${renderSupport.portalResource('lib/normalize.css')}">
+  href="${renderSupport.consoleResource('lib/normalize.css')}">
 <link rel="stylesheet"
   href="${renderSupport.pageResource('gridstack/gridstack' + minifiedExtension + '.css')}" />
 <link rel="stylesheet" 
@@ -21,11 +21,11 @@
 <link rel="stylesheet"
   href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
-  href="${renderSupport.portalBaseResource('portal' + minifiedExtension + '.css')}" />
+  href="${renderSupport.consoleBaseResource('portal' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
-  href="${renderSupport.portalResource('portal-layout' + minifiedExtension + '.css')}" />
+  href="${renderSupport.consoleResource('portal-layout' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
-  href="${renderSupport.portalResource('portal-styling' + minifiedExtension + '.css')}" />
+  href="${renderSupport.consoleResource('portal-styling' + minifiedExtension + '.css')}" />
 
 <!-- Scripts(s) -->
 <script data-jgp-provides="jquery"
@@ -71,8 +71,8 @@
 import Vue from "${renderSupport.pageResource('vue/vue.esm.browser.js')}";
 import Vuex from "${renderSupport.pageResource('vuex/vuex.esm.browser.js')}";
 import "${renderSupport.pageResource('jgp-vue-components/jgp-components.js')}";
-import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}";
-import VueJsPortal from "${renderSupport.portalResource('vuejsportal.js')}";
+import JGPortal from "${renderSupport.consoleBaseResource('jgportal.js')}";
+import VueJsPortal from "${renderSupport.consoleResource('vuejsportal.js')}";
 
 Vue.use(Vuex);
 Vue.prototype.$window = window;

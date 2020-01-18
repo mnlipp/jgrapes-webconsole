@@ -64,7 +64,7 @@ public class MarkdownItProvider extends PageResourceProvider {
      */
     @Handler(priority = 100)
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()

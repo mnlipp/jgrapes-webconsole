@@ -72,7 +72,7 @@ public class RenderConletRequest
      * 
      * @return the portlet id
      */
-    public String portletId() {
+    public String conletId() {
         return portletId;
     }
 

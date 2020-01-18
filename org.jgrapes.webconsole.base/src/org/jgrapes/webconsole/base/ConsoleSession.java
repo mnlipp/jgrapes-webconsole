@@ -43,11 +43,11 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
 
 /**
  * The server side representation of a window in the browser 
- * that displays a portal page (a portal session). An instance 
- * is created when a new portal window opens the websocket 
+ * that displays a console page (a console session). An instance 
+ * is created when a new console window opens the websocket 
  * connection to the server for the first time. If the 
  * connection between the browser and the server is lost, 
- * the portal code in the browser tries to establish a 
+ * the console code in the browser tries to establish a 
  * new websocket connection to the same, already
  * existing {@link ConsoleSession}. The {@link ConsoleSession} 
  * object is thus independent of the websocket connection 
@@ -62,18 +62,18 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * 
  * {@link ConsoleSession} implements the {@link IOSubchannel}
  * interface. This allows the instances to be used as channels
- * for exchanging portal session scoped events with the 
+ * for exchanging console session scoped events with the 
  * {@link WebConsole} component. The upstream channel
  * (see {@link #upstreamChannel()}) is the channel of the
  * WebSocket. It may be unavailable if the connection has
  * been interrupted and not (yet) re-established.
  * 
  * The response {@link EventPipeline} must be used to send
- * events (responses) to the portal session in the browser.
+ * events (responses) to the console session in the browser.
  * No other event pipeline may be used for this purpose, else
  * messages will interleave.
  * 
- * Because a portal session (channel) remains conceptually open
+ * Because a console session (channel) remains conceptually open
  * even if the connection to the browser is lost (until the
  * timeout occurs) {@link Closed} events from upstream are not
  * forwarded immediately. Rather, a {@link Closed} event is
@@ -88,14 +88,14 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * 
  * @startuml ConsoleSession.svg
  * class ConsoleSession {
- *  -{static}Map<String,ConsoleSession> portalSessions
- *  +{static}findOrCreate(String portalSessionId, Manager component): ConsoleSession
+ *  -{static}Map<String,ConsoleSession> consoleSessions
+ *  +{static}findOrCreate(String consoleSessionId, Manager component): ConsoleSession
  *  +setTimeout(timeout: long): ConsoleSession
  *  +refresh(): void
  *  +setUpstreamChannel(IOSubchannel upstreamChannel): ConsoleSession
  *  +setSession(Session browserSession): ConsoleSession
  *  +upstreamChannel(): Optional<IOSubchannel>
- *  +portalSessionId(): String
+ *  +consoleSessionId(): String
  *  +browserSession(): Session
  *  +locale(): Locale
  *  +setLocale(Locale locale): void
@@ -115,13 +115,13 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  */
 public final class ConsoleSession extends DefaultIOSubchannel {
 
-    private static Map<String, WeakReference<ConsoleSession>> portalSessions
+    private static Map<String, WeakReference<ConsoleSession>> consoleSessions
         = new ConcurrentHashMap<>();
     private static ReferenceQueue<ConsoleSession> unusedSessions
         = new ReferenceQueue<>();
 
-    private String portalSessionId;
-    private final WebConsole portal;
+    private String consoleSessionId;
+    private final WebConsole console;
     private final Set<Locale> supportedLocales;
     private Locale locale;
     private long timeout;
@@ -137,37 +137,37 @@ public final class ConsoleSession extends DefaultIOSubchannel {
             if (unused == null) {
                 break;
             }
-            portalSessions.remove(unused.get().portalSessionId());
+            consoleSessions.remove(unused.get().consoleSessionId());
         }
     }
 
     /**
-     * Lookup the portal session (the channel)
-     * for the given portal session id.
+     * Lookup the console session (the channel)
+     * for the given console session id.
      * 
-     * @param portalSessionId the portal session id
+     * @param consoleSessionId the console session id
      * @return the channel
      */
     /* default */ static Optional<ConsoleSession>
-            lookup(String portalSessionId) {
+            lookup(String consoleSessionId) {
         cleanUnused();
-        return Optional.ofNullable(portalSessions.get(portalSessionId))
+        return Optional.ofNullable(consoleSessions.get(consoleSessionId))
             .flatMap(ref -> Optional.ofNullable(ref.get()));
     }
 
     /**
-     * Return all sessions that belong to the given portal as a new
+     * Return all sessions that belong to the given console as a new
      * unmodifiable set.
      *
-     * @param portal the portal
+     * @param console the console
      * @return the sets the
      */
-    public static Set<ConsoleSession> byPortal(WebConsole portal) {
+    public static Set<ConsoleSession> byConsole(WebConsole console) {
         cleanUnused();
         Set<ConsoleSession> result = new HashSet<>();
-        for (WeakReference<ConsoleSession> psr : portalSessions.values()) {
+        for (WeakReference<ConsoleSession> psr : consoleSessions.values()) {
             ConsoleSession psess = psr.get();
-            if (psess.portal.equals(portal)) {
+            if (psess.console.equals(console)) {
                 result.add(psess);
             }
         }
@@ -175,49 +175,49 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     }
 
     /**
-     * Lookup (and create if not found) the portal browserSession channel
-     * for the given portal browserSession id.
+     * Lookup (and create if not found) the console browserSession channel
+     * for the given console browserSession id.
      *
-     * @param portalSessionId the browserSession id
-     * @param portal the portal that this session belongs to
+     * @param consoleSessionId the browserSession id
+     * @param console the console that this session belongs to
      * class' constructor if a new channel is created, usually 
-     * the portal
-     * @param supportedLocales the locales supported by the portal
-     * @param timeout the portal session timeout in milli seconds
+     * the console
+     * @param supportedLocales the locales supported by the console
+     * @param timeout the console session timeout in milli seconds
      * @return the channel
      */
     /* default */ static ConsoleSession lookupOrCreate(
-            String portalSessionId, WebConsole portal,
+            String consoleSessionId, WebConsole console,
             Set<Locale> supportedLocales, long timeout) {
         cleanUnused();
-        return portalSessions.computeIfAbsent(portalSessionId,
+        return consoleSessions.computeIfAbsent(consoleSessionId,
             psi -> new WeakReference<>(new ConsoleSession(
-                portal, supportedLocales, portalSessionId, timeout),
+                console, supportedLocales, consoleSessionId, timeout),
                 unusedSessions))
             .get();
     }
 
     /**
-     * Replace the id of the portal session with the new id.
+     * Replace the id of the console session with the new id.
      *
-     * @param newPortalSessionId the new portal session id
-     * @return the portal session
+     * @param newConsoleSessionId the new console session id
+     * @return the console session
      */
-    /* default */ ConsoleSession replaceId(String newPortalSessionId) {
-        portalSessions.remove(portalSessionId);
-        portalSessionId = newPortalSessionId;
-        portalSessions.put(portalSessionId, new WeakReference<>(
+    /* default */ ConsoleSession replaceId(String newConsoleSessionId) {
+        consoleSessions.remove(consoleSessionId);
+        consoleSessionId = newConsoleSessionId;
+        consoleSessions.put(consoleSessionId, new WeakReference<>(
             this, unusedSessions));
         connected = true;
         return this;
     }
 
-    private ConsoleSession(WebConsole portal, Set<Locale> supportedLocales,
-            String portalSessionId, long timeout) {
-        super(portal.channel(), portal.newEventPipeline());
-        this.portal = portal;
+    private ConsoleSession(WebConsole console, Set<Locale> supportedLocales,
+            String consoleSessionId, long timeout) {
+        super(console.channel(), console.newEventPipeline());
+        this.console = console;
         this.supportedLocales = supportedLocales;
-        this.portalSessionId = portalSessionId;
+        this.consoleSessionId = consoleSessionId;
         this.timeout = timeout;
         timeoutTimer = Components.schedule(
             tmr -> discard(), Duration.ofMillis(timeout));
@@ -228,7 +228,7 @@ public final class ConsoleSession extends DefaultIOSubchannel {
      * given value.
      * 
      * @param timeout the timeout in milli seconds
-     * @return the portal session for easy chaining
+     * @return the console session for easy chaining
      */
     public ConsoleSession setTimeout(long timeout) {
         this.timeout = timeout;
@@ -256,14 +256,14 @@ public final class ConsoleSession extends DefaultIOSubchannel {
      * Discards this session.
      */
     public void discard() {
-        portalSessions.remove(portalSessionId);
+        consoleSessions.remove(consoleSessionId);
         connected = false;
         active = false;
-        portal.newEventPipeline().fire(new Closed(), this);
+        console.newEventPipeline().fire(new Closed(), this);
     }
 
     /**
-     * Checks if the portal session has become stale (inactive).
+     * Checks if the console session has become stale (inactive).
      *
      * @return true, if is stale
      */
@@ -290,7 +290,7 @@ public final class ConsoleSession extends DefaultIOSubchannel {
      * the {@link ConsoleWeblet}.
      * 
      * @param upstreamChannel the upstream channel (WebSocket connection)
-     * @return the portal session for easy chaining
+     * @return the console session for easy chaining
      */
     public ConsoleSession setUpstreamChannel(IOSubchannel upstreamChannel) {
         if (upstreamChannel == null) {
@@ -306,7 +306,7 @@ public final class ConsoleSession extends DefaultIOSubchannel {
      * the {@link ConsoleWeblet}.
      * 
      * @param browserSession the browser session
-     * @return the portal session for easy chaining
+     * @return the console session for easy chaining
      */
     public ConsoleSession setSession(Session browserSession) {
         this.browserSession = browserSession;
@@ -324,15 +324,15 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     }
 
     /**
-     * The portal session id is used in the communication between the
+     * The console session id is used in the communication between the
      * browser and the server. It is not guaranteed to remain the same
-     * over time, even if the portal session is maintained. To prevent
+     * over time, even if the console session is maintained. To prevent
      * wrong usage, its visibility is therefore set to package. 
      * 
-     * @return the portalSessionId
+     * @return the consoleSessionId
      */
-    /* default */ String portalSessionId() {
-        return portalSessionId;
+    /* default */ String consoleSessionId() {
+        return consoleSessionId;
     }
 
     /**
@@ -345,14 +345,14 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     /**
      * Returns the supported locales.
      *
-     * @return the set of locales supported by the portal
+     * @return the set of locales supported by the console
      */
     public Set<Locale> supportedLocales() {
         return supportedLocales;
     }
 
     /**
-     * Return the portal session's locale. The locale is initialized
+     * Return the console session's locale. The locale is initialized
      * from the browser session's locale.
      * 
      * @return the locale
@@ -362,10 +362,10 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     }
 
     /**
-     * Sets the locale for this portal session.
+     * Sets the locale for this console session.
      *
      * @param locale the locale
-     * @return the portal session
+     * @return the console session
      */
     public ConsoleSession setLocale(Locale locale) {
         this.locale = locale;

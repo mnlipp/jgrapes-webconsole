@@ -38,7 +38,7 @@ import org.jgrapes.http.Session;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webconsole.base.AbstractConlet.PortletBaseModel;
+import org.jgrapes.webconsole.base.AbstractConlet.ConletBaseModel;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.UserPrincipal;
@@ -85,7 +85,7 @@ public class HelloWorldConlet
     }
 
     @Handler
-    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
@@ -93,7 +93,7 @@ public class HelloWorldConlet
             .setDisplayNames(
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addScript(new ScriptResource().setScriptUri(
-                event.renderSupport().portletResource(type(),
+                event.renderSupport().conletResource(type(),
                     "HelloWorld-functions.js")))
             .addScript(new ScriptResource().setScriptId("testsource")
                 .setScriptType("text/x-test")
@@ -121,18 +121,18 @@ public class HelloWorldConlet
     }
 
     @Override
-    public String doAddPortlet(AddConletRequest event,
+    public String doAddConlet(AddConletRequest event,
             ConsoleSession channel) throws Exception {
-        String portletId = generatePortletId();
-        HelloWorldModel portletModel = putInSession(
-            channel.browserSession(), new HelloWorldModel(portletId));
+        String conletId = generateConletId();
+        HelloWorldModel conletModel = putInSession(
+            channel.browserSession(), new HelloWorldModel(conletId));
         String jsonState = JsonBeanEncoder.create()
-            .writeObject(portletModel).toJson();
+            .writeObject(conletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + portletModel.getPortletId(),
+            storagePath(channel.browserSession()) + conletModel.getConletId(),
             jsonState));
-        renderPortlet(event, channel, portletModel);
-        return portletId;
+        renderConlet(event, channel, conletModel);
+        return conletId;
     }
 
     /*
@@ -141,13 +141,13 @@ public class HelloWorldConlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderConletRequest event,
+    protected void doRenderConlet(RenderConletRequest event,
             ConsoleSession channel, String portletId,
             HelloWorldModel portletModel) throws Exception {
-        renderPortlet(event, channel, portletModel);
+        renderConlet(event, channel, portletModel);
     }
 
-    private void renderPortlet(RenderConletRequestBase<?> event,
+    private void renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, HelloWorldModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
@@ -155,7 +155,7 @@ public class HelloWorldConlet
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
             channel.respond(new RenderPortletFromTemplate(event,
-                HelloWorldConlet.class, portletModel.getPortletId(),
+                HelloWorldConlet.class, portletModel.getConletId(),
                 tpl, fmModel(event, channel, portletModel))
                     .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(MODES)
@@ -165,13 +165,13 @@ public class HelloWorldConlet
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
             channel.respond(new RenderPortletFromTemplate(event,
-                HelloWorldConlet.class, portletModel.getPortletId(),
+                HelloWorldConlet.class, portletModel.getConletId(),
                 tpl, fmModel(event, channel, portletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
             channel.respond(new NotifyConletView(type(),
-                portletModel.getPortletId(), "setWorldVisible",
+                portletModel.getConletId(), "setWorldVisible",
                 portletModel.isWorldVisible()));
         }
     }
@@ -182,7 +182,7 @@ public class HelloWorldConlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeleteConletRequest event,
+    protected void doDeleteConlet(DeleteConletRequest event,
             ConsoleSession channel, String portletId,
             HelloWorldModel portletState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
@@ -196,7 +196,7 @@ public class HelloWorldConlet
      * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
      */
     @Override
-    protected void doNotifyPortletModel(NotifyConletModel event,
+    protected void doNotifyConletModel(NotifyConletModel event,
             ConsoleSession channel, HelloWorldModel portletModel)
             throws Exception {
         event.stop();
@@ -205,10 +205,10 @@ public class HelloWorldConlet
         String jsonState = JsonBeanEncoder.create()
             .writeObject(portletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + portletModel.getPortletId(),
+            storagePath(channel.browserSession()) + portletModel.getConletId(),
             jsonState));
         channel.respond(new NotifyConletView(type(),
-            portletModel.getPortletId(), "setWorldVisible",
+            portletModel.getConletId(), "setWorldVisible",
             portletModel.isWorldVisible()));
         channel.respond(new DisplayNotification("<span>"
             + resourceBundle(channel.locale()).getString("visibilityChange")
@@ -217,7 +217,7 @@ public class HelloWorldConlet
     }
 
     @SuppressWarnings("serial")
-    public static class HelloWorldModel extends PortletBaseModel {
+    public static class HelloWorldModel extends ConletBaseModel {
 
         private boolean worldVisible = true;
 

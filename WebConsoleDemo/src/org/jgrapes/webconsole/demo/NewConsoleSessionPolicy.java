@@ -50,18 +50,18 @@ public class NewConsoleSessionPolicy extends Component {
     }
 
     @Handler
-    public void onPortalReady(ConsoleReady event, ConsoleSession portalsession) {
+    public void onConsoleReady(ConsoleReady event, ConsoleSession portalsession) {
         portalsession.browserSession().put(renderedFlagName, false);
     }
 
     @Handler
-    public void onRenderPortlet(RenderConlet event,
+    public void onRenderConlet(RenderConlet event,
             ConsoleSession portalsession) {
         portalsession.browserSession().put(renderedFlagName, true);
     }
 
     @Handler
-    public void onPortalConfigured(ConsoleConfigured event,
+    public void onConsoleConfigured(ConsoleConfigured event,
             ConsoleSession portalSession)
             throws InterruptedException {
         if ((Boolean) portalSession.browserSession().getOrDefault(

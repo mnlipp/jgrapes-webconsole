@@ -7,13 +7,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Portal -->
-<link rel="icon" href="${renderSupport.portalResource('favicon.ico')}">
+<link rel="icon" href="${renderSupport.consoleResource('favicon.ico')}">
 <title>${_("portalTitle")}</title>
 
 <!-- CSS -->
 <!-- Bootstrap 4 -->
 <link rel="stylesheet"
-  href="${renderSupport.portalResource('lib/bootstrap-4.1.2/css/bootstrap' + minifiedExtension + '.css')}">
+  href="${renderSupport.consoleResource('lib/bootstrap-4.1.2/css/bootstrap' + minifiedExtension + '.css')}">
 <!-- Gridstack -->
 <link rel="stylesheet"
   href="${renderSupport.pageResource('gridstack/gridstack' + minifiedExtension + '.css')}" />
@@ -21,9 +21,9 @@
 <link rel="stylesheet"
   href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
-  href="${renderSupport.portalBaseResource('portal' + minifiedExtension + '.css')}" />
+  href="${renderSupport.consoleBaseResource('portal' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
-  href="${renderSupport.portalResource('portal' + minifiedExtension + '.css')}" />
+  href="${renderSupport.consoleResource('portal' + minifiedExtension + '.css')}" />
 <!-- More... -->
 
 <!-- Scripts(s) -->
@@ -33,10 +33,10 @@
 <script data-jgp-provides="moment, moment-with-locales"
   src="${renderSupport.pageResource('moment/moment-with-locales' + minifiedExtension + '.js')}"></script>
 <script
-  src="${renderSupport.portalResource('lib/popper-1.14.3/popper' + minifiedExtension + '.js')}"></script>
+  src="${renderSupport.consoleResource('lib/popper-1.14.3/popper' + minifiedExtension + '.js')}"></script>
 <!-- Bootstrap 4 -->
 <script
-  src="${renderSupport.portalResource('lib/bootstrap-4.1.2/js/bootstrap' + minifiedExtension + '.js')}"></script>
+  src="${renderSupport.consoleResource('lib/bootstrap-4.1.2/js/bootstrap' + minifiedExtension + '.js')}"></script>
 <!-- Gridstack and prerequisites Lodash and JQueryUI () -->
 <script data-jgp-provides="lodash"
   src="${renderSupport.pageResource('lodash/lodash' + minifiedExtension + '.js')}"></script>
@@ -52,8 +52,8 @@
 
 <!-- Portal -->
   <script type="module">
-  import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
-  import B4UIPortal from "${renderSupport.portalResource('b4uiportal.js')}"
+  import JGPortal from "${renderSupport.consoleBaseResource('jgportal.js')}"
+  import B4UIPortal from "${renderSupport.consoleResource('b4uiportal.js')}"
   JGPortal.init("${portalSessionId}", 
     parseInt("${portalSessionRefreshInterval?c}"),
     parseInt("${portalSessionInactivityTimeout?c}"), new B4UIPortal.Renderer({

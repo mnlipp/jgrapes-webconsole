@@ -35,17 +35,17 @@ public interface RenderSupport {
      * @param uri the uri
      * @return the uri
      */
-    URI portalBaseResource(URI uri);
+    URI consoleBaseResource(URI uri);
 
     /**
      * Convenience method that converts the path to an URI
-     * before calling {@link #portalBaseResource(URI)}.
+     * before calling {@link #consoleBaseResource(URI)}.
      * 
      * @param path the path 
      * @return the resulting URI
      */
-    default URI portalBaseResource(String path) {
-        return portalBaseResource(WebConsoleUtils.uriFromPath(path));
+    default URI consoleBaseResource(String path) {
+        return consoleBaseResource(WebConsoleUtils.uriFromPath(path));
     }
 
     /**
@@ -54,17 +54,17 @@ public interface RenderSupport {
      * @param uri the URI  
      * @return the resulting URI
      */
-    URI portalResource(URI uri);
+    URI consoleResource(URI uri);
 
     /**
      * Convenience method that converts the path to an URI
-     * before calling {@link #portalResource(URI)}.
+     * before calling {@link #consoleResource(URI)}.
      * 
      * @param path the path 
      * @return the resulting URI
      */
-    default URI portalResource(String path) {
-        return portalResource(WebConsoleUtils.uriFromPath(path));
+    default URI consoleResource(String path) {
+        return consoleResource(WebConsoleUtils.uriFromPath(path));
     }
 
     /**
@@ -99,18 +99,18 @@ public interface RenderSupport {
      * {@link ConletResourceRequest#resourceUri()}
      * @return the resulting URI
      */
-    URI portletResource(String portletType, URI uri);
+    URI conletResource(String portletType, URI uri);
 
     /**
      * Convenience method that converts the path to an URI
-     * before calling {@link #portletResource(String, URI)}.
+     * before calling {@link #conletResource(String, URI)}.
      * 
-     * @param portletType the portlet type
+     * @param conletType the portlet type
      * @param path the path 
      * @return the resulting URI
      */
-    default URI portletResource(String portletType, String path) {
-        return portletResource(portletType, WebConsoleUtils.uriFromPath(path));
+    default URI conletResource(String conletType, String path) {
+        return conletResource(conletType, WebConsoleUtils.uriFromPath(path));
     }
 
     /**

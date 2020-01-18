@@ -62,7 +62,7 @@ public class MomentProvider extends PageResourceProvider {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()

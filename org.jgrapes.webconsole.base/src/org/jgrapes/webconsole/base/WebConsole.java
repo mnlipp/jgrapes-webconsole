@@ -79,7 +79,7 @@ public class WebConsole extends Component {
 
     /* default */ void setView(ConsoleWeblet view) {
         this.view = view;
-        MBeanView.addPortal(this);
+        MBeanView.addConsole(this);
     }
 
     /**
@@ -163,7 +163,7 @@ public class WebConsole extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onPortalConfigured(
+    public void onConsoleConfigured(
             ConsoleConfigured event, ConsoleSession channel)
             throws InterruptedException, IOException {
         channel.respond(new SimpleConsoleCommand("portalConfigured"));
@@ -181,7 +181,7 @@ public class WebConsole extends Component {
     public void onRenderPortlet(
             RenderConletRequest event, ConsoleSession channel) {
         if (!event.hasBeenRendered()) {
-            channel.respond(new DeleteConlet(event.portletId()));
+            channel.respond(new DeleteConlet(event.conletId()));
         }
     }
 
@@ -192,7 +192,7 @@ public class WebConsole extends Component {
      */
     @Handler
     public void onStop(Stop event) {
-        for (ConsoleSession ps : ConsoleSession.byPortal(this)) {
+        for (ConsoleSession ps : ConsoleSession.byConsole(this)) {
             ps.discard();
         }
     }
@@ -201,7 +201,7 @@ public class WebConsole extends Component {
      * The MBeans view of a portal.
      */
     @SuppressWarnings({ "PMD.CommentRequired", "PMD.AvoidDuplicateLiterals" })
-    public interface PortalMXBean {
+    public interface ConsoleMXBean {
 
         @SuppressWarnings("PMD.CommentRequired")
         class PortalSessionInfo {
@@ -231,11 +231,11 @@ public class WebConsole extends Component {
 
         void setUseMinifiedResources(boolean useMinifiedResources);
 
-        SortedMap<String, PortalSessionInfo> getPortalSessions();
+        SortedMap<String, PortalSessionInfo> getConsoleSessions();
     }
 
     @SuppressWarnings("PMD.CommentRequired")
-    public static class PortalInfo implements PortalMXBean {
+    public static class WebConsoleInfo implements ConsoleMXBean {
 
         private static MBeanServer mbs
             = ManagementFactory.getPlatformMBeanServer();
@@ -243,7 +243,7 @@ public class WebConsole extends Component {
         private ObjectName mbeanName;
         private final WeakReference<WebConsole> portalRef;
 
-        public PortalInfo(WebConsole portal) {
+        public WebConsoleInfo(WebConsole portal) {
             try {
                 mbeanName = new ObjectName("org.jgrapes.portal:type="
                     + WebConsole.class.getSimpleName() + ",name="
@@ -268,7 +268,7 @@ public class WebConsole extends Component {
             }
         }
 
-        public Optional<WebConsole> portal() {
+        public Optional<WebConsole> console() {
             WebConsole portal = portalRef.get();
             if (portal == null) {
                 try {
@@ -282,34 +282,35 @@ public class WebConsole extends Component {
 
         @Override
         public String getComponentPath() {
-            return portal().map(mgr -> mgr.componentPath()).orElse("<removed>");
+            return console().map(mgr -> mgr.componentPath())
+                .orElse("<removed>");
         }
 
         @Override
         public String getPrefix() {
-            return portal().map(
+            return console().map(
                 portal -> portal.view.prefix().toString()).orElse("<unknown>");
         }
 
         @Override
         public boolean isUseMinifiedResources() {
-            return portal().map(
+            return console().map(
                 portal -> portal.view.useMinifiedResources())
                 .orElse(false);
         }
 
         @Override
         public void setUseMinifiedResources(boolean useMinifiedResources) {
-            portal().ifPresent(portal -> portal.view.setUseMinifiedResources(
+            console().ifPresent(portal -> portal.view.setUseMinifiedResources(
                 useMinifiedResources));
         }
 
         @Override
         @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-        public SortedMap<String, PortalSessionInfo> getPortalSessions() {
+        public SortedMap<String, PortalSessionInfo> getConsoleSessions() {
             SortedMap<String, PortalSessionInfo> result = new TreeMap<>();
-            portal().ifPresent(portal -> {
-                for (ConsoleSession ps : ConsoleSession.byPortal(portal)) {
+            console().ifPresent(portal -> {
+                for (ConsoleSession ps : ConsoleSession.byConsole(portal)) {
                     result.put(Components.simpleObjectName(ps),
                         new PortalSessionInfo(ps));
                 }
@@ -322,13 +323,13 @@ public class WebConsole extends Component {
      * An MBean interface for getting information about all portals.
      * 
      * There is currently no summary information. However, the (periodic)
-     * invocation of {@link PortalSummaryMXBean#getPortals()} ensures
+     * invocation of {@link PortalSummaryMXBean#getConsoles()} ensures
      * that entries for removed {@link WebConsole}s are unregistered.
      */
     @SuppressWarnings("PMD.CommentRequired")
     public interface PortalSummaryMXBean {
 
-        Set<PortalMXBean> getPortals();
+        Set<ConsoleMXBean> getConsoles();
 
     }
 
@@ -338,27 +339,28 @@ public class WebConsole extends Component {
     @SuppressWarnings("PMD.CommentRequired")
     private static class MBeanView implements PortalSummaryMXBean {
 
-        private static Set<PortalInfo> portalInfos = new HashSet<>();
+        private static Set<WebConsoleInfo> consoleInfos = new HashSet<>();
 
-        public static void addPortal(WebConsole portal) {
-            synchronized (portalInfos) {
-                portalInfos.add(new PortalInfo(portal));
+        public static void addConsole(WebConsole portal) {
+            synchronized (consoleInfos) {
+                consoleInfos.add(new WebConsoleInfo(portal));
             }
         }
 
         @Override
-        public Set<PortalMXBean> getPortals() {
-            Set<PortalInfo> expired = new HashSet<>();
-            synchronized (portalInfos) {
-                for (PortalInfo portalInfo : portalInfos) {
-                    if (!portalInfo.portal().isPresent()) {
+        public Set<ConsoleMXBean> getConsoles() {
+            Set<WebConsoleInfo> expired = new HashSet<>();
+            synchronized (consoleInfos) {
+                for (WebConsoleInfo portalInfo : consoleInfos) {
+                    if (!portalInfo.console().isPresent()) {
                         expired.add(portalInfo);
                     }
                 }
-                portalInfos.removeAll(expired);
+                consoleInfos.removeAll(expired);
             }
             @SuppressWarnings("unchecked")
-            Set<PortalMXBean> result = (Set<PortalMXBean>) (Object) portalInfos;
+            Set<ConsoleMXBean> result
+                = (Set<ConsoleMXBean>) (Object) consoleInfos;
             return result;
         }
     }
@@ -367,7 +369,7 @@ public class WebConsole extends Component {
         try {
             MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
             ObjectName mxbeanName
-                = new ObjectName("org.jgrapes.portal:type="
+                = new ObjectName("org.jgrapes.webconsole:type="
                     + WebConsole.class.getSimpleName() + "s");
             mbs.registerMBean(new MBeanView(), mxbeanName);
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException

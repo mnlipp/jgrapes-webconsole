@@ -57,7 +57,7 @@ public class ConletResourceRequest extends ResourceRequest {
     /**
      * @return the portletId
      */
-    public String portletClass() {
+    public String conletClass() {
         return portletType;
     }
 

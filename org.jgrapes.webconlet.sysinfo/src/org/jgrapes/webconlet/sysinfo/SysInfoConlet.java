@@ -90,7 +90,7 @@ public class SysInfoConlet
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add SysInfoConlet resources to page
@@ -99,7 +99,7 @@ public class SysInfoConlet
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addScript(new ScriptResource()
                 .setRequires("chart.js")
-                .setScriptUri(event.renderSupport().portletResource(
+                .setScriptUri(event.renderSupport().conletResource(
                     type(), "SysInfo-functions.ftl.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "SysInfo-style.css")));
@@ -111,8 +111,8 @@ public class SysInfoConlet
      * @see org.jgrapes.portal.AbstractPortlet#generatePortletId()
      */
     @Override
-    protected String generatePortletId() {
-        return type() + "-" + super.generatePortletId();
+    protected String generateConletId() {
+        return type() + "-" + super.generateConletId();
     }
 
     /*
@@ -130,12 +130,12 @@ public class SysInfoConlet
     }
 
     @Override
-    public String doAddPortlet(AddConletRequest event,
-            ConsoleSession portalSession) throws Exception {
-        String portletId = generatePortletId();
-        SysInfoModel portletModel = putInSession(
-            portalSession.browserSession(), new SysInfoModel(portletId));
-        renderPortlet(event, portalSession, portletModel);
+    public String doAddConlet(AddConletRequest event,
+            ConsoleSession consoleSession) throws Exception {
+        String portletId = generateConletId();
+        SysInfoModel conletModel = putInSession(
+            consoleSession.browserSession(), new SysInfoModel(portletId));
+        renderConlet(event, consoleSession, conletModel);
         return portletId;
     }
 
@@ -145,14 +145,14 @@ public class SysInfoConlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderConletRequest event,
-            ConsoleSession portalSession, String portletId,
-            SysInfoModel portletModel) throws Exception {
-        renderPortlet(event, portalSession, portletModel);
+    protected void doRenderConlet(RenderConletRequest event,
+            ConsoleSession consoleSession, String portletId,
+            SysInfoModel conletModel) throws Exception {
+        renderConlet(event, consoleSession, conletModel);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private void renderPortlet(RenderConletRequestBase<?> event,
+    private void renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession portalSession, SysInfoModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
@@ -160,18 +160,18 @@ public class SysInfoConlet
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
-                SysInfoConlet.class, portletModel.getPortletId(),
+                SysInfoConlet.class, portletModel.getConletId(),
                 tpl, fmModel(event, portalSession, portletModel))
                     .setRenderMode(RenderMode.DeleteablePreview)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            updateView(portalSession, portletModel.getPortletId());
+            updateView(portalSession, portletModel.getConletId());
         }
         if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
-                SysInfoConlet.class, portletModel.getPortletId(),
+                SysInfoConlet.class, portletModel.getConletId(),
                 tpl, fmModel(event, portalSession, portletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
@@ -197,7 +197,7 @@ public class SysInfoConlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeleteConletRequest event,
+    protected void doDeleteConlet(DeleteConletRequest event,
             ConsoleSession portalSession, String portletId,
             SysInfoModel retrievedState) throws Exception {
         portalSession.respond(new DeleteConlet(portletId));
@@ -212,20 +212,20 @@ public class SysInfoConlet
      */
     @Handler
     public void onUpdate(Update event, ConsoleSession portalSession) {
-        for (String portletId : portletIds(portalSession)) {
+        for (String portletId : conletIds(portalSession)) {
             updateView(portalSession, portletId);
         }
     }
 
     @Override
     @SuppressWarnings("PMD.DoNotCallGarbageCollectionExplicitly")
-    protected void doNotifyPortletModel(NotifyConletModel event,
+    protected void doNotifyConletModel(NotifyConletModel event,
             ConsoleSession portalSession, SysInfoModel portletState)
             throws Exception {
         event.stop();
         System.gc();
-        for (String portletId : portletIds(portalSession)) {
-            updateView(portalSession, portletId);
+        for (String conletId : conletIds(portalSession)) {
+            updateView(portalSession, conletId);
         }
     }
 
@@ -234,7 +234,7 @@ public class SysInfoConlet
      */
     @SuppressWarnings("serial")
     public static class SysInfoModel
-            extends AbstractConlet.PortletBaseModel {
+            extends AbstractConlet.ConletBaseModel {
 
         /**
          * Creates a new model with the given type and id.

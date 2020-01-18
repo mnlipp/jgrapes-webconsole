@@ -113,7 +113,7 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
      * 
      * @return the portlet type
      */
-    public String portletType() {
+    public String conletType() {
         return portletType;
     }
 

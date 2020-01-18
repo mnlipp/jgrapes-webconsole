@@ -51,7 +51,7 @@ import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.webconsole.base.AbstractConlet;
-import org.jgrapes.webconsole.base.AbstractConlet.PortletBaseModel;
+import org.jgrapes.webconsole.base.AbstractConlet.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.ResourceByGenerator;
@@ -122,7 +122,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * 
      * This model provides:
      *  * The function `portletResource` that makes 
-     *    {@link RenderSupport#portletResource(String, java.net.URI)}
+     *    {@link RenderSupport#conletResource(String, java.net.URI)}
      *    available in the template. The first argument is set to the name
      *    of the portlet, only the second must be supplied when the function
      *    is invoked in a template.
@@ -143,7 +143,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
                     if (!(args.get(0) instanceof SimpleScalar)) {
                         throw new TemplateModelException("Not a string.");
                     }
-                    return renderSupport.portletResource(
+                    return renderSupport.conletResource(
                         FreeMarkerComponent.this.getClass().getName(),
                         ((SimpleScalar) args.get(0)).getAsString())
                         .getRawPath();
@@ -200,7 +200,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * 
      * This model provides:
      *  * The `event` property (of type {@link RenderConletRequest}).
-     *  * The `portlet` property (of type {@link PortletBaseModel}).
+     *  * The `portlet` property (of type {@link ConletBaseModel}).
      *  * The function `_Id(String base)` that creates a unique
      *    id for an HTML element by appending the portlet id to the 
      *    provided base.
@@ -210,9 +210,9 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * @param portletModel the portlet model
      * @return the model
      */
-    protected Map<String, Object> fmPortletModel(
+    protected Map<String, Object> fmConletModel(
             RenderConletRequestBase<?> event,
-            IOSubchannel channel, PortletBaseModel portletModel) {
+            IOSubchannel channel, ConletBaseModel portletModel) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
         model.put("event", event);
@@ -227,7 +227,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
                     throw new TemplateModelException("Not a string.");
                 }
                 return ((SimpleScalar) args.get(0)).getAsString()
-                    + "-" + portletModel.getPortletId();
+                    + "-" + portletModel.getConletId();
             }
         });
         return model;
@@ -239,16 +239,16 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * 
      * @param event the event
      * @param channel the channel
-     * @param portletModel the portlet model
+     * @param conletModel the portlet model
      * @return the model
      */
     protected Map<String, Object> fmModel(RenderConletRequestBase<?> event,
-            ConsoleSession channel, PortletBaseModel portletModel) {
+            ConsoleSession channel, ConletBaseModel conletModel) {
         final Map<String, Object> model
             = fmSessionModel(channel.browserSession());
         model.put("locale", channel.locale());
         model.putAll(fmTypeModel(event.renderSupport()));
-        model.putAll(fmPortletModel(event, channel, portletModel));
+        model.putAll(fmConletModel(event, channel, conletModel));
         return model;
     }
 

@@ -136,20 +136,20 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         app.attach(new PostProcessor(app.channel()));
         app.attach(new WsEchoServer(app.channel()));
 
-        createJQueryUiPortal();
-        createBootstrap4Portal();
-        createVueJsPortal();
+        createJQueryUiConsole();
+        createBootstrap4Console();
+        createVueJsConsole();
         Components.start(app);
     }
 
-    private void createJQueryUiPortal() throws URISyntaxException {
+    private void createJQueryUiConsole() throws URISyntaxException {
         ConsoleWeblet portalWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
                 new URI("/jqportal/")))
                 .prependResourceBundleProvider(WebConsoleDemo.class)
-                .prependPortalResourceProvider(WebConsoleDemo.class);
-        WebConsole portal = portalWeblet.portal();
-        portalWeblet.setPortalSessionInactivityTimeout(300000);
+                .prependConsoleResourceProvider(WebConsoleDemo.class);
+        WebConsole portal = portalWeblet.console();
+        portalWeblet.setConsoleSessionInactivityTimeout(300000);
         portal.attach(new BrowserLocalBackedKVStore(
             portal, portalWeblet.prefix().getPath()));
         portal.attach(new KVStoreBasedConsolePolicy(portal));
@@ -162,15 +162,15 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             ConletComponentFactory.class, portal));
     }
 
-    private void createBootstrap4Portal() throws URISyntaxException {
+    private void createBootstrap4Console() throws URISyntaxException {
         ConsoleWeblet portalWeblet
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
                 new URI("/b4portal/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleDemo.class)
-                .prependPortalResourceProvider(WebConsoleDemo.class);
-        WebConsole portal = portalWeblet.portal();
-        portalWeblet.setPortalSessionInactivityTimeout(300000);
+                .prependConsoleResourceProvider(WebConsoleDemo.class);
+        WebConsole portal = portalWeblet.console();
+        portalWeblet.setConsoleSessionInactivityTimeout(300000);
         portal.attach(new BrowserLocalBackedKVStore(
             portal, portalWeblet.prefix().getPath()));
         portal.attach(new KVStoreBasedConsolePolicy(portal));
@@ -192,15 +192,15 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             ConletComponentFactory.class, portal));
     }
 
-    private void createVueJsPortal() throws URISyntaxException {
+    private void createVueJsConsole() throws URISyntaxException {
         ConsoleWeblet portalWeblet
             = app.attach(new VueJsPortalWeblet(app.channel(), Channel.SELF,
                 new URI("/vjportal/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleDemo.class)
-                .prependPortalResourceProvider(WebConsoleDemo.class);
-        WebConsole portal = portalWeblet.portal();
-        portalWeblet.setPortalSessionInactivityTimeout(300000);
+                .prependConsoleResourceProvider(WebConsoleDemo.class);
+        WebConsole portal = portalWeblet.console();
+        portalWeblet.setConsoleSessionInactivityTimeout(300000);
         portal.attach(new BrowserLocalBackedKVStore(
             portal, portalWeblet.prefix().getPath()));
         portal.attach(new KVStoreBasedConsolePolicy(portal));

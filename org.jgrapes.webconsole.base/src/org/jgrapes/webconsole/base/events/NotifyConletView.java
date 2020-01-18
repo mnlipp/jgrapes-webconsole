@@ -58,7 +58,7 @@ public class NotifyConletView extends ConsoleCommand {
      * 
      * @return the portlet class
      */
-    public String portletType() {
+    public String conletType() {
         return portletType;
     }
 
@@ -67,7 +67,7 @@ public class NotifyConletView extends ConsoleCommand {
      * 
      * @return the portlet id
      */
-    public String portletId() {
+    public String conletId() {
         return portletId;
     }
 
@@ -91,7 +91,7 @@ public class NotifyConletView extends ConsoleCommand {
 
     @Override
     public void toJson(Writer writer) throws IOException {
-        toJson(writer, "notifyPortletView", portletType(), portletId(),
+        toJson(writer, "notifyPortletView", conletType(), conletId(),
             method(), params());
     }
 }

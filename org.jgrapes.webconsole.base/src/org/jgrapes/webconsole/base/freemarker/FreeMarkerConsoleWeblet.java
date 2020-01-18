@@ -136,7 +136,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      * @return the base model
      */
     @SuppressWarnings("PMD.UseConcurrentHashMap")
-    protected Map<String, Object> createPortalBaseModel() {
+    protected Map<String, Object> createConsoleBaseModel() {
         // Create portal model
         Map<String, Object> portalModel = new HashMap<>();
         portalModel.put("renderSupport", renderSupport());
@@ -144,9 +144,9 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
         portalModel.put("minifiedExtension",
             useMinifiedResources() ? ".min" : "");
         portalModel.put(
-            "portalSessionRefreshInterval", portalSessionRefreshInterval());
+            "portalSessionRefreshInterval", consoleSessionRefreshInterval());
         portalModel.put(
-            "portalSessionInactivityTimeout", portalSessionInactivityTimeout());
+            "portalSessionInactivityTimeout", consoleSessionInactivityTimeout());
         return portalModel;
     }
 
@@ -156,15 +156,15 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      *
      * @param model the model
      * @param event the event
-     * @param portalSessionId the portal session id
+     * @param consoleSessionId the portal session id
      * @return the map
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    protected Map<String, Object> expandPortalModel(
+    protected Map<String, Object> expandConsoleModel(
             Map<String, Object> model, Request.In.Get event,
-            UUID portalSessionId) {
+            UUID consoleSessionId) {
         // WebConsole Session UUID
-        model.put("portalSessionId", portalSessionId.toString());
+        model.put("portalSessionId", consoleSessionId.toString());
 
         // Add locale
         final Locale locale = event.associated(Selection.class).map(
@@ -185,7 +185,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
             .sorted(comp).toArray(size -> new LanguageInfo[size]);
         model.put("supportedLanguages", languages);
 
-        final ResourceBundle baseResources = portalResourceBundle(locale);
+        final ResourceBundle baseResources = consoleResourceBundle(locale);
         model.put("_", new TemplateMethodModelEx() {
             @Override
             public Object exec(@SuppressWarnings("rawtypes") List arguments)
@@ -208,7 +208,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
     }
 
     @Override
-    protected void renderPortal(Request.In.Get event, IOSubchannel channel,
+    protected void renderConsole(Request.In.Get event, IOSubchannel channel,
             UUID portalSessionId) throws IOException, InterruptedException {
         event.setResult(true);
         event.stop();
@@ -228,8 +228,8 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
             @SuppressWarnings("PMD.UseConcurrentHashMap")
 
             Template tpl = freeMarkerConfig.getTemplate("portal.ftl.html");
-            Map<String, Object> portalModel = expandPortalModel(
-                createPortalBaseModel(), event, portalSessionId);
+            Map<String, Object> portalModel = expandConsoleModel(
+                createConsoleBaseModel(), event, portalSessionId);
             tpl.process(portalModel, out);
         } catch (TemplateException e) {
             throw new IOException(e);

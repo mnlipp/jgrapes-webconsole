@@ -6,24 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <!-- Portal -->
-  <link rel="icon" href="${renderSupport.portalResource('favicon.ico')}">
+  <link rel="icon" href="${renderSupport.consoleResource('favicon.ico')}">
   <title>${_("portalTitle")}</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="${renderSupport.portalResource('normalize-7.0.0.css')}">
+  <link rel="stylesheet" href="${renderSupport.consoleResource('normalize-7.0.0.css')}">
   <!-- jQuery / jQuery UI and extensions -->
-  <link rel="stylesheet" href="${renderSupport.portalResource('theme/jquery-ui' + minifiedExtension + '.css')}">
-  <link rel="stylesheet" href="${renderSupport.portalResource('lib/jquery-ui-iconfont-2.3.2/jquery-ui-1.12.icon-font' + minifiedExtension + '.css')}">
-  <link rel="stylesheet" href="${renderSupport.portalResource('lib/jquery-dropdown-2.0.3/jquery.dropdown' + minifiedExtension + '.css')}">
-  <link rel="stylesheet" href="${renderSupport.portalResource('lib/jquery-dropdown-2.0.3/overrides-1.0.0.css')}">
-  <link rel="stylesheet" href="${renderSupport.portalResource('lib/jquery-fa-loading-0.3/jquery.faloading' + minifiedExtension + '.css')}">
+  <link rel="stylesheet" href="${renderSupport.consoleResource('theme/jquery-ui' + minifiedExtension + '.css')}">
+  <link rel="stylesheet" href="${renderSupport.consoleResource('lib/jquery-ui-iconfont-2.3.2/jquery-ui-1.12.icon-font' + minifiedExtension + '.css')}">
+  <link rel="stylesheet" href="${renderSupport.consoleResource('lib/jquery-dropdown-2.0.3/jquery.dropdown' + minifiedExtension + '.css')}">
+  <link rel="stylesheet" href="${renderSupport.consoleResource('lib/jquery-dropdown-2.0.3/overrides-1.0.0.css')}">
+  <link rel="stylesheet" href="${renderSupport.consoleResource('lib/jquery-fa-loading-0.3/jquery.faloading' + minifiedExtension + '.css')}">
   <!-- Portal -->
   <link rel="stylesheet"
     href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
   <link rel="stylesheet"
-    href="${renderSupport.portalBaseResource('portal' + minifiedExtension + '.css')}" />
-  <link rel="stylesheet" href="${renderSupport.portalResource('structure.css')}">
-  <link rel="stylesheet" href="${renderSupport.portalResource('theme/portal.css')}">
+    href="${renderSupport.consoleBaseResource('portal' + minifiedExtension + '.css')}" />
+  <link rel="stylesheet" href="${renderSupport.consoleResource('structure.css')}">
+  <link rel="stylesheet" href="${renderSupport.consoleResource('theme/portal.css')}">
   <style>
   body {
     min-width: 520px;
@@ -49,13 +49,13 @@
     src="${renderSupport.pageResource('jquery-ui/jquery-ui' + minifiedExtension + '.js')}"></script>
   <script data-jgp-provides="jquery-ui.touch-punch"
     src="${renderSupport.pageResource('jquery-ui-touch-punch/jquery.ui.touch-punch' + minifiedExtension + '.js')}"></script>
-  <script src="${renderSupport.portalResource('lib/jquery-dropdown-2.0.3/jquery.dropdown.js')}"></script>
-  <script src="${renderSupport.portalResource('lib/jquery-fa-loading-0.3/jquery.faloading' + minifiedExtension + '.js')}"></script>
+  <script src="${renderSupport.consoleResource('lib/jquery-dropdown-2.0.3/jquery.dropdown.js')}"></script>
+  <script src="${renderSupport.consoleResource('lib/jquery-fa-loading-0.3/jquery.faloading' + minifiedExtension + '.js')}"></script>
 
   <!-- Portal -->
   <script type="module">
-  import JGPortal from "${renderSupport.portalBaseResource('jgportal.js')}"
-  import JQUIPortal from "${renderSupport.portalResource('jquiportal.js')}"
+  import JGPortal from "${renderSupport.consoleBaseResource('jgportal.js')}"
+  import JQUIPortal from "${renderSupport.consoleResource('jquiportal.js')}"
   JGPortal.init(
     "${portalSessionId}", parseInt('${portalSessionRefreshInterval?c}'), 
     parseInt('${portalSessionInactivityTimeout?c}'), new JQUIPortal.Renderer());    

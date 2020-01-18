@@ -72,7 +72,7 @@ public class BrowserLocalBackedKVStore extends Component {
      * @throws InterruptedException the interrupted exception
      */
     @Handler(priority = 1000)
-    public void onPortalReady(ConsoleReady event, ConsoleSession channel)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession channel)
             throws InterruptedException {
         // Put there by onJsonInput if retrieval has been done.
         if (TypedIdKey.get(channel.browserSession(), Store.class,

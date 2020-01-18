@@ -116,7 +116,7 @@ public class MarkdownDisplayConlet
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add MarkdownDisplayConlet resources to page
@@ -134,7 +134,7 @@ public class MarkdownDisplayConlet
                     "github.com/markdown-it/markdown-it-mark",
                     "github.com/markdown-it/markdown-it-sub",
                     "github.com/markdown-it/markdown-it-sup" })
-                .setScriptUri(event.renderSupport().portletResource(
+                .setScriptUri(event.renderSupport().conletResource(
                     type(), "MarkdownDisplay-functions.ftl.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "MarkdownDisplay-style.css")));
@@ -186,14 +186,14 @@ public class MarkdownDisplayConlet
      *   the portlet instance.
      */
     @Override
-    public String doAddPortlet(AddConletRequest event,
+    public String doAddConlet(AddConletRequest event,
             ConsoleSession portalSession) throws Exception {
         ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
 
         // Create new model
         String portletId = (String) event.properties().get(PORTLET_ID);
         if (portletId == null) {
-            portletId = generatePortletId();
+            portletId = generateConletId();
         }
         MarkdownDisplayModel model = putInSession(
             portalSession.browserSession(),
@@ -215,11 +215,11 @@ public class MarkdownDisplayConlet
         String jsonState = JsonBeanEncoder.create()
             .writeObject(model).toJson();
         portalSession.respond(new KeyValueStoreUpdate().update(
-            storagePath(portalSession.browserSession()) + model.getPortletId(),
+            storagePath(portalSession.browserSession()) + model.getConletId(),
             jsonState));
 
         // Send HTML
-        renderPortlet(event, portalSession, model);
+        renderConlet(event, portalSession, model);
         return portletId;
     }
 
@@ -229,14 +229,14 @@ public class MarkdownDisplayConlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderConletRequest event,
+    protected void doRenderConlet(RenderConletRequest event,
             ConsoleSession portalSession, String portletId,
             MarkdownDisplayModel model) throws Exception {
-        renderPortlet(event, portalSession, model);
+        renderConlet(event, portalSession, model);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private void renderPortlet(RenderConletRequestBase<?> event,
+    private void renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession portalSession, MarkdownDisplayModel model)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
@@ -249,7 +249,7 @@ public class MarkdownDisplayConlet
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
-                MarkdownDisplayConlet.class, model.getPortletId(),
+                MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, portalSession, model))
                     .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(modes)
@@ -260,7 +260,7 @@ public class MarkdownDisplayConlet
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-view.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
-                MarkdownDisplayConlet.class, model.getPortletId(),
+                MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, portalSession, model))
                     .setRenderMode(RenderMode.View).setSupportedModes(modes)
                     .setForeground(event.isForeground()));
@@ -270,7 +270,7 @@ public class MarkdownDisplayConlet
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
             portalSession.respond(new RenderPortletFromTemplate(event,
-                MarkdownDisplayConlet.class, model.getPortletId(),
+                MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, portalSession, model))
                     .setRenderMode(RenderMode.Edit).setSupportedModes(modes));
         }
@@ -292,7 +292,7 @@ public class MarkdownDisplayConlet
 
     private void updateView(IOSubchannel channel, MarkdownDisplayModel model) {
         channel.respond(new NotifyConletView(type(),
-            model.getPortletId(), "updateAll", model.getTitle(),
+            model.getConletId(), "updateAll", model.getTitle(),
             model.getPreviewContent(), model.getViewContent(),
             renderModes(model)));
     }
@@ -303,7 +303,7 @@ public class MarkdownDisplayConlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeleteConletRequest event,
+    protected void doDeleteConlet(DeleteConletRequest event,
             ConsoleSession channel, String portletId,
             MarkdownDisplayModel retrievedState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
@@ -317,7 +317,7 @@ public class MarkdownDisplayConlet
      * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
      */
     @Override
-    protected void doNotifyPortletModel(NotifyConletModel event,
+    protected void doNotifyConletModel(NotifyConletModel event,
             ConsoleSession portalSession, MarkdownDisplayModel portletState)
             throws Exception {
         event.stop();
@@ -332,7 +332,7 @@ public class MarkdownDisplayConlet
         if (event.params().get(2) != null) {
             properties.put(VIEW_SOURCE, event.params().asString(2));
         }
-        fire(new UpdateConletModel(event.portletId(), properties),
+        fire(new UpdateConletModel(event.conletId(), properties),
             portalSession);
     }
 
@@ -347,7 +347,7 @@ public class MarkdownDisplayConlet
     @Handler
     public void onUpdatePortletModel(UpdateConletModel event,
             ConsoleSession portalSession) {
-        stateFromSession(portalSession.browserSession(), event.portletId())
+        stateFromSession(portalSession.browserSession(), event.conletId())
             .ifPresent(model -> {
                 event.ifPresent(TITLE,
                     (key, value) -> model.setTitle((String) value))
@@ -366,7 +366,7 @@ public class MarkdownDisplayConlet
                         .writeObject(model).toJson();
                     portalSession.respond(new KeyValueStoreUpdate().update(
                         storagePath(portalSession.browserSession())
-                            + model.getPortletId(),
+                            + model.getConletId(),
                         jsonState));
                     updateView(portalSession, model);
                 } catch (IOException e) { // NOPMD
@@ -380,7 +380,7 @@ public class MarkdownDisplayConlet
      */
     @SuppressWarnings("serial")
     public static class MarkdownDisplayModel
-            extends AbstractConlet.PortletBaseModel {
+            extends AbstractConlet.ConletBaseModel {
 
         private String title = "";
         private String previewContent = "";

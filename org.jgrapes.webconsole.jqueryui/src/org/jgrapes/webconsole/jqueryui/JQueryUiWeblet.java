@@ -97,8 +97,8 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     }
 
     @Override
-    protected Map<String, Object> createPortalBaseModel() {
-        Map<String, Object> model = super.createPortalBaseModel();
+    protected Map<String, Object> createConsoleBaseModel() {
+        Map<String, Object> model = super.createConsoleBaseModel();
         model.put("themeInfos",
             StreamSupport.stream(themeLoader().spliterator(), false)
                 .map(thi -> new ThemeInfo(thi.themeId(), thi.themeName()))
@@ -120,24 +120,24 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     }
 
     @Override
-    protected void renderPortal(Request.In.Get event, IOSubchannel channel,
+    protected void renderConsole(Request.In.Get event, IOSubchannel channel,
             UUID portalSessionId) throws IOException, InterruptedException {
         // Reloading themes on every reload allows themes
         // to be added dynamically. Note that we must load again
         // (not reload) in order for this to work in an OSGi environment.
         themeLoader = null;
-        super.renderPortal(event, channel, portalSessionId);
+        super.renderConsole(event, channel, portalSessionId);
     }
 
     @Override
-    protected void providePortalResource(Request.In.Get event,
+    protected void provideConsoleResource(Request.In.Get event,
             String requestPath, IOSubchannel channel) {
         String[] requestParts = ResourcePattern.split(requestPath, 1);
         if (requestParts.length == 2 && requestParts[0].equals("theme")) {
             sendThemeResource(event, channel, requestParts[1]);
             return;
         }
-        super.providePortalResource(event, requestPath, channel);
+        super.provideConsoleResource(event, requestPath, channel);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")

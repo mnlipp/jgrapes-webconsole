@@ -83,7 +83,7 @@ public abstract class RenderConlet extends ConsoleCommand {
      * 
      * @return the portlet id
      */
-    public String portletId() {
+    public String conletId() {
         return portletId;
     }
 
@@ -182,7 +182,7 @@ public abstract class RenderConlet extends ConsoleCommand {
     public void toJson(Writer writer)
             throws InterruptedException, IOException {
         try {
-            toJson(writer, "updatePortlet", portletId(), renderMode().name(),
+            toJson(writer, "updatePortlet", conletId(), renderMode().name(),
                 supportedRenderModes().stream().map(RenderMode::name)
                     .toArray(size -> new String[size]),
                 content().get(), isForeground());

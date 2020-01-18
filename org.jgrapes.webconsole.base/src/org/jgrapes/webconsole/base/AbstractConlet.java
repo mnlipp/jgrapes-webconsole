@@ -143,7 +143,7 @@ import org.jgrapes.webconsole.base.events.SetLocale;
  * it checks if state information for the portlet id exists. If so,
  * it deletes the state information from the session and
  * invokes 
- * {@link #doDeletePortlet(DeleteConletRequest, ConsoleSession, String, Serializable)}
+ * {@link #doDeleteConlet(DeleteConletRequest, ConsoleSession, String, Serializable)}
  * with the state information. This method fires the {@link DeleteConlet}
  * event that confirms the deletion of the portlet.
  * 
@@ -264,7 +264,7 @@ import org.jgrapes.webconsole.base.events.SetLocale;
 public abstract class AbstractConlet<S extends Serializable>
         extends Component {
 
-    private Map<ConsoleSession, Set<String>> portletIdsByPortalSession;
+    private Map<ConsoleSession, Set<String>> conletIdsByPortalSession;
     private Duration refreshInterval;
     private Supplier<Event<?>> refreshEventSupplier;
     private Timer refreshTimer;
@@ -291,7 +291,7 @@ public abstract class AbstractConlet<S extends Serializable>
     public AbstractConlet(Channel channel,
             ChannelReplacements channelReplacements) {
         super(channel, channelReplacements);
-        portletIdsByPortalSession
+        conletIdsByPortalSession
             = Collections.synchronizedMap(new WeakHashMap<>());
     }
 
@@ -317,7 +317,7 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     private void updateRefresh() {
-        if (refreshInterval == null || portletIdsByPortalSession().isEmpty()) {
+        if (refreshInterval == null || conletIdsByConsoleSession().isEmpty()) {
             // At least one of the prerequisites is missing, terminate
             if (refreshTimer != null) {
                 refreshTimer.cancel();
@@ -356,7 +356,7 @@ public abstract class AbstractConlet<S extends Serializable>
     public final void onResourceRequest(
             ConletResourceRequest event, IOSubchannel channel) {
         // For me?
-        if (!event.portletClass().equals(type())) {
+        if (!event.conletClass().equals(type())) {
             return;
         }
         doGetResource(event, channel);
@@ -438,7 +438,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * 
      * @return the portlet id
      */
-    protected String generatePortletId() {
+    protected String generateConletId() {
         return UUID.randomUUID().toString();
     }
 
@@ -449,20 +449,20 @@ public abstract class AbstractConlet<S extends Serializable>
      * result.
      * 
      * If you need a particular session's portlet ids, you should
-     * prefer {@link #portletIds(ConsoleSession)} over calling
+     * prefer {@link #conletIds(ConsoleSession)} over calling
      * this method with `get(portalSession)` appended.
      * 
      * @return the result
      */
-    protected Map<ConsoleSession, Set<String>> portletIdsByPortalSession() {
+    protected Map<ConsoleSession, Set<String>> conletIdsByConsoleSession() {
         // Create copy to get a non-weak map.
         return Collections
-            .unmodifiableMap(new HashMap<>(portletIdsByPortalSession));
+            .unmodifiableMap(new HashMap<>(conletIdsByPortalSession));
     }
 
     /**
      * Returns the tracked sessions. This is effectively
-     * `portletIdsByPortalSession().keySet()` converted to
+     * `conletIdsByPortalSession().keySet()` converted to
      * an array. This representation is especially useful 
      * when the portal sessions are used as argument for 
      * {@link #fire(Event, Channel...)}.
@@ -471,7 +471,7 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     protected ConsoleSession[] trackedSessions() {
         Set<ConsoleSession> sessions = new HashSet<>(
-            portletIdsByPortalSession.keySet());
+            conletIdsByPortalSession.keySet());
         return sessions.toArray(new ConsoleSession[0]);
     }
 
@@ -484,23 +484,23 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param portalSession the portal session
      * @return the set
      */
-    protected Set<String> portletIds(ConsoleSession portalSession) {
+    protected Set<String> conletIds(ConsoleSession portalSession) {
         return Collections.unmodifiableSet(
-            portletIdsByPortalSession.getOrDefault(
+            conletIdsByPortalSession.getOrDefault(
                 portalSession, Collections.emptySet()));
     }
 
     /**
      * Track the given portlet from the given session. This is invoked by
-     * {@link #onAddPortletRequest(AddConletRequest, ConsoleSession)} and
+     * {@link #onAddConletRequest(AddConletRequest, ConsoleSession)} and
      * needs only be used if {@link #onAddPortletRequest} is overridden.
      *
      * @param portalSession the portal session
      * @param portletId the portlet id
      */
-    protected void trackPortlet(ConsoleSession portalSession,
+    protected void trackConlet(ConsoleSession portalSession,
             String portletId) {
-        portletIdsByPortalSession.computeIfAbsent(portalSession,
+        conletIdsByPortalSession.computeIfAbsent(portalSession,
             newKey -> ConcurrentHashMap.newKeySet()).add(portletId);
         updateRefresh();
     }
@@ -537,9 +537,9 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param portletModel the portlet model
      * @return the portlet model
      */
-    protected <T extends PortletBaseModel> T putInSession(
+    protected <T extends ConletBaseModel> T putInSession(
             Session session, T portletModel) {
-        putInSession(session, portletModel.getPortletId(), portletModel);
+        putInSession(session, portletModel.getConletId(), portletModel);
         return portletModel;
     }
 
@@ -611,21 +611,21 @@ public abstract class AbstractConlet<S extends Serializable>
      * and calls {@link #doAddPortlet}. 
      *
      * @param event the event
-     * @param portalSession the channel
+     * @param consoleSession the channel
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
         "PMD.AvoidDuplicateLiterals" })
-    public final void onAddPortletRequest(AddConletRequest event,
-            ConsoleSession portalSession) throws Exception {
-        if (!event.portletType().equals(type())) {
+    public final void onAddConletRequest(AddConletRequest event,
+            ConsoleSession consoleSession) throws Exception {
+        if (!event.conletType().equals(type())) {
             return;
         }
         event.stop();
-        String portletId = doAddPortlet(event, portalSession);
-        event.setResult(portletId);
-        trackPortlet(portalSession, portletId);
+        String conletId = doAddConlet(event, consoleSession);
+        event.setResult(conletId);
+        trackConlet(consoleSession, conletId);
     }
 
     /**
@@ -639,7 +639,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @return the id of the created portlet
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected abstract String doAddPortlet(AddConletRequest event,
+    protected abstract String doAddConlet(AddConletRequest event,
             ConsoleSession portalSession) throws Exception;
 
     /**
@@ -652,31 +652,31 @@ public abstract class AbstractConlet<S extends Serializable>
      * also removed.
      *
      * @param event the event
-     * @param portalSession the portal session
+     * @param consoleSession the portal session
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public final void onDeletePortletRequest(DeleteConletRequest event,
-            ConsoleSession portalSession) throws Exception {
+    public final void onDeleteConletRequest(DeleteConletRequest event,
+            ConsoleSession consoleSession) throws Exception {
         Optional<S> optPortletState = stateFromSession(
-            portalSession.browserSession(), event.portletId());
+            consoleSession.browserSession(), event.conletId());
         if (!optPortletState.isPresent()) {
             return;
         }
-        String portletId = event.portletId();
-        removeState(portalSession.browserSession(), portletId);
-        for (Iterator<ConsoleSession> psi = portletIdsByPortalSession
+        String conletId = event.conletId();
+        removeState(consoleSession.browserSession(), conletId);
+        for (Iterator<ConsoleSession> psi = conletIdsByPortalSession
             .keySet().iterator(); psi.hasNext();) {
-            Set<String> idSet = portletIdsByPortalSession.get(psi.next());
-            idSet.remove(portletId);
+            Set<String> idSet = conletIdsByPortalSession.get(psi.next());
+            idSet.remove(conletId);
             if (idSet.isEmpty()) {
                 psi.remove();
             }
         }
         updateRefresh();
         event.stop();
-        doDeletePortlet(event, portalSession, event.portletId(),
+        doDeleteConlet(event, consoleSession, event.conletId(),
             optPortletState.get());
     }
 
@@ -694,7 +694,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param portletState the portlet state
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected abstract void doDeletePortlet(DeleteConletRequest event,
+    protected abstract void doDeleteConlet(DeleteConletRequest event,
             ConsoleSession channel, String portletId, S portletState)
             throws Exception;
 
@@ -716,18 +716,18 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public final void onRenderPortlet(RenderConletRequest event,
+    public final void onRenderConlet(RenderConletRequest event,
             ConsoleSession portalSession) throws Exception {
-        Optional<S> optPortletState = stateFromSession(
-            portalSession.browserSession(), event.portletId());
-        if (!optPortletState.isPresent()) {
+        Optional<S> optConletState = stateFromSession(
+            portalSession.browserSession(), event.conletId());
+        if (!optConletState.isPresent()) {
             return;
         }
         event.setResult(true);
         event.stop();
-        doRenderPortlet(
-            event, portalSession, event.portletId(), optPortletState.get());
-        trackPortlet(portalSession, event.portletId());
+        doRenderConlet(
+            event, portalSession, event.conletId(), optConletState.get());
+        trackConlet(portalSession, event.conletId());
     }
 
     /**
@@ -740,7 +740,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param portletState the portletState
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected abstract void doRenderPortlet(RenderConletRequest event,
+    protected abstract void doRenderConlet(RenderConletRequest event,
             ConsoleSession channel, String portletId, S portletState)
             throws Exception;
 
@@ -763,7 +763,7 @@ public abstract class AbstractConlet<S extends Serializable>
         if (event.reload()) {
             return;
         }
-        for (String portletId : portletIds(portalSession)) {
+        for (String portletId : conletIds(portalSession)) {
             if (!doSetLocale(event, portalSession, portletId)) {
                 event.forceReload();
                 break;
@@ -811,14 +811,14 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public final void onNotifyPortletModel(NotifyConletModel event,
+    public final void onNotifyConletModel(NotifyConletModel event,
             ConsoleSession channel) throws Exception {
         Optional<S> optPortletState
-            = stateFromSession(channel.browserSession(), event.portletId());
+            = stateFromSession(channel.browserSession(), event.conletId());
         if (!optPortletState.isPresent()) {
             return;
         }
-        doNotifyPortletModel(event, channel, optPortletState.get());
+        doNotifyConletModel(event, channel, optPortletState.get());
     }
 
     /**
@@ -830,7 +830,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param portletState the portletState
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected void doNotifyPortletModel(NotifyConletModel event,
+    protected void doNotifyConletModel(NotifyConletModel event,
             ConsoleSession channel, S portletState) throws Exception {
         // Default is to do nothing.
     }
@@ -846,7 +846,7 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     @Handler
     public final void onClosed(Closed event, ConsoleSession portalSession) {
-        portletIdsByPortalSession.remove(portalSession);
+        conletIdsByPortalSession.remove(portalSession);
         updateRefresh();
         afterOnClosed(event, portalSession);
     }
@@ -872,7 +872,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * to portable formats. 
      */
     @SuppressWarnings("serial")
-    public static class PortletBaseModel implements Serializable {
+    public static class ConletBaseModel implements Serializable {
 
         protected String portletId;
 
@@ -882,7 +882,7 @@ public abstract class AbstractConlet<S extends Serializable>
          * @param portletId the portlet id
          */
         @ConstructorProperties({ "portletId" })
-        public PortletBaseModel(String portletId) {
+        public ConletBaseModel(String portletId) {
             this.portletId = portletId;
         }
 
@@ -891,7 +891,7 @@ public abstract class AbstractConlet<S extends Serializable>
          * 
          * @return the portlet id
          */
-        public String getPortletId() {
+        public String getConletId() {
             return portletId;
         }
 
@@ -933,7 +933,7 @@ public abstract class AbstractConlet<S extends Serializable>
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            PortletBaseModel other = (PortletBaseModel) obj;
+            ConletBaseModel other = (ConletBaseModel) obj;
             if (portletId == null) {
                 if (other.portletId != null) {
                     return false;
@@ -949,7 +949,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * Send to the portal page for adding or updating a complete portlet
      * representation.
      */
-    public class RenderPortletFromReader extends RenderConlet {
+    public class RenderConletFromReader extends RenderConlet {
 
         private final Future<String> content;
 
@@ -961,7 +961,7 @@ public abstract class AbstractConlet<S extends Serializable>
          * @param portletId the id of the portlet
          * @param contentReader the content reader
          */
-        public RenderPortletFromReader(RenderConletRequestBase<?> request,
+        public RenderConletFromReader(RenderConletRequestBase<?> request,
                 Class<?> portletClass, String portletId, Reader contentReader) {
             super(portletClass, portletId);
             // Start to prepare the content immediately and concurrently.

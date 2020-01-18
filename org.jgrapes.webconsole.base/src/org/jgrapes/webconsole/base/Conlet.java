@@ -23,11 +23,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This interface provides portlet related constants. Portlets
- * need not implement this interface, not even as a marker interface.
- * They only have to expose a specific response behavior to certain
- * events. An overview of the event sequences is provided by the
- * package description. Make sure to read this description first.
+ * This interface provides web console component related constants. 
+ * Web console components need not implement this interface, not even 
+ * as a marker interface. They only have to expose a specific response 
+ * behavior to certain events. An overview of the event sequences is 
+ * provided by the package description. Make sure to read this 
+ * description first.
  */
 public interface Conlet {
 

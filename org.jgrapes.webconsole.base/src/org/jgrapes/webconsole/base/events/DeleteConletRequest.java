@@ -57,7 +57,7 @@ public class DeleteConletRequest extends Event<Void> {
      * 
      * @return the portlet id
      */
-    public String portletId() {
+    public String conletId() {
         return portletId;
     }
 
