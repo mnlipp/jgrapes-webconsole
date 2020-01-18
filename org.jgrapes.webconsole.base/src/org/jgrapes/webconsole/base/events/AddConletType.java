@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jdrupes.json.JsonArray;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 
 /**
@@ -42,7 +42,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
  * 
  * This in turn causes the browser to issue `GET` requests that
  * (usually) refer to the portlet's resources. These requests are
- * converted to {@link ComponentResourceRequest}s by the portal and
+ * converted to {@link ConletResourceRequest}s by the portal and
  * sent to the portlets, which must respond to the requests.
  * 
  * The sequence of events is shown in the diagram.
@@ -50,7 +50,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
  * ![WebConsole Ready Event Sequence](AddPortletTypeSeq.svg)
  * 
  * See {@link ResourceRequest} for details about the processing
- * of the {@link ComponentResourceRequest}.
+ * of the {@link ConletResourceRequest}.
  * 
  * A portelt's JavaScript may (and probably must) make use of
  * the functions provided by the portal page. See the 
@@ -67,7 +67,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
  * WebConsole -> PortletX: ConsoleReady 
  * deactivate WebConsole
  * activate PortletX
- * PortletX -> WebConsole: AddComponentType 
+ * PortletX -> WebConsole: AddConletType 
  * deactivate PortletX
  * activate WebConsole
  * WebConsole -> Browser: "addPortletType"
@@ -75,14 +75,14 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
  * deactivate WebConsole
  * Browser -> WebConsole: "GET <portlet resource URI>"
  * activate WebConsole
- * WebConsole -> PortletX: ComponentResourceRequest
+ * WebConsole -> PortletX: ConletResourceRequest
  * deactivate Browser
  * activate PortletX
  * deactivate PortletX
  * 
  * @enduml
  */
-public class AddComponentType extends ConsoleCommand {
+public class AddConletType extends ConsoleCommand {
 
     private final String portletType;
     private Map<Locale, String> displayNames = Collections.emptyMap();
@@ -96,7 +96,7 @@ public class AddComponentType extends ConsoleCommand {
      * @param portletType a unique id for the portlet type (usually
      * the class name)
      */
-    public AddComponentType(String portletType) {
+    public AddConletType(String portletType) {
         this.portletType = portletType;
     }
 
@@ -115,7 +115,7 @@ public class AddComponentType extends ConsoleCommand {
      * @param displayNames the display names
      * @return the event for easy chaining
      */
-    public AddComponentType setDisplayNames(Map<Locale, String> displayNames) {
+    public AddConletType setDisplayNames(Map<Locale, String> displayNames) {
         this.displayNames = displayNames;
         return this;
     }
@@ -138,7 +138,7 @@ public class AddComponentType extends ConsoleCommand {
      * @param mode the mode
      * @return the event for easy chaining
      */
-    public AddComponentType addRenderMode(RenderMode mode) {
+    public AddConletType addRenderMode(RenderMode mode) {
         if (renderModes == null) {
             renderModes = new ArrayList<>();
         }
@@ -164,7 +164,7 @@ public class AddComponentType extends ConsoleCommand {
      * @param scriptResource the script resource
      * @return the event for easy chaining
      */
-    public AddComponentType addScript(ScriptResource scriptResource) {
+    public AddConletType addScript(ScriptResource scriptResource) {
         scriptResources.add(scriptResource);
         return this;
     }
@@ -177,7 +177,7 @@ public class AddComponentType extends ConsoleCommand {
      * @param uri the URI
      * @return the event for easy chaining
      */
-    public AddComponentType addCss(RenderSupport renderSupport, URI uri) {
+    public AddConletType addCss(RenderSupport renderSupport, URI uri) {
         cssUris.add(renderSupport.portletResource(portletType(), uri));
         return this;
     }

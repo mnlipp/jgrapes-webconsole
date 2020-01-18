@@ -50,21 +50,21 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.webconsole.base.AbstractComponent;
+import org.jgrapes.webconsole.base.AbstractConlet;
+import org.jgrapes.webconsole.base.AbstractConlet.PortletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.ResourceByGenerator;
-import org.jgrapes.webconsole.base.AbstractComponent.PortletBaseModel;
-import org.jgrapes.webconsole.base.events.ComponentResourceRequest;
-import org.jgrapes.webconsole.base.events.RenderComponent;
-import org.jgrapes.webconsole.base.events.RenderComponentRequest;
-import org.jgrapes.webconsole.base.events.RenderComponentRequestBase;
+import org.jgrapes.webconsole.base.events.ConletResourceRequest;
+import org.jgrapes.webconsole.base.events.RenderConlet;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
+import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 
 /**
  * 
  */
 public abstract class FreeMarkerComponent<S extends Serializable>
-        extends AbstractComponent<S> {
+        extends AbstractConlet<S> {
 
     @SuppressWarnings("PMD.VariableNamingConventions")
     private static final Pattern templatePattern
@@ -199,7 +199,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * Build a freemarker model for the current request.
      * 
      * This model provides:
-     *  * The `event` property (of type {@link RenderComponentRequest}).
+     *  * The `event` property (of type {@link RenderConletRequest}).
      *  * The `portlet` property (of type {@link PortletBaseModel}).
      *  * The function `_Id(String base)` that creates a unique
      *    id for an HTML element by appending the portlet id to the 
@@ -211,7 +211,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * @return the model
      */
     protected Map<String, Object> fmPortletModel(
-            RenderComponentRequestBase<?> event,
+            RenderConletRequestBase<?> event,
             IOSubchannel channel, PortletBaseModel portletModel) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
@@ -242,7 +242,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * @param portletModel the portlet model
      * @return the model
      */
-    protected Map<String, Object> fmModel(RenderComponentRequestBase<?> event,
+    protected Map<String, Object> fmModel(RenderConletRequestBase<?> event,
             ConsoleSession channel, PortletBaseModel portletModel) {
         final Map<String, Object> model
             = fmSessionModel(channel.browserSession());
@@ -264,7 +264,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * @param channel the channel
      */
     @Override
-    protected void doGetResource(ComponentResourceRequest event,
+    protected void doGetResource(ConletResourceRequest event,
             IOSubchannel channel) {
         if (!templatePattern.matcher(event.resourceUri().getPath()).matches()) {
             super.doGetResource(event, channel);
@@ -301,7 +301,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
     /**
      * Specifies how to render portlet content using a template.
      */
-    public static class RenderPortletFromTemplate extends RenderComponent {
+    public static class RenderPortletFromTemplate extends RenderConlet {
 
         private final Future<String> content;
 
@@ -314,7 +314,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
          * @param template the template
          * @param dataModel the data model
          */
-        public RenderPortletFromTemplate(RenderComponentRequestBase<?> request,
+        public RenderPortletFromTemplate(RenderConletRequestBase<?> request,
                 Class<?> portletClass, String portletId, Template template,
                 Object dataModel) {
             super(portletClass, portletId);

@@ -29,7 +29,7 @@ import java.util.Set;
  * events. An overview of the event sequences is provided by the
  * package description. Make sure to read this description first.
  */
-public interface ConsoleComponent {
+public interface Conlet {
 
     /**
      * The render modes.

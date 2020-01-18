@@ -23,12 +23,12 @@ import java.util.Optional;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
-import org.jgrapes.webconsole.base.PortletComponentFactory;
+import org.jgrapes.webconsole.base.ConletComponentFactory;
 
 /**
  * A factory for creating {@link SysInfoConlet}s.
  */
-public class SysInfoConletFactory implements PortletComponentFactory {
+public class SysInfoConletFactory implements ConletComponentFactory {
 
     /*
      * (non-Javadoc)

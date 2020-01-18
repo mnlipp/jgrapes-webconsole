@@ -31,8 +31,8 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.PageResourceProvider;
 import org.jgrapes.webconsole.base.events.AddPageResources;
-import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webconsole.base.events.ConsoleReady;
 
 /**
  * Provider for the [JQuery](https://jquery.com/) library.

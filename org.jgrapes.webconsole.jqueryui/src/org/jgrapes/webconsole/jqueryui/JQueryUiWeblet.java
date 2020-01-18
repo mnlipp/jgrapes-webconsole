@@ -289,7 +289,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 //
 //    /**
 //     * The channel used to send {@link PageResourceRequest}s and
-//     * {@link ComponentResourceRequest}s to the portlets (via the
+//     * {@link ConletResourceRequest}s to the portlets (via the
 //     * portal).
 //     */
 //    public class PortalResourceChannel extends LinkedIOSubchannel {

@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2017-2018 Michael N. Lipp
+ * Copyright (C) 2018 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -16,16 +16,16 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.webconsole.demo.conlet.helloworld;
+package org.jgrapes.webconsole.demo.conlet.tabledemo;
 
 import java.util.Map;
 import java.util.Optional;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
-import org.jgrapes.webconsole.base.PortletComponentFactory;
+import org.jgrapes.webconsole.base.ConletComponentFactory;
 
-public class HelloWorldPortletFactory implements PortletComponentFactory {
+public class TableDemoConletFactory implements ConletComponentFactory {
 
     /*
      * (non-Javadoc)
@@ -34,7 +34,7 @@ public class HelloWorldPortletFactory implements PortletComponentFactory {
      */
     @Override
     public Class<? extends ComponentType> componentType() {
-        return HelloWorldPortlet.class;
+        return TableDemoConlet.class;
     }
 
     /*
@@ -46,7 +46,7 @@ public class HelloWorldPortletFactory implements PortletComponentFactory {
     @Override
     public Optional<ComponentType> create(
             Channel componentChannel, Map<Object, Object> properties) {
-        return Optional.of(new HelloWorldPortlet(componentChannel));
+        return Optional.of(new TableDemoConlet(componentChannel));
     }
 
 }

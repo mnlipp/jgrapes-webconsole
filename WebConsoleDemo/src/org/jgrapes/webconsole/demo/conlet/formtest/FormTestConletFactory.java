@@ -23,9 +23,9 @@ import java.util.Optional;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
-import org.jgrapes.webconsole.base.PortletComponentFactory;
+import org.jgrapes.webconsole.base.ConletComponentFactory;
 
-public class FormTestPortletFactory implements PortletComponentFactory {
+public class FormTestConletFactory implements ConletComponentFactory {
 
     /*
      * (non-Javadoc)
@@ -34,7 +34,7 @@ public class FormTestPortletFactory implements PortletComponentFactory {
      */
     @Override
     public Class<? extends ComponentType> componentType() {
-        return FormTestPortlet.class;
+        return FormTestConlet.class;
     }
 
     /*
@@ -46,7 +46,7 @@ public class FormTestPortletFactory implements PortletComponentFactory {
     @Override
     public Optional<ComponentType> create(
             Channel componentChannel, Map<Object, Object> properties) {
-        return Optional.of(new FormTestPortlet(componentChannel));
+        return Optional.of(new FormTestConlet(componentChannel));
     }
 
 }

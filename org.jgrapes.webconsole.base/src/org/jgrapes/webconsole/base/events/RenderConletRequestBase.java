@@ -21,13 +21,13 @@ package org.jgrapes.webconsole.base.events;
 import java.util.Set;
 
 import org.jgrapes.core.Event;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
 
 /**
  * The base class for events that result in a portlet being rendered.
  */
-public abstract class RenderComponentRequestBase<T> extends Event<T> {
+public abstract class RenderConletRequestBase<T> extends Event<T> {
     private final RenderSupport renderSupport;
     private final Set<RenderMode> renderModes;
 
@@ -37,7 +37,7 @@ public abstract class RenderComponentRequestBase<T> extends Event<T> {
      * @param renderSupport the render support
      * @param renderModes the render modes
      */
-    public RenderComponentRequestBase(
+    public RenderConletRequestBase(
             RenderSupport renderSupport, Set<RenderMode> renderModes) {
         this.renderSupport = renderSupport;
         this.renderModes = renderModes;

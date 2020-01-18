@@ -25,7 +25,7 @@ import java.io.Writer;
  * A notification (as defined by the JSON RPC specification) to be sent to
  * the portlet view (the browser).
  */
-public class DeleteComponent extends ConsoleCommand {
+public class DeleteConlet extends ConsoleCommand {
 
     private final String portletId;
 
@@ -34,7 +34,7 @@ public class DeleteComponent extends ConsoleCommand {
      *  
      * @param portletId the portlet (view) that should be deleted
      */
-    public DeleteComponent(String portletId) {
+    public DeleteConlet(String portletId) {
         this.portletId = portletId;
     }
 

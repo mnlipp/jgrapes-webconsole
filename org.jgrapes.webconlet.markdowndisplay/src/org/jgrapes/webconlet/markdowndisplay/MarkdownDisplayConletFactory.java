@@ -23,12 +23,12 @@ import java.util.Optional;
 
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
-import org.jgrapes.webconsole.base.PortletComponentFactory;
+import org.jgrapes.webconsole.base.ConletComponentFactory;
 
 /**
  * A factory for creating {@link MarkdownDisplayConlet}s.
  */
-public class MarkdownDisplayConletFactory implements PortletComponentFactory {
+public class MarkdownDisplayConletFactory implements ConletComponentFactory {
 
     /*
      * (non-Javadoc)

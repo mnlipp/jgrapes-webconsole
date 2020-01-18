@@ -35,8 +35,8 @@ import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.PageResourceProvider;
 import org.jgrapes.webconsole.base.StylingInfo;
 import org.jgrapes.webconsole.base.events.AddPageResources;
-import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webconsole.base.events.ConsoleReady;
 
 /**
  * Provider for the [Datatables](https://datatables.net/) library.

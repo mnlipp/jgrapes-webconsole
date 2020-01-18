@@ -44,22 +44,22 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webconsole.base.AbstractComponent;
+import org.jgrapes.webconsole.base.AbstractConlet;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.UserPrincipal;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
-import org.jgrapes.webconsole.base.events.AddComponentRequest;
-import org.jgrapes.webconsole.base.events.AddComponentType;
-import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteComponent;
-import org.jgrapes.webconsole.base.events.DeleteComponentRequest;
-import org.jgrapes.webconsole.base.events.NotifyComponentModel;
-import org.jgrapes.webconsole.base.events.NotifyPortletView;
-import org.jgrapes.webconsole.base.events.RenderComponentRequest;
-import org.jgrapes.webconsole.base.events.RenderComponentRequestBase;
-import org.jgrapes.webconsole.base.events.UpdateComponentModel;
+import org.jgrapes.webconsole.base.events.AddConletRequest;
+import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.DeleteConlet;
+import org.jgrapes.webconsole.base.events.DeleteConletRequest;
+import org.jgrapes.webconsole.base.events.NotifyConletModel;
+import org.jgrapes.webconsole.base.events.NotifyConletView;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
+import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
+import org.jgrapes.webconsole.base.events.UpdateConletModel;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
 
 /**
@@ -70,7 +70,8 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
  */
 @SuppressWarnings("PMD.DataClass")
 public class MarkdownDisplayConlet
-        extends FreeMarkerComponent<MarkdownDisplayConlet.MarkdownDisplayModel> {
+        extends
+        FreeMarkerComponent<MarkdownDisplayConlet.MarkdownDisplayModel> {
 
     /** Property for forcing a portlet id (used for singleton instaces). */
     public static final String PORTLET_ID = "PortletId";
@@ -105,7 +106,7 @@ public class MarkdownDisplayConlet
     }
 
     /**
-     * On {@link ConsoleReady}, fire the {@link AddComponentType}.
+     * On {@link ConsoleReady}, fire the {@link AddConletType}.
      *
      * @param event the event
      * @param portalSession the portal session
@@ -119,7 +120,7 @@ public class MarkdownDisplayConlet
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add MarkdownDisplayConlet resources to page
-        portalSession.respond(new AddComponentType(type())
+        portalSession.respond(new AddConletType(type())
             .setDisplayNames(
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addScript(new ScriptResource()
@@ -166,7 +167,7 @@ public class MarkdownDisplayConlet
 
     /**
      * Adds the portlet to the portal. The portlet supports the 
-     * following options (see {@link AddComponentRequest#properties()}:
+     * following options (see {@link AddConletRequest#properties()}:
      * 
      * * `PORTLET_ID` (String): The portlet id.
      * 
@@ -185,7 +186,7 @@ public class MarkdownDisplayConlet
      *   the portlet instance.
      */
     @Override
-    public String doAddPortlet(AddComponentRequest event,
+    public String doAddPortlet(AddConletRequest event,
             ConsoleSession portalSession) throws Exception {
         ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
 
@@ -228,14 +229,14 @@ public class MarkdownDisplayConlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderComponentRequest event,
+    protected void doRenderPortlet(RenderConletRequest event,
             ConsoleSession portalSession, String portletId,
             MarkdownDisplayModel model) throws Exception {
         renderPortlet(event, portalSession, model);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private void renderPortlet(RenderComponentRequestBase<?> event,
+    private void renderPortlet(RenderConletRequestBase<?> event,
             ConsoleSession portalSession, MarkdownDisplayModel model)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
@@ -290,7 +291,7 @@ public class MarkdownDisplayConlet
     }
 
     private void updateView(IOSubchannel channel, MarkdownDisplayModel model) {
-        channel.respond(new NotifyPortletView(type(),
+        channel.respond(new NotifyConletView(type(),
             model.getPortletId(), "updateAll", model.getTitle(),
             model.getPreviewContent(), model.getViewContent(),
             renderModes(model)));
@@ -302,12 +303,12 @@ public class MarkdownDisplayConlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeleteComponentRequest event,
+    protected void doDeletePortlet(DeleteConletRequest event,
             ConsoleSession channel, String portletId,
             MarkdownDisplayModel retrievedState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
             storagePath(channel.browserSession()) + portletId));
-        channel.respond(new DeleteComponent(portletId));
+        channel.respond(new DeleteConlet(portletId));
     }
 
     /*
@@ -316,7 +317,7 @@ public class MarkdownDisplayConlet
      * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
      */
     @Override
-    protected void doNotifyPortletModel(NotifyComponentModel event,
+    protected void doNotifyPortletModel(NotifyConletModel event,
             ConsoleSession portalSession, MarkdownDisplayModel portletState)
             throws Exception {
         event.stop();
@@ -331,20 +332,20 @@ public class MarkdownDisplayConlet
         if (event.params().get(2) != null) {
             properties.put(VIEW_SOURCE, event.params().asString(2));
         }
-        fire(new UpdateComponentModel(event.portletId(), properties),
+        fire(new UpdateConletModel(event.portletId(), properties),
             portalSession);
     }
 
     /**
      * Stores the modified properties using a {@link KeyValueStoreUpdate}
-     * event and updates the view with a {@link NotifyPortletView}. 
+     * event and updates the view with a {@link NotifyConletView}. 
      *
      * @param event the event
      * @param portalSession the portal session
      */
     @SuppressWarnings("unchecked")
     @Handler
-    public void onUpdatePortletModel(UpdateComponentModel event,
+    public void onUpdatePortletModel(UpdateConletModel event,
             ConsoleSession portalSession) {
         stateFromSession(portalSession.browserSession(), event.portletId())
             .ifPresent(model -> {
@@ -379,7 +380,7 @@ public class MarkdownDisplayConlet
      */
     @SuppressWarnings("serial")
     public static class MarkdownDisplayModel
-            extends AbstractComponent.PortletBaseModel {
+            extends AbstractConlet.PortletBaseModel {
 
         private String title = "";
         private String previewContent = "";

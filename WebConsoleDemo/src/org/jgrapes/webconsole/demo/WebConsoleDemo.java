@@ -57,10 +57,10 @@ import org.jgrapes.net.SslCodec;
 import org.jgrapes.net.TcpServer;
 import org.jgrapes.util.PreferencesStore;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
+import org.jgrapes.webconsole.base.ConletComponentFactory;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
 import org.jgrapes.webconsole.base.KVStoreBasedConsolePolicy;
 import org.jgrapes.webconsole.base.PageResourceProviderFactory;
-import org.jgrapes.webconsole.base.PortletComponentFactory;
 import org.jgrapes.webconsole.base.WebConsole;
 import org.jgrapes.webconsole.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.webconsole.jqueryui.JQueryUiWeblet;
@@ -159,7 +159,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             PageResourceProviderFactory.class, portal));
         // Add all available portlets
         portal.attach(new ComponentCollector<>(
-            PortletComponentFactory.class, portal));
+            ConletComponentFactory.class, portal));
     }
 
     private void createBootstrap4Portal() throws URISyntaxException {
@@ -189,7 +189,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available portlets
         portal.attach(new ComponentCollector<>(
-            PortletComponentFactory.class, portal));
+            ConletComponentFactory.class, portal));
     }
 
     private void createVueJsPortal() throws URISyntaxException {
@@ -219,7 +219,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available portlets
         portal.attach(new ComponentCollector<>(
-            PortletComponentFactory.class, portal));
+            ConletComponentFactory.class, portal));
     }
 
     /*

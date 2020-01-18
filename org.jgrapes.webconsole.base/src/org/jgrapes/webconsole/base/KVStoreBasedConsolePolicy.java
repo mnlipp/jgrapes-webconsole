@@ -37,12 +37,12 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.events.ConsoleLayoutChanged;
 import org.jgrapes.webconsole.base.events.ConsolePrepared;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.LastConsoleLayout;
-import org.jgrapes.webconsole.base.events.RenderComponentRequest;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
 
 /**
  * A component that restores the console layout
@@ -85,9 +85,9 @@ import org.jgrapes.webconsole.base.events.RenderComponentRequest;
  * WebConsole -> Browser: "lastPortalLayout"
  * deactivate WebConsole
  * loop for all portlets to be displayed
- *     KVStoreBasedConsolePolicy -> PortletX: RenderComponentRequest
+ *     KVStoreBasedConsolePolicy -> PortletX: RenderConletRequest
  *     activate PortletX
- *     PortletX -> WebConsole: RenderComponent
+ *     PortletX -> WebConsole: RenderConlet
  *     deactivate PortletX
  *     activate WebConsole
  *     WebConsole -> Browser: "renderPortlet"
@@ -262,12 +262,12 @@ public class KVStoreBasedConsolePolicy extends Component {
 
             // Restore portlets
             for (String portletId : tabsLayout) {
-                fire(new RenderComponentRequest(
+                fire(new RenderConletRequest(
                     event.event().renderSupport(), portletId,
                     RenderMode.asSet(RenderMode.View)), channel);
             }
             for (String portletId : previewLayout) {
-                fire(new RenderComponentRequest(
+                fire(new RenderConletRequest(
                     event.event().renderSupport(), portletId,
                     RenderMode.asSet(RenderMode.Preview,
                         RenderMode.Foreground)),

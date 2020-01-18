@@ -38,30 +38,30 @@ import org.jgrapes.http.Session;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
+import org.jgrapes.webconsole.base.AbstractConlet.PortletBaseModel;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.UserPrincipal;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
-import org.jgrapes.webconsole.base.AbstractComponent.PortletBaseModel;
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
-import org.jgrapes.webconsole.base.events.AddComponentRequest;
-import org.jgrapes.webconsole.base.events.AddComponentType;
-import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteComponent;
-import org.jgrapes.webconsole.base.events.DeleteComponentRequest;
-import org.jgrapes.webconsole.base.events.DisplayNotification;
-import org.jgrapes.webconsole.base.events.NotifyComponentModel;
-import org.jgrapes.webconsole.base.events.NotifyPortletView;
-import org.jgrapes.webconsole.base.events.RenderComponentRequest;
-import org.jgrapes.webconsole.base.events.RenderComponentRequestBase;
+import org.jgrapes.webconsole.base.events.AddConletRequest;
+import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.DeleteConlet;
+import org.jgrapes.webconsole.base.events.DeleteConletRequest;
+import org.jgrapes.webconsole.base.events.DisplayNotification;
+import org.jgrapes.webconsole.base.events.NotifyConletModel;
+import org.jgrapes.webconsole.base.events.NotifyConletView;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
+import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
-import org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldPortlet;
+import org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldConlet;
 
 /**
  * 
  */
-public class HelloWorldPortlet
-        extends FreeMarkerComponent<HelloWorldPortlet.HelloWorldModel> {
+public class HelloWorldConlet
+        extends FreeMarkerComponent<HelloWorldConlet.HelloWorldModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);
@@ -74,22 +74,22 @@ public class HelloWorldPortlet
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
-    public HelloWorldPortlet(Channel componentChannel) {
+    public HelloWorldConlet(Channel componentChannel) {
         super(componentChannel);
     }
 
     private String storagePath(Session session) {
         return "/" + WebConsoleUtils.userFromSession(session)
             .map(UserPrincipal::toString).orElse("")
-            + "/portlets/" + HelloWorldPortlet.class.getName() + "/";
+            + "/portlets/" + HelloWorldConlet.class.getName() + "/";
     }
 
     @Handler
     public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        // Add HelloWorldPortlet resources to page
-        portalSession.respond(new AddComponentType(type())
+        // Add HelloWorldConlet resources to page
+        portalSession.respond(new AddConletType(type())
             .setDisplayNames(
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addScript(new ScriptResource().setScriptUri(
@@ -121,7 +121,7 @@ public class HelloWorldPortlet
     }
 
     @Override
-    public String doAddPortlet(AddComponentRequest event,
+    public String doAddPortlet(AddConletRequest event,
             ConsoleSession channel) throws Exception {
         String portletId = generatePortletId();
         HelloWorldModel portletModel = putInSession(
@@ -141,13 +141,13 @@ public class HelloWorldPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderComponentRequest event,
+    protected void doRenderPortlet(RenderConletRequest event,
             ConsoleSession channel, String portletId,
             HelloWorldModel portletModel) throws Exception {
         renderPortlet(event, channel, portletModel);
     }
 
-    private void renderPortlet(RenderComponentRequestBase<?> event,
+    private void renderPortlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, HelloWorldModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
@@ -155,7 +155,7 @@ public class HelloWorldPortlet
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
             channel.respond(new RenderPortletFromTemplate(event,
-                HelloWorldPortlet.class, portletModel.getPortletId(),
+                HelloWorldConlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, channel, portletModel))
                     .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(MODES)
@@ -165,12 +165,12 @@ public class HelloWorldPortlet
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
             channel.respond(new RenderPortletFromTemplate(event,
-                HelloWorldPortlet.class, portletModel.getPortletId(),
+                HelloWorldConlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, channel, portletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            channel.respond(new NotifyPortletView(type(),
+            channel.respond(new NotifyConletView(type(),
                 portletModel.getPortletId(), "setWorldVisible",
                 portletModel.isWorldVisible()));
         }
@@ -182,12 +182,12 @@ public class HelloWorldPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeleteComponentRequest event,
+    protected void doDeletePortlet(DeleteConletRequest event,
             ConsoleSession channel, String portletId,
             HelloWorldModel portletState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
             storagePath(channel.browserSession()) + portletId));
-        channel.respond(new DeleteComponent(portletId));
+        channel.respond(new DeleteConlet(portletId));
     }
 
     /*
@@ -196,7 +196,7 @@ public class HelloWorldPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
      */
     @Override
-    protected void doNotifyPortletModel(NotifyComponentModel event,
+    protected void doNotifyPortletModel(NotifyConletModel event,
             ConsoleSession channel, HelloWorldModel portletModel)
             throws Exception {
         event.stop();
@@ -207,7 +207,7 @@ public class HelloWorldPortlet
         channel.respond(new KeyValueStoreUpdate().update(
             storagePath(channel.browserSession()) + portletModel.getPortletId(),
             jsonState));
-        channel.respond(new NotifyPortletView(type(),
+        channel.respond(new NotifyConletView(type(),
             portletModel.getPortletId(), "setWorldVisible",
             portletModel.isWorldVisible()));
         channel.respond(new DisplayNotification("<span>"

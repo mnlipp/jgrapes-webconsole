@@ -37,25 +37,25 @@ import org.jgrapes.http.Session;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
+import org.jgrapes.webconsole.base.AbstractConlet.PortletBaseModel;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.UserPrincipal;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
-import org.jgrapes.webconsole.base.AbstractComponent.PortletBaseModel;
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
-import org.jgrapes.webconsole.base.events.AddComponentRequest;
-import org.jgrapes.webconsole.base.events.AddComponentType;
-import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteComponent;
-import org.jgrapes.webconsole.base.events.DeleteComponentRequest;
-import org.jgrapes.webconsole.base.events.RenderComponentRequest;
-import org.jgrapes.webconsole.base.events.RenderComponentRequestBase;
+import org.jgrapes.webconsole.base.events.AddConletRequest;
+import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.DeleteConlet;
+import org.jgrapes.webconsole.base.events.DeleteConletRequest;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
+import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
 
 /**
  * 
  */
-public class FormTestPortlet
+public class FormTestConlet
         extends FreeMarkerComponent<PortletBaseModel> {
 
     private static final Set<RenderMode> MODES
@@ -69,22 +69,22 @@ public class FormTestPortlet
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
-    public FormTestPortlet(Channel componentChannel) {
+    public FormTestConlet(Channel componentChannel) {
         super(componentChannel);
     }
 
     private String storagePath(Session session) {
         return "/" + WebConsoleUtils.userFromSession(session)
             .map(UserPrincipal::toString).orElse("")
-            + "/portlets/" + FormTestPortlet.class.getName() + "/";
+            + "/portlets/" + FormTestConlet.class.getName() + "/";
     }
 
     @Handler
     public void onPortalReady(ConsoleReady event, ConsoleSession portalSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        // Add HelloWorldPortlet resources to page
-        portalSession.respond(new AddComponentType(type())
+        // Add HelloWorldConlet resources to page
+        portalSession.respond(new AddConletType(type())
             .setDisplayNames(
                 displayNames(portalSession.supportedLocales(), "portletName"))
             .addRenderMode(RenderMode.View)
@@ -114,7 +114,7 @@ public class FormTestPortlet
     }
 
     @Override
-    public String doAddPortlet(AddComponentRequest event,
+    public String doAddPortlet(AddConletRequest event,
             ConsoleSession channel) throws Exception {
         String portletId = generatePortletId();
         PortletBaseModel portletModel = putInSession(
@@ -134,13 +134,13 @@ public class FormTestPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
      */
     @Override
-    protected void doRenderPortlet(RenderComponentRequest event,
+    protected void doRenderPortlet(RenderConletRequest event,
             ConsoleSession channel, String portletId,
             PortletBaseModel portletModel) throws Exception {
         renderPortlet(event, channel, portletModel);
     }
 
-    private void renderPortlet(RenderComponentRequestBase<?> event,
+    private void renderPortlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, PortletBaseModel portletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
@@ -148,7 +148,7 @@ public class FormTestPortlet
             Template tpl
                 = freemarkerConfig().getTemplate("FormTest-view.ftl.html");
             channel.respond(new RenderPortletFromTemplate(event,
-                FormTestPortlet.class, portletModel.getPortletId(),
+                FormTestConlet.class, portletModel.getPortletId(),
                 tpl, fmModel(event, channel, portletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
@@ -162,12 +162,12 @@ public class FormTestPortlet
      * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
      */
     @Override
-    protected void doDeletePortlet(DeleteComponentRequest event,
+    protected void doDeletePortlet(DeleteConletRequest event,
             ConsoleSession channel, String portletId,
             PortletBaseModel portletState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
             storagePath(channel.browserSession()) + portletId));
-        channel.respond(new DeleteComponent(portletId));
+        channel.respond(new DeleteConlet(portletId));
     }
 
 }

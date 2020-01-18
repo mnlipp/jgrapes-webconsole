@@ -38,7 +38,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * WebConsole -> ConsoleWeblet: SetLocale
  * deactivate ConsoleWeblet
  * loop for portlets with l10n support
- *     WebConsole -> PortletComponent: SetLocale
+ *     WebConsole -> Conlet: SetLocale
  * end loop
  * deactivate WebConsole
  * actor Framework

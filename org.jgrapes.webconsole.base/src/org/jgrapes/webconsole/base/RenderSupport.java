@@ -20,7 +20,7 @@ package org.jgrapes.webconsole.base;
 
 import java.net.URI;
 
-import org.jgrapes.webconsole.base.events.ComponentResourceRequest;
+import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.PageResourceRequest;
 
 /**
@@ -92,11 +92,11 @@ public interface RenderSupport {
     /**
      * Create a reference to a resource provided by a portlet
      * of the given type. Requesting the resulting URI results
-     * in a {@link ComponentResourceRequest}.
+     * in a {@link ConletResourceRequest}.
      * 
      * @param portletType the portlet type
      * @param uri the URI made available as 
-     * {@link ComponentResourceRequest#resourceUri()}
+     * {@link ConletResourceRequest#resourceUri()}
      * @return the resulting URI
      */
     URI portletResource(String portletType, URI uri);

@@ -25,7 +25,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
 /**
  * Signals the successful loading of the portal structure
  * in the browser. Portlets should respond to this event by
- * adding their types (using {@link AddComponentType} events).
+ * adding their types (using {@link AddConletType} events).
  * 
  * After the portal ready event has been processed, a {@link ConsolePrepared}
  * event is generated as its {@link CompletionEvent}. All further action is 

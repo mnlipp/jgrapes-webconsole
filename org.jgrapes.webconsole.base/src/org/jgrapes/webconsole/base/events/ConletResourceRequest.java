@@ -30,9 +30,9 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * An event that signals the request of a resource by the portal (browser).
  * Resource request from the browser for a portlet resource are usually
  * generated during portal boot. See the description of
- * {@link AddComponentType} for details.
+ * {@link AddConletType} for details.
  */
-public class ComponentResourceRequest extends ResourceRequest {
+public class ConletResourceRequest extends ResourceRequest {
 
     private final String portletType;
 
@@ -45,7 +45,7 @@ public class ComponentResourceRequest extends ResourceRequest {
      * @param httpChannel the channel that the HTTP request was received on
      * @param renderSupport the render support
      */
-    public ComponentResourceRequest(String portletType, URI resourceUri,
+    public ConletResourceRequest(String portletType, URI resourceUri,
             Instant ifModifiedSince,
             HttpRequest httpRequest, IOSubchannel httpChannel,
             Session session, RenderSupport renderSupport) {

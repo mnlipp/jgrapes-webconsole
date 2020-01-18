@@ -67,13 +67,13 @@
  * 
  * ### Portlets
  * 
- * ConsoleComponent components represent available portlet types. If a 
+ * Conlet components represent available portlet types. If a 
  * portlet is actually used (instantiated) in the portal, and state
  * is associated with this instance or instances have to be tracked,
  * the portlet has to create and maintain a server side representation
  * of the instance. How this is done is completely up to the portlet. 
  * A common approach, which is supported by the portlet base class 
- * {@link org.jgrapes.webconsole.base.AbstractComponent}, is shown in the 
+ * {@link org.jgrapes.webconsole.base.AbstractConlet}, is shown in the 
  * diagram above. 
  * 
  * Using this approach, the portlet creates a portlet data object 
@@ -164,7 +164,7 @@
  * 
  * In parallel (also in response to the 
  * {@link org.jgrapes.webconsole.base.events.ConsoleReady} event), each portlet 
- * component fires an {@link org.jgrapes.webconsole.base.events.AddComponentType} event.
+ * component fires an {@link org.jgrapes.webconsole.base.events.AddConletType} event.
  * This cause the portal page in the browser to register the portlet type 
  * in the portal's menu of instantiable portlets and to load any additionally 
  * required resources.
@@ -176,7 +176,7 @@
  * {@link org.jgrapes.webconsole.base.events.ConsoleReady} event). This causes
  * the portal policy to send the last known layout to the portal page
  * in the browser and to send 
- * {@link org.jgrapes.webconsole.base.events.RenderComponentRequest} events 
+ * {@link org.jgrapes.webconsole.base.events.RenderConletRequest} events 
  * for all portlets (portlet instances) in that last known layout.
  * These are the same events as those sent by the browser
  * when the user adds a new portlet instance to the portal page.
@@ -193,35 +193,35 @@
  * After the portal session has been configured, the system usually
  * waits for input from the user. Changes of the layout of the
  * portal page result in events such as 
- * {@link org.jgrapes.webconsole.base.events.AddComponentRequest},
- * {@link org.jgrapes.webconsole.base.events.DeleteComponentRequest} and
- * {@link org.jgrapes.webconsole.base.events.RenderComponentRequest}.
+ * {@link org.jgrapes.webconsole.base.events.AddConletRequest},
+ * {@link org.jgrapes.webconsole.base.events.DeleteConletRequest} and
+ * {@link org.jgrapes.webconsole.base.events.RenderConletRequest}.
  * 
  * Actions on portlets trigger JSON messages that result in
- * {@link org.jgrapes.webconsole.base.events.NotifyComponentModel} events
+ * {@link org.jgrapes.webconsole.base.events.NotifyConletModel} events
  * that are processed by the respective portlet component. If,
  * due to the results of the action, the representation of the
  * portlet on the portal page must be updated, the portlet 
  * component fires a 
- * {@link org.jgrapes.webconsole.base.events.NotifyPortletView} event.
+ * {@link org.jgrapes.webconsole.base.events.NotifyConletView} event.
  * 
- * {@link org.jgrapes.webconsole.base.events.NotifyPortletView} events
+ * {@link org.jgrapes.webconsole.base.events.NotifyConletView} events
  * can also be sent unsolicitedly by portlet components if
  * the model data changes independent of user actions.
  * 
- * Writing a ConsoleComponent
+ * Writing a Conlet
  * -----------------
  * 
  * Portlets are components that consume and produce events. They
  * don't have to implement a specific interface. Rather they have
  * exhibit a specific behavior that can be derived from the
  * descriptions above. The documentation of the base class
- * {@link org.jgrapes.webconsole.base.AbstractComponent} summarizes
+ * {@link org.jgrapes.webconsole.base.AbstractConlet} summarizes
  * the responsibilities of a portal component.
  * 
  * Portlets consist of (at least one) Java class and HTML generated
  * by this class. Optionally, a portlet can contribute style information
- * and JavaScript (see {@link org.jgrapes.webconsole.base.events.AddComponentType}).
+ * and JavaScript (see {@link org.jgrapes.webconsole.base.events.AddConletType}).
  * It may (and should) make use of the styles and 
  * <a href="jsdoc/module-portal-base-resource_jgportal.html">functions</a> 
  * provided by the portal.
@@ -326,7 +326,7 @@
  *     loop for all portlets
  *         WebConsole -> PortletX: ConsoleReady
  *         activate PortletX
- *         PortletX -> WebConsole: AddComponentType 
+ *         PortletX -> WebConsole: AddConletType 
  *         deactivate PortletX
  *         activate WebConsole
  *         WebConsole -> Browser: "addPortletType"
@@ -342,9 +342,9 @@
  * PortalPolicy -> WebConsole: LastConsoleLayout
  * WebConsole -> Browser: "lastPortalLayout"
  * loop for all portlets to be displayed
- *     PortalPolicy -> PortletX: RenderComponentRequest
+ *     PortalPolicy -> PortletX: RenderConletRequest
  *     activate PortletX
- *     PortletX -> WebConsole: RenderComponent
+ *     PortletX -> WebConsole: RenderConlet
  *     deactivate PortletX
  *     activate WebConsole
  *     WebConsole -> Browser: "renderPortlet"

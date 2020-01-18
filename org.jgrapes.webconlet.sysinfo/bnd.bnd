@@ -17,7 +17,7 @@ Require-Capability: \
     org.jgrapes.portal.page.resource;filter:="(name=chart.js)"
 
 Provide-Capability: osgi.serviceloader; \
-    osgi.serviceloader=org.jgrapes.webconsole.base.PortletComponentFactory; \
+    osgi.serviceloader=org.jgrapes.webconsole.base.ConletComponentFactory; \
     uses:="org.jgrapes.webconsole.base,org.jgrapes.core"
 
 -fixupmessages: \

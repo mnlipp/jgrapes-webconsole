@@ -24,7 +24,7 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.events.ConsoleConfigured;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.RenderComponent;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 
 /**
  * 
@@ -55,7 +55,7 @@ public class NewConsoleSessionPolicy extends Component {
     }
 
     @Handler
-    public void onRenderPortlet(RenderComponent event,
+    public void onRenderPortlet(RenderConlet event,
             ConsoleSession portalsession) {
         portalsession.browserSession().put(renderedFlagName, true);
     }
@@ -68,9 +68,9 @@ public class NewConsoleSessionPolicy extends Component {
             renderedFlagName, false)) {
             return;
         }
-//        fire(new AddComponentRequest(event.event().event().renderSupport(),
+//        fire(new AddConletRequest(event.event().event().renderSupport(),
 //            MarkdownDisplayConlet.class.getName(),
-//            ConsoleComponent.RenderMode.Preview)
+//            Conlet.RenderMode.Preview)
 //                .addProperty(MarkdownDisplayConlet.TITLE, "Demo WebConsole")
 //                .addProperty(MarkdownDisplayConlet.PREVIEW_SOURCE,
 //                    "A Demo WebConsole")

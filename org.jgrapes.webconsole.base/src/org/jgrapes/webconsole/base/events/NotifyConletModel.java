@@ -26,7 +26,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * A decoded notification (as defined by the JSON RPC specification) that
  * invokes a method on a portlet model. Usually, though not necessarily,
  * the portlet component responds by sending a
- * {@link NotifyPortletView} to update the portlet representation.
+ * {@link NotifyConletView} to update the portlet representation.
  * 
  * ![Event Sequence](NotifyPortletModelSeq.svg)
  * 
@@ -35,11 +35,11 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * 
  * Browser -> WebConsole: "notifyPortletModel"
  * activate WebConsole
- * WebConsole -> ConsoleComponent: NotifyComponentModel
+ * WebConsole -> Conlet: NotifyConletModel
  * deactivate WebConsole
- * activate ConsoleComponent
- * ConsoleComponent -> WebConsole: NotifyPortletView
- * deactivate ConsoleComponent
+ * activate Conlet
+ * Conlet -> WebConsole: NotifyConletView
+ * deactivate Conlet
  * activate WebConsole
  * WebConsole -> Browser: "notifyPortletView"
  * deactivate WebConsole
@@ -47,7 +47,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * @enduml
  */
 @SuppressWarnings("PMD.DataClass")
-public class NotifyComponentModel extends Event<Void> {
+public class NotifyConletModel extends Event<Void> {
 
     private final RenderSupport renderSupport;
     private final String portletId;
@@ -64,7 +64,7 @@ public class NotifyComponentModel extends Event<Void> {
      * @param method the method to be executed
      * @param params parameters
      */
-    public NotifyComponentModel(RenderSupport renderSupport,
+    public NotifyConletModel(RenderSupport renderSupport,
             String portletId, String method, JsonArray params) {
         this.renderSupport = renderSupport;
         this.portletId = portletId;

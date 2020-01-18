@@ -23,6 +23,6 @@ import org.jgrapes.core.ComponentFactory;
 /**
  * A factory interface for portlet components.
  */
-public interface PortletComponentFactory
+public interface ConletComponentFactory
         extends ComponentFactory {
 }

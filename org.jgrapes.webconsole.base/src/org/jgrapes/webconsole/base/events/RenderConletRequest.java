@@ -20,13 +20,13 @@ package org.jgrapes.webconsole.base.events;
 
 import java.util.Set;
 
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
 
 /**
  * Sent to the portal (server) if an existing portlet instance 
  * should be updated. The portal server usually responds with 
- * a {@link RenderComponent} event that has as payload the
+ * a {@link RenderConlet} event that has as payload the
  * HTML that displays the portlet on the portal page.
  * 
  * ![Event Sequence](RenderPortletRequestSeq.svg)
@@ -38,19 +38,19 @@ import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
  * 
  * Browser -> WebConsole: "renderPortletRequest"
  * activate WebConsole
- * WebConsole -> ConsoleComponent: RenderComponentRequest
+ * WebConsole -> Conlet: RenderConletRequest
  * deactivate WebConsole
- * activate ConsoleComponent
- * ConsoleComponent -> WebConsole: RenderComponent
- * deactivate ConsoleComponent
+ * activate Conlet
+ * Conlet -> WebConsole: RenderConlet
+ * deactivate Conlet
  * activate WebConsole
  * WebConsole -> Browser: "renderPortlet"
  * deactivate WebConsole
  * 
  * @enduml
  */
-public class RenderComponentRequest
-        extends RenderComponentRequestBase<Boolean> {
+public class RenderConletRequest
+        extends RenderConletRequestBase<Boolean> {
 
     private final String portletId;
 
@@ -61,7 +61,7 @@ public class RenderComponentRequest
      * @param portletId the portlet to be updated
      * @param renderModes the render options
      */
-    public RenderComponentRequest(RenderSupport renderSupport,
+    public RenderConletRequest(RenderSupport renderSupport,
             String portletId, Set<RenderMode> renderModes) {
         super(renderSupport, renderModes);
         this.portletId = portletId;

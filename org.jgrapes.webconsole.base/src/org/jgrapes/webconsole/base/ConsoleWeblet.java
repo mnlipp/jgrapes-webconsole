@@ -61,7 +61,7 @@ import org.jgrapes.io.events.Output;
 import org.jgrapes.io.util.CharBufferWriter;
 import org.jgrapes.io.util.LinkedIOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreQuery;
-import org.jgrapes.webconsole.base.events.ComponentResourceRequest;
+import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.ConsoleCommand;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.PageResourceRequest;
@@ -506,8 +506,8 @@ public abstract class ConsoleWeblet extends Component {
             String resPath = resource.getPath();
             int sep = resPath.indexOf('/');
             // Send events to portlets on portal's channel
-            ComponentResourceRequest portletRequest
-                = new ComponentResourceRequest(
+            ConletResourceRequest portletRequest
+                = new ConletResourceRequest(
                     resPath.substring(0, sep),
                     new URI(null, null, resPath.substring(sep + 1),
                         event.requestUri().getQuery(),
@@ -771,7 +771,7 @@ public abstract class ConsoleWeblet extends Component {
 
     /**
      * The channel used to send {@link PageResourceRequest}s and
-     * {@link ComponentResourceRequest}s to the portlets (via the
+     * {@link ConletResourceRequest}s to the portlets (via the
      * portal).
      */
     public class PortalResourceChannel extends LinkedIOSubchannel {

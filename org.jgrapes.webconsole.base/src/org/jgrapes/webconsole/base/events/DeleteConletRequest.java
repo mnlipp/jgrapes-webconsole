@@ -24,7 +24,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
 /**
  * A request to delete a portlet instance.
  */
-public class DeleteComponentRequest extends Event<Void> {
+public class DeleteConletRequest extends Event<Void> {
 
     private final RenderSupport renderSupport;
     private final String portletId;
@@ -37,7 +37,7 @@ public class DeleteComponentRequest extends Event<Void> {
      * @param portletId the portlet model that the notification is 
      * directed at 
      */
-    public DeleteComponentRequest(RenderSupport renderSupport,
+    public DeleteConletRequest(RenderSupport renderSupport,
             String portletId) {
         this.renderSupport = renderSupport;
         this.portletId = portletId;

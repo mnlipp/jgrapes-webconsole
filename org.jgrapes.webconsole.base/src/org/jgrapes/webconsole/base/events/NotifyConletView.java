@@ -27,7 +27,7 @@ import java.util.Arrays;
  * the portlet view (the browser).
  */
 @SuppressWarnings("PMD.DataClass")
-public class NotifyPortletView extends ConsoleCommand {
+public class NotifyConletView extends ConsoleCommand {
 
     private final String portletType;
     private final String portletId;
@@ -38,14 +38,14 @@ public class NotifyPortletView extends ConsoleCommand {
      * Creates a new event.
      *  
      * @param portletType the portlet type (used by the portal 
-     * core JS to look up the available functions, see {@link AddComponentType})
+     * core JS to look up the available functions, see {@link AddConletType})
      * @param portletId the portlet (view) instance that the 
      * notification is directed at
      * @param method the method (function) to be executed, must
-     * have been registered by handling {@link AddComponentType}
+     * have been registered by handling {@link AddConletType}
      * @param params the parameters
      */
-    public NotifyPortletView(String portletType,
+    public NotifyConletView(String portletType,
             String portletId, String method, Object... params) {
         this.portletType = portletType;
         this.portletId = portletId;

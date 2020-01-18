@@ -47,16 +47,16 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.events.Stop;
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
-import org.jgrapes.webconsole.base.events.AddComponentRequest;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
+import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.ConsoleConfigured;
 import org.jgrapes.webconsole.base.events.ConsoleLayoutChanged;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteComponent;
-import org.jgrapes.webconsole.base.events.DeleteComponentRequest;
+import org.jgrapes.webconsole.base.events.DeleteConlet;
+import org.jgrapes.webconsole.base.events.DeleteConletRequest;
 import org.jgrapes.webconsole.base.events.JsonInput;
-import org.jgrapes.webconsole.base.events.NotifyComponentModel;
-import org.jgrapes.webconsole.base.events.RenderComponentRequest;
+import org.jgrapes.webconsole.base.events.NotifyConletModel;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.SetLocale;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 
@@ -102,7 +102,7 @@ public class WebConsole extends Component {
             break;
         }
         case "addPortlet": {
-            fire(new AddComponentRequest(view.renderSupport(),
+            fire(new AddConletRequest(view.renderSupport(),
                 params.asString(0), params.asArray(1).stream().map(
                     value -> RenderMode.valueOf((String) value))
                     .collect(Collectors.toSet())),
@@ -110,7 +110,7 @@ public class WebConsole extends Component {
             break;
         }
         case "deletePortlet": {
-            fire(new DeleteComponentRequest(
+            fire(new DeleteConletRequest(
                 view.renderSupport(), params.asString(0)), channel);
             break;
         }
@@ -125,7 +125,7 @@ public class WebConsole extends Component {
             break;
         }
         case "renderPortlet": {
-            fire(new RenderComponentRequest(view.renderSupport(),
+            fire(new RenderConletRequest(view.renderSupport(),
                 params.asString(0),
                 params.asArray(1).stream().map(
                     value -> RenderMode.valueOf((String) value))
@@ -140,7 +140,7 @@ public class WebConsole extends Component {
             break;
         }
         case "notifyPortletModel": {
-            fire(new NotifyComponentModel(view.renderSupport(),
+            fire(new NotifyConletModel(view.renderSupport(),
                 params.asString(0), params.asString(1),
                 params.size() <= 2
                     ? JsonArray.EMPTY_ARRAY
@@ -170,8 +170,8 @@ public class WebConsole extends Component {
     }
 
     /**
-     * Fallback handler that sends a {@link DeleteComponent} event 
-     * if the {@link RenderComponentRequest} event has not been handled
+     * Fallback handler that sends a {@link DeleteConlet} event 
+     * if the {@link RenderConletRequest} event has not been handled
      * successfully.
      *
      * @param event the event
@@ -179,9 +179,9 @@ public class WebConsole extends Component {
      */
     @Handler(priority = -1000000)
     public void onRenderPortlet(
-            RenderComponentRequest event, ConsoleSession channel) {
+            RenderConletRequest event, ConsoleSession channel) {
         if (!event.hasBeenRendered()) {
-            channel.respond(new DeleteComponent(event.portletId()));
+            channel.respond(new DeleteConlet(event.portletId()));
         }
     }
 

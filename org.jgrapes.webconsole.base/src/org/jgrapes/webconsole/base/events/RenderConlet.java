@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 
 /**
  * A base class for portal rendering. Sent to the portal page for 
@@ -46,7 +46,7 @@ import org.jgrapes.webconsole.base.ConsoleComponent.RenderMode;
  * function is invoked when changes made in the form must be
  * applied (e.g. before the dialog is closed).
  */
-public abstract class RenderComponent extends ConsoleCommand {
+public abstract class RenderConlet extends ConsoleCommand {
 
     private static final Set<RenderMode> DEFAULT_SUPPORTED
         = Collections.unmodifiableSet(new HashSet<>(
@@ -64,7 +64,7 @@ public abstract class RenderComponent extends ConsoleCommand {
      * @param portletClass the portlet class
      * @param portletId the id of the portlet
      */
-    public RenderComponent(Class<?> portletClass, String portletId) {
+    public RenderConlet(Class<?> portletClass, String portletId) {
         this.portletClass = portletClass;
         this.portletId = portletId;
     }
@@ -93,7 +93,7 @@ public abstract class RenderComponent extends ConsoleCommand {
      * @param renderMode the render mode to set
      * @return the event for easy chaining
      */
-    public RenderComponent setRenderMode(RenderMode renderMode) {
+    public RenderConlet setRenderMode(RenderMode renderMode) {
         this.renderMode = renderMode;
         return this;
     }
@@ -114,7 +114,7 @@ public abstract class RenderComponent extends ConsoleCommand {
      * @param supportedModes the supported render modes to set
      * @return the event for easy chaining
      */
-    public RenderComponent setSupportedModes(Set<RenderMode> supportedModes) {
+    public RenderConlet setSupportedModes(Set<RenderMode> supportedModes) {
         this.supportedModes = supportedModes;
         return this;
     }
@@ -125,7 +125,7 @@ public abstract class RenderComponent extends ConsoleCommand {
      * @param supportedMode the supported render modes to add
      * @return the event for easy chaining
      */
-    public RenderComponent addSupportedMode(RenderMode supportedMode) {
+    public RenderConlet addSupportedMode(RenderMode supportedMode) {
         if (supportedModes == DEFAULT_SUPPORTED) { // NOPMD, check identity
             supportedModes = new HashSet<>(DEFAULT_SUPPORTED);
         }
@@ -149,7 +149,7 @@ public abstract class RenderComponent extends ConsoleCommand {
      * @param foreground if set, the portlet is put in foreground
      * @return the event for easy chaining
      */
-    public RenderComponent setForeground(boolean foreground) {
+    public RenderConlet setForeground(boolean foreground) {
         this.foreground = foreground;
         return this;
     }
