@@ -8,7 +8,7 @@ body .fa-loading-modal {
     column-gap: 0px;
   }
   
-  div .portlet {
+  div .conlet {
     break-inside: avoid;
   }
 }
@@ -19,11 +19,11 @@ body .fa-loading-modal {
   }
 }
 
-div .portlet {
+div .conlet {
   overflow: hidden;
 }
 
-.portlet-expand {
+.conlet-expand {
     float: right;
     cursor: pointer;
 }
@@ -71,7 +71,7 @@ body {
     min-height: 100vh;
 }
 
-#portlet-tabs {
+#conlet-tabs {
     flex: 1;
 }
 

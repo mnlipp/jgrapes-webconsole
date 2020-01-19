@@ -6,9 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Portal -->
+<!-- Console -->
 <link rel="icon" href="${renderSupport.consoleResource('favicon.ico')}">
-<title>${_("portalTitle")}</title>
+<title>${_("consoleTitle")}</title>
 
 <!-- CSS -->
 <link rel="stylesheet" 
@@ -17,15 +17,15 @@
   href="${renderSupport.pageResource('gridstack/gridstack' + minifiedExtension + '.css')}" />
 <link rel="stylesheet" 
   href="${renderSupport.pageResource('jgp-vue-components/jgp-components' + minifiedExtension + '.css')}">
-<!-- Portal -->
+<!-- Console -->
 <link rel="stylesheet"
   href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
-  href="${renderSupport.consoleBaseResource('portal' + minifiedExtension + '.css')}" />
+  href="${renderSupport.consoleBaseResource('console' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
-  href="${renderSupport.consoleResource('portal-layout' + minifiedExtension + '.css')}" />
+  href="${renderSupport.consoleResource('console-layout' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
-  href="${renderSupport.consoleResource('portal-styling' + minifiedExtension + '.css')}" />
+  href="${renderSupport.consoleResource('console-styling' + minifiedExtension + '.css')}" />
 
 <!-- Scripts(s) -->
 <script data-jgp-provides="jquery"
@@ -46,18 +46,18 @@
 <!-- More... -->
 </head>
 
-<body id="page-top" class="index portal-vuejs">
+<body id="page-top" class="index console-vuejs">
 
-  <#include "portal-header.ftl.html">
+  <#include "console-header.ftl.html">
 
   <main role="main">
 
-  <div class="portalVue">
-    <jgp-tablist id="portalTabs"></jgp-tablist>
+  <div class="consoleVue">
+    <jgp-tablist id="consoleTabs"></jgp-tablist>
   </div>
-  <div id="portalPanels">
-    <section id="portalOverviewPanel" hidden>
-      <div id="portalPreviews" class="grid-stack" role="grid">
+  <div id="consolePanels">
+    <section id="consoleOverviewPanel" hidden>
+      <div id="consolePreviews" class="grid-stack" role="grid">
       </div>
     </section>
   </div>
@@ -65,14 +65,14 @@
   </main>
 
   <!-- Footer -->
-  <#include "portal-footer.ftl.html">
+  <#include "console-footer.ftl.html">
 
 <script type="module">
 import Vue from "${renderSupport.pageResource('vue/vue.esm.browser.js')}";
 import Vuex from "${renderSupport.pageResource('vuex/vuex.esm.browser.js')}";
 import "${renderSupport.pageResource('jgp-vue-components/jgp-components.js')}";
-import JGPortal from "${renderSupport.consoleBaseResource('jgportal.js')}";
-import VueJsPortal from "${renderSupport.consoleResource('vuejsportal.js')}";
+import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}";
+import VueJsPortal from "${renderSupport.consoleResource('vuejsconsole.js')}";
 
 Vue.use(Vuex);
 Vue.prototype.$window = window;
@@ -83,7 +83,7 @@ const localeMenuitems = [
   // </#list>
 ];
 
-const portalMessages = {
+const consoleMessages = {
     // <#list supportedLanguages as l>
     '${l.locale.toLanguageTag()}': {
         // <#list l.l10nBundle.keys as key>
@@ -93,11 +93,11 @@ const portalMessages = {
     // </#list>    
 };
 
-const renderer = new VueJsPortal.Renderer(localeMenuitems, portalMessages);
+const renderer = new VueJsPortal.Renderer(localeMenuitems, consoleMessages);
 
-JGPortal.init(
-    "${portalSessionId}", parseInt('${portalSessionRefreshInterval?c}'), 
-    parseInt('${portalSessionInactivityTimeout?c}'), renderer);
+JGConsole.init(
+    "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
+    parseInt('${consoleSessionInactivityTimeout?c}'), renderer);
 
 </script>
  

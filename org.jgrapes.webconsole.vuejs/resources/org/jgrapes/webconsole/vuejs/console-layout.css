@@ -54,7 +54,7 @@ body > header > :first-child {
     left: auto;
 }
 
-#portlet-menu > ul {
+#conlet-menu > ul {
     right: 0;
     left: auto;
 }
@@ -63,27 +63,27 @@ body > header > :first-child {
  * Portlet preview layout
  */
 
-.portlet-preview {
+.conlet-preview {
     display: flex;
     flex-direction: column;
 }
 
-.portlet-preview > header {
+.conlet-preview > header {
     display: flex;
 }
 
-.portlet-preview > header > p {
+.conlet-preview > header > p {
     flex-grow: 1;
 }
 
-.portlet-preview > section {
+.conlet-preview > section {
     flex: 1 1 auto;
-    /* Scroll portlet content (card body) not portlet */
+    /* Scroll conlet content (card body) not conlet */
     overflow: auto;
  }
 
 /* Activate close only on selected. */
-#portalTabs .nav-link:not(.active) span {
+#consoleTabs .nav-link:not(.active) span {
     display: none;
 }
 

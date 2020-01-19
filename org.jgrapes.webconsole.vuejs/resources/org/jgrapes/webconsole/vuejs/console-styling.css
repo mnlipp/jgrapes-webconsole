@@ -52,9 +52,9 @@
         "Liberation Mono", "Courier New", monospace;
 }
 
-/* # Portal styling */
+/* # Console styling */
 
-/* ## Portal "Frame" Styling */
+/* ## Console "Frame" Styling */
 
 body {
     font-family: var(--font-family-sans-serif);
@@ -96,11 +96,11 @@ body > main {
     margin: 0.5rem;    
 }
 
-#portalPanels {
+#consolePanels {
     margin-top: 1rem;
 }
 
-#portalPanels article {
+#consolePanels article {
     margin: 1rem;
 }
 
@@ -273,23 +273,23 @@ body > footer {
 
 /* ## Portlet Preview Styling */
 
-.portlet-preview {
+.conlet-preview {
     border: 1px solid rgb(var(--panel-border));
     border-radius: .25rem;
 }
 
-.portlet-preview > header {
+.conlet-preview > header {
     padding: .75rem 1.25rem;
     background-color: rgb(var(--panel-background));
     border-bottom: 1px solid rgb(var(--panel-border));
     line-height: 1.2;
 }
 
-.portlet-preview > header > p {
+.conlet-preview > header > p {
     margin: 0;
 }
 
-.portlet-preview > header button {
+.conlet-preview > header button {
     display: inline-block;
     border: none;
     font-size: 1rem;
@@ -299,11 +299,11 @@ body > footer {
     background-color: transparent;
 }
 
-.portlet-preview > header button:hover {
+.conlet-preview > header button:hover {
     transform: scale(1.25);
 }
 
-.portlet-preview > section {
+.conlet-preview > section {
     padding: 1.25rem;
 }
 
@@ -311,7 +311,7 @@ body > footer {
 
 /* ### Button styling. */
 
-.portlet-content:not(.portlet-content--no-markup-styles) 
+.conlet-content:not(.conlet-content--no-markup-styles) 
     button[type="button"] {
     display: inline-block;
     font-weight: 400;
@@ -328,31 +328,31 @@ body > footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .portlet-content:not(.portlet-content--no-markup-styles) 
+    .conlet-content:not(.conlet-content--no-markup-styles) 
         button[type="button"] {
         transition: none;
     }
 }
 
-.portlet-content:not(.portlet-content--no-markup-styles) 
+.conlet-content:not(.conlet-content--no-markup-styles) 
     span[role=button] {
     color: rgb(var(--primary));
 }
 
-.portlet-content:not(.portlet-content--no-markup-styles) 
+.conlet-content:not(.conlet-content--no-markup-styles) 
     span[role=button]:hover {
     transform: scale(1.25);
 }
 
-.portlet-content:not(.portlet-content--no-markup-styles) a {
+.conlet-content:not(.conlet-content--no-markup-styles) a {
     color: rgb(var(--primary));
 }
 
-.portlet-content:not(.portlet-content--no-markup-styles) a:hover {
+.conlet-content:not(.conlet-content--no-markup-styles) a:hover {
     color: rgba(var(--primary), 0.9);
 }
 
-/* # Markup (mostly) form styles (not portlet specific) */
+/* # Markup (mostly) form styles (not conlet specific) */
 
 /* ## Plain form styles */
 

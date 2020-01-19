@@ -22,25 +22,25 @@ import org.jgrapes.core.Event;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * A request to delete a portlet instance.
+ * A request to delete a web console component instance.
  */
 public class DeleteConletRequest extends Event<Void> {
 
     private final RenderSupport renderSupport;
-    private final String portletId;
+    private final String conletId;
 
     /**
      * Creates a new event.
      * 
      * @param renderSupport the render support from the portal in case
      * the response requires it
-     * @param portletId the portlet model that the notification is 
+     * @param conletId the web console component model that the notification is 
      * directed at 
      */
     public DeleteConletRequest(RenderSupport renderSupport,
-            String portletId) {
+            String conletId) {
         this.renderSupport = renderSupport;
-        this.portletId = portletId;
+        this.conletId = conletId;
     }
 
     /**
@@ -53,12 +53,12 @@ public class DeleteConletRequest extends Event<Void> {
     }
 
     /**
-     * Returns the portlet id.
+     * Returns the web console component id.
      * 
-     * @return the portlet id
+     * @return the web console component id
      */
     public String conletId() {
-        return portletId;
+        return conletId;
     }
 
 }

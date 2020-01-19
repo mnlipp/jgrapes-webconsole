@@ -26,37 +26,39 @@ import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Event;
 
 /**
- * Sent to a portlet to update some of its properties. The interpretation
- * of the properties is completely dependent on the handling portlet.
+ * Sent to a web console component to update some of its properties. 
+ * The interpretation of the properties is completely dependent on the 
+ * handling web console component.
  * 
  * This event has a close relationship to the {@link NotifyConletModel}
- * event. The latter is used by portlet's functions to send information
- * from the portal page to the portlet model. It passes the information 
- * as a {@link JsonArray}. The interpretation of this information is only 
- * known by the portlet. The {@link UpdateConletModel} event should be 
+ * event. The latter is used by web console component's functions to 
+ * send information from the console page to the web console component 
+ * model. It passes the information as a {@link JsonArray}. The 
+ * interpretation of this information is only known by the web console 
+ * component. The {@link UpdateConletModel} event should be 
  * used to to pass information within the application, i.e. on the server
  * side.
  * 
  * Depending on the information passed, it may be good practice to 
- * write an event handler for the portlet that converts a 
+ * write an event handler for the web console component that converts a 
  * {@link NotifyConletModel} to a {@link UpdateConletModel} that is
  * fired on its channel instead of handling it immediately. This allows 
- * events sent from the portal page and from other components in the 
+ * events sent from the console page and from other components in the 
  * application to be handled in a uniform way.
  */
 public class UpdateConletModel extends Event<Void> {
 
-    private String portletId;
+    private String conletId;
     private Map<Object, Object> properties;
 
     /**
      * Creates a new event.
      * 
-     * @param portletId the id of the portlet
+     * @param conletId the id of the web console component
      * @param properties the properties to update
      */
-    public UpdateConletModel(String portletId, Map<?, ?> properties) {
-        this.portletId = portletId;
+    public UpdateConletModel(String conletId, Map<?, ?> properties) {
+        this.conletId = conletId;
         @SuppressWarnings("unchecked")
         Map<Object, Object> props = (Map<Object, Object>) properties;
         this.properties = props;
@@ -67,19 +69,19 @@ public class UpdateConletModel extends Event<Void> {
      * properties and is therefore intended to be used together with
      * {@link #addPreference(Object, Object)}.
      *
-     * @param portletId the portlet id
+     * @param conletId the web console component id
      */
-    public UpdateConletModel(String portletId) {
-        this(portletId, new HashMap<>());
+    public UpdateConletModel(String conletId) {
+        this(conletId, new HashMap<>());
     }
 
     /**
-     * Returns the portlet id.
+     * Returns the web console component id.
      * 
-     * @return the portlet id
+     * @return the web console component id
      */
     public String conletId() {
-        return portletId;
+        return conletId;
     }
 
     /**

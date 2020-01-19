@@ -35,19 +35,20 @@ import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 
 /**
- * Adds a portlet type with its global resources (JavaScript and/or CSS) 
- * to the portal page. Specifying global resources result in the respective
+ * Adds a web console component type with its global resources 
+ * (JavaScript and/or CSS) to the console page. Specifying global 
+ * resources result in the respective
  * `<link .../>` or `<script ...></script>` nodes
  * being added to the page's `<head>` node.
  * 
  * This in turn causes the browser to issue `GET` requests that
- * (usually) refer to the portlet's resources. These requests are
+ * (usually) refer to the web console component's resources. These requests are
  * converted to {@link ConletResourceRequest}s by the portal and
- * sent to the portlets, which must respond to the requests.
+ * sent to the web console components, which must respond to the requests.
  * 
  * The sequence of events is shown in the diagram.
  * 
- * ![WebConsole Ready Event Sequence](AddPortletTypeSeq.svg)
+ * ![WebConsole Ready Event Sequence](AddConletTypeSeq.svg)
  * 
  * See {@link ResourceRequest} for details about the processing
  * of the {@link ConletResourceRequest}.
@@ -57,56 +58,56 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
  * <a href="../jsdoc/module-jgportal.html">JavaScript
  * documentation of these functions</a> for details.
  * 
- * @startuml AddPortletTypeSeq.svg
+ * @startuml AddConletTypeSeq.svg
  * hide footbox
  * 
  * activate Browser
  * Browser -> WebConsole: "portalReady"
  * deactivate Browser
  * activate WebConsole
- * WebConsole -> PortletX: ConsoleReady 
+ * WebConsole -> ConletX: ConsoleReady 
  * deactivate WebConsole
- * activate PortletX
- * PortletX -> WebConsole: AddConletType 
- * deactivate PortletX
+ * activate ConletX
+ * ConletX -> WebConsole: AddConletType 
+ * deactivate ConletX
  * activate WebConsole
- * WebConsole -> Browser: "addPortletType"
+ * WebConsole -> Browser: "addConletType"
  * activate Browser
  * deactivate WebConsole
- * Browser -> WebConsole: "GET <portlet resource URI>"
+ * Browser -> WebConsole: "GET <conlet resource URI>"
  * activate WebConsole
- * WebConsole -> PortletX: ConletResourceRequest
+ * WebConsole -> ConletX: ConletResourceRequest
  * deactivate Browser
- * activate PortletX
- * deactivate PortletX
+ * activate ConletX
+ * deactivate ConletX
  * 
  * @enduml
  */
 public class AddConletType extends ConsoleCommand {
 
-    private final String portletType;
+    private final String conletType;
     private Map<Locale, String> displayNames = Collections.emptyMap();
     private final List<URI> cssUris = new ArrayList<>();
     private final List<ScriptResource> scriptResources = new ArrayList<>();
     private List<RenderMode> renderModes;
 
     /**
-     * Create a new event for the given portlet type.
+     * Create a new event for the given web console component type.
      * 
-     * @param portletType a unique id for the portlet type (usually
-     * the class name)
+     * @param conletType a unique id for the web console component type 
+     * (usually the class name)
      */
-    public AddConletType(String portletType) {
-        this.portletType = portletType;
+    public AddConletType(String conletType) {
+        this.conletType = conletType;
     }
 
     /**
-     * Return the portlet type.
+     * Return the web console component type.
      * 
-     * @return the portlet type
+     * @return the web console component type
      */
     public String conletType() {
-        return portletType;
+        return conletType;
     }
 
     /**
@@ -130,8 +131,8 @@ public class AddConletType extends ConsoleCommand {
     }
 
     /**
-     * Add a render mode. The render mode determines how the portlet
-     * is initially rendered (i.e. when added). Several modes may be
+     * Add a render mode. The render mode determines how the web console 
+     * component is initially rendered (i.e. when added). Several modes may be
      * added in order of preference. The default mode (i.e. none 
      * specified) is {@link RenderMode#Preview}.
      *
@@ -206,7 +207,7 @@ public class AddConletType extends ConsoleCommand {
         for (ScriptResource scriptResource : scriptResources()) {
             strArray.append(scriptResource.toJsonValue());
         }
-        toJson(writer, "addPortletType", conletType(),
+        toJson(writer, "addConletType", conletType(),
             displayNames().entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getKey().toLanguageTag(),
                     e -> e.getValue())),

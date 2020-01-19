@@ -81,7 +81,7 @@ public class HelloWorldConlet
     private String storagePath(Session session) {
         return "/" + WebConsoleUtils.userFromSession(session)
             .map(UserPrincipal::toString).orElse("")
-            + "/portlets/" + HelloWorldConlet.class.getName() + "/";
+            + "/conlets/" + HelloWorldConlet.class.getName() + "/";
     }
 
     @Handler
@@ -91,7 +91,7 @@ public class HelloWorldConlet
         // Add HelloWorldConlet resources to page
         portalSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(portalSession.supportedLocales(), "portletName"))
+                displayNames(portalSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().conletResource(type(),
                     "HelloWorld-functions.js")))
@@ -135,28 +135,23 @@ public class HelloWorldConlet
         return conletId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
-     */
     @Override
     protected void doRenderConlet(RenderConletRequest event,
-            ConsoleSession channel, String portletId,
-            HelloWorldModel portletModel) throws Exception {
-        renderConlet(event, channel, portletModel);
+            ConsoleSession channel, String conletId,
+            HelloWorldModel conletModel) throws Exception {
+        renderConlet(event, channel, conletModel);
     }
 
     private void renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, HelloWorldModel portletModel)
+            ConsoleSession channel, HelloWorldModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderPreview()) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
-            channel.respond(new RenderPortletFromTemplate(event,
-                HelloWorldConlet.class, portletModel.getConletId(),
-                tpl, fmModel(event, channel, portletModel))
+            channel.respond(new RenderConletFromTemplate(event,
+                HelloWorldConlet.class, conletModel.getConletId(),
+                tpl, fmModel(event, channel, conletModel))
                     .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
@@ -164,52 +159,42 @@ public class HelloWorldConlet
         if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
-            channel.respond(new RenderPortletFromTemplate(event,
-                HelloWorldConlet.class, portletModel.getConletId(),
-                tpl, fmModel(event, channel, portletModel))
+            channel.respond(new RenderConletFromTemplate(event,
+                HelloWorldConlet.class, conletModel.getConletId(),
+                tpl, fmModel(event, channel, conletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
             channel.respond(new NotifyConletView(type(),
-                portletModel.getConletId(), "setWorldVisible",
-                portletModel.isWorldVisible()));
+                conletModel.getConletId(), "setWorldVisible",
+                conletModel.isWorldVisible()));
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
-     */
     @Override
     protected void doDeleteConlet(DeleteConletRequest event,
-            ConsoleSession channel, String portletId,
-            HelloWorldModel portletState) throws Exception {
+            ConsoleSession channel, String conletId,
+            HelloWorldModel conletState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
-            storagePath(channel.browserSession()) + portletId));
-        channel.respond(new DeleteConlet(portletId));
+            storagePath(channel.browserSession()) + conletId));
+        channel.respond(new DeleteConlet(conletId));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
-     */
     @Override
     protected void doNotifyConletModel(NotifyConletModel event,
-            ConsoleSession channel, HelloWorldModel portletModel)
+            ConsoleSession channel, HelloWorldModel conletModel)
             throws Exception {
         event.stop();
-        portletModel.setWorldVisible(!portletModel.isWorldVisible());
+        conletModel.setWorldVisible(!conletModel.isWorldVisible());
 
         String jsonState = JsonBeanEncoder.create()
-            .writeObject(portletModel).toJson();
+            .writeObject(conletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + portletModel.getConletId(),
+            storagePath(channel.browserSession()) + conletModel.getConletId(),
             jsonState));
         channel.respond(new NotifyConletView(type(),
-            portletModel.getConletId(), "setWorldVisible",
-            portletModel.isWorldVisible()));
+            conletModel.getConletId(), "setWorldVisible",
+            conletModel.isWorldVisible()));
         channel.respond(new DisplayNotification("<span>"
             + resourceBundle(channel.locale()).getString("visibilityChange")
             + "</span>")
@@ -224,11 +209,11 @@ public class HelloWorldConlet
         /**
          * Creates a new model with the given type and id.
          * 
-         * @param portletId the portlet id
+         * @param conletId the web console component id
          */
-        @ConstructorProperties({ "portletId" })
-        public HelloWorldModel(String portletId) {
-            super(portletId);
+        @ConstructorProperties({ "conletId" })
+        public HelloWorldModel(String conletId) {
+            super(conletId);
         }
 
         /**

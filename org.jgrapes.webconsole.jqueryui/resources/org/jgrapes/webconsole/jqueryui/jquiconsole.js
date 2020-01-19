@@ -18,17 +18,17 @@
 
 'use strict';
 
-import JGPortal from "../portal-base-resource/jgportal.js"
+import JGConsole from "../console-base-resource/jgconsole.js"
 
 /**
- * @module jquiportal
+ * @module jquiconsole
  */ 
-export const JQUIPortal = {};
-export default JQUIPortal;
+export const JQUIConsole = {};
+export default JQUIConsole;
 
-var log = JGPortal.log;
+var log = JGConsole.log;
 
-JQUIPortal.Renderer = class extends JGPortal.Renderer {
+JQUIConsole.Renderer = class extends JGConsole.Renderer {
 
     constructor() {
         super();
@@ -61,17 +61,17 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             $("#theme-menu").jqDropdown("hide");
         });
 
-        $("#addon-menu").on("click", "[data-portlet-type]", function() {
-            _this.sendAddPortlet($(this).data("portlet-type"),
+        $("#addon-menu").on("click", "[data-conlet-type]", function() {
+            _this.sendAddConlet($(this).data("conlet-type"),
                 $(this).data("render-modes"));
             $("#theme-menu").jqDropdown("hide");
         });
 
         // Tabs
-        $("#portlet-tabs").tabs();
+        $("#conlet-tabs").tabs();
 
         // AddTab button
-        var tabs = $("#portlet-tabs").tabs();
+        var tabs = $("#conlet-tabs").tabs();
 
         // Close icon: removing the tab on click
         tabs.on("click", "span.ui-icon-close", function() {
@@ -82,20 +82,20 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
         });
 
         // Dialogs
-        $("#portal-session-suspended-dialog").dialog({
+        $("#console-session-suspended-dialog").dialog({
             autoOpen: false,
             modal: true,
         });
 
         //
-        // Portlet Grid
+        // Conlet Grid
         //
 
         // Prepare columns
         $(".preview-area").sortable({
-            handle: ".portlet-header",
-            cancel: ".portlet-toggle",
-            placeholder: "portlet-placeholder ui-corner-all",
+            handle: ".conlet-header",
+            cancel: ".conlet-toggle",
+            placeholder: "conlet-placeholder ui-corner-all",
             stop: function(event, ui) { _this._layoutChanged(); }
         });
     }
@@ -123,28 +123,28 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     connectionSuspended(resume) {
-        $("#portal-session-suspended-dialog").dialog("option", "buttons", {
+        $("#console-session-suspended-dialog").dialog("option", "buttons", {
             Ok: function() {
                 $(this).dialog("close");
                 resume();
             }
         });
-        $("#portal-session-suspended-dialog").dialog("open");
+        $("#console-session-suspended-dialog").dialog("open");
     }
 
-    portalConfigured() {
+    consoleConfigured() {
         this._layoutChanged();
         log.debug("Unlocking screen");
         $("body").faLoading('remove');
     }
 
-    addPortletType(portletType, displayNames, renderModes) {
+    addConletType(conletType, displayNames, renderModes) {
         // Add to menu
         let lang = document.querySelector("html").getAttribute('lang');
-        let displayName = JGPortal.forLang(displayNames, lang);
+        let displayName = JGConsole.forLang(displayNames, lang);
         let item = $('<li class="ui-menu-item">'
-            + '<div class="ui-menu-item-wrapper" data-portlet-type="'
-            + portletType + '">' + displayName + '</div></li>');
+            + '<div class="ui-menu-item-wrapper" data-conlet-type="'
+            + conletType + '">' + displayName + '</div></li>');
         item.find("div").data("render-modes", renderModes);
         let inserted = false;
         $("#addon-menu-list").find(".ui-menu-item").each(function(index, el) {
@@ -160,39 +160,39 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
 
     }
 
-    lastPortalLayout(previewLayout, tabsLayout, xtraInfo) {
+    lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
         this._lastPreviewLayout = previewLayout;
         this._lastTabsLayout = tabsLayout;
         this._lastXtraInfo = xtraInfo;
     }
 
-    updatePortletPreview(isNew, container, modes, content, foreground) {
+    updateConletPreview(isNew, container, modes, content, foreground) {
         // Container is:
-        //     <section class='portlet portlet-preview' data-portlet-id='...' 
-        //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>"
+        //     <section class='conlet conlet-preview' data-conlet-id='...' 
+        //     data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>"
         let _this = this;
         container = $(container);
         if (isNew) {
             container.addClass('ui-widget ui-widget-content ui-helper-clearfix ui-corner-all');
-            container.append('<div class="portlet-header ui-widget-header"><span class="portlet-header-text"></span></div>'
-                + '<div class="portlet-content ui-widget-content"></div>');
+            container.append('<div class="conlet-header ui-widget-header"><span class="conlet-header-text"></span></div>'
+                + '<div class="conlet-content ui-widget-content"></div>');
 
-            let portletHeader = container.find(".portlet-header");
-            portletHeader.addClass("ui-widget-header ui-corner-all");
+            let conletHeader = container.find(".conlet-header");
+            conletHeader.addClass("ui-widget-header ui-corner-all");
             this._setModeIcons(container, modes);
             let previewArea = $(".preview-area");
             let inserted = false;
-            // Hack to check if portletId is in
+            // Hack to check if conletId is in
             // lastPreviewLayout
-            let portletId = container.attr("data-portlet-id");
-            if (_this._isBefore(_this._lastPreviewLayout, portletId, portletId)) {
-                previewArea.find(".portlet").each(
-                    function(portletIndex) {
+            let conletId = container.attr("data-conlet-id");
+            if (_this._isBefore(_this._lastPreviewLayout, conletId, conletId)) {
+                previewArea.find(".conlet").each(
+                    function(conletIndex) {
                         let item = $(this);
-                        let itemId = item.attr("data-portlet-id");
+                        let itemId = item.attr("data-conlet-id");
                         if (!_this._isBefore(_this._lastPreviewLayout,
-                            itemId, portletId)) {
-                            item.before(portlet);
+                            itemId, conletId)) {
+                            item.before(conlet);
                             inserted = true;
                             return false;
                         }
@@ -208,13 +208,13 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             this._layoutChanged();
         }
         let newContent = $(content);
-        let portletHeaderText = container.find(".portlet-header-text");
-        portletHeaderText.text(newContent.attr("data-portlet-title"));
-        let portletContent = container.find(".portlet-content");
-        portletContent.children().detach();
-        portletContent.append(newContent);
+        let conletHeaderText = container.find(".conlet-header-text");
+        conletHeaderText.text(newContent.attr("data-conlet-title"));
+        let conletContent = container.find(".conlet-content");
+        conletContent.children().detach();
+        conletContent.append(newContent);
         if (foreground) {
-            $("#portlet-tabs").tabs("option", "active", 0);
+            $("#conlet-tabs").tabs("option", "active", 0);
         }
     }
 
@@ -230,64 +230,64 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
         return false;
     }
 
-    _setModeIcons(portlet, modes) {
+    _setModeIcons(conlet, modes) {
         let _this = this;
-        let portletHeader = portlet.find(".portlet-header");
-        portletHeader.find(".ui-icon").remove();
+        let conletHeader = conlet.find(".conlet-header");
+        conletHeader.find(".ui-icon").remove();
         if (modes.includes("Edit")) {
-            portletHeader.prepend("<span class='ui-icon ui-icon-wrench portlet-edit'></span>");
-            portletHeader.find(".portlet-edit").on("click", function() {
+            conletHeader.prepend("<span class='ui-icon ui-icon-wrench conlet-edit'></span>");
+            conletHeader.find(".conlet-edit").on("click", function() {
                 let icon = $(this);
-                let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                _this.sendRenderPortlet(portletId, ["Edit", "Foreground"]);
+                let conletId = icon.closest(".conlet").attr("data-conlet-id");
+                _this.sendRenderConlet(conletId, ["Edit", "Foreground"]);
             });
         }
         if (modes.includes("DeleteablePreview")) {
-            portletHeader.prepend("<span class='ui-icon ui-icon-delete portlet-delete'></span>");
-            portletHeader.find(".portlet-delete").on("click", function() {
+            conletHeader.prepend("<span class='ui-icon ui-icon-delete conlet-delete'></span>");
+            conletHeader.find(".conlet-delete").on("click", function() {
                 let icon = $(this);
-                let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                _this.sendDeletePortlet(portletId);
+                let conletId = icon.closest(".conlet").attr("data-conlet-id");
+                _this.sendDeleteConlet(conletId);
             });
         }
         if (modes.includes("View")) {
-            portletHeader.prepend("<span class='ui-icon ui-icon-fullscreen portlet-expand'></span>");
-            portletHeader.find(".portlet-expand").on("click", function() {
+            conletHeader.prepend("<span class='ui-icon ui-icon-fullscreen conlet-expand'></span>");
+            conletHeader.find(".conlet-expand").on("click", function() {
                 let icon = $(this);
-                let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                let portletView = _this.findPortletView(portletId);
-                if (portletView) {
-                    _this._activatePortletView($(portletView));
+                let conletId = icon.closest(".conlet").attr("data-conlet-id");
+                let conletView = _this.findConletView(conletId);
+                if (conletView) {
+                    _this._activateConletView($(conletView));
                 } else {
-                    _this.sendRenderPortlet(portletId, ["View", "Foreground"]);
+                    _this.sendRenderConlet(conletId, ["View", "Foreground"]);
                 }
             });
         }
     }
 
-    _activatePortletView(portlet) {
-        let tabs = $("#portlet-tabs").tabs();
-        let portletIndex = portlet.index();
-        if (portletIndex) {
-            tabs.tabs("option", "active", portletIndex - 1);
+    _activateConletView(conlet) {
+        let tabs = $("#conlet-tabs").tabs();
+        let conletIndex = conlet.index();
+        if (conletIndex) {
+            tabs.tabs("option", "active", conletIndex - 1);
         }
     }
 
-    updatePortletView(isNew, container, modes, content, foreground) {
+    updateConletView(isNew, container, modes, content, foreground) {
         // Container is 
-        //     <article class="portlet portlet-view 
-        //              data-portlet-id='...'"></article>"
+        //     <article class="conlet conlet-view 
+        //              data-conlet-id='...'"></article>"
         container = $(container);
         let newContent = $(content);
         if (!isNew) {
             container.children().detach();
             container.append(newContent);
         } else {
-            let tabs = $("#portlet-tabs").tabs();
+            let tabs = $("#conlet-tabs").tabs();
             this._tabCounter += 1;
-            let id = "portlet-tabs-" + this._tabCounter;
+            let id = "conlet-tabs-" + this._tabCounter;
             let li = $(this._tabTemplate.replace(/@\{href\}/g, "#" + id)
-                .replace(/@\{label\}/g, newContent.attr("data-portlet-title")));
+                .replace(/@\{label\}/g, newContent.attr("data-conlet-title")));
             let tabItems = tabs.find(".ui-tabs-nav");
             tabItems.append(li);
             container.attr("id", id);
@@ -297,20 +297,20 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
             this._layoutChanged();
         }
         if (foreground) {
-            this._activatePortletView(container);
+            this._activateConletView(container);
         }
     }
 
-    removePortletDisplays(containers) {
+    removeConletDisplays(containers) {
         containers.forEach(function(container) {
             container = $(container);
-            if (container.hasClass('portlet-view')) {
+            if (container.hasClass('conlet-view')) {
                 let panelId = container.closest(".ui-tabs-panel").remove().attr("id");
-                let tabs = $("#portlet-tabs").tabs();
+                let tabs = $("#conlet-tabs").tabs();
                 tabs.find("li[aria-controls='" + panelId + "']").remove();
-                $("#portlet-tabs").tabs().tabs("refresh");
+                $("#conlet-tabs").tabs().tabs("refresh");
             }
-            if (container.hasClass('portlet-preview')) {
+            if (container.hasClass('conlet-preview')) {
                 container.remove();
             }
         });
@@ -324,16 +324,16 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     _layoutChanged() {
         let previewLayout = [];
         $(".overview-panel").find(".preview-area")
-            .find(".portlet-preview[data-portlet-id]").each(function() {
-                previewLayout.push($(this).attr("data-portlet-id"));
+            .find(".conlet-preview[data-conlet-id]").each(function() {
+                previewLayout.push($(this).attr("data-conlet-id"));
             });
         let tabsLayout = [];
-        let tabs = $("#portlet-tabs").tabs();
+        let tabs = $("#conlet-tabs").tabs();
         tabs.find(".ui-tabs-nav .ui-tabs-tab").each(function(index) {
             if (index > 0) {
                 let tabId = $(this).attr("aria-controls");
-                let portletId = tabs.find("#" + tabId).attr("data-portlet-id");
-                tabsLayout.push(portletId);
+                let conletId = tabs.find("#" + tabId).attr("data-conlet-id");
+                tabsLayout.push(conletId);
             }
         });
         let xtraInfo = {};
@@ -342,60 +342,60 @@ JQUIPortal.Renderer = class extends JGPortal.Renderer {
     };
 
     /**
-     * Update the title of the portlet with the given id.
+     * Update the title of the conlet with the given id.
      *
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string} title the new title
      */
-    updatePortletTitle(portletId, title) {
-        let tabs = $("#portlet-tabs").tabs();
-        let portletView = tabs.find("> .portlet-view[data-portlet-id='" + portletId + "']");
-        if (portletView.length > 0) {
-            portletView.find("[data-portlet-title]").attr("data-portlet-title", title);
-            let tabId = portletView.attr("id");
-            let portletTab = tabs.find("a[href='#" + tabId + "']");
-            portletTab.empty();
-            portletTab.append(title);
+    updateConletTitle(conletId, title) {
+        let tabs = $("#conlet-tabs").tabs();
+        let conletView = tabs.find("> .conlet-view[data-conlet-id='" + conletId + "']");
+        if (conletView.length > 0) {
+            conletView.find("[data-conlet-title]").attr("data-conlet-title", title);
+            let tabId = conletView.attr("id");
+            let conletTab = tabs.find("a[href='#" + tabId + "']");
+            conletTab.empty();
+            conletTab.append(title);
         }
-        let portletPreview = this.findPortletPreview(portletId);
-        if (portletPreview) {
-            let headerText = $(portletPreview).find(".portlet-header-text");
+        let conletPreview = this.findConletPreview(conletId);
+        if (conletPreview) {
+            let headerText = $(conletPreview).find(".conlet-header-text");
             headerText.empty();
             headerText.append(title);
         }
     }
 
     /**
-     * Update the modes of the portlet with the given id.
+     * Update the modes of the conlet with the given id.
      * 
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string[]} modes the modes
      */
-    updatePortletModes(portletId, modes) {
-        let portlet = this.findPortletPreview(portletId);
-        if (!portlet) {
+    updateConletModes(conletId, modes) {
+        let conlet = this.findConletPreview(conletId);
+        if (!conlet) {
             return;
         }
-        this._setModeIcons($(portlet), modes);
+        this._setModeIcons($(conlet), modes);
     }
 
     showEditDialog(container, modes, content) {
         let _this = this;
         container = $(container);
-        container.addClass("portlet-content");
+        container.addClass("conlet-content");
         let dialogContent = $(content);
         container.append(dialogContent);
         container.dialog({
             modal: true,
             width: "auto",
             close: function(event, ui) {
-                _this.portal().execOnApply(container[0]);
+                _this.console().execOnApply(container[0]);
             }
         });
     }
 }
 
-JQUIPortal.tooltip = function(nodeSet) {
+JQUIConsole.tooltip = function(nodeSet) {
     nodeSet.tooltip({
         items: "[data-tooltip-id], [title]",
         content: function() {
@@ -419,7 +419,7 @@ JQUIPortal.tooltip = function(nodeSet) {
 
 /**
  * A jQuery UI plugin for displaying notifications on the top of 
- * the portal page.
+ * the console page.
  * 
  * @name NotificationPlugin
  * @namespace NotificationPlugin

@@ -27,18 +27,19 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * Sent to the portal (server) if a new portlet instance of a given 
- * type should be added to the portal page. The portal server usually 
+ * Sent to the console (server) if a new web console component instance of a given 
+ * type should be added to the portal page. The console server usually 
  * responds with a {@link RenderConlet} event that has as payload the
- * HTML that displays the portlet on the portal page.
+ * HTML that displays the web console component on the console page.
  * 
  * Properties may be passed with the event. The interpretation
- * of the properties is completely dependent on the handling portlet.
- * It is recommended to use {@link String}s as keys and JDK types
- * as values. This avoids classpath dependencies on the portlet
+ * of the properties is completely dependent on the handling web console 
+ * component. It is recommended to use {@link String}s as keys and JDK types
+ * as values. This avoids classpath dependencies on the web console component
  * that is to be added. 
  * 
- * The event's result is the portlet id of the new portlet instance.
+ * The event's result is the web console component id of the new 
+ * web console component instance.
  * 
  * ![Event Sequence](AddPortletRequestSeq.svg)
  * 
@@ -61,7 +62,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  */
 public class AddConletRequest extends RenderConletRequestBase<String> {
 
-    private final String portletType;
+    private final String conletType;
     private boolean foreground = true;
     private Map<? extends Object, ? extends Object> properties;
 
@@ -69,36 +70,37 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
      * Creates a new event.
      *
      * @param renderSupport the render support
-     * @param portletType the type of the portlet
+     * @param conletType the type of the web console component
      * @param renderModes the render modes
      */
-    public AddConletRequest(RenderSupport renderSupport, String portletType,
+    public AddConletRequest(RenderSupport renderSupport, String conletType,
             Set<RenderMode> renderModes) {
         super(renderSupport, renderModes);
-        this.portletType = portletType;
+        this.conletType = conletType;
     }
 
     /**
      * Creates a new event.
      *
      * @param renderSupport the render support
-     * @param portletType the type of the portlet
+     * @param conletType the type of the web console component
      * @param renderModes the render modes
-     * @param properties optional values for properties of the portlet instance
+     * @param properties optional values for properties of the 
+     * web console component instance
      */
-    public AddConletRequest(RenderSupport renderSupport, String portletType,
+    public AddConletRequest(RenderSupport renderSupport, String conletType,
             Set<RenderMode> renderModes, Map<?, ?> properties) {
         super(renderSupport, renderModes);
-        this.portletType = portletType;
+        this.conletType = conletType;
         @SuppressWarnings("unchecked")
         Map<Object, Object> props = (Map<Object, Object>) properties;
         this.properties = props;
     }
 
     /**
-     * Determines if the portlet will be put in the foreground.
-     * Defaults to `true` for added portlets as they are most likely
-     * supposed to be seen. 
+     * Determines if the web console component will be put in the foreground.
+     * Defaults to `true` for added web console components as they are 
+     * most likely supposed to be seen. 
      *
      * @param foreground the foreground
      * @return the event for easy chaining
@@ -109,12 +111,12 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
     }
 
     /**
-     * Returns the portlet type
+     * Returns the web console component type
      * 
-     * @return the portlet type
+     * @return the web console component type
      */
     public String conletType() {
-        return portletType;
+        return conletType;
     }
 
     /**

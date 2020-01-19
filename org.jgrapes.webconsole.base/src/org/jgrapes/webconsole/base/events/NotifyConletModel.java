@@ -24,16 +24,16 @@ import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
  * A decoded notification (as defined by the JSON RPC specification) that
- * invokes a method on a portlet model. Usually, though not necessarily,
- * the portlet component responds by sending a
- * {@link NotifyConletView} to update the portlet representation.
+ * invokes a method on a web console component model. Usually, though 
+ * not necessarily, the web console component component responds by sending a
+ * {@link NotifyConletView} to update the web console component representation.
  * 
- * ![Event Sequence](NotifyPortletModelSeq.svg)
+ * ![Event Sequence](NotifyConletModelSeq.svg)
  * 
- * @startuml NotifyPortletModelSeq.svg
+ * @startuml NotifyConletModelSeq.svg
  * hide footbox
  * 
- * Browser -> WebConsole: "notifyPortletModel"
+ * Browser -> WebConsole: "notifyConletModel"
  * activate WebConsole
  * WebConsole -> Conlet: NotifyConletModel
  * deactivate WebConsole
@@ -41,7 +41,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * Conlet -> WebConsole: NotifyConletView
  * deactivate Conlet
  * activate WebConsole
- * WebConsole -> Browser: "notifyPortletView"
+ * WebConsole -> Browser: "notifyConletView"
  * deactivate WebConsole
  * 
  * @enduml
@@ -50,7 +50,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
 public class NotifyConletModel extends Event<Void> {
 
     private final RenderSupport renderSupport;
-    private final String portletId;
+    private final String conletId;
     private final String method;
     private final JsonArray params;
 
@@ -59,15 +59,15 @@ public class NotifyConletModel extends Event<Void> {
      * 
      * @param renderSupport the render support from the portal in case
      * the response requires it
-     * @param portletId the portlet model that the notification is 
-     * directed at 
+     * @param conletId the web console component model that the notification 
+     * is directed at 
      * @param method the method to be executed
      * @param params parameters
      */
     public NotifyConletModel(RenderSupport renderSupport,
-            String portletId, String method, JsonArray params) {
+            String conletId, String method, JsonArray params) {
         this.renderSupport = renderSupport;
-        this.portletId = portletId;
+        this.conletId = conletId;
         this.method = method;
         this.params = params;
     }
@@ -82,12 +82,12 @@ public class NotifyConletModel extends Event<Void> {
     }
 
     /**
-     * Returns the portlet id.
+     * Returns the web console component id.
      * 
-     * @return the portlet id
+     * @return the web console component id
      */
     public String conletId() {
-        return portletId;
+        return conletId;
     }
 
     /**

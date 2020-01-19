@@ -18,22 +18,22 @@
 
 'use strict';
 
-import JGPortal from "../portal-base-resource/jgportal.js"
+import JGConsole from "../console-base-resource/jgconsole.js"
 import Vue from "../page-resource/vue/vue.esm.browser.js";
 import Vuex from "../page-resource/vuex/vuex.esm.browser.js";
 
 /**
- * JGPortal establishes a namespace for the JavaScript functions
- * that are provided by the portal.
+ * JGConsole establishes a namespace for the JavaScript functions
+ * that are provided by the console.
  * 
- * @module vuejsportal
+ * @module vuejsconsole
  */
-export const VueJsPortal = {};
-export default VueJsPortal;
+export const VueJsConsole = {};
+export default VueJsConsole;
 
-var log = JGPortal.log;
+var log = JGConsole.log;
 
-VueJsPortal.Renderer = class extends JGPortal.Renderer {
+VueJsConsole.Renderer = class extends JGConsole.Renderer {
 
     constructor(localeMenuitems, l10nMessages) {
         super();
@@ -42,11 +42,11 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         this._lastXtraInfo = {};
         let _this = this;
         // Make renderer available
-        Vue.prototype.$portalRenderer = this;
+        Vue.prototype.$consoleRenderer = this;
         
-        // Prepare portal i18n
+        // Prepare console i18n
         this._l10nMessages = l10nMessages;
-        window.portalL10n = function(key) { return _this.translate(key) };
+        window.consoleL10n = function(key) { return _this.translate(key) };
         
         // Prepare Vuex Store
         let initialLang = document.querySelector("html")
@@ -55,16 +55,16 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             state: {
                 localeMenuitems,
                 lang: initialLang,
-                portletTypes: [],
+                conletTypes: [],
             },
             mutations: {
                 lang(state, lang) {
                     state.lang = lang;
                     document.querySelector("html").setAttribute('lang', lang);
-                    _this.portal().setLocale(lang, false);
+                    _this.console().setLocale(lang, false);
                 },
-                addPortletType(state, item) {
-                    state.portletTypes.push(item);
+                addConletType(state, item) {
+                    state.conletTypes.push(item);
                 },
             },
         });
@@ -75,12 +75,12 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         // Start Vue
         let store = this._vuexStore;
         new Vue({ el: 'header', store });
-        new Vue({ el: '.portalVue', store });
+        new Vue({ el: '.consoleVue', store });
 
         // Init tabs
-        this._portalTabs().addTab({ label: "Overview", 
-            id: "portalOverviewPanel", 
-            l10n: window.portalL10n });
+        this._consoleTabs().addTab({ label: "Overview", 
+            id: "consoleOverviewPanel", 
+            l10n: window.consoleL10n });
 
         // Grid
         var options = {
@@ -89,18 +89,18 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
             alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
             disableOneColumnMode: true,
         };
-        $('#portalPreviews').gridstack(options);
-        _this._previewGrid = $('#portalPreviews').data('gridstack');
+        $('#consolePreviews').gridstack(options);
+        _this._previewGrid = $('#consolePreviews').data('gridstack');
         if (!_this._previewGrid) {
-            log.error("VueJsPortal: Creating preview grid failed.")
+            log.error("VueJsConsole: Creating preview grid failed.")
         }
-        $('#portalPreviews').on('change', function(event, items) {
+        $('#consolePreviews').on('change', function(event, items) {
             _this._layoutChanged();
         });
     }
 
-    _portalTabs() {
-        return document.querySelector("#portalTabs").__vue__;
+    _consoleTabs() {
+        return document.querySelector("#consoleTabs").__vue__;
     }
 
     translate(key) {
@@ -122,7 +122,7 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
     
     _layoutChanged() {
         let gridItems = [];
-        $("#portalPreviews .grid-stack-item").each(function() {
+        $("#consolePreviews .grid-stack-item").each(function() {
             gridItems.push($(this));
         });
         gridItems.sort(function(a, b) {
@@ -135,32 +135,32 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         let previewLayout = [];
         let xtraInfo = {};
         gridItems.forEach(function(item) {
-            let portletId = item.find(".portlet-preview[data-portlet-id]")
-                .attr("data-portlet-id");
-            previewLayout.push(portletId);
-            xtraInfo[portletId] = [item.attr("data-gs-x"),
+            let conletId = item.find(".conlet-preview[data-conlet-id]")
+                .attr("data-conlet-id");
+            previewLayout.push(conletId);
+            xtraInfo[conletId] = [item.attr("data-gs-x"),
             item.attr("data-gs-y"), item.attr("data-gs-width"),
             item.attr("data-gs-height")]
         });
 
         let tabsLayout = [];
-        for (let tab of this._portalTabs().tabs) {
+        for (let tab of this._consoleTabs().tabs) {
             let panel = $("[id='" + tab.id + "']");
-            let portletId = panel.attr("data-portlet-id");
-            if (portletId) {
-                tabsLayout.push(portletId);
+            let conletId = panel.attr("data-conlet-id");
+            if (conletId) {
+                tabsLayout.push(conletId);
             }
         }
-        this.portal().updateLayout(previewLayout, tabsLayout, xtraInfo);
+        this.console().updateLayout(previewLayout, tabsLayout, xtraInfo);
     };
 
-    addPortletType(portletType, displayNames, renderModes) {
+    addConletType(conletType, displayNames, renderModes) {
         // Add to menu
         let _this = this;
         let label = function() {
-            return JGPortal.forLang(displayNames, _this._vuexStore.state.lang) || "Portlet";
+            return JGConsole.forLang(displayNames, _this._vuexStore.state.lang) || "Conlet";
         };
-        _this._vuexStore.commit('addPortletType', [label, portletType, renderModes]);
+        _this._vuexStore.commit('addConletType', [label, conletType, renderModes]);
     }
     
     connectionLost() {
@@ -172,45 +172,45 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
     connectionSuspended(resume) {
     }
 
-    portalConfigured() {
+    consoleConfigured() {
     }
 
-    lastPortalLayout(previewLayout, tabsLayout, xtraInfo) {
+    lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
         this._lastPreviewLayout = previewLayout;
         this._lastTabsLayout = tabsLayout;
         this._lastXtraInfo = xtraInfo;
     }
 
-    updatePortletPreview(isNew, container, modes, content, foreground) {
+    updateConletPreview(isNew, container, modes, content, foreground) {
         // Container is:
-        //     <section class='portlet portlet-preview' data-portlet-id='...' 
-        //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>"
+        //     <section class='conlet conlet-preview' data-conlet-id='...' 
+        //     data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>"
         let _this = this;
         container = $(container);
         let newContent = $(content);
         if (isNew) {
             container.append('<header class="ui-draggable-handle"></header>'
-                + '<section class="portlet-content"></section>');
+                + '<section class="conlet-content"></section>');
             this._setModeIcons(container, modes);
 
             // Get grid info
-            let portletId = container.attr("data-portlet-id");
+            let conletId = container.attr("data-conlet-id");
             let options = {}
-            if (portletId in this._lastXtraInfo) {
+            if (conletId in this._lastXtraInfo) {
                 options.autoPosition = false;
-                options.x = this._lastXtraInfo[portletId][0];
-                options.y = this._lastXtraInfo[portletId][1];
-                options.width = this._lastXtraInfo[portletId][2];
-                options.height = this._lastXtraInfo[portletId][3];
+                options.x = this._lastXtraInfo[conletId][0];
+                options.y = this._lastXtraInfo[conletId][1];
+                options.width = this._lastXtraInfo[conletId][2];
+                options.height = this._lastXtraInfo[conletId][3];
             } else {
                 options.autoPosition = true;
                 options.width = 4;
                 options.height = 4;
-                if (newContent.attr("data-portlet-grid-columns")) {
-                    options.width = newContent.attr("data-portlet-grid-columns");
+                if (newContent.attr("data-conlet-grid-columns")) {
+                    options.width = newContent.attr("data-conlet-grid-columns");
                 }
-                if (newContent.attr("data-portlet-grid-rows")) {
-                    options.height = newContent.attr("data-portlet-grid-rows");
+                if (newContent.attr("data-conlet-grid-rows")) {
+                    options.height = newContent.attr("data-conlet-grid-rows");
                 }
                 if ($(window).width() < 1200) {
                     let winWidth = Math.max(320, $(window).width());
@@ -232,105 +232,105 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
 
             this._layoutChanged();
         }
-        let portletHeader = container.children("header");
-        portletHeader.find("p").remove();
-        portletHeader.prepend("<p>"
-            + newContent.attr("data-portlet-title") + "</p>");
+        let conletHeader = container.children("header");
+        conletHeader.find("p").remove();
+        conletHeader.prepend("<p>"
+            + newContent.attr("data-conlet-title") + "</p>");
         let previewContent = container.children("section");
         previewContent.empty();
         previewContent.append(newContent);
         if (foreground) {
-            this._portalTabs().selectTab("portalOverviewPanel");
+            this._consoleTabs().selectTab("consoleOverviewPanel");
         }
     }
 
-    updatePortletView(isNew, container, modes, content, foreground) {
+    updateConletView(isNew, container, modes, content, foreground) {
         // Container is 
-        //     <article class="portlet portlet-view 
-        //              data-portlet-id='...'"></article>"
+        //     <article class="conlet conlet-view 
+        //              data-conlet-id='...'"></article>"
         let _this = this;
         container = $(container);
         let newContent = $(content);
-        let portletId = container.attr("data-portlet-id");
-        let panelId = "portlet-panel-" + portletId;
+        let conletId = container.attr("data-conlet-id");
+        let panelId = "conlet-panel-" + conletId;
         if (!isNew) {
             container.children().detach();
             container.append(newContent);
-            for (let tab of this._portalTabs().tabs) {
+            for (let tab of this._consoleTabs().tabs) {
                 if (tab.id === panelId) {
-                    tab.label = newContent.attr("data-portlet-title");
+                    tab.label = newContent.attr("data-conlet-title");
                 }
             }
         } else {
             container.attr("id", panelId);
             container.attr("hidden", "");
             container.append(newContent);
-            let portalPanels = $("#portalPanels");
+            let consolePanels = $("#consolePanels");
             // JQuery append seems to have a delay.
-            portalPanels[0].appendChild(container[0]);
+            consolePanels[0].appendChild(container[0]);
             // Add to tab list
-            this._portalTabs().addTab({ 
-                label: newContent.attr("data-portlet-title"), 
+            this._consoleTabs().addTab({ 
+                label: newContent.attr("data-conlet-title"), 
                 id: panelId, 
-                l10n: window.portalL10n,
-                removeCallback: function() { _this.portal().removeView(portletId); }
+                l10n: window.consoleL10n,
+                removeCallback: function() { _this.console().removeView(conletId); }
             });
             this._layoutChanged();
         }
         if (foreground) {
-            this._portalTabs().selectTab(panelId);
+            this._consoleTabs().selectTab(panelId);
         }
     }
 
-    _setModeIcons(portlet, modes) {
+    _setModeIcons(conlet, modes) {
         let _this = this;
-        let portletHeader = portlet.children("header");
-        portletHeader.find("button").remove();
+        let conletHeader = conlet.children("header");
+        conletHeader.find("button").remove();
         if (modes.includes("Edit")) {
             let button = $("<button type='button' class='fa fa-wrench'></button>");
             button.on("click", function() {
                 let button = $(this);
-                let portletId = button.closest(".portlet").attr("data-portlet-id");
-                _this.portal().renderPortlet(portletId, ["Edit", "Foreground"]);
+                let conletId = button.closest(".conlet").attr("data-conlet-id");
+                _this.console().renderConlet(conletId, ["Edit", "Foreground"]);
             });
-            portletHeader.append(button);
+            conletHeader.append(button);
         }
         if (modes.includes("DeleteablePreview")) {
             let button = $("<button type='button' class='fa fa-times'></button>");
             button.on("click", function() {
                 let button = $(this);
-                let portletId = button.closest(".portlet").attr("data-portlet-id");
-                _this.portal().removePreview(portletId);
+                let conletId = button.closest(".conlet").attr("data-conlet-id");
+                _this.console().removePreview(conletId);
             });
-            portletHeader.append(button);
+            conletHeader.append(button);
         }
         if (modes.includes("View")) {
             let button = $("<button type='button' class='fa fa-expand'></button>");
             button.on("click", function() {
                 let button = $(this);
-                let portletId = button.closest(".portlet").attr("data-portlet-id");
-                _this.portal().renderPortlet(portletId, ["View", "Foreground"]);
+                let conletId = button.closest(".conlet").attr("data-conlet-id");
+                _this.console().renderConlet(conletId, ["View", "Foreground"]);
             });
-            portletHeader.append(button);
+            conletHeader.append(button);
         }
     }
 
-    removePortletDisplays(containers) {
+    removeConletDisplays(containers) {
         let _this = this;
         containers.forEach(function(container) {
             container = $(container);
-            if (container.hasClass('portlet-preview')) {
+            if (container.hasClass('conlet-preview')) {
                 let gridItem = container.closest(".grid-stack-item");
                 _this._previewGrid.removeWidget(gridItem);
             }
-            if (container.hasClass('portlet-view')) {
+            if (container.hasClass('conlet-view')) {
                 let panelId = container.attr("id");
-                _this._portalTabs().removeTab(panelId);
+                _this._consoleTabs().removeTab(panelId);
                 container.remove();
                 _this._layoutChanged();
             }
         });
-        this._portalTabs().selectTab("portalOverviewPanel");
+        this._consoleTabs().selectTab("consoleOverviewPanel");
         this._layoutChanged();
     }
 
@@ -338,36 +338,36 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     /**
-     * Update the title of the portlet with the given id.
+     * Update the title of the conlet with the given id.
      *
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string} title the new title
      */
-    updatePortletTitle(portletId, title) {
-        let preview = this.findPortletPreview(portletId);
+    updateConletTitle(conletId, title) {
+        let preview = this.findConletPreview(conletId);
         if (preview) {
-            let portletHeader = $(preview).children("section:first-child > header");
-            portletHeader.children("p:first-child").text(title);
+            let conletHeader = $(preview).children("section:first-child > header");
+            conletHeader.children("p:first-child").text(title);
         }
-        for (let tab of this._portalTabs().tabs) {
-            if (tab.id === "portlet-panel-" + portletId) {
+        for (let tab of this._consoleTabs().tabs) {
+            if (tab.id === "conlet-panel-" + conletId) {
                 tab.label = title;
             }
         }
     }
 
     /**
-     * Update the modes of the portlet with the given id.
+     * Update the modes of the conlet with the given id.
      * 
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string[]} modes the modes
      */
-    updatePortletModes(portletId, modes) {
-        let portlet = this.findPortletPreview(portletId);
-        if (!portlet) {
+    updateConletModes(conletId, modes) {
+        let conlet = this.findConletPreview(conletId);
+        if (!conlet) {
             return;
         }
-        this._setModeIcons($(portlet), modes);
+        this._setModeIcons($(conlet), modes);
     }
 
     showEditDialog(container, modes, content) {
@@ -375,17 +375,17 @@ VueJsPortal.Renderer = class extends JGPortal.Renderer {
         let dialog = new (Vue.component('jgp-modal-dialog'))({
             propsData: {
                 content: content,
-                contentClasses: ["portlet-content"],
+                contentClasses: ["conlet-content"],
                 onClose: function(applyChanges) {
                     if (applyChanges) {
-                        _this.portal().execOnApply(container);
+                        _this.console().execOnApply(container);
                     }
                     container.parentNode.removeChild(container);
                 }
             }
         });
         dialog.$mount();
-        let contentRoot = dialog.$el.querySelector(".portlet-content")
+        let contentRoot = dialog.$el.querySelector(".conlet-content")
             .querySelector("* > [title]");
         if (contentRoot) {
             dialog.title = contentRoot.getAttribute("title");

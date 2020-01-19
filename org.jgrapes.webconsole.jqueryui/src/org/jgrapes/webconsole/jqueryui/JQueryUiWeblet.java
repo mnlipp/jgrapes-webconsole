@@ -180,7 +180,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    @Handler(channels = PortalChannel.class)
+    @Handler(channels = ConsoleChannel.class)
     public void onJsonInput(JsonInput event, ConsoleSession channel)
             throws InterruptedException, IOException {
         // Send events to portlets on portal's channel
@@ -204,7 +204,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
      * @throws InterruptedException the interrupted exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    @Handler(channels = PortalChannel.class)
+    @Handler(channels = ConsoleChannel.class)
     public void onSetTheme(SetTheme event, ConsoleSession channel)
             throws InterruptedException, IOException {
         ThemeProvider themeProvider = StreamSupport
@@ -292,7 +292,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 //     * {@link ConletResourceRequest}s to the portlets (via the
 //     * portal).
 //     */
-//    public class PortalResourceChannel extends LinkedIOSubchannel {
+//    public class ConsoleResourceChannel extends LinkedIOSubchannel {
 //
 //        /**
 //         * Instantiates a new portal resource channel.
@@ -301,7 +301,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 //         * @param upstreamChannel the upstream channel
 //         * @param responsePipeline the response pipeline
 //         */
-//        public PortalResourceChannel(Manager hub,
+//        public ConsoleResourceChannel(Manager hub,
 //                IOSubchannel upstreamChannel, EventPipeline responsePipeline) {
 //            super(hub, hub.channel(), upstreamChannel, responsePipeline);
 //        }
@@ -312,35 +312,18 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 //     */
 //    private class RenderSupportImpl implements RenderSupport {
 //
-//        /*
-//         * (non-Javadoc)
-//         * 
-//         * @see
-//         * org.jgrapes.portal.RenderSupport#portletResource(java.lang.String,
-//         * java.net.URI)
-//         */
 //        @Override
 //        public URI portletResource(String portletType, URI uri) {
 //            return portal.prefix().resolve(uriFromPath(
 //                "portlet-resource/" + portletType + "/")).resolve(uri);
 //        }
 //
-//        /*
-//         * (non-Javadoc)
-//         * 
-//         * @see org.jgrapes.portal.RenderSupport#pageResource(java.net.URI)
-//         */
 //        @Override
 //        public URI pageResource(URI uri) {
 //            return portal.prefix().resolve(uriFromPath(
 //                "page-resource/")).resolve(uri);
 //        }
 //
-//        /*
-//         * (non-Javadoc)
-//         * 
-//         * @see org.jgrapes.portal.RenderSupport#useMinifiedResources()
-//         */
 //        @Override
 //        public boolean useMinifiedResources() {
 //            return useMinifiedResources;

@@ -25,7 +25,7 @@ import org.jgrapes.core.CompletionEvent;
  * This event is the completion event for the {@link ConsoleReady}
  * event. A portal policy component should handle this event 
  * by sending the last known layout to the portal 
- * and triggering the rendering of the portlets
+ * and triggering the rendering of the web console components
  * that are to be displayed in that layout.
  */
 public class ConsolePrepared extends CompletionEvent<ConsoleReady> {

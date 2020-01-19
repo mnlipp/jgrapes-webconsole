@@ -27,7 +27,8 @@ import org.jdrupes.json.JsonObject;
 /**
  * Sent by the server to the browser in response to {@link ConsolePrepared} 
  * (see this event's description for details). The provided information
- * enables the portal to restore portlets to their previous positions.
+ * enables the portal to restore web console components to their previous 
+ * positions.
  */
 public class LastConsoleLayout extends ConsoleCommand {
 
@@ -69,7 +70,7 @@ public class LastConsoleLayout extends ConsoleCommand {
 
     @Override
     public void toJson(Writer writer) throws IOException {
-        toJson(writer, "lastPortalLayout", previewLayout(), tabsLayout(),
+        toJson(writer, "lastConsoleLayout", previewLayout(), tabsLayout(),
             xtraInfo());
     }
 

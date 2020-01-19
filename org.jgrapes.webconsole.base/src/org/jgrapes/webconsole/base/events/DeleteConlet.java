@@ -23,33 +23,33 @@ import java.io.Writer;
 
 /**
  * A notification (as defined by the JSON RPC specification) to be sent to
- * the portlet view (the browser).
+ * the web console component view (the browser).
  */
 public class DeleteConlet extends ConsoleCommand {
 
-    private final String portletId;
+    private final String conletId;
 
     /**
      * Creates a new event.
      *  
-     * @param portletId the portlet (view) that should be deleted
+     * @param conletId the web console component (view) that should be deleted
      */
-    public DeleteConlet(String portletId) {
-        this.portletId = portletId;
+    public DeleteConlet(String conletId) {
+        this.conletId = conletId;
     }
 
     /**
-     * Returns the portlet id.
+     * Returns the web console component id.
      * 
-     * @return the portlet id
+     * @return the web console component id
      */
     public String conletId() {
-        return portletId;
+        return conletId;
     }
 
     @Override
     public void toJson(Writer writer) throws IOException {
-        toJson(writer, "deletePortlet", conletId());
+        toJson(writer, "deleteConlet", conletId());
     }
 
 }

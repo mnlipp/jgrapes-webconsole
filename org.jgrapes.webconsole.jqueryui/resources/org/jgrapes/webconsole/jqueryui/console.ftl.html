@@ -7,7 +7,7 @@
   
   <!-- Portal -->
   <link rel="icon" href="${renderSupport.consoleResource('favicon.ico')}">
-  <title>${_("portalTitle")}</title>
+  <title>${_("consoleTitle")}</title>
 
   <!-- CSS -->
   <link rel="stylesheet" href="${renderSupport.consoleResource('normalize-7.0.0.css')}">
@@ -21,9 +21,9 @@
   <link rel="stylesheet"
     href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
   <link rel="stylesheet"
-    href="${renderSupport.consoleBaseResource('portal' + minifiedExtension + '.css')}" />
+    href="${renderSupport.consoleBaseResource('console' + minifiedExtension + '.css')}" />
   <link rel="stylesheet" href="${renderSupport.consoleResource('structure.css')}">
-  <link rel="stylesheet" href="${renderSupport.consoleResource('theme/portal.css')}">
+  <link rel="stylesheet" href="${renderSupport.consoleResource('theme/console.css')}">
   <style>
   body {
     min-width: 520px;
@@ -32,14 +32,14 @@
   #dialog label, #dialog input { display:block; }
   #dialog label { margin-top: 0.5em; }
   #dialog input, #dialog textarea { width: 95%; }
-  #portlet-tabs { margin-top: 1em; }
-  #portlet-tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }
+  #conlet-tabs { margin-top: 1em; }
+  #conlet-tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }
   #add_tab { cursor: pointer; }
   
   </style> 
   
   <!-- Scripts(s) --> 
-  <!-- JQuery and portal base -->
+  <!-- JQuery and console base -->
   <script data-jgp-provides="jquery"
     src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"></script>
   <script data-jgp-provides="moment, moment-with-locales"
@@ -54,16 +54,16 @@
 
   <!-- Portal -->
   <script type="module">
-  import JGPortal from "${renderSupport.consoleBaseResource('jgportal.js')}"
-  import JQUIPortal from "${renderSupport.consoleResource('jquiportal.js')}"
-  JGPortal.init(
-    "${portalSessionId}", parseInt('${portalSessionRefreshInterval?c}'), 
-    parseInt('${portalSessionInactivityTimeout?c}'), new JQUIPortal.Renderer());    
+  import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
+  import JQUIPortal from "${renderSupport.consoleResource('jquiconsole.js')}"
+  JGConsole.init(
+    "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
+    parseInt('${consoleSessionInactivityTimeout?c}'), new JQUIPortal.Renderer());    
   </script>
   
 </head>
 
-<body class="portal-jqueryui">
+<body class="console-jqueryui">
 
 <!-- The bar at the top of the page -->
 <div class="ui-widget top-bar">
@@ -72,18 +72,18 @@
 </div>
 
 <!-- Main content: The tabs -->
-<div id="portlet-tabs">
+<div id="conlet-tabs">
   <ul>
-    <li><a href="#portlet-tabs-1">${_("Overview")}</a></li>
+    <li><a href="#conlet-tabs-1">${_("Overview")}</a></li>
   </ul>
 
-  <div id="portlet-tabs-1" class="overview-panel">
+  <div id="conlet-tabs-1" class="overview-panel">
     <div class="preview-area">
     </div>
   </div>
 </div>
 
-<#include "portal-footer.ftl.html">
+<#include "console-footer.ftl.html">
 
 <!-- (Initially invisible) --> 
 
@@ -124,11 +124,11 @@
   </ul>
 </div>
 
-<div id="portal-session-suspended-dialog" style="display:none;"
+<div id="console-session-suspended-dialog" style="display:none;"
   title="${_("Portal Session Suspended")}">
   <p>
     <span class="ui-icon ui-icon-pause" style="float:left; margin:0 7px 50px 0;"></span>
-    ${_("portalSessionSuspendedMessage")}
+    ${_("consoleSessionSuspendedMessage")}
   </p>
 </div>
 

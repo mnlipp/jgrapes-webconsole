@@ -64,7 +64,7 @@ import org.jgrapes.webconsole.base.PageResourceProviderFactory;
 import org.jgrapes.webconsole.base.WebConsole;
 import org.jgrapes.webconsole.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.webconsole.jqueryui.JQueryUiWeblet;
-import org.jgrapes.webconsole.vuejs.VueJsPortalWeblet;
+import org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -145,7 +145,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
     private void createJQueryUiConsole() throws URISyntaxException {
         ConsoleWeblet portalWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
-                new URI("/jqportal/")))
+                new URI("/jqconsole/")))
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole portal = portalWeblet.console();
@@ -165,7 +165,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
     private void createBootstrap4Console() throws URISyntaxException {
         ConsoleWeblet portalWeblet
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
-                new URI("/b4portal/")))
+                new URI("/b4console/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
@@ -180,7 +180,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             PageResourceProviderFactory.class, portal,
             type -> {
                 switch (type) {
-                case "org.jgrapes.portal.providers.gridstack.GridstackProvider":
+                case "org.jgrapes.webconsole.providers.gridstack.GridstackProvider":
                     return Arrays.asList(
                         Components.mapOf("configuration", "CoreWithJQueryUI"));
                 default:
@@ -194,8 +194,8 @@ public class WebConsoleDemo extends Component implements BundleActivator {
 
     private void createVueJsConsole() throws URISyntaxException {
         ConsoleWeblet portalWeblet
-            = app.attach(new VueJsPortalWeblet(app.channel(), Channel.SELF,
-                new URI("/vjportal/")))
+            = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
+                new URI("/vjconsole/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
@@ -210,7 +210,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             PageResourceProviderFactory.class, portal,
             type -> {
                 switch (type) {
-                case "org.jgrapes.portal.providers.gridstack.GridstackProvider":
+                case "org.jgrapes.webconsole.providers.gridstack.GridstackProvider":
                     return Arrays.asList(
                         Components.mapOf("configuration", "CoreWithJQueryUI"));
                 default:

@@ -151,36 +151,36 @@ form:not(.form--no-markup-styles) label.form__label--top-aligned > :nth-child(2)
 }
 
 /* # Deprecated, kept for backward compatibility. */
-.jgportal-basic-table thead th {
+.jgconsole-basic-table thead th {
     white-space: nowrap;
 } 
 
-.jgportal-basic-table {
+.jgconsole-basic-table {
     display: block;
     overflow-x: auto;
 }
 
-.jgportal-basic-table thead th {
+.jgconsole-basic-table thead th {
     white-space: nowrap;
 } 
 
-.jgportal-basic-table thead th.sortable {
+.jgconsole-basic-table thead th.sortable {
     cursor: pointer;
 }
 
-.jgportal-basic-table thead th:not(:last-child) {
+.jgconsole-basic-table thead th:not(:last-child) {
     padding-right: 1em;
 } 
 
-.jgportal-basic-table tbody td:not(:last-child) {
+.jgconsole-basic-table tbody td:not(:last-child) {
     padding-right: 1em;
 } 
 
-.jgportal-striped-table tbody tr.even {
+.jgconsole-striped-table tbody tr.even {
     background-color: rgba(0,0,0,.05);
 }
 
-.jgportal-auto-striped-table tbody tr:nth-of-type(2n+1) {
+.jgconsole-auto-striped-table tbody tr:nth-of-type(2n+1) {
     background-color: rgba(0,0,0,.05);
 }
 

@@ -71,30 +71,20 @@ public class TableDemoConlet extends FreeMarkerComponent<ConletBaseModel> {
         // Add HelloWorldConlet resources to page
         portalSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(portalSession.supportedLocales(), "portletName"))
+                displayNames(portalSession.supportedLocales(), "conletName"))
             .addRenderMode(RenderMode.View));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#generatePortletId()
-     */
     @Override
     protected String generateConletId() {
         return type() + "-" + super.generateConletId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#modelFromSession
-     */
     @Override
     protected Optional<ConletBaseModel> stateFromSession(
-            Session session, String portletId) {
-        if (portletId.startsWith(type() + "-")) {
-            return Optional.of(new ConletBaseModel(portletId));
+            Session session, String conletId) {
+        if (conletId.startsWith(type() + "-")) {
+            return Optional.of(new ConletBaseModel(conletId));
         }
         return Optional.empty();
     }
@@ -102,35 +92,30 @@ public class TableDemoConlet extends FreeMarkerComponent<ConletBaseModel> {
     @Override
     public String doAddConlet(AddConletRequest event,
             ConsoleSession channel) throws Exception {
-        String portletId = generateConletId();
+        String conletId = generateConletId();
         ConletBaseModel conletModel = putInSession(
-            channel.browserSession(), new ConletBaseModel(portletId));
+            channel.browserSession(), new ConletBaseModel(conletId));
         renderConlet(event, channel, conletModel);
-        return portletId;
+        return conletId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
-     */
     @Override
     protected void doRenderConlet(RenderConletRequest event,
-            ConsoleSession channel, String portletId,
+            ConsoleSession channel, String conletId,
             ConletBaseModel conletModel) throws Exception {
         renderConlet(event, channel, conletModel);
     }
 
     private void renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, ConletBaseModel portletModel)
+            ConsoleSession channel, ConletBaseModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderPreview()) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-preview.ftl.html");
-            channel.respond(new RenderPortletFromTemplate(event,
-                TableDemoConlet.class, portletModel.getConletId(),
-                tpl, fmModel(event, channel, portletModel))
+            channel.respond(new RenderConletFromTemplate(event,
+                TableDemoConlet.class, conletModel.getConletId(),
+                tpl, fmModel(event, channel, conletModel))
                     .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
@@ -138,25 +123,20 @@ public class TableDemoConlet extends FreeMarkerComponent<ConletBaseModel> {
         if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-view.ftl.html");
-            channel.respond(new RenderPortletFromTemplate(event,
-                TableDemoConlet.class, portletModel.getConletId(),
-                tpl, fmModel(event, channel, portletModel))
+            channel.respond(new RenderConletFromTemplate(event,
+                TableDemoConlet.class, conletModel.getConletId(),
+                tpl, fmModel(event, channel, conletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
-     */
     @Override
     protected void doDeleteConlet(DeleteConletRequest event,
-            ConsoleSession channel, String portletId,
-            ConletBaseModel portletState) throws Exception {
-        channel.respond(new DeleteConlet(portletId));
+            ConsoleSession channel, String conletId,
+            ConletBaseModel conletState) throws Exception {
+        channel.respond(new DeleteConlet(conletId));
     }
 
 }

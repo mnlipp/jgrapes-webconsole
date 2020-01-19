@@ -223,7 +223,7 @@
  * by this class. Optionally, a portlet can contribute style information
  * and JavaScript (see {@link org.jgrapes.webconsole.base.events.AddConletType}).
  * It may (and should) make use of the styles and 
- * <a href="jsdoc/module-portal-base-resource_jgportal.html">functions</a> 
+ * <a href="jsdoc/module-console-base-resource_jgportal.html">functions</a> 
  * provided by the portal.
  * 
  * 
@@ -248,13 +248,13 @@
  *   WebConsole "1" -right- "1" PortletA
  * 
  *   class PortletAData {
- *     -portletId: String
+ *     -conletId: String
  *   }
  * 
  *   PortletAData "*" -up- "1" PortletA
  * 
  *   class PortletBData {
- *     -portletId: String
+ *     -conletId: String
  *   }
  * 
  *   PortletBData "*" -up- "1" PortletB
@@ -329,7 +329,7 @@
  *         PortletX -> WebConsole: AddConletType 
  *         deactivate PortletX
  *         activate WebConsole
- *         WebConsole -> Browser: "addPortletType"
+ *         WebConsole -> Browser: "addConletType"
  *         deactivate WebConsole
  *     end
  * 
@@ -340,7 +340,7 @@
  * deactivate WebConsole
  * activate PortalPolicy
  * PortalPolicy -> WebConsole: LastConsoleLayout
- * WebConsole -> Browser: "lastPortalLayout"
+ * WebConsole -> Browser: "lastConsoleLayout"
  * loop for all portlets to be displayed
  *     PortalPolicy -> PortletX: RenderConletRequest
  *     activate PortletX

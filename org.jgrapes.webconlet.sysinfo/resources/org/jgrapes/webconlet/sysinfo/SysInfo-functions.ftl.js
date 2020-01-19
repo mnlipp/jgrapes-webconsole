@@ -18,15 +18,15 @@
 
 'use strict';
 
-var orgJGrapesPortletsSysInfo = {
+var orgJGrapesConletsSysInfo = {
     };
 
 (function() {
 
-    $("body").on("click", ".jgrapes-portlets-sysinfo-view .GarbageCollection-action",
+    $("body").on("click", ".jgrapes-conlets-sysinfo-view .GarbageCollection-action",
             function(event) {
-        let portletId = $(this).closest("[data-portlet-id]").attr("data-portlet-id");
-        JGPortal.notifyPortletModel(portletId, "garbageCollection");
+        let conletId = $(this).closest("[data-conlet-id]").attr("data-conlet-id");
+        JGConsole.notifyConletModel(conletId, "garbageCollection");
     })
 
     let timeData = [];
@@ -34,9 +34,9 @@ var orgJGrapesPortletsSysInfo = {
     let totalMemoryData = [];
     let usedMemoryData = [];
     
-    JGPortal.registerPortletMethod(
+    JGConsole.registerConletMethod(
             "org.jgrapes.webconlet.sysinfo.SysInfoConlet",
-            "updateMemorySizes", function(portletId, params) {
+            "updateMemorySizes", function(conletId, params) {
                 if (timeData.length >= 301) {
                     timeData.shift();
                     maxMemoryData.shift();
@@ -50,32 +50,32 @@ var orgJGrapesPortletsSysInfo = {
                 let maxFormatted = "";
                 let totalFormatted = "";
                 let usedFormatted = "";
-                let portlet = JGPortal.renderer.findPortletPreview(portletId);
+                let conlet = JGConsole.renderer.findConletPreview(conletId);
                 let lang = 'en';
-                if (portlet) {
-                    portlet = $(portlet);
-                    lang = portlet.closest('[lang]').attr('lang') || 'en'
-                    maxFormatted = JGPortal.renderer.formatMemorySize(params[1], 1, lang);
-                    totalFormatted = JGPortal.renderer.formatMemorySize(params[2], 1, lang);
-                    usedFormatted = JGPortal.renderer.formatMemorySize(params[3], 1, lang);
-                    let col = portlet.find(".maxMemory");
+                if (conlet) {
+                    conlet = $(conlet);
+                    lang = conlet.closest('[lang]').attr('lang') || 'en'
+                    maxFormatted = JGConsole.renderer.formatMemorySize(params[1], 1, lang);
+                    totalFormatted = JGConsole.renderer.formatMemorySize(params[2], 1, lang);
+                    usedFormatted = JGConsole.renderer.formatMemorySize(params[3], 1, lang);
+                    let col = conlet.find(".maxMemory");
                     col.html(maxFormatted);
-                    col = portlet.find(".totalMemory");
+                    col = conlet.find(".totalMemory");
                     col.html(totalFormatted);
-                    col = portlet.find(".usedMemory");
+                    col = conlet.find(".usedMemory");
                     col.html(usedFormatted);
                 }
-                portlet = JGPortal.renderer.findPortletView(portletId);
-                if (portlet) {
-                    portlet = $(portlet);
-                    let col = portlet.find(".maxMemory");
+                conlet = JGConsole.renderer.findConletView(conletId);
+                if (conlet) {
+                    conlet = $(conlet);
+                    let col = conlet.find(".maxMemory");
                     col.html(maxFormatted);
-                    col = portlet.find(".totalMemory");
+                    col = conlet.find(".totalMemory");
                     col.html(totalFormatted);
-                    col = portlet.find(".usedMemory");
+                    col = conlet.find(".usedMemory");
                     col.html(usedFormatted);
-                    let chartCanvas = portlet.find(".memoryChart");
-                    if (portlet.find(".memoryChart").parent(":hidden").length === 0) {
+                    let chartCanvas = conlet.find(".memoryChart");
+                    if (conlet.find(".memoryChart").parent(":hidden").length === 0) {
                         let chart = chartCanvas.data('chartjs-chart');
                         if (chart) {
                             moment.locale(lang);
@@ -85,7 +85,7 @@ var orgJGrapesPortletsSysInfo = {
                 }
             });
 
-    orgJGrapesPortletsSysInfo.initMemoryChart = function(content) {
+    orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
         let chartCanvas = $(content).find(".memoryChart");
         let ctx = chartCanvas[0].getContext('2d');
         let lang = chartCanvas.closest('[lang]').attr('lang') || 'en'
@@ -140,7 +140,7 @@ var orgJGrapesPortletsSysInfo = {
                     yAxes: [{
                         ticks: {
                             callback: function(value, index, values) {
-                                return JGPortal.renderer.formatMemorySize(value, 0, lang);
+                                return JGConsole.renderer.formatMemorySize(value, 0, lang);
                             }
                         }
                     }]

@@ -69,16 +69,17 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
     protected Configuration freeMarkerConfig;
 
     /**
-     * Instantiates a new free marker portal weblet.
+     * Instantiates a new free marker console weblet.
      *
      * @param webletChannel the weblet channel
-     * @param portalChannel the portal channel
-     * @param portalPrefix the portal prefix
+     * @param consoleChannel the console channel
+     * @param consolePrefix the console prefix
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public FreeMarkerConsoleWeblet(Channel webletChannel, Channel portalChannel,
-            URI portalPrefix) {
-        super(webletChannel, portalChannel, portalPrefix);
+    public FreeMarkerConsoleWeblet(Channel webletChannel,
+            Channel consoleChannel,
+            URI consolePrefix) {
+        super(webletChannel, consoleChannel, consolePrefix);
         freeMarkerConfig = new Configuration(Configuration.VERSION_2_3_26);
         List<TemplateLoader> loaders = new ArrayList<>();
         Class<?> clazz = getClass();
@@ -101,7 +102,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      *
      * @param classloader the class loader
      * @param path the path
-     * @return the free marker portal weblet
+     * @return the free marker console weblet
      */
     public FreeMarkerConsoleWeblet
             prependClassTemplateLoader(ClassLoader classloader, String path) {
@@ -123,7 +124,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      * the path from the class's package name.
      *
      * @param clazz the clazz
-     * @return the free marker portal weblet
+     * @return the free marker console weblet
      */
     public FreeMarkerConsoleWeblet prependClassTemplateLoader(Class<?> clazz) {
         return prependClassTemplateLoader(clazz.getClassLoader(),
@@ -131,32 +132,33 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
     }
 
     /**
-     * Creates the portal base model.
+     * Creates the console base model.
      *
      * @return the base model
      */
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     protected Map<String, Object> createConsoleBaseModel() {
-        // Create portal model
-        Map<String, Object> portalModel = new HashMap<>();
-        portalModel.put("renderSupport", renderSupport());
-        portalModel.put("useMinifiedResources", useMinifiedResources());
-        portalModel.put("minifiedExtension",
+        // Create console model
+        Map<String, Object> consoleModel = new HashMap<>();
+        consoleModel.put("renderSupport", renderSupport());
+        consoleModel.put("useMinifiedResources", useMinifiedResources());
+        consoleModel.put("minifiedExtension",
             useMinifiedResources() ? ".min" : "");
-        portalModel.put(
-            "portalSessionRefreshInterval", consoleSessionRefreshInterval());
-        portalModel.put(
-            "portalSessionInactivityTimeout", consoleSessionInactivityTimeout());
-        return portalModel;
+        consoleModel.put(
+            "consoleSessionRefreshInterval", consoleSessionRefreshInterval());
+        consoleModel.put(
+            "consoleSessionInactivityTimeout",
+            consoleSessionInactivityTimeout());
+        return consoleModel;
     }
 
     /**
-     * Expand the given portal model with data from the event 
-     * (portal session id, locale information).
+     * Expand the given console model with data from the event 
+     * (console session id, locale information).
      *
      * @param model the model
      * @param event the event
-     * @param consoleSessionId the portal session id
+     * @param consoleSessionId the console session id
      * @return the map
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -164,7 +166,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
             Map<String, Object> model, Request.In.Get event,
             UUID consoleSessionId) {
         // WebConsole Session UUID
-        model.put("portalSessionId", consoleSessionId.toString());
+        model.put("consoleSessionId", consoleSessionId.toString());
 
         // Add locale
         final Locale locale = event.associated(Selection.class).map(
@@ -209,7 +211,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
 
     @Override
     protected void renderConsole(Request.In.Get event, IOSubchannel channel,
-            UUID portalSessionId) throws IOException, InterruptedException {
+            UUID consoleSessionId) throws IOException, InterruptedException {
         event.setResult(true);
         event.stop();
 
@@ -227,10 +229,10 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
                     UTF_8)) {
             @SuppressWarnings("PMD.UseConcurrentHashMap")
 
-            Template tpl = freeMarkerConfig.getTemplate("portal.ftl.html");
-            Map<String, Object> portalModel = expandConsoleModel(
-                createConsoleBaseModel(), event, portalSessionId);
-            tpl.process(portalModel, out);
+            Template tpl = freeMarkerConfig.getTemplate("console.ftl.html");
+            Map<String, Object> consoleModel = expandConsoleModel(
+                createConsoleBaseModel(), event, consoleSessionId);
+            tpl.process(consoleModel, out);
         } catch (TemplateException e) {
             throw new IOException(e);
         }

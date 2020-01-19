@@ -18,21 +18,21 @@
 
 'use strict';
 
-import JGPortal from "../portal-base-resource/jgportal.js"
+import JGConsole from "../console-base-resource/jgconsole.js"
 
 /**
- * @module b4uiportal
+ * @module b4uiconsole
  */
-export const B4UIPortal = {};
-export default B4UIPortal;
+export const B4UIConsole = {};
+export default B4UIConsole;
 
-var log = JGPortal.log;
+var log = JGConsole.log;
 
-B4UIPortal.Renderer = class extends JGPortal.Renderer {
+B4UIConsole.Renderer = class extends JGConsole.Renderer {
 
     constructor(l10n) {
         super();
-        B4UIPortal.l10n = l10n;
+        B4UIConsole.l10n = l10n;
         this._connectionLostNotification = null;
         this._lastPreviewLayout = [];
         this._lastTabsLayout = [];
@@ -44,7 +44,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         let _this = this;
         log.debug("Locking screen");
 
-        $("#portalLanguageMenu").on("click", "[data-locale]", function() {
+        $("#consoleLanguageMenu").on("click", "[data-locale]", function() {
             _this.sendSetLocale($(this).data("locale"), true);
         });
 
@@ -56,23 +56,23 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
             disableOneColumnMode: true,
         };
-        $('#portalPreviews').gridstack(options);
-        _this._previewGrid = $('#portalPreviews').data('gridstack');
+        $('#consolePreviews').gridstack(options);
+        _this._previewGrid = $('#consolePreviews').data('gridstack');
         if (!_this._previewGrid) {
-            log.error("VueJsPortal: Creating preview grid failed.")
+            log.error("VueJsConsole: Creating preview grid failed.")
         }
-        $('#portalPreviews').on('change', function(event, items) {
+        $('#consolePreviews').on('change', function(event, items) {
             _this._layoutChanged();
         });
 
         // Tabs
-        var tabs = $("#portalTabs");
+        var tabs = $("#consoleTabs");
 
         // Close icon: removing the tab on click
-        tabs.on("click", ".portlet-tab-close", function() {
-            var tabId = $(this).closest("li").remove().attr("data-portlet-tab");
+        tabs.on("click", ".conlet-tab-close", function() {
+            var tabId = $(this).closest("li").remove().attr("data-conlet-tab");
             $("#" + tabId + "-pane").remove();
-            $("#portalOverviewTab").tab('show');
+            $("#consoleOverviewTab").tab('show');
             _this._layoutChanged();
         });
 
@@ -81,7 +81,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     connectionLost() {
         if (this._connectionLostNotification == null) {
             this._connectionLostNotification =
-                this.notification(B4UIPortal.l10n.serverConnectionLost, {
+                this.notification(B4UIConsole.l10n.serverConnectionLost, {
                     error: true,
                     closeable: false,
                 });
@@ -92,7 +92,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         if (this._connectionLostNotification != null) {
             this._connectionLostNotification.alert("close");
         }
-        this.notification(B4UIPortal.l10n.serverConnectionRestored, {
+        this.notification(B4UIConsole.l10n.serverConnectionRestored, {
             type: "success",
             autoClose: 2000,
         });
@@ -104,14 +104,14 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             + '<div class="modal-content">'
             + '<div class="modal-header">'
             + '<h5 class="modal-title">'
-            + B4UIPortal.l10n.sessionSuspendedTitle + '</h5>'
+            + B4UIConsole.l10n.sessionSuspendedTitle + '</h5>'
             + '</button></div>'
             + '<div class="modal-body">'
-            + '<p>' + B4UIPortal.l10n.sessionSuspendedMessage + '</p>'
+            + '<p>' + B4UIConsole.l10n.sessionSuspendedMessage + '</p>'
             + '</div>'
             + '<div class="modal-footer">'
             + '<button type="button" class="btn btn-primary" data-dismiss="modal">'
-            + B4UIPortal.l10n.ok + '</button>'
+            + B4UIConsole.l10n.ok + '</button>'
             + '</div>'
             + '</div>'
             + '</div>'
@@ -122,26 +122,26 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         dialog.modal();
     }
 
-    portalConfigured() {
+    consoleConfigured() {
         this._layoutChanged();
         log.debug("Unlocking screen");
         $("#loader-overlay").fadeOut("slow");
     }
 
-    addPortletType(portletType, displayNames, renderModes) {
+    addConletType(conletType, displayNames, renderModes) {
         // Add to menu
         let _this = this;
         let lang = document.querySelector("html").getAttribute('lang');
         let displayName = displayNames[lang];
-        let item = $('<a class="dropdown-item" href="#" data-portlet-type="'
-            + portletType + '">' + displayName + '</a>');
+        let item = $('<a class="dropdown-item" href="#" data-conlet-type="'
+            + conletType + '">' + displayName + '</a>');
         item.data("render-modes", renderModes)
         item.on('click', function(e) {
-            _this.sendAddPortlet($(this).data("portlet-type"),
+            _this.sendAddConlet($(this).data("conlet-type"),
                 $(this).data("render-modes"));
         });
         let inserted = false;
-        $("#portalNavbarPortletList").find(".dropdown-item").each(function(index, el) {
+        $("#consoleNavbarConletList").find(".dropdown-item").each(function(index, el) {
             if (displayName < $(el).text()) {
                 $(el).before(item);
                 inserted = true;
@@ -149,49 +149,49 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             }
         });
         if (!inserted) {
-            $("#portalNavbarPortletList").append(item);
+            $("#consoleNavbarConletList").append(item);
         }
     }
 
-    lastPortalLayout(previewLayout, tabsLayout, xtraInfo) {
+    lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
         this._lastPreviewLayout = previewLayout;
         this._lastTabsLayout = tabsLayout;
         this._lastXtraInfo = xtraInfo;
     }
 
-    updatePortletPreview(isNew, container, modes, content, foreground) {
+    updateConletPreview(isNew, container, modes, content, foreground) {
         // Container is:
-        //     <section class='portlet portlet-preview' data-portlet-id='...' 
-        //     data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>"
+        //     <section class='conlet conlet-preview' data-conlet-id='...' 
+        //     data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>"
         let _this = this;
         container = $(container);
         let newContent = $(content);
         if (isNew) {
             container.addClass('card');
-            container.append('<h6 class="card-header portlet-preview-header '
+            container.append('<h6 class="card-header conlet-preview-header '
                 + 'd-flex flex-row"></h6>'
-                + '<div class="card-body portlet-content portlet-preview-content">'
+                + '<div class="card-body conlet-content conlet-preview-content">'
                 + '</div>');
             this._setModeIcons(container, modes);
 
             // Get grid info
-            let portletId = container.attr("data-portlet-id");
+            let conletId = container.attr("data-conlet-id");
             let options = {}
-            if (portletId in this._lastXtraInfo) {
+            if (conletId in this._lastXtraInfo) {
                 options.autoPosition = false;
-                options.x = this._lastXtraInfo[portletId][0];
-                options.y = this._lastXtraInfo[portletId][1];
-                options.width = this._lastXtraInfo[portletId][2];
-                options.height = this._lastXtraInfo[portletId][3];
+                options.x = this._lastXtraInfo[conletId][0];
+                options.y = this._lastXtraInfo[conletId][1];
+                options.width = this._lastXtraInfo[conletId][2];
+                options.height = this._lastXtraInfo[conletId][3];
             } else {
                 options.autoPosition = true;
                 options.width = 4;
                 options.height = 4;
-                if (newContent.attr("data-portlet-grid-columns")) {
-                    options.width = newContent.attr("data-portlet-grid-columns");
+                if (newContent.attr("data-conlet-grid-columns")) {
+                    options.width = newContent.attr("data-conlet-grid-columns");
                 }
-                if (newContent.attr("data-portlet-grid-rows")) {
-                    options.height = newContent.attr("data-portlet-grid-rows");
+                if (newContent.attr("data-conlet-grid-rows")) {
+                    options.height = newContent.attr("data-conlet-grid-rows");
                 }
                 if ($(window).width() < 1200) {
                     let winWidth = Math.max(320, $(window).width());
@@ -213,69 +213,69 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
 
             this._layoutChanged();
         }
-        let portletHeader = container.find(".portlet-preview-header");
-        portletHeader.find(".portlet-preview-title").remove();
-        portletHeader.prepend("<span class='portlet-preview-title flex-fill'>"
-            + newContent.attr("data-portlet-title") + "</span>");
-        let previewContent = container.find(".portlet-preview-content");
+        let conletHeader = container.find(".conlet-preview-header");
+        conletHeader.find(".conlet-preview-title").remove();
+        conletHeader.prepend("<span class='conlet-preview-title flex-fill'>"
+            + newContent.attr("data-conlet-title") + "</span>");
+        let previewContent = container.find(".conlet-preview-content");
         this._styleSemantics(newContent);
         previewContent.empty();
         previewContent.append(newContent);
         if (foreground) {
-            $("#portalOverviewTab").tab('show');
+            $("#consoleOverviewTab").tab('show');
         }
     }
 
-    _setModeIcons(portlet, modes) {
+    _setModeIcons(conlet, modes) {
         let _this = this;
-        let portletHeader = portlet.find(".portlet-preview-header");
-        portletHeader.find(".portlet-preview-icon").remove();
+        let conletHeader = conlet.find(".conlet-preview-header");
+        conletHeader.find(".conlet-preview-icon").remove();
         if (modes.includes("Edit")) {
-            portletHeader.append("<a href='#' class='" +
-                "portlet-preview-icon portlet-edit" +
+            conletHeader.append("<a href='#' class='" +
+                "conlet-preview-icon conlet-edit" +
                 " ml-2 fa fa-wrench' role='button'></a>");
-            portletHeader.find(".portlet-edit").on("click", function() {
+            conletHeader.find(".conlet-edit").on("click", function() {
                 let icon = $(this);
-                let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                _this.sendRenderPortlet(portletId, ["Edit", "Foreground"]);
+                let conletId = icon.closest(".conlet").attr("data-conlet-id");
+                _this.sendRenderConlet(conletId, ["Edit", "Foreground"]);
             });
         }
         if (modes.includes("DeleteablePreview")) {
-            portletHeader.append("<a href='#' class='" +
-                "portlet-preview-icon portlet-delete" +
+            conletHeader.append("<a href='#' class='" +
+                "conlet-preview-icon conlet-delete" +
                 " ml-2 fa fa-times' role='button'></a>");
-            portletHeader.find(".portlet-delete").on("click", function() {
+            conletHeader.find(".conlet-delete").on("click", function() {
                 let icon = $(this);
-                let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                _this.sendDeletePortlet(portletId);
+                let conletId = icon.closest(".conlet").attr("data-conlet-id");
+                _this.sendDeleteConlet(conletId);
             });
         }
         if (modes.includes("View")) {
-            portletHeader.append("<a href='#' class='" +
-                "portlet-preview-icon portlet-expand" +
+            conletHeader.append("<a href='#' class='" +
+                "conlet-preview-icon conlet-expand" +
                 " ml-2 fa fa-expand' role='button'></a>");
-            portletHeader.find(".portlet-expand").on("click", function() {
+            conletHeader.find(".conlet-expand").on("click", function() {
                 let icon = $(this);
-                let portletId = icon.closest(".portlet").attr("data-portlet-id");
-                let portletView = _this.findPortletView(portletId);
-                if (portletView) {
-                    _this._activatePortletView($(portletView));
+                let conletId = icon.closest(".conlet").attr("data-conlet-id");
+                let conletView = _this.findConletView(conletId);
+                if (conletView) {
+                    _this._activateConletView($(conletView));
                 } else {
-                    _this.sendRenderPortlet(portletId, ["View", "Foreground"]);
+                    _this.sendRenderConlet(conletId, ["View", "Foreground"]);
                 }
             });
         }
     }
 
-    _activatePortletView(portlet) {
-        let tabId = portlet.attr("data-portlet-tab-tab");
+    _activateConletView(conlet) {
+        let tabId = conlet.attr("data-conlet-tab-tab");
         $("#" + tabId).tab('show');
     }
 
-    updatePortletView(isNew, container, modes, content, foreground) {
+    updateConletView(isNew, container, modes, content, foreground) {
         // Container is 
-        //     <article class="portlet portlet-view 
-        //              data-portlet-id='...'"></article>"
+        //     <article class="conlet conlet-view 
+        //              data-conlet-id='...'"></article>"
         container = $(container);
         let newContent = $(content);
         this._styleSemantics(newContent);
@@ -284,33 +284,33 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             container.append(newContent);
         } else {
             this._tabCounter += 1;
-            let id = "portlet-tab-" + this._tabCounter;
-            let tabs = $("#portalTabs");
-            let tab = $('<li class="nav-item" data-portlet-tab="' + id + '"'
-                + ' data-portlet-id="' + container.attr("data-portlet-id") + '">'
+            let id = "conlet-tab-" + this._tabCounter;
+            let tabs = $("#consoleTabs");
+            let tab = $('<li class="nav-item" data-conlet-tab="' + id + '"'
+                + ' data-conlet-id="' + container.attr("data-conlet-id") + '">'
                 + '<a class="nav-link" role="tab"'
                 + ' id="' + id + '-tab" data-toggle="tab"'
                 + ' href="#' + id + '-pane"'
-                + ' alt="' + B4UIPortal.l10n.close + '"'
-                + '>' + newContent.attr("data-portlet-title")
-                + '<span class="fa fa-times ml-2 text-primary portlet-tab-close"></span>'
+                + ' alt="' + B4UIConsole.l10n.close + '"'
+                + '>' + newContent.attr("data-conlet-title")
+                + '<span class="fa fa-times ml-2 text-primary conlet-tab-close"></span>'
                 + '</a>'
                 + '</li>');
             tabs.append(tab);
 
             container.addClass("tab-pane fade m-3");
             container.attr("id", id + "-pane");
-            container.attr("data-portlet-tab-tab", id + "-tab");
+            container.attr("data-conlet-tab-tab", id + "-tab");
             container.attr("role", "tabpanel");
             container.attr("aria-labelledby", id + "-tab");
             container.append(newContent);
-            let tabPanes = $("#portalTabPanes");
+            let tabPanes = $("#consoleTabPanes");
             // JQuery append seems to have a delay.
             tabPanes[0].appendChild(container[0]);
             this._layoutChanged();
         }
         if (foreground) {
-            this._activatePortletView(container);
+            this._activateConletView(container);
         }
     }
 
@@ -331,17 +331,17 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         */
     }
 
-    removePortletDisplays(containers) {
+    removeConletDisplays(containers) {
         let _this = this;
         containers.forEach(function(container) {
             container = $(container);
-            if (container.hasClass('portlet-preview')) {
+            if (container.hasClass('conlet-preview')) {
                 let gridItem = container.closest(".grid-stack-item");
                 _this._previewGrid.removeWidget(gridItem);
             }
-            if (container.hasClass('portlet-view')) {
-                $("#portalOverviewTab").tab('show');
-                var tabId = container.attr("data-portlet-tab-tab");
+            if (container.hasClass('conlet-view')) {
+                $("#consoleOverviewTab").tab('show');
+                var tabId = container.attr("data-conlet-tab-tab");
                 $("#" + tabId).closest("li").remove();
                 container.remove();
             }
@@ -390,7 +390,7 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
 
     _layoutChanged() {
         let gridItems = [];
-        $("#portalPreviews .grid-stack-item").each(function() {
+        $("#consolePreviews .grid-stack-item").each(function() {
             gridItems.push($(this));
         });
         gridItems.sort(function(a, b) {
@@ -403,42 +403,42 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
         let previewLayout = [];
         let xtraInfo = {};
         gridItems.forEach(function(item) {
-            let portletId = item.find(".portlet-preview[data-portlet-id]")
-                .attr("data-portlet-id");
-            previewLayout.push(portletId);
-            xtraInfo[portletId] = [item.attr("data-gs-x"),
+            let conletId = item.find(".conlet-preview[data-conlet-id]")
+                .attr("data-conlet-id");
+            previewLayout.push(conletId);
+            xtraInfo[conletId] = [item.attr("data-gs-x"),
             item.attr("data-gs-y"), item.attr("data-gs-width"),
             item.attr("data-gs-height")]
         });
 
         let tabsLayout = [];
-        $("#portalTabPanes > [data-portlet-id]").each(function(index) {
-            let portletId = $(this).attr("data-portlet-id");
-            tabsLayout.push(portletId);
+        $("#consoleTabPanes > [data-conlet-id]").each(function(index) {
+            let conletId = $(this).attr("data-conlet-id");
+            tabsLayout.push(conletId);
         });
 
         this.sendLayout(previewLayout, tabsLayout, xtraInfo);
     };
 
     /**
-     * Update the title of the portlet with the given id.
+     * Update the title of the conlet with the given id.
      *
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string} title the new title
      */
-    updatePortletTitle(portletId, title) {
-        let preview = $("#portalPreviews .portlet-preview[data-portlet-id='"
-            + portletId + "'");
+    updateConletTitle(conletId, title) {
+        let preview = $("#consolePreviews .conlet-preview[data-conlet-id='"
+            + conletId + "'");
         if (preview.length > 0) {
-            let portletHeader = preview.find(".portlet-preview-header");
-            portletHeader.find(".portlet-preview-title").remove();
-            portletHeader.prepend("<span class='portlet-preview-title flex-fill'>"
+            let conletHeader = preview.find(".conlet-preview-header");
+            conletHeader.find(".conlet-preview-title").remove();
+            conletHeader.prepend("<span class='conlet-preview-title flex-fill'>"
                 + title + "</span>");
         }
-        let view = $("#portalTabs .nav-item[data-portlet-id='" + portletId + "']");
+        let view = $("#consoleTabs .nav-item[data-conlet-id='" + conletId + "']");
         if (view.length > 0) {
             let titleNode = view.find(".nav-link");
-            let close = titleNode.find(".portlet-tab-close").detach();
+            let close = titleNode.find(".conlet-tab-close").detach();
             titleNode.empty();
             titleNode.append(title);
             titleNode.append(close);
@@ -446,17 +446,17 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
     }
 
     /**
-     * Update the modes of the portlet with the given id.
+     * Update the modes of the conlet with the given id.
      * 
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string[]} modes the modes
      */
-    updatePortletModes(portletId, modes) {
-        let portlet = this.findPortletPreview(portletId);
-        if (!portlet) {
+    updateConletModes(conletId, modes) {
+        let conlet = this.findConletPreview(conletId);
+        if (!conlet) {
             return;
         }
-        this._setModeIcons($(portlet), modes);
+        this._setModeIcons($(conlet), modes);
     }
 
     showEditDialog(container, modes, content) {
@@ -467,21 +467,21 @@ B4UIPortal.Renderer = class extends JGPortal.Renderer {
             + '<div class="modal-content">'
             + '<div class="modal-header">'
             + '<button type="button" class="close" data-dismiss="modal"'
-            + ' alt="' + B4UIPortal.l10n.close + '">'
+            + ' alt="' + B4UIConsole.l10n.close + '">'
             + '<span aria-hidden="true">&times;</span>'
             + '</button></div>'
-            + '<div class="modal-body portlet-content">'
+            + '<div class="modal-body conlet-content">'
             + '</div>'
             + '<div class="modal-footer">'
             + '<button type="button" class="btn btn-primary" data-dismiss="modal">'
-            + B4UIPortal.l10n.ok + '</button>'
+            + B4UIConsole.l10n.ok + '</button>'
             + '</div>'
             + '</div>'
             + '</div>'
             + '</div>');
         dialog.find(".modal-body").append($(content));
         dialog.find(".btn-primary").on('click', function() {
-            _this.portal().execOnApply(container[0]);
+            _this.console().execOnApply(container[0]);
         });
         container.append(dialog);
         dialog.modal();

@@ -121,11 +121,11 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * that the render support does not change for a given portal.
      * 
      * This model provides:
-     *  * The function `portletResource` that makes 
+     *  * The function `conletResource` that makes 
      *    {@link RenderSupport#conletResource(String, java.net.URI)}
      *    available in the template. The first argument is set to the name
-     *    of the portlet, only the second must be supplied when the function
-     *    is invoked in a template.
+     *    of the web console component, only the second must be supplied 
+     *    when the function is invoked in a template.
      * 
      * @param renderSupport the render support from the portal
      * @return the result
@@ -134,7 +134,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
             RenderSupport renderSupport) {
         if (fmModel == null) {
             fmModel = new HashMap<>();
-            fmModel.put("portletResource", new TemplateMethodModelEx() {
+            fmModel.put("conletResource", new TemplateMethodModelEx() {
                 @Override
                 public Object exec(@SuppressWarnings("rawtypes") List arguments)
                         throws TemplateModelException {
@@ -161,8 +161,8 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * This model provides:
      *  * The `locale` (of type {@link Locale}).
      *  * The `resourceBundle` (of type {@link ResourceBundle}).
-     *  * A function `_` that looks up the given key in the portlet's
-     *    resource bundle.
+     *  * A function `_` that looks up the given key in the web console 
+     *    component's resource bundle.
      *    
      * @param session the session
      * @return the model
@@ -200,23 +200,23 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * 
      * This model provides:
      *  * The `event` property (of type {@link RenderConletRequest}).
-     *  * The `portlet` property (of type {@link ConletBaseModel}).
+     *  * The `conlet` property (of type {@link ConletBaseModel}).
      *  * The function `_Id(String base)` that creates a unique
-     *    id for an HTML element by appending the portlet id to the 
-     *    provided base.
+     *    id for an HTML element by appending the web console component 
+     *    id to the provided base.
      *    
      * @param event the event
      * @param channel the channel
-     * @param portletModel the portlet model
+     * @param conletModel the web console component model
      * @return the model
      */
     protected Map<String, Object> fmConletModel(
             RenderConletRequestBase<?> event,
-            IOSubchannel channel, ConletBaseModel portletModel) {
+            IOSubchannel channel, ConletBaseModel conletModel) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
         model.put("event", event);
-        model.put("portlet", portletModel);
+        model.put("conlet", conletModel);
         model.put("_id", new TemplateMethodModelEx() {
             @Override
             public Object exec(@SuppressWarnings("rawtypes") List arguments)
@@ -227,7 +227,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
                     throw new TemplateModelException("Not a string.");
                 }
                 return ((SimpleScalar) args.get(0)).getAsString()
-                    + "-" + portletModel.getConletId();
+                    + "-" + conletModel.getConletId();
             }
         });
         return model;
@@ -235,11 +235,11 @@ public abstract class FreeMarkerComponent<S extends Serializable>
 
     /**
      * Build a freemarker model that combines {@link #fmTypeModel},
-     * {@link #fmSessionModel} and {@link #fmPortletModel}.
+     * {@link #fmSessionModel} and {@link #fmConletModel}.
      * 
      * @param event the event
      * @param channel the channel
-     * @param conletModel the portlet model
+     * @param conletModel the web console component model
      * @return the model
      */
     protected Map<String, Object> fmModel(RenderConletRequestBase<?> event,
@@ -299,9 +299,9 @@ public abstract class FreeMarkerComponent<S extends Serializable>
     }
 
     /**
-     * Specifies how to render portlet content using a template.
+     * Specifies how to render web console component content using a template.
      */
-    public static class RenderPortletFromTemplate extends RenderConlet {
+    public static class RenderConletFromTemplate extends RenderConlet {
 
         private final Future<String> content;
 
@@ -309,15 +309,15 @@ public abstract class FreeMarkerComponent<S extends Serializable>
          * Instantiates a new event.
          *
          * @param request the request
-         * @param portletClass the portlet class
-         * @param portletId the portlet id
+         * @param conletClass the web console component class
+         * @param conletId the web console component id
          * @param template the template
          * @param dataModel the data model
          */
-        public RenderPortletFromTemplate(RenderConletRequestBase<?> request,
-                Class<?> portletClass, String portletId, Template template,
+        public RenderConletFromTemplate(RenderConletRequestBase<?> request,
+                Class<?> conletClass, String conletId, Template template,
                 Object dataModel) {
-            super(portletClass, portletId);
+            super(conletClass, conletId);
             // Start to prepare the content immediately and concurrently.
             content
                 = request.processedBy().map(procBy -> procBy.executorService())

@@ -46,7 +46,7 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  */
 public class BrowserLocalBackedKVStore extends Component {
 
-    private final String portalPrefix;
+    private final String consolePrefix;
 
     /**
      * Create a new key/value store that uses the browser's local storage
@@ -55,13 +55,13 @@ public class BrowserLocalBackedKVStore extends Component {
      * @param componentChannel the channel that the component's 
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
-     * @param portalPrefix the portal's prefix as returned by
+     * @param consolePrefix the portal's prefix as returned by
      * {@link ConsoleWeblet#prefix()}, i.e. staring and ending with a slash
      */
     public BrowserLocalBackedKVStore(
-            Channel componentChannel, String portalPrefix) {
+            Channel componentChannel, String consolePrefix) {
         super(componentChannel);
-        this.portalPrefix = portalPrefix;
+        this.consolePrefix = consolePrefix;
     }
 
     /**
@@ -76,7 +76,7 @@ public class BrowserLocalBackedKVStore extends Component {
             throws InterruptedException {
         // Put there by onJsonInput if retrieval has been done.
         if (TypedIdKey.get(channel.browserSession(), Store.class,
-            portalPrefix)
+            consolePrefix)
             .isPresent()) {
             // Already have store, nothing to do
             return;
@@ -84,7 +84,7 @@ public class BrowserLocalBackedKVStore extends Component {
         // Remove portal ready event from queue and save it
         event.cancel(false);
         channel.setAssociated(this, event);
-        String keyStart = portalPrefix
+        String keyStart = consolePrefix
             + BrowserLocalBackedKVStore.class.getName() + "/";
         channel
             .respond(new SimpleConsoleCommand("retrieveLocalData", keyStart));
@@ -92,9 +92,9 @@ public class BrowserLocalBackedKVStore extends Component {
 
     private Store getStore(ConsoleSession channel) {
         return TypedIdKey
-            .get(channel.browserSession(), Store.class, portalPrefix)
+            .get(channel.browserSession(), Store.class, consolePrefix)
             .orElseGet(
-                () -> TypedIdKey.put(channel.browserSession(), portalPrefix,
+                () -> TypedIdKey.put(channel.browserSession(), consolePrefix,
                     new Store()));
     }
 
@@ -116,7 +116,7 @@ public class BrowserLocalBackedKVStore extends Component {
             .ifPresent(origEvent -> {
                 // We have intercepted the portal ready event, fill store.
                 // Having a store now also shows that retrieval has been done.
-                final String keyStart = portalPrefix
+                final String keyStart = consolePrefix
                     + BrowserLocalBackedKVStore.class.getName() + "/";
                 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
                 Store data = getStore(channel);
@@ -151,7 +151,7 @@ public class BrowserLocalBackedKVStore extends Component {
             throws InterruptedException, IOException {
         Store data = getStore(channel);
         List<String[]> actions = new ArrayList<>();
-        String keyStart = portalPrefix
+        String keyStart = consolePrefix
             + BrowserLocalBackedKVStore.class.getName();
         for (Action action : event.actions()) {
             @SuppressWarnings("PMD.UselessParentheses")
@@ -183,7 +183,7 @@ public class BrowserLocalBackedKVStore extends Component {
             KeyValueStoreQuery event, ConsoleSession channel) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<String, String> result = new HashMap<>();
-        TypedIdKey.get(channel.browserSession(), Store.class, portalPrefix)
+        TypedIdKey.get(channel.browserSession(), Store.class, consolePrefix)
             .ifPresent(data -> {
                 if (!event.query().endsWith("/")) {
                     // Single value

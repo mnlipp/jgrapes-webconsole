@@ -10397,7 +10397,7 @@ $.ui.plugin.add( "draggable", "connectToSortable", {
 					sortable._mouseCapture( event, true );
 					sortable._mouseStart( event, true, true );
 
-					// Because the browser event is way off the new appended portlet,
+					// Because the browser event is way off the new appended conlet,
 					// modify necessary variables to reflect the changes
 					sortable.offset.click.top = draggable.offset.click.top;
 					sortable.offset.click.left = draggable.offset.click.left;

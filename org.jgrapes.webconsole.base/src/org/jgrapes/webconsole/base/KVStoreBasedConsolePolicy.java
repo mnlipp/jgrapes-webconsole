@@ -57,7 +57,7 @@ import org.jgrapes.webconsole.base.events.RenderConletRequest;
  * 
  * When the portal has been prepared, the policy sends the last layout
  * as retrieved from persistent storage to the portal and then generates
- * render events for all portlets contained in this layout.
+ * render events for all web console components contained in this layout.
  * 
  * Each time the layout is changed in the portal, the portal sends the
  * new layout data and this component updates the persistent storage
@@ -82,15 +82,15 @@ import org.jgrapes.webconsole.base.events.RenderConletRequest;
  * activate KVStoreBasedConsolePolicy
  * KVStoreBasedConsolePolicy -> WebConsole: LastConsoleLayout
  * activate WebConsole
- * WebConsole -> Browser: "lastPortalLayout"
+ * WebConsole -> Browser: "lastConsoleLayout"
  * deactivate WebConsole
- * loop for all portlets to be displayed
- *     KVStoreBasedConsolePolicy -> PortletX: RenderConletRequest
- *     activate PortletX
- *     PortletX -> WebConsole: RenderConlet
- *     deactivate PortletX
+ * loop for all conlets to be displayed
+ *     KVStoreBasedConsolePolicy -> ConletX: RenderConletRequest
+ *     activate ConletX
+ *     ConletX -> WebConsole: RenderConlet
+ *     deactivate ConletX
  *     activate WebConsole
- *     WebConsole -> Browser: "renderPortlet"
+ *     WebConsole -> Browser: "renderConlet"
  *     deactivate WebConsole
  * end
  * deactivate KVStoreBasedConsolePolicy
@@ -260,15 +260,15 @@ public class KVStoreBasedConsolePolicy extends Component {
             channel.respond(new LastConsoleLayout(
                 previewLayout, tabsLayout, xtraInfo));
 
-            // Restore portlets
-            for (String portletId : tabsLayout) {
+            // Restore conlets
+            for (String conletId : tabsLayout) {
                 fire(new RenderConletRequest(
-                    event.event().renderSupport(), portletId,
+                    event.event().renderSupport(), conletId,
                     RenderMode.asSet(RenderMode.View)), channel);
             }
-            for (String portletId : previewLayout) {
+            for (String conletId : previewLayout) {
                 fire(new RenderConletRequest(
-                    event.event().renderSupport(), portletId,
+                    event.event().renderSupport(), conletId,
                     RenderMode.asSet(RenderMode.Preview,
                         RenderMode.Foreground)),
                     channel);

@@ -21,15 +21,15 @@
 
     $("body").on("click", ".HelloWorld-view .HelloWorld-toggle",
             function(event) {
-        let portletId = $(this).closest("[data-portlet-id]").attr("data-portlet-id");
-        JGPortal.notifyPortletModel(portletId, "toggleWorld");
+        let conletId = $(this).closest("[data-conlet-id]").attr("data-conlet-id");
+        JGConsole.notifyConletModel(conletId, "toggleWorld");
     })
 
-    JGPortal.registerPortletMethod(
+    JGConsole.registerConletMethod(
             "org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldConlet",
-            "setWorldVisible", function(portletId, params) {
-                let portlet = JGPortal.renderer.findPortletView(portletId);
-                let image = $(portlet).find(".helloWorldIcon");
+            "setWorldVisible", function(conletId, params) {
+                let conlet = JGConsole.renderer.findConletView(conletId);
+                let image = $(conlet).find(".helloWorldIcon");
                 let state = params[0]; 
                 if (params[0]) {
                     image.show();

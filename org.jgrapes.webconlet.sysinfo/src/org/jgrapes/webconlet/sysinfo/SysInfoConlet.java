@@ -96,7 +96,7 @@ public class SysInfoConlet
         // Add SysInfoConlet resources to page
         portalSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(portalSession.supportedLocales(), "portletName"))
+                displayNames(portalSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires("chart.js")
                 .setScriptUri(event.renderSupport().conletResource(
@@ -105,26 +105,16 @@ public class SysInfoConlet
                 "SysInfo-style.css")));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#generatePortletId()
-     */
     @Override
     protected String generateConletId() {
         return type() + "-" + super.generateConletId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#modelFromSession
-     */
     @Override
     protected Optional<SysInfoModel> stateFromSession(
-            Session session, String portletId) {
-        if (portletId.startsWith(type() + "-")) {
-            return Optional.of(new SysInfoModel(portletId));
+            Session session, String conletId) {
+        if (conletId.startsWith(type() + "-")) {
+            return Optional.of(new SysInfoModel(conletId));
         }
         return Optional.empty();
     }
@@ -132,75 +122,65 @@ public class SysInfoConlet
     @Override
     public String doAddConlet(AddConletRequest event,
             ConsoleSession consoleSession) throws Exception {
-        String portletId = generateConletId();
+        String conletId = generateConletId();
         SysInfoModel conletModel = putInSession(
-            consoleSession.browserSession(), new SysInfoModel(portletId));
+            consoleSession.browserSession(), new SysInfoModel(conletId));
         renderConlet(event, consoleSession, conletModel);
-        return portletId;
+        return conletId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
-     */
     @Override
     protected void doRenderConlet(RenderConletRequest event,
-            ConsoleSession consoleSession, String portletId,
+            ConsoleSession consoleSession, String conletId,
             SysInfoModel conletModel) throws Exception {
         renderConlet(event, consoleSession, conletModel);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private void renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession portalSession, SysInfoModel portletModel)
+            ConsoleSession portalSession, SysInfoModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderPreview()) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-            portalSession.respond(new RenderPortletFromTemplate(event,
-                SysInfoConlet.class, portletModel.getConletId(),
-                tpl, fmModel(event, portalSession, portletModel))
+            portalSession.respond(new RenderConletFromTemplate(event,
+                SysInfoConlet.class, conletModel.getConletId(),
+                tpl, fmModel(event, portalSession, conletModel))
                     .setRenderMode(RenderMode.DeleteablePreview)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            updateView(portalSession, portletModel.getConletId());
+            updateView(portalSession, conletModel.getConletId());
         }
         if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
-            portalSession.respond(new RenderPortletFromTemplate(event,
-                SysInfoConlet.class, portletModel.getConletId(),
-                tpl, fmModel(event, portalSession, portletModel))
+            portalSession.respond(new RenderConletFromTemplate(event,
+                SysInfoConlet.class, conletModel.getConletId(),
+                tpl, fmModel(event, portalSession, conletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
         }
     }
 
-    private void updateView(ConsoleSession portalSession, String portletId) {
+    private void updateView(ConsoleSession portalSession, String conletId) {
         if (!portalSession.isConnected()) {
             return;
         }
         Runtime runtime = Runtime.getRuntime();
         portalSession.respond(new NotifyConletView(type(),
-            portletId, "updateMemorySizes",
+            conletId, "updateMemorySizes",
             System.currentTimeMillis(), runtime.maxMemory(),
             runtime.totalMemory(),
             runtime.totalMemory() - runtime.freeMemory()));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
-     */
     @Override
     protected void doDeleteConlet(DeleteConletRequest event,
-            ConsoleSession portalSession, String portletId,
+            ConsoleSession portalSession, String conletId,
             SysInfoModel retrievedState) throws Exception {
-        portalSession.respond(new DeleteConlet(portletId));
+        portalSession.respond(new DeleteConlet(conletId));
     }
 
     /**
@@ -208,19 +188,19 @@ public class SysInfoConlet
      * events.
      *
      * @param event the event
-     * @param portalSession the portal session
+     * @param consoleSession the console session
      */
     @Handler
-    public void onUpdate(Update event, ConsoleSession portalSession) {
-        for (String portletId : conletIds(portalSession)) {
-            updateView(portalSession, portletId);
+    public void onUpdate(Update event, ConsoleSession consoleSession) {
+        for (String conletId : conletIds(consoleSession)) {
+            updateView(consoleSession, conletId);
         }
     }
 
     @Override
     @SuppressWarnings("PMD.DoNotCallGarbageCollectionExplicitly")
     protected void doNotifyConletModel(NotifyConletModel event,
-            ConsoleSession portalSession, SysInfoModel portletState)
+            ConsoleSession portalSession, SysInfoModel conletState)
             throws Exception {
         event.stop();
         System.gc();
@@ -230,7 +210,7 @@ public class SysInfoConlet
     }
 
     /**
-     * The portlet's model.
+     * The conlet's model.
      */
     @SuppressWarnings("serial")
     public static class SysInfoModel
@@ -239,11 +219,11 @@ public class SysInfoConlet
         /**
          * Creates a new model with the given type and id.
          * 
-         * @param portletId the portlet id
+         * @param conletId the web console component id
          */
-        @ConstructorProperties({ "portletId" })
-        public SysInfoModel(String portletId) {
-            super(portletId);
+        @ConstructorProperties({ "conletId" })
+        public SysInfoModel(String conletId) {
+            super(conletId);
         }
 
         /**

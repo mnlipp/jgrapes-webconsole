@@ -61,7 +61,7 @@ import org.jgrapes.webconsole.base.events.SetLocale;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 
 /**
- * Provides the portlet related part of the portal.
+ * Provides the web console component related part of the console.
  */
 public class WebConsole extends Component {
 
@@ -94,14 +94,14 @@ public class WebConsole extends Component {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public void onJsonInput(JsonInput event, ConsoleSession channel)
             throws InterruptedException, IOException {
-        // Send events to portlets on portal's channel
+        // Send events to web console components on console's channel
         JsonArray params = event.request().params();
         switch (event.request().method()) {
-        case "portalReady": {
+        case "consoleReady": {
             fire(new ConsoleReady(view.renderSupport()), channel);
             break;
         }
-        case "addPortlet": {
+        case "addConlet": {
             fire(new AddConletRequest(view.renderSupport(),
                 params.asString(0), params.asArray(1).stream().map(
                     value -> RenderMode.valueOf((String) value))
@@ -109,12 +109,12 @@ public class WebConsole extends Component {
                 channel);
             break;
         }
-        case "deletePortlet": {
+        case "deleteConlet": {
             fire(new DeleteConletRequest(
                 view.renderSupport(), params.asString(0)), channel);
             break;
         }
-        case "portalLayout": {
+        case "consoleLayout": {
             List<String> previewLayout = params.asArray(0).stream().map(
                 value -> (String) value).collect(Collectors.toList());
             List<String> tabsLayout = params.asArray(1).stream().map(
@@ -124,7 +124,7 @@ public class WebConsole extends Component {
                 previewLayout, tabsLayout, xtraInfo), channel);
             break;
         }
-        case "renderPortlet": {
+        case "renderConlet": {
             fire(new RenderConletRequest(view.renderSupport(),
                 params.asString(0),
                 params.asArray(1).stream().map(
@@ -139,7 +139,7 @@ public class WebConsole extends Component {
                 params.asBoolean(1)), channel);
             break;
         }
-        case "notifyPortletModel": {
+        case "notifyConletModel": {
             fire(new NotifyConletModel(view.renderSupport(),
                 params.asString(0), params.asString(1),
                 params.size() <= 2
@@ -166,7 +166,7 @@ public class WebConsole extends Component {
     public void onConsoleConfigured(
             ConsoleConfigured event, ConsoleSession channel)
             throws InterruptedException, IOException {
-        channel.respond(new SimpleConsoleCommand("portalConfigured"));
+        channel.respond(new SimpleConsoleCommand("consoleConfigured"));
     }
 
     /**
@@ -178,7 +178,7 @@ public class WebConsole extends Component {
      * @param channel the channel
      */
     @Handler(priority = -1000000)
-    public void onRenderPortlet(
+    public void onRenderConlet(
             RenderConletRequest event, ConsoleSession channel) {
         if (!event.hasBeenRendered()) {
             channel.respond(new DeleteConlet(event.conletId()));
@@ -186,7 +186,7 @@ public class WebConsole extends Component {
     }
 
     /**
-     * Discard all portal sessions on stop.
+     * Discard all console sessions on stop.
      *
      * @param event the event
      */
@@ -198,17 +198,17 @@ public class WebConsole extends Component {
     }
 
     /**
-     * The MBeans view of a portal.
+     * The MBeans view of a console.
      */
     @SuppressWarnings({ "PMD.CommentRequired", "PMD.AvoidDuplicateLiterals" })
     public interface ConsoleMXBean {
 
         @SuppressWarnings("PMD.CommentRequired")
-        class PortalSessionInfo {
+        class ConsoleSessionInfo {
 
             private final ConsoleSession session;
 
-            public PortalSessionInfo(ConsoleSession session) {
+            public ConsoleSessionInfo(ConsoleSession session) {
                 super();
                 this.session = session;
             }
@@ -231,7 +231,7 @@ public class WebConsole extends Component {
 
         void setUseMinifiedResources(boolean useMinifiedResources);
 
-        SortedMap<String, PortalSessionInfo> getConsoleSessions();
+        SortedMap<String, ConsoleSessionInfo> getConsoleSessions();
     }
 
     @SuppressWarnings("PMD.CommentRequired")
@@ -241,19 +241,19 @@ public class WebConsole extends Component {
             = ManagementFactory.getPlatformMBeanServer();
 
         private ObjectName mbeanName;
-        private final WeakReference<WebConsole> portalRef;
+        private final WeakReference<WebConsole> consoleRef;
 
-        public WebConsoleInfo(WebConsole portal) {
+        public WebConsoleInfo(WebConsole console) {
             try {
-                mbeanName = new ObjectName("org.jgrapes.portal:type="
+                mbeanName = new ObjectName("org.jgrapes.webconsole:type="
                     + WebConsole.class.getSimpleName() + ",name="
-                    + ObjectName.quote(Components.simpleObjectName(portal)
-                        + " (" + portal.view.prefix().toString() + ")"));
+                    + ObjectName.quote(Components.simpleObjectName(console)
+                        + " (" + console.view.prefix().toString() + ")"));
             } catch (MalformedObjectNameException e) {
                 // Should not happen
                 logger.log(Level.WARNING, e.getMessage(), e);
             }
-            portalRef = new WeakReference<>(portal);
+            consoleRef = new WeakReference<>(console);
             try {
                 mbs.unregisterMBean(mbeanName);
             } catch (Exception e) { // NOPMD
@@ -269,15 +269,15 @@ public class WebConsole extends Component {
         }
 
         public Optional<WebConsole> console() {
-            WebConsole portal = portalRef.get();
-            if (portal == null) {
+            WebConsole console = consoleRef.get();
+            if (console == null) {
                 try {
                     mbs.unregisterMBean(mbeanName);
                 } catch (Exception e) { // NOPMD
                     // Should work.
                 }
             }
-            return Optional.ofNullable(portal);
+            return Optional.ofNullable(console);
         }
 
         @Override
@@ -289,30 +289,31 @@ public class WebConsole extends Component {
         @Override
         public String getPrefix() {
             return console().map(
-                portal -> portal.view.prefix().toString()).orElse("<unknown>");
+                console -> console.view.prefix().toString())
+                .orElse("<unknown>");
         }
 
         @Override
         public boolean isUseMinifiedResources() {
             return console().map(
-                portal -> portal.view.useMinifiedResources())
+                console -> console.view.useMinifiedResources())
                 .orElse(false);
         }
 
         @Override
         public void setUseMinifiedResources(boolean useMinifiedResources) {
-            console().ifPresent(portal -> portal.view.setUseMinifiedResources(
+            console().ifPresent(console -> console.view.setUseMinifiedResources(
                 useMinifiedResources));
         }
 
         @Override
         @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-        public SortedMap<String, PortalSessionInfo> getConsoleSessions() {
-            SortedMap<String, PortalSessionInfo> result = new TreeMap<>();
-            console().ifPresent(portal -> {
-                for (ConsoleSession ps : ConsoleSession.byConsole(portal)) {
+        public SortedMap<String, ConsoleSessionInfo> getConsoleSessions() {
+            SortedMap<String, ConsoleSessionInfo> result = new TreeMap<>();
+            console().ifPresent(console -> {
+                for (ConsoleSession ps : ConsoleSession.byConsole(console)) {
                     result.put(Components.simpleObjectName(ps),
-                        new PortalSessionInfo(ps));
+                        new ConsoleSessionInfo(ps));
                 }
             });
             return result;
@@ -320,30 +321,30 @@ public class WebConsole extends Component {
     }
 
     /**
-     * An MBean interface for getting information about all portals.
+     * An MBean interface for getting information about all consoles.
      * 
      * There is currently no summary information. However, the (periodic)
-     * invocation of {@link PortalSummaryMXBean#getConsoles()} ensures
+     * invocation of {@link WebConsoleSummaryMXBean#getConsoles()} ensures
      * that entries for removed {@link WebConsole}s are unregistered.
      */
     @SuppressWarnings("PMD.CommentRequired")
-    public interface PortalSummaryMXBean {
+    public interface WebConsoleSummaryMXBean {
 
         Set<ConsoleMXBean> getConsoles();
 
     }
 
     /**
-     * Provides an MBean view of the portal.
+     * Provides an MBean view of the console.
      */
     @SuppressWarnings("PMD.CommentRequired")
-    private static class MBeanView implements PortalSummaryMXBean {
+    private static class MBeanView implements WebConsoleSummaryMXBean {
 
         private static Set<WebConsoleInfo> consoleInfos = new HashSet<>();
 
-        public static void addConsole(WebConsole portal) {
+        public static void addConsole(WebConsole console) {
             synchronized (consoleInfos) {
-                consoleInfos.add(new WebConsoleInfo(portal));
+                consoleInfos.add(new WebConsoleInfo(console));
             }
         }
 
@@ -351,9 +352,9 @@ public class WebConsole extends Component {
         public Set<ConsoleMXBean> getConsoles() {
             Set<WebConsoleInfo> expired = new HashSet<>();
             synchronized (consoleInfos) {
-                for (WebConsoleInfo portalInfo : consoleInfos) {
-                    if (!portalInfo.console().isPresent()) {
-                        expired.add(portalInfo);
+                for (WebConsoleInfo consoleInfo : consoleInfos) {
+                    if (!consoleInfo.console().isPresent()) {
+                        expired.add(consoleInfo);
                     }
                 }
                 consoleInfos.removeAll(expired);

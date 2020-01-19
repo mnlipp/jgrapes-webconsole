@@ -24,14 +24,15 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * Sent to the portal (server) if an existing portlet instance 
+ * Sent to the portal (server) if an existing web console component instance 
  * should be updated. The portal server usually responds with 
  * a {@link RenderConlet} event that has as payload the
- * HTML that displays the portlet on the portal page.
+ * HTML that displays the web console component on the portal page.
  * 
  * ![Event Sequence](RenderPortletRequestSeq.svg)
  * 
- * The event's result must be set to `true` by the rendering portlet.
+ * The event's result must be set to `true` by the rendering 
+ * web console component.
  * 
  * @startuml RenderPortletRequestSeq.svg
  * hide footbox
@@ -52,28 +53,28 @@ import org.jgrapes.webconsole.base.RenderSupport;
 public class RenderConletRequest
         extends RenderConletRequestBase<Boolean> {
 
-    private final String portletId;
+    private final String conletId;
 
     /**
      * Creates a new request.
      *
      * @param renderSupport the render support for generating the response
-     * @param portletId the portlet to be updated
+     * @param conletId the web console component to be updated
      * @param renderModes the render options
      */
     public RenderConletRequest(RenderSupport renderSupport,
-            String portletId, Set<RenderMode> renderModes) {
+            String conletId, Set<RenderMode> renderModes) {
         super(renderSupport, renderModes);
-        this.portletId = portletId;
+        this.conletId = conletId;
     }
 
     /**
-     * Returns the portlet id.
+     * Returns the web console component id.
      * 
-     * @return the portlet id
+     * @return the web console component id
      */
     public String conletId() {
-        return portletId;
+        return conletId;
     }
 
     @Override
@@ -82,8 +83,8 @@ public class RenderConletRequest
     }
 
     /**
-     * Checks if the portlet has been rendered (i.e. the event has been
-     * handled).
+     * Checks if the web console component has been rendered (i.e. the 
+     * event has been handled).
      *
      * @return true, if successful
      */

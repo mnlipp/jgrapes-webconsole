@@ -1,5 +1,5 @@
-<div data-portlet-title="${_("portletName")}" class="jgrapes-portlets-sysinfo-view"
-  data-jgp-on-load="orgJGrapesPortletsSysInfo.initMemoryChart">
+<div data-conlet-title="${_("conletName")}" class="jgrapes-conlets-sysinfo-view"
+  data-jgp-on-load="orgJGrapesConletsSysInfo.initMemoryChart">
   <button type="button"
     class="GarbageCollection-action ui-button ui-widget ui-corner-all">
     <span class="fa fa-trash-alt"></span>${_("Garbage Collection")}</button>
@@ -8,20 +8,20 @@
     <tbody>
       <tr>
         <td>${_("jre")}:</td>
-        <td>${portlet.systemProperties()["java.vendor"!""]}
-            (${portlet.systemProperties()["java.version"]!""})</td>
+        <td>${conlet.systemProperties()["java.vendor"!""]}
+            (${conlet.systemProperties()["java.version"]!""})</td>
       </tr>
       <tr>
         <td>${_("jvm")}:</td>
-        <td>${portlet.systemProperties()["java.vm.vendor"]!""}, 
-            ${portlet.systemProperties()["java.vm.name"]!""} 
-            (${portlet.systemProperties()["java.vm.version"!""]})</td>
+        <td>${conlet.systemProperties()["java.vm.vendor"]!""}, 
+            ${conlet.systemProperties()["java.vm.name"]!""} 
+            (${conlet.systemProperties()["java.vm.version"!""]})</td>
       </tr>
       <tr>
         <td>${_("os")}:</td>
-        <td>${portlet.systemProperties()["os.name"!""]}
-            (${portlet.systemProperties()["os.arch"!""]})
-            ${portlet.systemProperties()["os.version"!""]}</td>
+        <td>${conlet.systemProperties()["os.name"!""]}
+            (${conlet.systemProperties()["os.arch"!""]})
+            ${conlet.systemProperties()["os.version"!""]}</td>
       </tr>
       <tr>
         <td>${_("maxMemory")}:</td>

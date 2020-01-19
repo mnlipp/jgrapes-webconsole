@@ -48,32 +48,32 @@
     overflow: auto;
 }
 
-.portlet {
+.conlet {
     margin: 0 1em 1em 0;
     padding: 0.3em;
 }
 
-.portlet-header {
+.conlet-header {
     padding: 0.2em 0.3em;
     margin-bottom: 0.5em;
     position: relative;
 }
 
-.portlet-delete {
+.conlet-delete {
     float: right;
     cursor: pointer;
 }
 
-.portlet-edit {
+.conlet-edit {
     float: right;
     cursor: pointer;
 }
 
-.portlet-content {
+.conlet-content {
     padding: 0.4em;
 }
 
-.portlet .portlet-content {
+.conlet .conlet-content {
     position: relative;
     border: 0;
     padding: .5em 1em;
@@ -81,7 +81,7 @@
     overflow: auto;
 }
 
-.portlet-placeholder {
+.conlet-placeholder {
     border: 1px dotted black;
     margin: 0 1em 1em 0;
     height: 50px;

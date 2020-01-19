@@ -2,22 +2,22 @@
  * Portlet specific styles.
  */
 
-.jgrapes-portlets-mdp-form {
+.jgrapes-conlets-mdp-form {
     display: block;
     min-width: 80vw;
 }
 
-.jgrapes-portlets-mdp-form section > p:first-of-type {
+.jgrapes-conlets-mdp-form section > p:first-of-type {
 	font-size: 150%;
     margin-bottom: 0;
 }
 
-.jgrapes-portlets-mdp-form p {
+.jgrapes-conlets-mdp-form p {
 	margin-top: 0.25em;
 }
 
-.jgrapes-portlets-mdp-form .jgrapes-portlets-mdp-preview-preview,
-.jgrapes-portlets-mdp-form .jgrapes-portlets-mdp-view-preview {
+.jgrapes-conlets-mdp-form .jgrapes-conlets-mdp-preview-preview,
+.jgrapes-conlets-mdp-form .jgrapes-conlets-mdp-view-preview {
 	padding: 0.5em 0.5em;
 	border: 1px solid black;
 	max-height: 20vh;
@@ -26,17 +26,17 @@
 }
 
 /* Put preview input and preview side by side. */
-.jgrapes-portlets-mdp-preview {
+.jgrapes-conlets-mdp-preview {
     width: 100%;
     display: flex;
     align-items: stretch;
 }
 
-.jgrapes-portlets-mdp-preview > p {
+.jgrapes-conlets-mdp-preview > p {
 	margin-bottom: 0;
 }
 	
-.jgrapes-portlets-mdp-preview p:nth-child(1) {
+.jgrapes-conlets-mdp-preview p:nth-child(1) {
     padding-right: 0.5em;
     flex-basis: 50%;
     flex-grow: 1;
@@ -45,28 +45,28 @@
     flex-direction: column;
 }
 
-.jgrapes-portlets-mdp-preview p:nth-child(1) label {
+.jgrapes-conlets-mdp-preview p:nth-child(1) label {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 }
 
-.jgrapes-portlets-mdp-preview p:nth-child(1) label textarea {
+.jgrapes-conlets-mdp-preview p:nth-child(1) label textarea {
     height: 100%;
     flex-grow: 1;
 }
 
-.jgrapes-portlets-mdp-preview p:nth-child(2) {
+.jgrapes-conlets-mdp-preview p:nth-child(2) {
     padding-left: 0.5em;
     flex-basis: 50%;
     flex-grow: 1;
 }
 
-.jgrapes-portlets-mdp-preview .form-group:nth-child(1) 
+.jgrapes-conlets-mdp-preview .form-group:nth-child(1) 
     .form-item:last-child {
 	flex-grow: 1;
 }
 
-.jgrapes-portlets-mdp-view label {
+.jgrapes-conlets-mdp-view label {
 	width: 100%;
 }

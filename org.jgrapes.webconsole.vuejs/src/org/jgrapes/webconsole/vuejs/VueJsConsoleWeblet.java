@@ -33,18 +33,18 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods" })
-public class VueJsPortalWeblet extends FreeMarkerConsoleWeblet {
+public class VueJsConsoleWeblet extends FreeMarkerConsoleWeblet {
 
     /**
      * Instantiates a new vue.js UI weblet.
      *
      * @param webletChannel the weblet channel
-     * @param portalChannel the portal channel
-     * @param portalPrefix the portal prefix
+     * @param consoleChannel the console channel
+     * @param consolePrefix the console prefix
      */
-    public VueJsPortalWeblet(Channel webletChannel, Channel portalChannel,
-            URI portalPrefix) {
-        super(webletChannel, portalChannel, portalPrefix);
+    public VueJsConsoleWeblet(Channel webletChannel, Channel consoleChannel,
+            URI consolePrefix) {
+        super(webletChannel, consoleChannel, consolePrefix);
     }
 
     @Override

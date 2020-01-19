@@ -25,7 +25,8 @@ import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
  * Signals that the locale for the portal has changed. Should be handled
- * by portlets that support localization by updating the representation.
+ * by web console components that support localization by updating 
+ * the representation.
  * 
  * ![Event Sequence](SetLocale.svg)
  * 
@@ -37,7 +38,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * activate ConsoleWeblet
  * WebConsole -> ConsoleWeblet: SetLocale
  * deactivate ConsoleWeblet
- * loop for portlets with l10n support
+ * loop for conlets with l10n support
  *     WebConsole -> Conlet: SetLocale
  * end loop
  * deactivate WebConsole
@@ -101,12 +102,12 @@ public class SetLocale extends Event<Void> {
     }
 
     /**
-     * Sets the reload flag. Used by portlets that cannot dynamically
-     * update their content to the new locale.
+     * Sets the reload flag. Used by web console components that cannot 
+     * dynamically update their content to the new locale.
      * 
-     * For optimized behavior, portlets should check {@link #reload()}
-     * before generating events that update the content dynamically.
-     * Portlets that invoke this method 
+     * For optimized behavior, web console components should check 
+     * {@link #reload()} before generating events that update the content 
+     * dynamically. Web console component that invoke this method 
      * should define a handler with a higher priority. 
      */
     public void forceReload() {

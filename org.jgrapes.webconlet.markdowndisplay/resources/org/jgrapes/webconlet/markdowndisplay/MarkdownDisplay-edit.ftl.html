@@ -1,31 +1,31 @@
-<div title="${_("portletName")}" class="jgrapes-portlets-markdowndisplay-edit"
-    data-jgp-on-load="orgJGrapesPortletsMarkdownDisplay.init"
-    data-jgp-on-apply="orgJGrapesPortletsMarkdownDisplay.apply">
+<div title="${_("conletName")}" class="jgrapes-conlets-markdowndisplay-edit"
+    data-jgp-on-load="orgJGrapesConletsMarkdownDisplay.init"
+    data-jgp-on-apply="orgJGrapesConletsMarkdownDisplay.apply">
 
-  <form class="jgrapes-portlets-mdp-form">
+  <form class="jgrapes-conlets-mdp-form">
 
     <p>
       <label class="form__label--topAligned">
         <span>${_("Title")}</span>
-        <input class="jgrapes-portlets-mdp-title-input"
-          type="text" value="${portlet.title}">
+        <input class="jgrapes-conlets-mdp-title-input"
+          type="text" value="${conlet.title}">
       </label>
     </p>
 
     <section>
       <p>${_("Preview Text")}</p>
-      <div class="jgrapes-portlets-mdp-preview">
+      <div class="jgrapes-conlets-mdp-preview">
         <p>
           <label class="form__label--topAligned">
             <span>${_("Markdown Source")}</span>
             <textarea 
-              class="jgrapes-portlets-mdp-preview-input">${portlet.previewContent}</textarea>
+              class="jgrapes-conlets-mdp-preview-input">${conlet.previewContent}</textarea>
           </label>
         </p>
         <p>
           <label class="form__label--topAligned">
             <span>${_("Preview")}</span>
-            <span style="display:block;" class="jgrapes-portlets-mdp-preview-preview"></span>
+            <span style="display:block;" class="jgrapes-conlets-mdp-preview-preview"></span>
           </label>
         </p>
       </div>
@@ -33,19 +33,19 @@
 
     <section>
       <p>${_("View Text")}</p>
-      <div class="jgrapes-portlets-mdp-view">
+      <div class="jgrapes-conlets-mdp-view">
         <p>
           <label class="form__label--topAligned">
             <span>${_("Markdown Source")}</span>
             <textarea  
-              class="jgrapes-portlets-mdp-view-input">${portlet.viewContent}</textarea>
+              class="jgrapes-conlets-mdp-view-input">${conlet.viewContent}</textarea>
           </label>
         </p>
         <p>
           <label>
             <span>${_("Preview")}</span>
             <span style="display:block;" 
-              class="jgrapes-portlets-mdp-view-preview"></span>
+              class="jgrapes-conlets-mdp-view-preview"></span>
           </label>
         </p>
       </div>

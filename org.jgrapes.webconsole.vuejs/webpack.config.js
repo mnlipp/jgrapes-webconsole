@@ -1,8 +1,8 @@
 var path = require('path');
 var webpack = require('webpack')
-var ROOT = path.resolve(__dirname, 'portalapp');
+var ROOT = path.resolve(__dirname, 'consoleapp');
 var SRC = path.resolve(ROOT, 'javascript');
-var DEST = path.resolve(__dirname, 'portalapp/');
+var DEST = path.resolve(__dirname, 'consoleapp/');
 
 module.exports = {
   mode: 'development',

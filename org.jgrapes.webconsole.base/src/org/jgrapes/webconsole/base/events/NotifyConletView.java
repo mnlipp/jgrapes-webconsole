@@ -24,51 +24,51 @@ import java.util.Arrays;
 
 /**
  * A notification (as defined by the JSON RPC specification) to be sent to
- * the portlet view (the browser).
+ * the web console component view (the browser).
  */
 @SuppressWarnings("PMD.DataClass")
 public class NotifyConletView extends ConsoleCommand {
 
-    private final String portletType;
-    private final String portletId;
+    private final String conletType;
+    private final String conletId;
     private final String method;
     private final Object[] params;
 
     /**
      * Creates a new event.
      *  
-     * @param portletType the portlet type (used by the portal 
+     * @param conletType the web console component type (used by the console 
      * core JS to look up the available functions, see {@link AddConletType})
-     * @param portletId the portlet (view) instance that the 
+     * @param conletId the web console component (view) instance that the 
      * notification is directed at
      * @param method the method (function) to be executed, must
      * have been registered by handling {@link AddConletType}
      * @param params the parameters
      */
-    public NotifyConletView(String portletType,
-            String portletId, String method, Object... params) {
-        this.portletType = portletType;
-        this.portletId = portletId;
+    public NotifyConletView(String conletType,
+            String conletId, String method, Object... params) {
+        this.conletType = conletType;
+        this.conletId = conletId;
         this.method = method;
         this.params = Arrays.copyOf(params, params.length);
     }
 
     /**
-     * Returns the portlet class.
+     * Returns the web console component class.
      * 
-     * @return the portlet class
+     * @return the web console component class
      */
     public String conletType() {
-        return portletType;
+        return conletType;
     }
 
     /**
-     * Returns the portlet id.
+     * Returns the web console component id.
      * 
-     * @return the portlet id
+     * @return the web console component id
      */
     public String conletId() {
-        return portletId;
+        return conletId;
     }
 
     /**
@@ -91,7 +91,7 @@ public class NotifyConletView extends ConsoleCommand {
 
     @Override
     public void toJson(Writer writer) throws IOException {
-        toJson(writer, "notifyPortletView", conletType(), conletId(),
+        toJson(writer, "notifyConletView", conletType(), conletId(),
             method(), params());
     }
 }

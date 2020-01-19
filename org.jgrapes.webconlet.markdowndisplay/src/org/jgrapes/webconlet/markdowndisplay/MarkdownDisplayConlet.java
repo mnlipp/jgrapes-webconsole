@@ -63,7 +63,7 @@ import org.jgrapes.webconsole.base.events.UpdateConletModel;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
 
 /**
- * A portlet used to display information to the user. Instances
+ * A web console component used to display information to the user. Instances
  * may be used as a kind of note, i.e. created and configured by
  * a user himself. A typical use case, however, is to create
  * an instance during startup by a portal policy.
@@ -73,8 +73,8 @@ public class MarkdownDisplayConlet
         extends
         FreeMarkerComponent<MarkdownDisplayConlet.MarkdownDisplayModel> {
 
-    /** Property for forcing a portlet id (used for singleton instaces). */
-    public static final String PORTLET_ID = "PortletId";
+    /** Property for forcing a conlet id (used for singleton instances). */
+    public static final String CONLET_ID = "ConletId";
     /** Property for setting a title. */
     public static final String TITLE = "Title";
     /** Property for setting the preview source. */
@@ -102,7 +102,7 @@ public class MarkdownDisplayConlet
     private String storagePath(Session session) {
         return "/" + WebConsoleUtils.userFromSession(session)
             .map(UserPrincipal::toString).orElse("")
-            + "/portlets/" + MarkdownDisplayConlet.class.getName() + "/";
+            + "/conlets/" + MarkdownDisplayConlet.class.getName() + "/";
     }
 
     /**
@@ -122,7 +122,7 @@ public class MarkdownDisplayConlet
         // Add MarkdownDisplayConlet resources to page
         portalSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(portalSession.supportedLocales(), "portletName"))
+                displayNames(portalSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires(new String[] { "markdown-it.github.io",
                     "github.com/markdown-it/markdown-it-abbr",
@@ -144,7 +144,7 @@ public class MarkdownDisplayConlet
     }
 
     /**
-     * Restore portlet information, if contained in the event.
+     * Restore web console component information, if contained in the event.
      *
      * @param event the event
      * @param channel the channel
@@ -166,24 +166,25 @@ public class MarkdownDisplayConlet
     }
 
     /**
-     * Adds the portlet to the portal. The portlet supports the 
+     * Adds the web console component to the console. The web console 
+     * component supports the 
      * following options (see {@link AddConletRequest#properties()}:
      * 
-     * * `PORTLET_ID` (String): The portlet id.
+     * * `CONLET_ID` (String): The web console component id.
      * 
-     * * `TITLE` (String): The portlet title.
+     * * `TITLE` (String): The web console component title.
      * 
      * * `PREVIEW_SOURCE` (String): The markdown source that is rendered 
-     *   in the portlet preview.
+     *   in the web console component preview.
      * 
      * * `VIEW_SOURCE` (String): The markdown source that is rendered 
-     *   in the portlet view.
+     *   in the web console component view.
      * 
-     * * `DELETABLE` (Boolean): Indicates that the portlet may be 
+     * * `DELETABLE` (Boolean): Indicates that the web console component may be 
      *   deleted from the overview page.
      * 
      * * `EDITABLE_BY` (Set&lt;Principal&gt;): The principals that may edit 
-     *   the portlet instance.
+     *   the web console component instance.
      */
     @Override
     public String doAddConlet(AddConletRequest event,
@@ -191,15 +192,15 @@ public class MarkdownDisplayConlet
         ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
 
         // Create new model
-        String portletId = (String) event.properties().get(PORTLET_ID);
-        if (portletId == null) {
-            portletId = generateConletId();
+        String conletId = (String) event.properties().get(CONLET_ID);
+        if (conletId == null) {
+            conletId = generateConletId();
         }
         MarkdownDisplayModel model = putInSession(
             portalSession.browserSession(),
-            new MarkdownDisplayModel(portletId));
+            new MarkdownDisplayModel(conletId));
         model.setTitle((String) event.properties().getOrDefault(TITLE,
-            resourceBundle.getString("portletName")));
+            resourceBundle.getString("conletName")));
         model.setPreviewContent((String) event.properties().getOrDefault(
             PREVIEW_SOURCE, ""));
         model.setViewContent((String) event.properties().getOrDefault(
@@ -220,17 +221,12 @@ public class MarkdownDisplayConlet
 
         // Send HTML
         renderConlet(event, portalSession, model);
-        return portletId;
+        return conletId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doRenderPortlet
-     */
     @Override
     protected void doRenderConlet(RenderConletRequest event,
-            ConsoleSession portalSession, String portletId,
+            ConsoleSession portalSession, String conletId,
             MarkdownDisplayModel model) throws Exception {
         renderConlet(event, portalSession, model);
     }
@@ -248,7 +244,7 @@ public class MarkdownDisplayConlet
         if (event.renderPreview()) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
-            portalSession.respond(new RenderPortletFromTemplate(event,
+            portalSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, portalSession, model))
                     .setRenderMode(RenderMode.Preview)
@@ -259,7 +255,7 @@ public class MarkdownDisplayConlet
         if (event.renderModes().contains(RenderMode.View)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-view.ftl.html");
-            portalSession.respond(new RenderPortletFromTemplate(event,
+            portalSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, portalSession, model))
                     .setRenderMode(RenderMode.View).setSupportedModes(modes)
@@ -269,7 +265,7 @@ public class MarkdownDisplayConlet
         if (event.renderModes().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
-            portalSession.respond(new RenderPortletFromTemplate(event,
+            portalSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, portalSession, model))
                     .setRenderMode(RenderMode.Edit).setSupportedModes(modes));
@@ -297,28 +293,18 @@ public class MarkdownDisplayConlet
             renderModes(model)));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doDeletePortlet
-     */
     @Override
     protected void doDeleteConlet(DeleteConletRequest event,
-            ConsoleSession channel, String portletId,
+            ConsoleSession channel, String conletId,
             MarkdownDisplayModel retrievedState) throws Exception {
         channel.respond(new KeyValueStoreUpdate().delete(
-            storagePath(channel.browserSession()) + portletId));
-        channel.respond(new DeleteConlet(portletId));
+            storagePath(channel.browserSession()) + conletId));
+        channel.respond(new DeleteConlet(conletId));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.AbstractPortlet#doNotifyPortletModel
-     */
     @Override
     protected void doNotifyConletModel(NotifyConletModel event,
-            ConsoleSession portalSession, MarkdownDisplayModel portletState)
+            ConsoleSession portalSession, MarkdownDisplayModel conletState)
             throws Exception {
         event.stop();
         @SuppressWarnings("PMD.UseConcurrentHashMap")
@@ -345,7 +331,7 @@ public class MarkdownDisplayConlet
      */
     @SuppressWarnings("unchecked")
     @Handler
-    public void onUpdatePortletModel(UpdateConletModel event,
+    public void onUpdateConletModel(UpdateConletModel event,
             ConsoleSession portalSession) {
         stateFromSession(portalSession.browserSession(), event.conletId())
             .ifPresent(model -> {
@@ -376,7 +362,7 @@ public class MarkdownDisplayConlet
     }
 
     /**
-     * The portlet's model.
+     * The web console component's model.
      */
     @SuppressWarnings("serial")
     public static class MarkdownDisplayModel
@@ -391,11 +377,11 @@ public class MarkdownDisplayConlet
         /**
          * Creates a new model with the given type and id.
          * 
-         * @param portletId the portlet id
+         * @param conletId the web console component id
          */
-        @ConstructorProperties({ "portletId" })
-        public MarkdownDisplayModel(String portletId) {
-            super(portletId);
+        @ConstructorProperties({ "conletId" })
+        public MarkdownDisplayModel(String conletId) {
+            super(conletId);
         }
 
         /**

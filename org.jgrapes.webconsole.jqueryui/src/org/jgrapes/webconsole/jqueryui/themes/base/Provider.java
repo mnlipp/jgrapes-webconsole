@@ -25,11 +25,6 @@ import org.jgrapes.webconsole.jqueryui.ThemeProvider;
  */
 public class Provider extends ThemeProvider {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.portal.ThemeProvider#name()
-     */
     @Override
     public String themeId() {
         return "base";

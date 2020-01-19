@@ -19,23 +19,23 @@
 'use strict';
 
 /**
- * JGPortal establishes a namespace for the JavaScript functions
- * that are provided by the portal.
+ * JGConsole establishes a namespace for the JavaScript functions
+ * that are provided by the console.
  * 
- * @module portal-base-resource/jgportal
+ * @module console-base-resource/jgconsole
  */
  
 /** The exported class used to access everything. */
-export class JGPortal {};
-export default JGPortal;
+export class JGConsole {};
+export default JGConsole;
 
 // For backward compatibility
-window.JGPortal = JGPortal;
+window.JGConsole = JGConsole;
 
 /**
  * Easy access to logging.
  */
-JGPortal.Log = class Log {
+JGConsole.Log = class Log {
 
     /**
      * Output a debug message.
@@ -79,9 +79,9 @@ JGPortal.Log = class Log {
 };
 
 // For Backward compatibility
-JGPortal.log = JGPortal.Log;
+JGConsole.log = JGConsole.Log;
 // Local access
-var log = JGPortal.Log;
+var log = JGConsole.Log;
 
 // ///////////////////
 // WebSocket "wrapper"
@@ -94,12 +94,12 @@ var log = JGPortal.Log;
  * when the connection is lost. The connection is used to
  * exchange JSON RPC notifications.
  */
-class PortalWebSocket {
+class ConsoleWebSocket {
 
-    constructor(portal) {
+    constructor(console) {
         // "Privacy by convention" is sufficient for this.
         this._debugHandler = false;
-        this._portal = portal;
+        this._console = console;
         this._ws = null;
         this._sendQueue = [];
         this._recvQueue = [];
@@ -110,9 +110,9 @@ class PortalWebSocket {
         this._reconnectTimer = null;
         this._connectRequested = false;
         this._initialConnect = true;
-        this._portalSessionId = null;
+        this._consoleSessionId = null;
         this._connectionLost = false;
-        this._oldPortalSessionId = sessionStorage.getItem("org.jgrapes.webconsole.base.sessionId");
+        this._oldConsoleSessionId = sessionStorage.getItem("org.jgrapes.webconsole.base.sessionId");
     };
 
     /**
@@ -120,8 +120,8 @@ class PortalWebSocket {
      * 
      * @return {string} the id
      */
-    portalSessionId() {
-        return this._portalSessionId;
+    consoleSessionId() {
+        return this._consoleSessionId;
     }
 
     _connect() {
@@ -130,11 +130,11 @@ class PortalWebSocket {
         if (!location.endsWith("/")) {
             location += "/";
         }
-        this._portalSessionId = sessionStorage.getItem("org.jgrapes.webconsole.base.sessionId");
-        location += "portal-session/" + this._portalSessionId;
-        if (this._oldPortalSessionId) {
-            location += "?was=" + this._oldPortalSessionId;
-            this._oldPortalSessionId = null;
+        this._consoleSessionId = sessionStorage.getItem("org.jgrapes.webconsole.base.sessionId");
+        location += "console-session/" + this._consoleSessionId;
+        if (this._oldConsoleSessionId) {
+            location += "?was=" + this._oldConsoleSessionId;
+            this._oldConsoleSessionId = null;
         }
         log.debug("Creating WebSocket for " + location);
         this._ws = new WebSocket(location);
@@ -144,28 +144,28 @@ class PortalWebSocket {
             log.debug("OnOpen called for WebSocket.");
             if (_this._connectionLost) {
                 _this._connectionLost = false;
-                _this._portal.connectionRestored();
+                _this._console.connectionRestored();
             }
             _this._drainSendQueue();
             if (_this._initialConnect) {
                 _this._initialConnect = false;
             } else {
                 // Make sure to get any lost updates
-                let renderer = _this._portal._renderer;
+                let renderer = _this._console._renderer;
                 renderer.findPreviewIds().forEach(function(id) {
-                    renderer.sendRenderPortlet(id, ["Preview"]);
+                    renderer.sendRenderConlet(id, ["Preview"]);
                 });
                 renderer.findViewIds().forEach(function(id) {
-                    renderer.sendRenderPortlet(id, ["View"]);
+                    renderer.sendRenderConlet(id, ["View"]);
                 });
             }
             _this._refreshTimer = setInterval(function() {
                 if (_this._sendQueue.length == 0) {
-                    _this._inactivity += _this._portal.sessionRefreshInterval;
-                    if (_this._portal.sessionInactivityTimeout > 0 &&
-                        _this._inactivity >= _this._portal.sessionInactivityTimeout) {
+                    _this._inactivity += _this._console.sessionRefreshInterval;
+                    if (_this._console.sessionInactivityTimeout > 0 &&
+                        _this._inactivity >= _this._console.sessionInactivityTimeout) {
                         _this.close();
-                        _this._portal.connectionSuspended(function() {
+                        _this._console.connectionSuspended(function() {
                             _this.connect();
                         });
                         return;
@@ -175,7 +175,7 @@ class PortalWebSocket {
                         "params": []
                     });
                 }
-            }, _this._portal.sessionRefreshInterval);
+            }, _this._console.sessionRefreshInterval);
         }
         this._ws.onclose = function(event) {
             log.debug("OnClose called for WebSocket (reconnect: " +
@@ -187,7 +187,7 @@ class PortalWebSocket {
             if (_this._connectRequested) {
                 // Not an intended disconnect
                 if (!_this._connectionLost) {
-                    _this._portal.connectionLost();
+                    _this._console.connectionLost();
                     _this._connectionLost = true;
                 }
                 _this._initiateReconnect();
@@ -233,10 +233,10 @@ class PortalWebSocket {
      * Closes the connection.
      */
     close() {
-        if (this._portalSessionId) {
+        if (this._consoleSessionId) {
             this._send({
                 "jsonrpc": "2.0", "method": "disconnect",
-                "params": [this._portalSessionId]
+                "params": [this._consoleSessionId]
             });
         }
         this._connectRequested = false;
@@ -356,8 +356,8 @@ class PortalWebSocket {
 
 class ResourceManager {
 
-    constructor(portal) {
-        this._portal = portal;
+    constructor(console) {
+        this._console = console;
         this._debugLoading = false;
         this._providedScriptResources = new Set(); // Names, i.e. strings
         document.querySelectorAll("script[data-jgp-provides]").forEach(s => {
@@ -486,7 +486,7 @@ class ResourceManager {
             }
             if (_this._unlockMessageQueueAfterLoad) {
                 _this._loadingMsg(function() { return "All loaded, unlocking message queue." });
-                _this._portal.unlockMessageQueue();
+                _this._console.unlockMessageQueue();
             }
         }
     }
@@ -517,7 +517,7 @@ class ResourceManager {
 
     lockWhileLoading() {
         if (this._loadingScripts.size > 0 && !this._unlockMessageQueueAfterLoad) {
-            this._portal.lockMessageQueue();
+            this._console.lockMessageQueue();
             this._loadingMsg(function() { return "Locking message queue until all loaded." });
             this._unlockMessageQueueAfterLoad = true;
         }
@@ -526,24 +526,24 @@ class ResourceManager {
 
 /**
  * A base class for implementing a portral renderer. The renderer
- * provides the DOM, based on the initial DOM from the portal page.
+ * provides the DOM, based on the initial DOM from the console page.
  */
-JGPortal.Renderer = class {
+JGConsole.Renderer = class {
 
     init() {
     }
 
     /**
-     * Provides access to the portal instance.
+     * Provides access to the console instance.
      *
-     * @return {Portal} the portal
+     * @return {Console} the console
      */
-    portal() {
-        return thePortal;
+    console() {
+        return theConsole;
     }
 
     /**
-     * Called from the portal when the connection to the server is lost.
+     * Called from the console when the connection to the server is lost.
      * The default implementation prints a warning message to the console.
      * Should be overridden by a funtion that displays a notification.
      */
@@ -552,7 +552,7 @@ JGPortal.Renderer = class {
     }
 
     /**
-     * Called from the portal when the connection to the server is restored.
+     * Called from the console when the connection to the server is restored.
      * The default implementation prints a warning message to the console.
      * Should be overridden by a funtion that displays a notification.
      */
@@ -561,7 +561,7 @@ JGPortal.Renderer = class {
     }
 
     /**
-     * Called from the portal when the connection to the server is syspended.
+     * Called from the console when the connection to the server is syspended.
      * The default implementation prints a warning message to the console.
      * Should be overridden by a funtion that displays a modal dialog.
      */
@@ -570,103 +570,103 @@ JGPortal.Renderer = class {
     }
 
     /**
-     * Called from the portal when the portal is configured.
+     * Called from the console when the console is configured.
      * The default implementation prints a warning message to the console.
      * Should be overridden by a funtion that displays a modal dialog.
      */
-    portalConfigured() {
-        log.warn("Portal configured handling not implemented!");
+    consoleConfigured() {
+        log.warn("Console configured handling not implemented!");
     }
 
     /**
-     * Called from the portal when a new portlet type is been added.
-     * @param {string} portletType the portlet type
+     * Called from the console when a new conlet type is been added.
+     * @param {string} conletType the conlet type
      * @param {Object} displayNames the display names by lang
      * @param {Array.string} renderModes the render modes
      */
-    addPortletType(portletType, displayNames, renderModes) {
+    addConletType(conletType, displayNames, renderModes) {
         log.warn("Not implemented!");
     }
 
     /**
-     * Called from the portal when the portal layout is received.
+     * Called from the console when the console layout is received.
      *
-     * @param {string[]} previewLayout the portlet ids from top left
+     * @param {string[]} previewLayout the conlet ids from top left
      * to bottom right
-     * @param {string[]} tabsLayout the ids of the portlets viewable in tabs
+     * @param {string[]} tabsLayout the ids of the conlets viewable in tabs
      * @param {Object} xtraInfo extra information spcific to the 
-     * portal implementation
+     * console implementation
      */
-    lastPortalLayout(previewLayout, tabsLayout, xtraInfo) {
+    lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
         log.warn("Not implemented!");
     }
 
     /**
-     * Update the preview of the given portlet.
+     * Update the preview of the given conlet.
      *
-     * @param {boolean} isNew `true` if it is a new portlet preview
+     * @param {boolean} isNew `true` if it is a new conlet preview
      * @param {HTMLElement} container the container for the preview,
      * provided as:
      * ```
-     * <section class='portlet portlet-preview' data-portlet-id='...' 
-     *      data-portlet-grid-columns='...' data-portlet-grid-rows='   '></section>
+     * <section class='conlet conlet-preview' data-conlet-id='...' 
+     *      data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>
      * ```
-     * @param {string[]} modes the supported portlet modes
+     * @param {string[]} modes the supported conlet modes
      * @param {string} content the preview content
      * @param {boolean} foreground `true` if the preview (i.e. the overview
      * plane) is to be made the active tab
      */
-    updatePortletPreview(isNew, container, modes, content, foreground) {
+    updateConletPreview(isNew, container, modes, content, foreground) {
         log.warn("Not implemented!");
     }
 
     /**
-     * Update the view of the given portlet.
+     * Update the view of the given conlet.
      *
-     * @param {boolean} isNew `true` if it is a new portlet view
+     * @param {boolean} isNew `true` if it is a new conlet view
      * @param {HTMLElement} container the container for the view,
      * provided as:
      * ```
-     * <article class="portlet portlet-view portlet-content 
-     *          data-portlet-id='...'"></article>"
+     * <article class="conlet conlet-view conlet-content 
+     *          data-conlet-id='...'"></article>"
      * ```
-     * @param {string[]} modes the supported portlet modes
+     * @param {string[]} modes the supported conlet modes
      * @param {string} content the view content
      * @param {boolean} foreground `true` if the view 
      * is to be made the active tab
      */
-    updatePortletView(isNew, container, modes, content, foreground) {
+    updateConletView(isNew, container, modes, content, foreground) {
         log.warn("Not implemented!");
     }
 
     /**
-     * Remove the given portlet representations, which may be 
+     * Remove the given conlet representations, which may be 
      * preview or view containers, from the DOM.
      *
      * @param {NodeList} containers the existing containers for
      * the preview or views 
      */
-    removePortletDisplays(containers) {
+    removeConletDisplays(containers) {
         log.warn("Not implemented!");
     }
 
     /**
-     * Update the title of the portlet with the given id.
+     * Update the title of the conlet with the given id.
      *
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string} title the new title
      */
-    updatePortletTitle(portletId, title) {
+    updateConletTitle(conletId, title) {
         log.warn("Not implemented!");
     }
 
     /**
-     * Update the modes of the portlet with the given id.
+     * Update the modes of the conlet with the given id.
      * 
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string[]} modes the modes
      */
-    updatePortletModes(portletId, modes) {
+    updateConletModes(conletId, modes) {
         log.warn("Not implemented!");
     }
 
@@ -681,104 +681,104 @@ JGPortal.Renderer = class {
     // Send methods
 
     /**
-     * @deprecated Use portal().setLocale() instead.
+     * @deprecated Use console().setLocale() instead.
      */
     sendSetLocale(locale, reload) {
-        this.portal().setLocale(locale, reload);
+        this.console().setLocale(locale, reload);
     };
 
     /**
-     * @deprecated Use portal().renderPortlet() instead.
+     * @deprecated Use console().renderConlet() instead.
      */
-    sendRenderPortlet(portletId, modes) {
-        this.portal().renderPortlet(portletId, modes);
+    sendRenderConlet(conletId, modes) {
+        this.console().renderConlet(conletId, modes);
     };
 
     /**
-     * @deprecated Use portal().addPortlet() instead.
+     * @deprecated Use console().addConlet() instead.
      */
-    sendAddPortlet(portletType, renderModes) {
-        this.portal().addPortlet(portletType, renderModes);
+    sendAddConlet(conletType, renderModes) {
+        this.console().addConlet(conletType, renderModes);
     };
 
     /**
-     * @deprecated Use portal().removePreview() and portal().removeView() instead.
+     * @deprecated Use console().removePreview() and console().removeView() instead.
      */
-    sendDeletePortlet(portletId) {
-        this.send("deletePortlet", portletId);
+    sendDeleteConlet(conletId) {
+        this.send("deleteConlet", conletId);
     };
 
     /**
-     * @deprecated Use portal().updateLayout() instead.
+     * @deprecated Use console().updateLayout() instead.
      */
     sendLayout(previewLayout, tabLayout, xtraInfo) {
-        this.portal().updateLayout(previewLayout, tabLayout, xtraInfo);
+        this.console().updateLayout(previewLayout, tabLayout, xtraInfo);
     };
 
     /**
-     * @deprecated Use portal().send() instead.
+     * @deprecated Use console().send() instead.
      */
     send(method, ...params) {
-        this.portal().send(method, ...params);
+        this.console().send(method, ...params);
     };
 
     // Utility methods.
 
     /**
      * Find the HTML elements that display the preview or view of the
-     * portlet with the given id.
+     * conlet with the given id.
      * 
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @return {NodeList} the elements found
      */
-    findPortletContainers(portletId) {
-        return $(".portlet[data-portlet-id='" + portletId + "']").get();
+    findConletContainers(conletId) {
+        return $(".conlet[data-conlet-id='" + conletId + "']").get();
     };
 
     /**
      * Find the HTML element that displays the preview of the
-     * portlet with the given id.
+     * conlet with the given id.
      * 
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @return {HTMLElement} the HTML element or null
      */
-    findPortletPreview(portletId) {
+    findConletPreview(conletId) {
         return document.querySelector(
-            ".portlet-preview[data-portlet-id='" + portletId + "']");
+            ".conlet-preview[data-conlet-id='" + conletId + "']");
     };
 
     /**
-     * Return the ids of all portlets displayed as preview.
+     * Return the ids of all conlets displayed as preview.
      *
      * @return {string[]}
      */
     findPreviewIds() {
         return Array.from(
-            document.querySelectorAll(".portlet-preview[data-portlet-id]"),
-            node => node.getAttribute("data-portlet-id"));
+            document.querySelectorAll(".conlet-preview[data-conlet-id]"),
+            node => node.getAttribute("data-conlet-id"));
     }
 
     /**
      * Find the HTML element that displays the view of the
-     * portlet with the given id.
+     * conlet with the given id.
      * 
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @return {HTMLElement} the HTML element
      */
-    findPortletView(portletId) {
+    findConletView(conletId) {
         return document.querySelector(
-            ".portlet-view[data-portlet-id='" + portletId + "']");
+            ".conlet-view[data-conlet-id='" + conletId + "']");
     };
 
     /**
-     * Return the ids of all portlets displayed as view.
+     * Return the ids of all conlets displayed as view.
      *
      * @return {string[]}
      */
     findViewIds() {
         return Array.from(
-            document.querySelectorAll(".portlet-view[data-portlet-id]"),
-            node => node.getAttribute("data-portlet-id"));
+            document.querySelectorAll(".conlet-view[data-conlet-id]"),
+            node => node.getAttribute("data-conlet-id"));
     }
 
     /**
@@ -833,11 +833,11 @@ JGPortal.Renderer = class {
 }
 
 /**
- * Provides portal related methods. A singleton is automatically
- * created. Selected methods are made available in the JGPortal
+ * Provides console related methods. A singleton is automatically
+ * created. Selected methods are made available in the JGConsole
  * namespace.
  */
-class Portal {
+class Console {
 
     constructor() {
         let _this = this;
@@ -845,51 +845,51 @@ class Portal {
         this._sessionRefreshInterval = 0;
         this._sessionInactivityTimeout = 0;
         this._renderer = null;
-        this._webSocket = new PortalWebSocket(this);
-        this._portletFunctionRegistry = {};
-        this._previewTemplate = $('<section class="portlet portlet-preview"></section>');
-        this._viewTemplate = $('<article class="portlet portlet-view portlet-content"></article>');
-        this._editTemplate = $('<div class="portlet portlet-edit"></div>');
+        this._webSocket = new ConsoleWebSocket(this);
+        this._conletFunctionRegistry = {};
+        this._previewTemplate = $('<section class="conlet conlet-preview"></section>');
+        this._viewTemplate = $('<article class="conlet conlet-view conlet-content"></article>');
+        this._editTemplate = $('<div class="conlet conlet-edit"></div>');
         this._webSocket.addMessageHandler('addPageResources',
             function(cssUris, cssSource, scriptResources) {
                 _this._resourceManager.addPageResources(cssUris, cssSource, scriptResources);
             });
-        this._webSocket.addMessageHandler('addPortletType',
-            function(portletType, displayNames, cssUris, scriptResources,
+        this._webSocket.addMessageHandler('addConletType',
+            function(conletType, displayNames, cssUris, scriptResources,
                 renderModes) {
                 _this._resourceManager.addPageResources(cssUris, null, scriptResources);
-                _this._renderer.addPortletType(portletType, displayNames, renderModes);
+                _this._renderer.addConletType(conletType, displayNames, renderModes);
             });
-        this._webSocket.addMessageHandler('lastPortalLayout',
+        this._webSocket.addMessageHandler('lastConsoleLayout',
             function(previewLayout, tabsLayout, xtraInfo) {
                 // Should we wait with further actions?
                 _this._resourceManager.lockWhileLoading();
-                _this._renderer.lastPortalLayout(previewLayout, tabsLayout, xtraInfo);
+                _this._renderer.lastConsoleLayout(previewLayout, tabsLayout, xtraInfo);
             });
-        this._webSocket.addMessageHandler('notifyPortletView',
-            function notifyPortletView(portletClass, portletId, method, params) {
-                let classRegistry = _this._portletFunctionRegistry[portletClass];
+        this._webSocket.addMessageHandler('notifyConletView',
+            function notifyConletView(conletClass, conletId, method, params) {
+                let classRegistry = _this._conletFunctionRegistry[conletClass];
                 if (classRegistry) {
                     let f = classRegistry[method];
                     if (f) {
-                        f(portletId, params);
+                        f(conletId, params);
                     }
                 }
             });
-        this._webSocket.addMessageHandler('portalConfigured',
-            function portalConfigured() {
+        this._webSocket.addMessageHandler('consoleConfigured',
+            function consoleConfigured() {
                 _this._isConfigured = true;
-                _this._renderer.portalConfigured();
+                _this._renderer.consoleConfigured();
             });
-        this._webSocket.addMessageHandler('updatePortlet',
-            function(portletId, mode, modes, content, foreground) {
+        this._webSocket.addMessageHandler('updateConlet',
+            function(conletId, mode, modes, content, foreground) {
                 if (mode === "Preview" || mode === "DeleteablePreview") {
-                    _this._updatePreview(portletId, modes, mode, content, foreground);
+                    _this._updatePreview(conletId, modes, mode, content, foreground);
                 } else if (mode === "View") {
-                    _this._updateView(portletId, modes, content, foreground);
+                    _this._updateView(conletId, modes, content, foreground);
                 } else if (mode === "Edit") {
                     let container = _this._editTemplate.clone();
-                    container.attr("data-portlet-id", portletId);
+                    container.attr("data-conlet-id", conletId);
                     _this._renderer.showEditDialog(container[0], modes, content);
                     if (!container[0].parentNode) {
                         $("body").append(container);
@@ -897,11 +897,11 @@ class Portal {
                     _this._execOnLoad(container);
                 }
             });
-        this._webSocket.addMessageHandler('deletePortlet',
-            function deletePortlet(portletId) {
-                let portletDisplays = _this._renderer.findPortletContainers(portletId);
-                if (portletDisplays.length > 0) {
-                    _this._renderer.removePortletDisplays(portletDisplays);
+        this._webSocket.addMessageHandler('deleteConlet',
+            function deleteConlet(conletId) {
+                let conletDisplays = _this._renderer.findConletContainers(conletId);
+                if (conletDisplays.length > 0) {
+                    _this._renderer.removeConletDisplays(conletDisplays);
                 }
             });
         this._webSocket.addMessageHandler('displayNotification',
@@ -955,25 +955,25 @@ class Portal {
             });
     }
 
-    init(portalSessionId, refreshInterval, inactivityTimeout, renderer) {
-        log.debug("JGPortal: Initializing portal...");
-        sessionStorage.setItem("org.jgrapes.webconsole.base.sessionId", portalSessionId);
+    init(consoleSessionId, refreshInterval, inactivityTimeout, renderer) {
+        log.debug("JGConsole: Initializing console...");
+        sessionStorage.setItem("org.jgrapes.webconsole.base.sessionId", consoleSessionId);
         this._resourceManager = new ResourceManager(this);
         this._sessionRefreshInterval = refreshInterval;
         this._sessionInactivityTimeout = inactivityTimeout;
         this._renderer = renderer;
-        JGPortal.renderer = renderer;
+        JGConsole.renderer = renderer;
 
         // Everything set up, can connect web socket now.
         this._webSocket.connect();
 
         // More initialization.
-        log.debug("JGPortal: Initializing renderer...");
+        log.debug("JGConsole: Initializing renderer...");
         this._renderer.init();
 
-        // With everything prepared, send portal ready
-        this.send("portalReady");
-        log.debug("JGPortal: PortalReady sent.");
+        // With everything prepared, send console ready
+        this.send("consoleReady");
+        log.debug("JGConsole: ConsoleReady sent.");
     }
 
     get isConfigured() {
@@ -1021,37 +1021,37 @@ class Portal {
         this._webSocket.unlockMessageReceiver();
     }
 
-    // Portlet management
+    // Conlet management
 
-    _updatePreview(portletId, modes, mode, content, foreground) {
-        let container = this._renderer.findPortletPreview(portletId);
+    _updatePreview(conletId, modes, mode, content, foreground) {
+        let container = this._renderer.findConletPreview(conletId);
         let isNew = !container;
         if (isNew) {
             container = this._previewTemplate.clone();
-            container.attr("data-portlet-id", portletId);
+            container.attr("data-conlet-id", conletId);
         }
         if (mode === "DeleteablePreview") {
             container = $(container);
-            container.addClass('portlet-deleteable')
+            container.addClass('conlet-deleteable')
         } else {
             container = $(container);
-            container.removeClass('portlet-deleteable')
+            container.removeClass('conlet-deleteable')
         }
-        this._renderer.updatePortletPreview(isNew, container[0], modes,
+        this._renderer.updateConletPreview(isNew, container[0], modes,
             content, foreground);
         this._execOnLoad(container);
     };
 
-    _updateView(portletId, modes, content, foreground) {
-        let container = this._renderer.findPortletView(portletId);
+    _updateView(conletId, modes, content, foreground) {
+        let container = this._renderer.findConletView(conletId);
         let isNew = !container;
         if (isNew) {
             container = this._viewTemplate.clone();
-            container.attr("data-portlet-id", portletId);
+            container.attr("data-conlet-id", conletId);
         } else {
             container = $(container);
         }
-        this._renderer.updatePortletView(isNew, container[0], modes,
+        this._renderer.updateConletView(isNew, container[0], modes,
             content, foreground);
         this._execOnLoad(container);
     };
@@ -1093,20 +1093,20 @@ class Portal {
     }
 
     /**
-     * Registers a portlet method that to be invoked if a
-     * JSON RPC notification with method <code>notifyPortletView</code>
+     * Registers a conlet method that to be invoked if a
+     * JSON RPC notification with method <code>notifyConletView</code>
      * is received.
      * 
-     * @param {string} portletClass the portlet type for which
+     * @param {string} conletClass the conlet type for which
      * the method is registered
      * @param {string} methodName the method that is registered
      * @param {function} method the function to invoke
      */
-    registerPortletMethod(portletClass, methodName, method) {
-        let classRegistry = this._portletFunctionRegistry[portletClass];
+    registerConletMethod(conletClass, methodName, method) {
+        let classRegistry = this._conletFunctionRegistry[conletClass];
         if (!classRegistry) {
             classRegistry = {};
-            this._portletFunctionRegistry[portletClass] = classRegistry;
+            this._conletFunctionRegistry[conletClass] = classRegistry;
         }
         classRegistry[methodName] = method;
     }
@@ -1140,90 +1140,90 @@ class Portal {
     };
 
     /**
-     * Sends a notification that requests the rendering of a portlet.
+     * Sends a notification that requests the rendering of a conlet.
      * 
-     * @param {string} portletId the portlet id
+     * @param {string} conletId the conlet id
      * @param {string[]} modes the requested render mode(s)
      */
-    renderPortlet(portletId, modes) {
-        this.send("renderPortlet", portletId, modes);
+    renderConlet(conletId, modes) {
+        this.send("renderConlet", conletId, modes);
     };
 
     /**
-     * Sends a notification that requests the addition of a portlet.
+     * Sends a notification that requests the addition of a conlet.
      * 
-     * @param {string} portletType the type of the portlet to add
+     * @param {string} conletType the type of the conlet to add
      * @param {string[]} renderModes the requested render mode(s)
      */
-    addPortlet(portletType, renderModes) {
-        this.send("addPortlet", portletType, renderModes);
+    addConlet(conletType, renderModes) {
+        this.send("addConlet", conletType, renderModes);
     };
 
     /**
-     * Requests the removal of a portlet preview. If a view of the
-     * portlet exists, it will be removed also.
+     * Requests the removal of a conlet preview. If a view of the
+     * conlet exists, it will be removed also.
      *
-     * @param {string} the portlet id
+     * @param {string} the conlet id
      */
-    removePreview(portletId) {
-        this.send("deletePortlet", portletId);
+    removePreview(conletId) {
+        this.send("deleteConlet", conletId);
     }
 
     /**
-     * Requests the removal of a portlet view.
+     * Requests the removal of a conlet view.
      *
-     * @param {string} the portlet id
+     * @param {string} the conlet id
      */
-    removeView(portletId) {
-        if (this._renderer.findPortletPreview(portletId)) {
-            let view = this._renderer.findPortletView(portletId);
+    removeView(conletId) {
+        if (this._renderer.findConletPreview(conletId)) {
+            let view = this._renderer.findConletView(conletId);
             if (view) {
-                this._renderer.removePortletDisplays($(view).get());
+                this._renderer.removeConletDisplays($(view).get());
             }
         } else {
-            this.send("deletePortlet", portletId);
+            this.send("deleteConlet", conletId);
         }
     }
 
     /**
-     * Send a notification that request the removal of a portlet.
+     * Send a notification that request the removal of a conlet.
      * 
-     * @param {string} portletId the id of the portlet to be deleted
+     * @param {string} conletId the id of the conlet to be deleted
      */
-    deletePortlet(portletId) {
-        this.send("deletePortlet", portletId);
+    deleteConlet(conletId) {
+        this.send("deleteConlet", conletId);
     };
 
     /**
-     * Send the current portal layout to the server.
+     * Send the current console layout to the server.
      *
-     * @param {string[]} previewLayout the portlet ids from top left
+     * @param {string[]} previewLayout the conlet ids from top left
      * to bottom right
-     * @param {string[]} tabsLayout the ids of the portlets viewable in tabs
+     * @param {string[]} tabsLayout the ids of the conlets viewable in tabs
      * @param {Object} xtraInfo extra information spcific to the 
-     * portal implementation
+     * console implementation
      */
     updateLayout(previewLayout, tabLayout, xtraInfo) {
-        if (!thePortal.isConfigured) {
+        if (!theConsole.isConfigured) {
             return;
         }
-        this.send("portalLayout", previewLayout, tabLayout, xtraInfo);
+        this.send("consoleLayout", previewLayout, tabLayout, xtraInfo);
     };
 
     /**
-     * Send a notification with method <code>notifyPortletModel</code>
-     * and the given portlet id, method and parameters as the 
+     * Send a notification with method <code>notifyConletModel</code>
+     * and the given conlet id, method and parameters as the 
      * notification's parameters to the server.
      * 
-     * @param {string} portletId the id of the portlet to send to
+     * @param {string} conletId the id of the conlet to send to
      * @param {string} method the method to invoke
      * @param params the parameters to send
      */
-    notifyPortletModel(portletId, method, ...params) {
+    notifyConletModel(conletId, method, ...params) {
         if (params === undefined) {
-            this.send("notifyPortletModel", portletId, method);
+            this.send("notifyConletModel", conletId, method);
         } else {
-            this.send("notifyPortletModel", portletId, method, params);
+            this.send("notifyConletModel", conletId, method, params);
         }
     };
 
@@ -1246,69 +1246,69 @@ class Portal {
 
 }
 
-var thePortal = new Portal();
+var theConsole = new Console();
 
 /**
- * Initialize the portal singleton.
+ * Initialize the console singleton.
  * 
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.init = function(...params) {
-    thePortal.init(...params);
+JGConsole.init = function(...params) {
+    theConsole.init(...params);
 }
 
 /**
- * Delegates to {@link Portal#registerPortletMethod}.
+ * Delegates to {@link Console#registerConletMethod}.
  * 
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.registerPortletMethod = function(...params) {
-    thePortal.registerPortletMethod(...params);
+JGConsole.registerConletMethod = function(...params) {
+    theConsole.registerConletMethod(...params);
 }
 
 /**
- * Delegates to {@link Portal#notifyPortletModel}.
+ * Delegates to {@link Console#notifyConletModel}.
  * 
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.notifyPortletModel = function(...params) {
-    return thePortal.notifyPortletModel(...params);
+JGConsole.notifyConletModel = function(...params) {
+    return theConsole.notifyConletModel(...params);
 }
 
 /**
- * Delegates to {@link Portal#lockMessageQueue}.
+ * Delegates to {@link Console#lockMessageQueue}.
  * 
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.lockMessageQueue = function(...params) {
-    thePortal.lockMessageQueue(...params);
+JGConsole.lockMessageQueue = function(...params) {
+    theConsole.lockMessageQueue(...params);
 }
 
 /**
- * Delegates to {@link Portal#unlockMessageQueue}.
+ * Delegates to {@link Console#unlockMessageQueue}.
  * 
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.unlockMessageQueue = function(...params) {
-    thePortal.unlockMessageQueue(...params);
+JGConsole.unlockMessageQueue = function(...params) {
+    theConsole.unlockMessageQueue(...params);
 }
 
 /**
- * Delegates to the portal's {@link JGPortal.Renderer#findPortletPreview}.
+ * Delegates to the console's {@link JGConsole.Renderer#findConletPreview}.
  * 
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.findPortletPreview = function(...params) {
-    return thePortal.renderer.findPortletPreview(...params);
+JGConsole.findConletPreview = function(...params) {
+    return theConsole.renderer.findConletPreview(...params);
 }
 
 /**
- * Delegates to the portal's {@link JGPortal.Renderer#findPortletView}.
+ * Delegates to the console's {@link JGConsole.Renderer#findConletView}.
  * 
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.findPortletView = function(...params) {
-    return thePortal.renderer.findPortletView(...params);
+JGConsole.findConletView = function(...params) {
+    return theConsole.renderer.findConletView(...params);
 }
 
 /**
@@ -1321,18 +1321,18 @@ JGPortal.findPortletView = function(...params) {
  * @param {Object} items the messages by language identifier
  * @param {string} lang the language identifier
  * @return {Object}
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.forLang = function(items, lang) {
+JGConsole.forLang = function(items, lang) {
     if (lang in items) {
         return items[lang];
     }
     let dashPos = lang.lastIndexOf("-");
     if (dashPos > 0) {
-        return JGPortal.forLang(items, lang.substring(0, dashPos));
+        return JGConsole.forLang(items, lang.substring(0, dashPos));
     }
     if (lang != "en") {
-        return JGPortal.forLang(items, "en");
+        return JGConsole.forLang(items, "en");
     }
     return null;
 }
@@ -1347,9 +1347,9 @@ JGPortal.forLang = function(items, lang) {
  * @param {Object} supplier - the supplier function
  * @returns {Object} the data
  * 
- * @memberof JGPortal
+ * @memberof JGConsole
  */
-JGPortal.createIfMissing = function(node, key, supplier) {
+JGConsole.createIfMissing = function(node, key, supplier) {
     let data = node.data(key);
     if (data) {
         return data;
@@ -1365,7 +1365,7 @@ JGPortal.createIfMissing = function(node, key, supplier) {
  * sort order and direction. In addition, it supports simple
  * filtering based on cell content.
  */
-JGPortal.TableController = class {
+JGConsole.TableController = class {
 
     /**
      * Creates a new controller for a table with the given numer
@@ -1541,7 +1541,7 @@ JGPortal.TableController = class {
  * a Set are the toggle functions and the support for temporarily
  * disabling an option.
  */
-JGPortal.OptionsSet = class {
+JGConsole.OptionsSet = class {
 
     /**
      * Creates a new option set.

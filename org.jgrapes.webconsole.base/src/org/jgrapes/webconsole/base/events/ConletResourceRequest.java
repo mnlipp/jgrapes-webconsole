@@ -28,37 +28,37 @@ import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
  * An event that signals the request of a resource by the portal (browser).
- * Resource request from the browser for a portlet resource are usually
- * generated during portal boot. See the description of
+ * Resource request from the browser for a web console component resource 
+ * are usually generated during console boot. See the description of
  * {@link AddConletType} for details.
  */
 public class ConletResourceRequest extends ResourceRequest {
 
-    private final String portletType;
+    private final String conletType;
 
     /**
      * Creates a new request.
      * 
-     * @param portletType the portlet type
+     * @param conletType the web console component type
      * @param resourceUri the requested resource
      * @param httpRequest the original HTTP request
      * @param httpChannel the channel that the HTTP request was received on
      * @param renderSupport the render support
      */
-    public ConletResourceRequest(String portletType, URI resourceUri,
+    public ConletResourceRequest(String conletType, URI resourceUri,
             Instant ifModifiedSince,
             HttpRequest httpRequest, IOSubchannel httpChannel,
             Session session, RenderSupport renderSupport) {
         super(resourceUri, ifModifiedSince,
             httpRequest, httpChannel, session, renderSupport);
-        this.portletType = portletType;
+        this.conletType = conletType;
     }
 
     /**
-     * @return the portletId
+     * @return the conletId
      */
     public String conletClass() {
-        return portletType;
+        return conletType;
     }
 
 }

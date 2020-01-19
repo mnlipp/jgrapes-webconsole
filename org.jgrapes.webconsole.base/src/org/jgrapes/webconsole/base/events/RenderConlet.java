@@ -31,8 +31,8 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 
 /**
  * A base class for portal rendering. Sent to the portal page for 
- * adding or updating a complete portlet representation. This class
- * maintains all required information except the actual content
+ * adding or updating a complete web console component representation. 
+ * This class maintains all required information except the actual content
  * (the HTML) which must be provided by the derived classes.
  * 
  * The HTML provided is searched for attributes `data-jgp-on-load`
@@ -52,8 +52,8 @@ public abstract class RenderConlet extends ConsoleCommand {
         = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(new RenderMode[] { RenderMode.Preview })));
 
-    private final Class<?> portletClass;
-    private final String portletId;
+    private final Class<?> conletClass;
+    private final String conletId;
     private RenderMode renderMode = RenderMode.Preview;
     private Set<RenderMode> supportedModes = DEFAULT_SUPPORTED;
     private boolean foreground;
@@ -61,30 +61,30 @@ public abstract class RenderConlet extends ConsoleCommand {
     /**
      * Creates a new event.
      * 
-     * @param portletClass the portlet class
-     * @param portletId the id of the portlet
+     * @param conletClass the web console component class
+     * @param conletId the id of the web console component
      */
-    public RenderConlet(Class<?> portletClass, String portletId) {
-        this.portletClass = portletClass;
-        this.portletId = portletId;
+    public RenderConlet(Class<?> conletClass, String conletId) {
+        this.conletClass = conletClass;
+        this.conletId = conletId;
     }
 
     /**
-     * Returns the portlet class as specified on creation.
+     * Returns the web console component class as specified on creation.
      *
      * @return the class
      */
-    public Class<?> portletClass() {
-        return portletClass;
+    public Class<?> conletClass() {
+        return conletClass;
     }
 
     /**
-     * Returns the portlet id as specified on creation.
+     * Returns the web console component id as specified on creation.
      * 
-     * @return the portlet id
+     * @return the web console component id
      */
     public String conletId() {
-        return portletId;
+        return conletId;
     }
 
     /**
@@ -143,10 +143,10 @@ public abstract class RenderConlet extends ConsoleCommand {
     }
 
     /**
-     * Id set, the tab with the portlet is put in the foreground
-     * when the portlet is rendered. The default value is `false`.
+     * Id set, the tab with the web console component is put in the foreground
+     * when the web console component is rendered. The default value is `false`.
      * 
-     * @param foreground if set, the portlet is put in foreground
+     * @param foreground if set, the web console component is put in foreground
      * @return the event for easy chaining
      */
     public RenderConlet setForeground(boolean foreground) {
@@ -164,7 +164,7 @@ public abstract class RenderConlet extends ConsoleCommand {
     }
 
     /**
-     * Provides the HTML that displays the portlet 
+     * Provides the HTML that displays the web console component 
      * on the page.
      * 
      * @return the HTML
@@ -182,7 +182,7 @@ public abstract class RenderConlet extends ConsoleCommand {
     public void toJson(Writer writer)
             throws InterruptedException, IOException {
         try {
-            toJson(writer, "updatePortlet", conletId(), renderMode().name(),
+            toJson(writer, "updateConlet", conletId(), renderMode().name(),
                 supportedRenderModes().stream().map(RenderMode::name)
                     .toArray(size -> new String[size]),
                 content().get(), isForeground());

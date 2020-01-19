@@ -1,10 +1,10 @@
-/* Scroll portlet content (card body) not portlet */
- .portlet-preview-content {
+/* Scroll conlet content (card body) not conlet */
+ .conlet-preview-content {
     overflow: auto;
  }
 
 /* Activate close only on selected. */
-#portalTabs .nav-link:not(.active) span {
+#consoleTabs .nav-link:not(.active) span {
     display: none;
 }
 
@@ -60,7 +60,7 @@ main {
 }
 
 /*
- * # Bootstrap4 specific overrides for base portal definitions.
+ * # Bootstrap4 specific overrides for base console definitions.
  */
 
 /* Flow content cannot be put inside a paragraph, but somtimes
@@ -74,12 +74,12 @@ span[role="button"] {
     color: var(--primary);
 }
 
-.portal-bootstrap4 .modal.show .modal-dialog {
+.console-bootstrap4 .modal.show .modal-dialog {
     -webkit-transform: inherit;
     transform: translateX(-50%);
 }
 
-.portal-bootstrap4 .modal-dialog {
+.console-bootstrap4 .modal-dialog {
     max-width: inherit;
     margin: 1.75rem 0;
     left: 50vw;
@@ -89,7 +89,7 @@ span[role="button"] {
 /* # UI Styles (markup based) */
 
 /* ## Button styling. */
-.portlet-content:not(.portlet--no-markup-styles) button[type="button"] {
+.conlet-content:not(.conlet--no-markup-styles) button[type="button"] {
     display: inline-block;
     font-weight: 400;
     color: #fff;
@@ -109,7 +109,7 @@ span[role="button"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .portlet-content:not(.portlet--no-markup-styles) button[type="button"] {
+    .conlet-content:not(.conlet--no-markup-styles) button[type="button"] {
         transition: none;
     }
 }

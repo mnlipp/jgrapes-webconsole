@@ -25,7 +25,8 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * The base class for events that result in a portlet being rendered.
+ * The base class for events that result in a web console component 
+ * being rendered.
  */
 public abstract class RenderConletRequestBase<T> extends Event<T> {
     private final RenderSupport renderSupport;
@@ -73,7 +74,7 @@ public abstract class RenderConletRequestBase<T> extends Event<T> {
     }
 
     /**
-     * Indicates if the portlet is to be put in the foreground.
+     * Indicates if the web console component is to be put in the foreground.
      * 
      * @return the result
      */
