@@ -41,5 +41,5 @@ task jsdoc(type: NodeTask) {
     script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
     args = ["-c", "${rootProject.projectDir}/jsdoc.json",
         "--destination", jsDocDestDir,
-        "resources/org/jgrapes/webconsole/bootstrap4/b4uiportal.js"]
+        "resources/org/jgrapes/webconsole/bootstrap4/b4uiconsole.js"]
 }

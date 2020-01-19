@@ -53,7 +53,7 @@ task jsdoc(type: NodeTask) {
         "${rootProject.projectDir}/jsdoc.json",
         "--destination",
         jsDocDestDir,
-        "resources/org/jgrapes/webconsole/base/jgportal.js"
+        "resources/org/jgrapes/webconsole/base/jgconsole.js"
     ]
 }
 

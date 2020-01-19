@@ -41,5 +41,5 @@ task jsdoc(type: NodeTask) {
     script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
     args = ["-c", "${rootProject.projectDir}/jsdoc.json",
         "--destination", jsDocDestDir,
-        "resources/org/jgrapes/webconsole/jqueryui/jquiportal.js"]
+        "resources/org/jgrapes/webconsole/jqueryui/jquiconsole.js"]
 }
