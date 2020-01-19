@@ -1,7 +1,7 @@
 Bundle-Name: JGrapes Portal Components Provider
 Bundle-Copyright: Michael N. Lipp (c) 2020
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
-Export-Package: org.jgrapes.webconsole.provider.jgpvuecomponents
+Export-Package: org.jgrapes.webconsole.provider.jgwcvuecomponents
 
 -sources: true
 -runee: JavaSE-1.8

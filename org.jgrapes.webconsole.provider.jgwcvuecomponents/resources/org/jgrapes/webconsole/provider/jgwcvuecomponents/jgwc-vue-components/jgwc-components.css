@@ -16,20 +16,20 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-.jgp-pulldown-menu {
+.jgwc-pulldown-menu {
     display: inline-block;
     position: relative;
 }
 
-.jgp-pulldown-menu button[aria-expanded=false] + ul {
+.jgwc-pulldown-menu button[aria-expanded=false] + ul {
     display: none;
 }
 
-.jgp-pulldown-menu button[aria-expanded=true] + ul {
+.jgwc-pulldown-menu button[aria-expanded=true] + ul {
     display: block;
 }
 
-.jgp-pulldown-menu > ul {
+.jgwc-pulldown-menu > ul {
     list-style: none;
     position: absolute;
     z-index: 1000;
@@ -38,7 +38,7 @@
     right: auto;    
 }
 
-.jgp-modal-dialog {
+.jgwc-modal-dialog {
     position: fixed;
     overflow-y: auto;
     top: 0;
@@ -48,7 +48,7 @@
     z-index: 10000;
 }
 
-.jgp-modal-dialog [role="dialog"] {
+.jgwc-modal-dialog [role="dialog"] {
     min-height: 100vh;
     position: absolute;
     top: 2rem;

@@ -360,8 +360,8 @@ class ResourceManager {
         this._console = console;
         this._debugLoading = false;
         this._providedScriptResources = new Set(); // Names, i.e. strings
-        document.querySelectorAll("script[data-jgp-provides]").forEach(s => {
-            s.getAttribute("data-jgp-provides").split(",").forEach(
+        document.querySelectorAll("script[data-jgwc-provides]").forEach(s => {
+            s.getAttribute("data-jgwc-provides").split(",").forEach(
                 n => this._providedScriptResources.add(n.trim()));
         });
         if (this._debugLoading) {
@@ -1057,8 +1057,8 @@ class Console {
     };
 
     _execOnLoad(container) {
-        container.find("[data-jgp-on-load]").each(function() {
-            let onLoad = $(this).data("jgp-on-load");
+        container.find("[data-jgwc-on-load]").each(function() {
+            let onLoad = $(this).data("jgwc-on-load");
             let segs = onLoad.split(".");
             let obj = window;
             while (obj && segs.length > 0) {
@@ -1071,7 +1071,7 @@ class Console {
     }
 
     /**
-     * Invokes the functions defined in `data-jgp-on-apply`
+     * Invokes the functions defined in `data-jgwc-on-apply`
      * attributes. Must be invoked by edit dialogs when 
      * they are closed.
      * 
@@ -1079,8 +1079,8 @@ class Console {
      */
     execOnApply(container) {
         container = $(container);
-        container.find("[data-jgp-on-apply]").each(function() {
-            let onApply = $(this).data("jgp-on-apply");
+        container.find("[data-jgwc-on-apply]").each(function() {
+            let onApply = $(this).data("jgwc-on-apply");
             let segs = onApply.split(".");
             let obj = window;
             while (obj && segs.length > 0) {

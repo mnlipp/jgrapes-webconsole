@@ -372,7 +372,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
 
     showEditDialog(container, modes, content) {
         let _this = this;
-        let dialog = new (Vue.component('jgp-modal-dialog'))({
+        let dialog = new (Vue.component('jgwc-modal-dialog'))({
             propsData: {
                 content: content,
                 contentClasses: ["conlet-content"],

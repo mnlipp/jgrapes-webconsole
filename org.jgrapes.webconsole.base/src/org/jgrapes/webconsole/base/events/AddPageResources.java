@@ -69,14 +69,14 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  * may be "pre-loaded" by adding the appropriate `script` element to the
  * initial portal page. In order to make the pre-loading known to the
  * resource manager, the `script` elements must carry an attribute
- * `data-jgp-provides` with a comma separated list of JavaScript resource
+ * `data-jgwc-provides` with a comma separated list of JavaScript resource
  * names provided by loading the script resource. The name(s) must match
  * the name(s) used in the {@link AddPageResources} request generated
  * by the {@link PageResourceProvider} for the pre-loaded resource(s).
  * Here's an example (for a portal using the {@link FreeMarkerConsoleWeblet}
  * to generate the initial portal page):
  * ```html
- * {@code <}script data-jgp-provides="jquery"
+ * {@code <}script data-jgwc-provides="jquery"
  *   src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"{@code >}
  * {@code <}/script{@code >};
  * ``` 

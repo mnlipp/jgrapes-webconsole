@@ -2,13 +2,13 @@
 
   <!-- Top navigation -->
   <span><#include "console-brand.ftl.html"></span>
-  <jgp-pulldown-menu v-bind:id="'conlet-menu'" 
+  <jgwc-pulldown-menu v-bind:id="'conlet-menu'" 
     v-bind:label="'<span class=\'fas fa-puzzle-piece\'></span>'"
     v-bind:items="this.$store.state.conletTypes"
-    v-bind:action="function(row) { this.$consoleRenderer.console().addConlet(row[1], row[2]) }"></jgp-pulldown-menu>
-  <jgp-pulldown-menu v-bind:id="'language-selector'" 
+    v-bind:action="function(row) { this.$consoleRenderer.console().addConlet(row[1], row[2]) }"></jgwc-pulldown-menu>
+  <jgwc-pulldown-menu v-bind:id="'language-selector'" 
     v-bind:label="'<span class=\'fas fa-language\'></span>'"
     v-bind:items="this.$store.state.localeMenuitems"
-    v-bind:action="function(row) { this.$store.commit('lang', row[1]) }"></jgp-pulldown-menu>
+    v-bind:action="function(row) { this.$store.commit('lang', row[1]) }"></jgwc-pulldown-menu>
 
 </header>

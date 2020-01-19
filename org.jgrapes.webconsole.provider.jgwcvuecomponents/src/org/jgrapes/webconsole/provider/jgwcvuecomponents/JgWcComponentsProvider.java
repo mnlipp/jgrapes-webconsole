@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.webconsole.provider.jgpvuecomponents;
+package org.jgrapes.webconsole.provider.jgwcvuecomponents;
 
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
@@ -35,9 +35,9 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 
 /**
- * Provider for the JGrapes WebConsole Components.
+ * Provider for the JGrapes Web Console Components.
  */
-public class JgpComponentsProvider extends PageResourceProvider {
+public class JgWcComponentsProvider extends PageResourceProvider {
 
     /**
      * Creates a new component with its channel set to the given 
@@ -47,7 +47,7 @@ public class JgpComponentsProvider extends PageResourceProvider {
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
-    public JgpComponentsProvider(Channel componentChannel) {
+    public JgWcComponentsProvider(Channel componentChannel) {
         super(componentChannel);
     }
 
@@ -67,6 +67,6 @@ public class JgpComponentsProvider extends PageResourceProvider {
             ParseException, IOException {
         portalSession.respond(new AddPageResources()
             .addScriptResource(new ScriptResource()
-                .setProvides(new String[] { "jgp-vue-components" })));
+                .setProvides(new String[] { "jgwc-vue-components" })));
     }
 }

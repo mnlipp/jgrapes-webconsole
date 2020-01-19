@@ -18,7 +18,7 @@ dependencies {
     compile project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vuex')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.jgpvuecomponents')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.jgwcvuecomponents')
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
     runtimeOnly project(':org.jgrapes.webconsole.provider.lodash')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')

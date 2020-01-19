@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.webconsole.provider.jgpvuecomponents;
+package org.jgrapes.webconsole.provider.jgwcvuecomponents;
 
 import java.util.Map;
 import java.util.Optional;
@@ -26,9 +26,9 @@ import org.jgrapes.core.ComponentType;
 import org.jgrapes.webconsole.base.PageResourceProviderFactory;
 
 /**
- * A factory for creating {@link JgpComponentsProvider}s.
+ * A factory for creating {@link JgWcComponentsProvider}s.
  */
-public class JgpComponentsProviderFactory implements PageResourceProviderFactory {
+public class JgWcComponentsProviderFactory implements PageResourceProviderFactory {
 
     /*
      * (non-Javadoc)
@@ -37,7 +37,7 @@ public class JgpComponentsProviderFactory implements PageResourceProviderFactory
      */
     @Override
     public Class<? extends ComponentType> componentType() {
-        return JgpComponentsProvider.class;
+        return JgWcComponentsProvider.class;
     }
 
     /*
@@ -49,7 +49,7 @@ public class JgpComponentsProviderFactory implements PageResourceProviderFactory
     @Override
     public Optional<ComponentType> create(
             Channel componentChannel, Map<Object, Object> properties) {
-        return Optional.of(new JgpComponentsProvider(componentChannel));
+        return Optional.of(new JgWcComponentsProvider(componentChannel));
     }
 
 }

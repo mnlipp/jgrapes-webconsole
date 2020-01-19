@@ -35,13 +35,13 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
  * This class maintains all required information except the actual content
  * (the HTML) which must be provided by the derived classes.
  * 
- * The HTML provided is searched for attributes `data-jgp-on-load`
+ * The HTML provided is searched for attributes `data-jgwc-on-load`
  * which must have as value the name of a function. When the
  * HTML has been loaded, this function is invoked with the element
  * containing the attribute as parameter.
  * 
  * The HTML elements of edit dialogs ({@link RenderMode#Edit})
- * can have an additional attribute `data-jgp-on-apply`
+ * can have an additional attribute `data-jgwc-on-apply`
  * which must have as its value the name of a function. This
  * function is invoked when changes made in the form must be
  * applied (e.g. before the dialog is closed).

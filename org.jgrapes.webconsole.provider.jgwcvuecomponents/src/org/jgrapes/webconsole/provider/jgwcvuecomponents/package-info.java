@@ -20,4 +20,4 @@
  * Provides some vue components used in but independent of the Vue.js portal
  * which may also be of interest when implementing portlets. 
  */
-package org.jgrapes.webconsole.provider.jgpvuecomponents;
+package org.jgrapes.webconsole.provider.jgwcvuecomponents;

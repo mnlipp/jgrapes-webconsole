@@ -18,7 +18,7 @@
 
 import Vue from "../vue/vue.esm.browser.js"
 
-Vue.component('jgp-pulldown-menu', {
+Vue.component('jgwc-pulldown-menu', {
   props: {
     id: String,
     label: String,
@@ -59,7 +59,7 @@ Vue.component('jgp-pulldown-menu', {
     }    
   },
   template: `
-    <div v-bind:id="id" class="jgp-pulldown-menu pulldown-menu">
+    <div v-bind:id="id" class="jgwc-pulldown-menu pulldown-menu">
       <button type="button" aria-haspopup="true"
         v-bind:aria-controls="id + '-menu'" 
         v-bind:aria-expanded="expanded ? 'true' : 'false'" 
@@ -85,7 +85,7 @@ Vue.component('jgp-pulldown-menu', {
   }
 });
 
-Vue.component('jgp-tablist', {
+Vue.component('jgwc-tablist', {
   props: {
     id: String,
     initialTabs: Array,
@@ -155,7 +155,7 @@ Vue.component('jgp-tablist', {
     },
   },
   template: `
-    <div v-bind:id="id" class="jgp-tablist" role="tablist">
+    <div v-bind:id="id" class="jgwc-tablist" role="tablist">
       <span v-for="tab of tabs" role="tab"
           v-bind:aria-selected="tab.id == selected ? 'true' : 'false'"
           v-bind:aria-controls="tab.id">
@@ -180,7 +180,7 @@ Vue.component('jgp-tablist', {
   }
 });
 
-Vue.component('jgp-modal-dialog', {
+Vue.component('jgwc-modal-dialog', {
   props: {
     id: String,
     title: String,
@@ -196,7 +196,7 @@ Vue.component('jgp-modal-dialog', {
     }
   },
   template: `
-    <div class="jgp-modal-dialog dialog__backdrop" :hidden="!isOpen">
+    <div class="jgwc-modal-dialog dialog__backdrop" :hidden="!isOpen">
       <div :id="effectiveId" role="dialog" :aria-labelledby="effectiveId + '-label'" 
         aria-modal="true">
         <header :id="effectiveId + '-label'">
@@ -236,6 +236,6 @@ Vue.component('jgp-modal-dialog', {
     if (!this.constructor.prototype.$instanceCounter) {
         this.constructor.prototype.$instanceCounter = 0;
     }
-    this.effectiveId = "jgp-modal-dialog-" + ++this.constructor.prototype.$instanceCounter;
+    this.effectiveId = "jgwc-modal-dialog-" + ++this.constructor.prototype.$instanceCounter;
   }
 });
