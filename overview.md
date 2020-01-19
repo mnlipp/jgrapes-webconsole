@@ -10,7 +10,7 @@ the core framework and components.
 
 `org.jgrapes.webconsole`
 : Components for building web consoles. **Make sure to read 
-    <a href="org/jgrapes/webcon/base/package-summary.html#package.description">this package's description</a>
+    <a href="org/jgrapes/webconsole/base/package-summary.html#package.description">this package's description</a>
     first.**
     
 @startuml package-hierarchy.svg
@@ -20,26 +20,26 @@ package org.jgrapes {
     package "JGrapes Core Components" {
     }
 
-    package org.jgrapes.webcon.base [[org/jgrapes/webcon/base/package-summary.html#package.description]] {
+    package org.jgrapes.webconsole.base [[org/jgrapes/webconsole/base/package-summary.html#package.description]] {
     }
 
-    package org.jgrapes.webcon.vuejs [[org/jgrapes/webcon/vuejs/package-summary.html#package.description]] {
+    package org.jgrapes.webconsole.vuejs [[org/jgrapes/webconsole/vuejs/package-summary.html#package.description]] {
     }
 
-    package org.jgrapes.webcon.bootstrap4 [[org/jgrapes/webcon/bootstrap4/package-summary.html#package.description]] {
+    package org.jgrapes.webconsole.bootstrap4 [[org/jgrapes/webconsole/bootstrap4/package-summary.html#package.description]] {
     }
 
-    package org.jgrapes.webcon.jqueryui [[org/jgrapes/webcon/jqueryui/package-summary.html#package.description]] {
+    package org.jgrapes.webconsole.jqueryui [[org/jgrapes/webconsole/jqueryui/package-summary.html#package.description]] {
     }
 
-    package "org.jgrapes.webcon.jqueryui.themes.*" {
+    package "org.jgrapes.webconsole.jqueryui.themes.*" {
     }
 }
 
-"JGrapes Core Components" <.. org.jgrapes.webcon.base
-org.jgrapes.webcon.base <.. "org.jgrapes.webcon.jqueryui"
-org.jgrapes.webcon.jqueryui <.. "org.jgrapes.webcon.jqueryui.themes.*"
-org.jgrapes.webcon.base <.. "org.jgrapes.webcon.bootstrap4"
-org.jgrapes.webcon.base <.. "org.jgrapes.webcon.vuejs"
+"JGrapes Core Components" <.. org.jgrapes.webconsole.base
+org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.jqueryui"
+org.jgrapes.webconsole.jqueryui <.. "org.jgrapes.webconsole.jqueryui.themes.*"
+org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.bootstrap4"
+org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.vuejs"
 
 @enduml

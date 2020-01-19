@@ -18,6 +18,6 @@
 
 /**
  * Provides a component for adding the [jQueryUI](https://jqueryui.com/) 
- * library to a portal.
+ * library to a web console.
  */
 package org.jgrapes.webconsole.provider.jqueryui;

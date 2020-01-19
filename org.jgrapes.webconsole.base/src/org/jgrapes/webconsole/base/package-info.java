@@ -17,7 +17,7 @@
  */
 
 /**
- * Provides the components for building a portal based on the
+ * Provides the components for building a web console based on the
  * core, io and http packages. 
  * 
  * [TOC formatted]
@@ -28,7 +28,7 @@
  * ### WebConsole and ConsoleWeblet 
  * 
  * The {@link org.jgrapes.webconsole.base.WebConsole} component 
- * is conceptually the main component of the portal. It exchanges events 
+ * is conceptually the main component of the web console. It exchanges events 
  * with the portlets and helper components, using a channel that is 
  * independent of the channel used for the communication with the browser.
  *
@@ -39,15 +39,15 @@
  * with the browser. You can think of the 
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet}/{@link org.jgrapes.webconsole.base.WebConsole}
  * pair as a gateway that translates the Input/Output related events on the 
- * HTTP/WebSocket side to portal/portlet related events on the portlet side and 
- * vice versa.
+ * HTTP/WebSocket side to web console and component related events on the 
+ * portlet side and vice versa.
  * 
- * ![WebConsole Structure](PortalStructure.svg)
+ * ![WebConsole Structure](ConsoleStructure.svg)
  * 
- * In the browser, the portal is implemented as a single page 
+ * In the browser, the web console is implemented as a single page 
  * application. The {@link org.jgrapes.webconsole.base.ConsoleWeblet} provides
  * an initial HTML document that implements the basic structure of
- * the portal. Aside from additional HTTP requests for static resources
+ * the web console. Aside from additional HTTP requests for static resources
  * like JavaScript libraries, CSS, images etc. all information is
  * then exchanged using JSON messages exchanged over a web socket 
  * connection that is established immediately after the initial 
@@ -63,12 +63,12 @@
  * usually preferable to add such libraries independent from individual
  * portlets in order to avoid duplicate loading and version conflicts.
  * This is done by {@link org.jgrapes.webconsole.base.PageResourceProvider}s
- * that fire the required events on portal startup (see below).
+ * that fire the required events on web console startup (see below).
  * 
  * ### Portlets
  * 
  * Conlet components represent available portlet types. If a 
- * portlet is actually used (instantiated) in the portal, and state
+ * portlet is actually used (instantiated) in the web console, and state
  * is associated with this instance or instances have to be tracked,
  * the portlet has to create and maintain a server side representation
  * of the instance. How this is done is completely up to the portlet. 
@@ -80,7 +80,7 @@
  * for each instance as an item stored in the browser session. This
  * couples the lifetime of the portlet data instances with the 
  * lifetime of the general session data, which is what you'd 
- * usually expect. Note that the portal data object is conceptually 
+ * usually expect. Note that the web console data object is conceptually 
  * a view of some model maintained elsewhere. If the state information
  * associated with this view (e.g. columns displayed or hidden in
  * a table representation) needs to be persisted across 
@@ -88,20 +88,21 @@
  * mechanism of its choice.
  * 
  * The functionality that must be provided by a portlet with respect 
- * to its display on the portal page will be discussed later, after
+ * to its display on the web console page will be discussed later, after
  * all components and their interactions have been introduced.
  * 
  * ### WebConsole Policies
  * 
  * WebConsole policy components are responsible for establishing the initial
- * set of portlets shown after the portal page has loaded. Usually,
- * there will be a portal policy component that restores the layout from the
- * previous session. {@link org.jgrapes.webconsole.base.KVStoreBasedConsolePolicy}
+ * set of portlets shown after the web console page has loaded. Usually,
+ * there will be a web console policy component that restores the layout 
+ * from the previous session. 
+ * {@link org.jgrapes.webconsole.base.KVStoreBasedConsolePolicy}
  * is an example of such a component.
  * 
- * There can be more than one portal policy component. A common use case
- * is to have one policy component that maintains the portal layout
- * and another component that ensures that the portal is not empty when
+ * There can be more than one web console policy component. A common use case
+ * is to have one policy component that maintains the web console layout
+ * and another component that ensures that the web console is not empty when
  * a new session is initially created. The demo includes such a component.
  * 
  * WebConsole Session Startup
@@ -109,12 +110,12 @@
  * 
  * ### WebConsole Page Loading
  * 
- * The following diagram shows the start of a portal session 
+ * The following diagram shows the start of a web console session 
  * up to the exchange of the first messages on the web socket connection.
  * 
- * ![Boot Event Sequence](PortalBootSeq.svg)
+ * ![Boot Event Sequence](ConsoleBootSeq.svg)
  * 
- * After the portal page has loaded and the web socket connection has been
+ * After the web console page has loaded and the web socket connection has been
  * established, all information is exchanged using 
  * [JSON RPC notifications](http://www.jsonrpc.org/specification#notification). 
  * The {@link org.jgrapes.webconsole.base.ConsoleWeblet} processes 
@@ -129,7 +130,7 @@
  * to a higher level event that is again fired on the
  * {@link org.jgrapes.webconsole.base.ConsoleSession} channel.
  * 
- * Components such as portlets or portal policies respond by sending 
+ * Components such as portlets or web console policies respond by sending 
  * {@link org.jgrapes.webconsole.base.events.ConsoleCommand}s on the
  * {@link org.jgrapes.webconsole.base.ConsoleSession} channel as responses.
  * The {@link org.jgrapes.webconsole.base.events.ConsoleCommand}s are handled 
@@ -140,13 +141,13 @@
  * ### WebConsole Session Preparation and Configuration
  * 
  * The diagram below shows the complete mandatory sequence of events 
- * following the portal ready message. The diagram uses a 
+ * following the web console ready message. The diagram uses a 
  * simplified version of the sequence diagram that combines the 
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet} and the 
  * {@link org.jgrapes.webconsole.base.WebConsole} into a single object and leaves out the
  * details about the JSON serialization/deserialization.
  * 
- * ![WebConsole Ready Event Sequence](PortalReadySeq.svg)
+ * ![WebConsole Ready Event Sequence](ConsoleReadySeq.svg)
  * 
  * The remaining part of this section provides an overview of the 
  * preparation and configuration sequence. Detailed information 
@@ -160,39 +161,39 @@
  * {@link org.jgrapes.webconsole.base.events.AddPageResources} events fired 
  * by the {@link org.jgrapes.webconsole.base.PageResourceProvider} components
  * in response to the {@link org.jgrapes.webconsole.base.events.ConsoleReady} event.
- * These cause the portal page to load additional, global resources.
+ * These cause the web console page to load additional, global resources.
  * 
  * In parallel (also in response to the 
  * {@link org.jgrapes.webconsole.base.events.ConsoleReady} event), each portlet 
  * component fires an {@link org.jgrapes.webconsole.base.events.AddConletType} event.
- * This cause the portal page in the browser to register the portlet type 
- * in the portal's menu of instantiable portlets and to load any additionally 
- * required resources.
+ * This cause the web console page in the browser to register the portlet type 
+ * in the web console's menu of instantiable portlets and to load any 
+ * additionally required resources.
  * 
  * When all previously mentioned events have
- * been processed, the portal is considered prepared for usage and a
+ * been processed, the web console is considered prepared for usage and a
  * {@link org.jgrapes.webconsole.base.events.ConsolePrepared} event is generated
  * (by the framework as {@link org.jgrapes.core.CompletionEvent} of the
  * {@link org.jgrapes.webconsole.base.events.ConsoleReady} event). This causes
- * the portal policy to send the last known layout to the portal page
+ * the web console policy to send the last known layout to the web console page
  * in the browser and to send 
  * {@link org.jgrapes.webconsole.base.events.RenderConletRequest} events 
  * for all portlets (portlet instances) in that last known layout.
  * These are the same events as those sent by the browser
- * when the user adds a new portlet instance to the portal page.
- * The portal policy thus "replays" the creation of the portlets.
+ * when the user adds a new portlet instance to the web console page.
+ * The web console policy thus "replays" the creation of the portlets.
  * 
  * As completion event of the {@link org.jgrapes.webconsole.base.events.ConsolePrepared}
  * event, the framework generates a 
  * {@link org.jgrapes.webconsole.base.events.ConsoleConfigured} event which is sent to
- * the portal, indicating that it is now ready for use.
+ * the web console, indicating that it is now ready for use.
  * 
  * WebConsole Session Use
  * ------------------
  * 
- * After the portal session has been configured, the system usually
+ * After the web console session has been configured, the system usually
  * waits for input from the user. Changes of the layout of the
- * portal page result in events such as 
+ * web console page result in events such as 
  * {@link org.jgrapes.webconsole.base.events.AddConletRequest},
  * {@link org.jgrapes.webconsole.base.events.DeleteConletRequest} and
  * {@link org.jgrapes.webconsole.base.events.RenderConletRequest}.
@@ -201,7 +202,7 @@
  * {@link org.jgrapes.webconsole.base.events.NotifyConletModel} events
  * that are processed by the respective portlet component. If,
  * due to the results of the action, the representation of the
- * portlet on the portal page must be updated, the portlet 
+ * portlet on the web console page must be updated, the portlet 
  * component fires a 
  * {@link org.jgrapes.webconsole.base.events.NotifyConletView} event.
  * 
@@ -217,17 +218,17 @@
  * exhibit a specific behavior that can be derived from the
  * descriptions above. The documentation of the base class
  * {@link org.jgrapes.webconsole.base.AbstractConlet} summarizes
- * the responsibilities of a portal component.
+ * the responsibilities of a web console component.
  * 
  * Portlets consist of (at least one) Java class and HTML generated
  * by this class. Optionally, a portlet can contribute style information
  * and JavaScript (see {@link org.jgrapes.webconsole.base.events.AddConletType}).
  * It may (and should) make use of the styles and 
- * <a href="jsdoc/module-console-base-resource_jgportal.html">functions</a> 
- * provided by the portal.
+ * <a href="jsdoc/module-console-base-resource_jgconsole.html">functions</a> 
+ * provided by the web console.
  * 
  * 
- * @startuml PortalStructure.svg
+ * @startuml ConsoleStructure.svg
  * skinparam packageStyle rectangle
  * allow_mixing
  * 
@@ -264,14 +265,14 @@
  * }
  * 
  * WebConsole "1" -down- "*" PageResourceProvider
- * WebConsole "1" -down- "*" PortalPolicy
+ * WebConsole "1" -down- "*" ConsolePolicy
  * 
  * @enduml
  * 
- * @startuml PortalBootSeq.svg
+ * @startuml ConsoleBootSeq.svg
  * hide footbox
  * 
- * Browser -> ConsoleWeblet: "GET <portal URL>"
+ * Browser -> ConsoleWeblet: "GET <console URL>"
  * activate ConsoleWeblet
  * ConsoleWeblet -> Browser: "HTML document"
  * deactivate ConsoleWeblet
@@ -290,14 +291,14 @@
  *     Browser -> ConsoleWeblet: Input (JSON RPC)
  * end
  * deactivate Browser
- * ConsoleWeblet -> WebConsole: JsonInput("portalReady")
+ * ConsoleWeblet -> WebConsole: JsonInput("consoleReady")
  * deactivate ConsoleWeblet
  * activate WebConsole
- * WebConsole -> PortalPolicy: ConsoleReady
+ * WebConsole -> ConsolePolicy: ConsoleReady
  * deactivate WebConsole
- * activate PortalPolicy
- * PortalPolicy -> ConsoleWeblet: LastConsoleLayout
- * deactivate PortalPolicy
+ * activate ConsolePolicy
+ * ConsolePolicy -> ConsoleWeblet: LastConsoleLayout
+ * deactivate ConsolePolicy
  * activate ConsoleWeblet
  * loop while request data
  *     ConsoleWeblet -> Browser: Output (JSON RPC)
@@ -305,10 +306,10 @@
  * deactivate ConsoleWeblet
  * @enduml
  * 
- * @startuml PortalReadySeq.svg
+ * @startuml ConsoleReadySeq.svg
  * hide footbox
  * 
- * Browser -> WebConsole: "portalReady"
+ * Browser -> WebConsole: "consoleReady"
  * activate WebConsole
  * 
  * par
@@ -336,13 +337,13 @@
  * end
  * 
  * actor Framework
- * Framework -> PortalPolicy: ConsolePrepared
+ * Framework -> ConsolePolicy: ConsolePrepared
  * deactivate WebConsole
- * activate PortalPolicy
- * PortalPolicy -> WebConsole: LastConsoleLayout
+ * activate ConsolePolicy
+ * ConsolePolicy -> WebConsole: LastConsoleLayout
  * WebConsole -> Browser: "lastConsoleLayout"
  * loop for all portlets to be displayed
- *     PortalPolicy -> PortletX: RenderConletRequest
+ *     ConsolePolicy -> PortletX: RenderConletRequest
  *     activate PortletX
  *     PortletX -> WebConsole: RenderConlet
  *     deactivate PortletX
@@ -350,10 +351,10 @@
  *     WebConsole -> Browser: "renderPortlet"
  *     deactivate WebConsole
  * end
- * deactivate PortalPolicy
+ * deactivate ConsolePolicy
  * Framework -> WebConsole: ConsoleConfigured
  * activate WebConsole
- * WebConsole -> Browser: "portalConfigured"
+ * WebConsole -> Browser: "consoleConfigured"
  * deactivate WebConsole
  * 
  * @enduml

@@ -27,10 +27,10 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * An event that signals the request of a resource by the portal (browser).
- * Resource request from the browser for a web console component resource 
- * are usually generated during console boot. See the description of
- * {@link AddConletType} for details.
+ * An event that signals the request of a resource by the web console 
+ * (browser). Resource request from the browser for a web console 
+ * component resource are usually generated during console boot. See 
+ * the description of {@link AddConletType} for details.
  */
 public class ConletResourceRequest extends ResourceRequest {
 

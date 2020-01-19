@@ -69,12 +69,12 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
      * Instantiates a new jQuery UI weblet.
      *
      * @param webletChannel the weblet channel
-     * @param portalChannel the portal channel
-     * @param portalPrefix the portal prefix
+     * @param consoleChannel the web console channel
+     * @param consolePrefix the web console prefix
      */
-    public JQueryUiWeblet(Channel webletChannel, Channel portalChannel,
-            URI portalPrefix) {
-        super(webletChannel, portalChannel, portalPrefix);
+    public JQueryUiWeblet(Channel webletChannel, Channel consoleChannel,
+            URI consolePrefix) {
+        super(webletChannel, consoleChannel, consolePrefix);
         baseTheme = new Provider();
     }
 
@@ -111,7 +111,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
      * a given theme provider and locale.
      * 
      * @param supplier the function
-     * @return the portal fo reasy chaining
+     * @return the web console fo reasy chaining
      */
     public JQueryUiWeblet setFallbackResourceSupplier(
             BiFunction<ThemeProvider, String, URL> supplier) {
@@ -121,12 +121,12 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 
     @Override
     protected void renderConsole(Request.In.Get event, IOSubchannel channel,
-            UUID portalSessionId) throws IOException, InterruptedException {
+            UUID consoleSessionId) throws IOException, InterruptedException {
         // Reloading themes on every reload allows themes
         // to be added dynamically. Note that we must load again
         // (not reload) in order for this to work in an OSGi environment.
         themeLoader = null;
-        super.renderConsole(event, channel, portalSessionId);
+        super.renderConsole(event, channel, consoleSessionId);
     }
 
     @Override
@@ -183,7 +183,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     @Handler(channels = ConsoleChannel.class)
     public void onJsonInput(JsonInput event, ConsoleSession channel)
             throws InterruptedException, IOException {
-        // Send events to portlets on portal's channel
+        // Send events to portlets on web console's channel
         JsonArray params = event.request().params();
         switch (event.request().method()) { // NOPMD
         case "setTheme": {
@@ -290,12 +290,12 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 //    /**
 //     * The channel used to send {@link PageResourceRequest}s and
 //     * {@link ConletResourceRequest}s to the portlets (via the
-//     * portal).
+//     * web console).
 //     */
 //    public class ConsoleResourceChannel extends LinkedIOSubchannel {
 //
 //        /**
-//         * Instantiates a new portal resource channel.
+//         * Instantiates a new web console resource channel.
 //         *
 //         * @param hub the hub
 //         * @param upstreamChannel the upstream channel
@@ -314,13 +314,13 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 //
 //        @Override
 //        public URI portletResource(String portletType, URI uri) {
-//            return portal.prefix().resolve(uriFromPath(
+//            return console.prefix().resolve(uriFromPath(
 //                "portlet-resource/" + portletType + "/")).resolve(uri);
 //        }
 //
 //        @Override
 //        public URI pageResource(URI uri) {
-//            return portal.prefix().resolve(uriFromPath(
+//            return console.prefix().resolve(uriFromPath(
 //                "page-resource/")).resolve(uri);
 //        }
 //

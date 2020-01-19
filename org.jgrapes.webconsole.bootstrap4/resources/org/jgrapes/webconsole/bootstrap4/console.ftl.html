@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Portal -->
+<!-- Console -->
 <link rel="icon" href="${renderSupport.consoleResource('favicon.ico')}">
 <title>${_("consoleTitle")}</title>
 
@@ -17,7 +17,7 @@
 <!-- Gridstack -->
 <link rel="stylesheet"
   href="${renderSupport.pageResource('gridstack/gridstack' + minifiedExtension + '.css')}" />
-<!-- Portal -->
+<!-- Console -->
 <link rel="stylesheet"
   href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
@@ -50,16 +50,16 @@
   src="${renderSupport.pageResource('jquery-ui-touch-punch/jquery.ui.touch-punch' + minifiedExtension + '.js')}"></script>
 <!-- More... -->
 
-<!-- Portal -->
+<!-- Console -->
   <script type="module">
   import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
-  import B4UIPortal from "${renderSupport.consoleResource('b4uiconsole.js')}"
+  import B4UIConsole from "${renderSupport.consoleResource('b4uiconsole.js')}"
   JGConsole.init("${consoleSessionId}", 
     parseInt("${consoleSessionRefreshInterval?c}"),
-    parseInt("${consoleSessionInactivityTimeout?c}"), new B4UIPortal.Renderer({
+    parseInt("${consoleSessionInactivityTimeout?c}"), new B4UIConsole.Renderer({
       ok: '${_("OK")}',
       close: '${_("Close")}',
-      sessionSuspendedTitle: '${_("Portal Session Suspended")}',
+      sessionSuspendedTitle: '${_("Console Session Suspended")}',
       sessionSuspendedMessage: '${_("consoleSessionSuspendedMessage")}',
       serverConnectionLost: '${_("serverConnectionLostMessage")}',
       serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',

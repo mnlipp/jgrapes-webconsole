@@ -18,6 +18,6 @@
 
 /**
  * Provides a component for adding the [Chart.js](http://www.chartjs.org/)
- * library to a portal.
+ * library to a web console.
  */
 package org.jgrapes.webconsole.provider.chartjs;

@@ -18,6 +18,6 @@
 
 /**
  * Provides a component for adding the [Fontawesome](https://fontawesome.com/)
- * free web font to a portal.
+ * free web font to a web console.
  */
 package org.jgrapes.webconsole.provider.fontawesome;

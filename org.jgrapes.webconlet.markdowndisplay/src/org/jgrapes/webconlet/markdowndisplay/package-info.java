@@ -17,7 +17,7 @@
  */
 
 /**
- * A web console component for displaying markdown text in a portal.
+ * A web console component for displaying markdown text in a web console.
  */
 @org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconlet.markdowndisplay;

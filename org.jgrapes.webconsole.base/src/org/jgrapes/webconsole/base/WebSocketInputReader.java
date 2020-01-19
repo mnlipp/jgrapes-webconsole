@@ -92,14 +92,14 @@ public class WebSocketInputReader extends Thread {
      * Instantiates a new web socket input reader.
      *
      * @param wsInPipeline the ws in pipeline
-     * @param portalChannel the portal channel
+     * @param consoleChannel the web console channel
      */
     public WebSocketInputReader(EventPipeline wsInPipeline,
-            ConsoleSession portalChannel) {
+            ConsoleSession consoleChannel) {
         pipelineRef
             = new WebSocketInputReader.RefWithThread<>(wsInPipeline, this);
         channelRef
-            = new WebSocketInputReader.RefWithThread<>(portalChannel, this);
+            = new WebSocketInputReader.RefWithThread<>(consoleChannel, this);
         setDaemon(true);
     }
 
@@ -156,24 +156,24 @@ public class WebSocketInputReader extends Thread {
                 break;
             }
             // Fully decoded JSON available.
-            ConsoleSession portalSession = channelRef.get();
+            ConsoleSession consoleSession = channelRef.get();
             EventPipeline eventPipeline = pipelineRef.get();
-            if (eventPipeline == null || portalSession == null) {
+            if (eventPipeline == null || consoleSession == null) {
                 break;
             }
             // WebConsole session established, check for special disconnect
             if ("disconnect".equals(rpc.method())
-                && portalSession.consoleSessionId().equals(
+                && consoleSession.consoleSessionId().equals(
                     rpc.params().asString(0))) {
-                portalSession.discard();
+                consoleSession.discard();
                 return;
             }
-            // Ordinary message from portal (view) to server.
-            portalSession.refresh();
+            // Ordinary message from web console (view) to server.
+            consoleSession.refresh();
             if ("keepAlive".equals(rpc.method())) {
                 continue;
             }
-            eventPipeline.fire(new JsonInput(rpc), portalSession);
+            eventPipeline.fire(new JsonInput(rpc), consoleSession);
         }
     }
 }

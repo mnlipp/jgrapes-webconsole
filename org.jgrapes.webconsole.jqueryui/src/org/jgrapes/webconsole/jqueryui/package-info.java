@@ -17,7 +17,7 @@
  */
 
 /**
- * Provides a portal weblet that implements the portal page using the
+ * Provides a web console weblet that implements the web console page using the
  * [JQuery UI](http://jqueryui.com/) framework.
  */
 @org.osgi.annotation.versioning.Version("${api_version}")

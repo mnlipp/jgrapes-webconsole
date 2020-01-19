@@ -24,7 +24,7 @@ import org.jgrapes.core.ComponentType;
 import org.jgrapes.core.Components;
 
 /**
- * Evaluates and provides the styling info to a portal component.
+ * Evaluates and provides the styling info to a web console component.
  */
 public class StylingInfo {
 
@@ -64,17 +64,17 @@ public class StylingInfo {
             styling = (String) properties.get("styling");
         }
         if (styling == null) {
-            // Try to get the information from the portal (weblet)
-            ComponentType portal = component;
+            // Try to get the information from the web console (weblet)
+            ComponentType console = component;
             while (true) {
-                portal = Components.manager(portal).parent();
-                if (portal == null) {
+                console = Components.manager(console).parent();
+                if (console == null) {
                     break;
                 }
                 // Component is in tree, cache result.
                 styling = "standard";
-                if (portal instanceof ConsoleWeblet) {
-                    styling = ((ConsoleWeblet) portal).styling();
+                if (console instanceof ConsoleWeblet) {
+                    styling = ((ConsoleWeblet) console).styling();
                     break;
                 }
             }

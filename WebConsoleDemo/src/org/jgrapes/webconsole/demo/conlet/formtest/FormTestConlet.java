@@ -80,13 +80,13 @@ public class FormTestConlet
     }
 
     @Handler
-    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
-        portalSession.respond(new AddConletType(type())
+        consoleSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(portalSession.supportedLocales(), "conletName"))
+                displayNames(consoleSession.supportedLocales(), "conletName"))
             .addRenderMode(RenderMode.View)
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().conletResource(type(),
@@ -94,8 +94,8 @@ public class FormTestConlet
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "FormTest-style.css")));
         KeyValueStoreQuery query = new KeyValueStoreQuery(
-            storagePath(portalSession.browserSession()), portalSession);
-        fire(query, portalSession);
+            storagePath(consoleSession.browserSession()), consoleSession);
+        fire(query, consoleSession);
     }
 
     @Handler

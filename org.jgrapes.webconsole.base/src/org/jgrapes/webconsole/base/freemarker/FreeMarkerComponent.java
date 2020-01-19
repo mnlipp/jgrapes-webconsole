@@ -118,7 +118,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
     /**
      * Creates the request independent part of the freemarker model. The
      * result is cached as unmodifiable map as it can safely be assumed
-     * that the render support does not change for a given portal.
+     * that the render support does not change for a given web console.
      * 
      * This model provides:
      *  * The function `conletResource` that makes 
@@ -127,7 +127,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      *    of the web console component, only the second must be supplied 
      *    when the function is invoked in a template.
      * 
-     * @param renderSupport the render support from the portal
+     * @param renderSupport the render support from the web console
      * @return the result
      */
     protected Map<String, Object> fmTypeModel(

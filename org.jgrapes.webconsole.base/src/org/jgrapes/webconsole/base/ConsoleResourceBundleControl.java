@@ -38,7 +38,7 @@ public class ConsoleResourceBundleControl extends Control {
     private final List<Class<?>> clses;
 
     /**
-     * Instantiates a new portal resource bundle control.
+     * Instantiates a new web console resource bundle control.
      *
      * @param clses the classes to use
      */
@@ -68,7 +68,7 @@ public class ConsoleResourceBundleControl extends Control {
      * constructor and the base name. For each class (in reverse order)
      * an attempt is made to load a properties file relative to the
      * class. If found, the entries are merged with any already existing
-     * entries. The class list usually consists of the portal class
+     * entries. The class list usually consists of the web console class
      * and its ancestor classes. Using this controller, derived classes
      * can thus override resources from their base classes.
      */

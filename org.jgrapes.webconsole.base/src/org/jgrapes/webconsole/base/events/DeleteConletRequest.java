@@ -32,7 +32,7 @@ public class DeleteConletRequest extends Event<Void> {
     /**
      * Creates a new event.
      * 
-     * @param renderSupport the render support from the portal in case
+     * @param renderSupport the render support from the web console in case
      * the response requires it
      * @param conletId the web console component model that the notification is 
      * directed at 

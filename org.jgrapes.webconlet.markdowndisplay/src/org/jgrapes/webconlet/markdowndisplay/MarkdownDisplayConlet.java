@@ -66,7 +66,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
  * A web console component used to display information to the user. Instances
  * may be used as a kind of note, i.e. created and configured by
  * a user himself. A typical use case, however, is to create
- * an instance during startup by a portal policy.
+ * an instance during startup by a web console policy.
  */
 @SuppressWarnings("PMD.DataClass")
 public class MarkdownDisplayConlet
@@ -109,20 +109,21 @@ public class MarkdownDisplayConlet
      * On {@link ConsoleReady}, fire the {@link AddConletType}.
      *
      * @param event the event
-     * @param portalSession the portal session
+     * @param consoleSession the console session
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event,
+            ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add MarkdownDisplayConlet resources to page
-        portalSession.respond(new AddConletType(type())
+        consoleSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(portalSession.supportedLocales(), "conletName"))
+                displayNames(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires(new String[] { "markdown-it.github.io",
                     "github.com/markdown-it/markdown-it-abbr",
@@ -139,8 +140,8 @@ public class MarkdownDisplayConlet
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "MarkdownDisplay-style.css")));
         KeyValueStoreQuery query = new KeyValueStoreQuery(
-            storagePath(portalSession.browserSession()), portalSession);
-        fire(query, portalSession);
+            storagePath(consoleSession.browserSession()), consoleSession);
+        fire(query, consoleSession);
     }
 
     /**
@@ -188,8 +189,8 @@ public class MarkdownDisplayConlet
      */
     @Override
     public String doAddConlet(AddConletRequest event,
-            ConsoleSession portalSession) throws Exception {
-        ResourceBundle resourceBundle = resourceBundle(portalSession.locale());
+            ConsoleSession consoleSession) throws Exception {
+        ResourceBundle resourceBundle = resourceBundle(consoleSession.locale());
 
         // Create new model
         String conletId = (String) event.properties().get(CONLET_ID);
@@ -197,7 +198,7 @@ public class MarkdownDisplayConlet
             conletId = generateConletId();
         }
         MarkdownDisplayModel model = putInSession(
-            portalSession.browserSession(),
+            consoleSession.browserSession(),
             new MarkdownDisplayModel(conletId));
         model.setTitle((String) event.properties().getOrDefault(TITLE,
             resourceBundle.getString("conletName")));
@@ -215,25 +216,25 @@ public class MarkdownDisplayConlet
         // Save model
         String jsonState = JsonBeanEncoder.create()
             .writeObject(model).toJson();
-        portalSession.respond(new KeyValueStoreUpdate().update(
-            storagePath(portalSession.browserSession()) + model.getConletId(),
+        consoleSession.respond(new KeyValueStoreUpdate().update(
+            storagePath(consoleSession.browserSession()) + model.getConletId(),
             jsonState));
 
         // Send HTML
-        renderConlet(event, portalSession, model);
+        renderConlet(event, consoleSession, model);
         return conletId;
     }
 
     @Override
     protected void doRenderConlet(RenderConletRequest event,
-            ConsoleSession portalSession, String conletId,
+            ConsoleSession consoleSession, String conletId,
             MarkdownDisplayModel model) throws Exception {
-        renderConlet(event, portalSession, model);
+        renderConlet(event, consoleSession, model);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private void renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession portalSession, MarkdownDisplayModel model)
+            ConsoleSession consoleSession, MarkdownDisplayModel model)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         Set<RenderMode> modes = renderModes(model);
@@ -244,30 +245,30 @@ public class MarkdownDisplayConlet
         if (event.renderPreview()) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
-            portalSession.respond(new RenderConletFromTemplate(event,
+            consoleSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
-                tpl, fmModel(event, portalSession, model))
+                tpl, fmModel(event, consoleSession, model))
                     .setRenderMode(RenderMode.Preview)
                     .setSupportedModes(modes)
                     .setForeground(event.isForeground()));
-            updateView(portalSession, model);
+            updateView(consoleSession, model);
         }
         if (event.renderModes().contains(RenderMode.View)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-view.ftl.html");
-            portalSession.respond(new RenderConletFromTemplate(event,
+            consoleSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
-                tpl, fmModel(event, portalSession, model))
+                tpl, fmModel(event, consoleSession, model))
                     .setRenderMode(RenderMode.View).setSupportedModes(modes)
                     .setForeground(event.isForeground()));
-            updateView(portalSession, model);
+            updateView(consoleSession, model);
         }
         if (event.renderModes().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
-            portalSession.respond(new RenderConletFromTemplate(event,
+            consoleSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
-                tpl, fmModel(event, portalSession, model))
+                tpl, fmModel(event, consoleSession, model))
                     .setRenderMode(RenderMode.Edit).setSupportedModes(modes));
         }
     }
@@ -304,7 +305,7 @@ public class MarkdownDisplayConlet
 
     @Override
     protected void doNotifyConletModel(NotifyConletModel event,
-            ConsoleSession portalSession, MarkdownDisplayModel conletState)
+            ConsoleSession consoleSession, MarkdownDisplayModel conletState)
             throws Exception {
         event.stop();
         @SuppressWarnings("PMD.UseConcurrentHashMap")
@@ -319,7 +320,7 @@ public class MarkdownDisplayConlet
             properties.put(VIEW_SOURCE, event.params().asString(2));
         }
         fire(new UpdateConletModel(event.conletId(), properties),
-            portalSession);
+            consoleSession);
     }
 
     /**
@@ -327,13 +328,13 @@ public class MarkdownDisplayConlet
      * event and updates the view with a {@link NotifyConletView}. 
      *
      * @param event the event
-     * @param portalSession the portal session
+     * @param consoleSession the console session
      */
     @SuppressWarnings("unchecked")
     @Handler
     public void onUpdateConletModel(UpdateConletModel event,
-            ConsoleSession portalSession) {
-        stateFromSession(portalSession.browserSession(), event.conletId())
+            ConsoleSession consoleSession) {
+        stateFromSession(consoleSession.browserSession(), event.conletId())
             .ifPresent(model -> {
                 event.ifPresent(TITLE,
                     (key, value) -> model.setTitle((String) value))
@@ -350,11 +351,11 @@ public class MarkdownDisplayConlet
                 try {
                     String jsonState = JsonBeanEncoder.create()
                         .writeObject(model).toJson();
-                    portalSession.respond(new KeyValueStoreUpdate().update(
-                        storagePath(portalSession.browserSession())
+                    consoleSession.respond(new KeyValueStoreUpdate().update(
+                        storagePath(consoleSession.browserSession())
                             + model.getConletId(),
                         jsonState));
-                    updateView(portalSession, model);
+                    updateView(consoleSession, model);
                 } catch (IOException e) { // NOPMD
                     // Won't happen, uses internal writer
                 }

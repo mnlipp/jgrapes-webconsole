@@ -24,13 +24,13 @@ import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.PageResourceRequest;
 
 /**
- * Provides support for creating URIs in the portal scope that
- * are forwarded to components listening on the portal channel.  
+ * Provides support for creating URIs in the web console scope that
+ * are forwarded to components listening on the web console channel.  
  */
 public interface RenderSupport {
 
     /**
-     * Returns the portal library URI.
+     * Returns the web console library URI.
      *
      * @param uri the uri
      * @return the uri
@@ -49,7 +49,7 @@ public interface RenderSupport {
     }
 
     /**
-     * Create a reference to a resource provided by the portal.
+     * Create a reference to a resource provided by the web console.
      * 
      * @param uri the URI  
      * @return the resulting URI

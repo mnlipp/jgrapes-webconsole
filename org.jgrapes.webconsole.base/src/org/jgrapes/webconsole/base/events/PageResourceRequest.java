@@ -31,7 +31,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * to the `<head>` section of the page.
  *
  * Requests for such resources are usually
- * generated during portal boot. See the description of
+ * generated during web console boot. See the description of
  * {@link AddPageResources} for details.
  */
 public class PageResourceRequest extends ResourceRequest {

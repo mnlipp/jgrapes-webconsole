@@ -36,7 +36,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
 
 /**
  * Adds `<link .../>`, `<style>...</style>` or `<script ...></script>` nodes
- * to the portal's `<head>` node on behalf of components that provide
+ * to the web console's `<head>` node on behalf of components that provide
  * such resources.
  * 
  * Adding resource references causes the browser to issue `GET` request that
@@ -63,18 +63,18 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  * it depends on are loaded.
  * 
  * Some libraries provided as page resources may already be required by the
- * JavaScript portal code (especially by the resource manager that handles
+ * JavaScript web console code (especially by the resource manager that handles
  * the delayed loading). They can therefore not be loaded by this
- * mechanism, which depends on the portal code. Such page resources
+ * mechanism, which depends on the web console code. Such page resources
  * may be "pre-loaded" by adding the appropriate `script` element to the
- * initial portal page. In order to make the pre-loading known to the
+ * initial web console page. In order to make the pre-loading known to the
  * resource manager, the `script` elements must carry an attribute
  * `data-jgwc-provides` with a comma separated list of JavaScript resource
  * names provided by loading the script resource. The name(s) must match
  * the name(s) used in the {@link AddPageResources} request generated
  * by the {@link PageResourceProvider} for the pre-loaded resource(s).
- * Here's an example (for a portal using the {@link FreeMarkerConsoleWeblet}
- * to generate the initial portal page):
+ * Here's an example (for a web console using the 
+ * {@link FreeMarkerConsoleWeblet} to generate the initial web console page):
  * ```html
  * {@code <}script data-jgwc-provides="jquery"
  *   src="${renderSupport.pageResource('jquery/jquery' + minifiedExtension + '.js')}"{@code >}
@@ -85,7 +85,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  * hide footbox
  * 
  * activate Browser
- * Browser -> WebConsole: "portalReady"
+ * Browser -> WebConsole: "consoleReady"
  * deactivate Browser
  * activate WebConsole
  * WebConsole -> PageResourceProvider: ConsoleReady 
@@ -112,7 +112,7 @@ public class AddPageResources extends ConsoleCommand {
 
     /**
      * Add the URI of a JavaScript resource that is to be added to the
-     * header section of the portal page.
+     * header section of the web console page.
      * 
      * @param scriptResource the resource to add
      * @return the event for easy chaining
@@ -133,7 +133,7 @@ public class AddPageResources extends ConsoleCommand {
 
     /**
      * Add the URI of a CSS resource that is to be added to the
-     * header section of the portal page.
+     * header section of the web console page.
      * 
      * @param uri the URI
      * @return the event for easy chaining

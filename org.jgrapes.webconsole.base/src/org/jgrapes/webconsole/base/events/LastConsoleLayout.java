@@ -27,7 +27,7 @@ import org.jdrupes.json.JsonObject;
 /**
  * Sent by the server to the browser in response to {@link ConsolePrepared} 
  * (see this event's description for details). The provided information
- * enables the portal to restore web console components to their previous 
+ * enables the web console to restore web console components to their previous 
  * positions.
  */
 public class LastConsoleLayout extends ConsoleCommand {

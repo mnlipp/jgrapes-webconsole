@@ -19,6 +19,6 @@
 /**
  * Provides a component for adding the 
  * [jQuery UI Touch Punch](http://touchpunch.furf.com/)
- * library to a portal.
+ * library to a web console.
  */
 package org.jgrapes.webconsole.provider.jquitouchpunch;

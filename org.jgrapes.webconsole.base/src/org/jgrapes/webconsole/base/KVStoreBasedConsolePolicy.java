@@ -52,21 +52,21 @@ import org.jgrapes.webconsole.base.events.RenderConletRequest;
  * 
  * This component requires another component that handles the key/value
  * store events ({@link KeyValueStoreUpdate}, {@link KeyValueStoreQuery})
- * used by this component for implementing persistence. When the portal becomes
- * ready, this policy sends a query for the persisted data.
+ * used by this component for implementing persistence. When the web console 
+ * becomesready, this policy sends a query for the persisted data.
  * 
- * When the portal has been prepared, the policy sends the last layout
- * as retrieved from persistent storage to the portal and then generates
+ * When the web console has been prepared, the policy sends the last layout
+ * as retrieved from persistent storage to the web console and then generates
  * render events for all web console components contained in this layout.
  * 
- * Each time the layout is changed in the portal, the portal sends the
- * new layout data and this component updates the persistent storage
+ * Each time the layout is changed in the web console, the web console sends 
+ * the new layout data and this component updates the persistent storage
  * accordingly.
  * 
  * @startuml KVPPBootSeq.svg
  * hide footbox
  * 
- * Browser -> WebConsole: "portalReady"
+ * Browser -> WebConsole: "consoleReady"
  * activate WebConsole
  * WebConsole -> KVStoreBasedConsolePolicy: ConsoleReady
  * deactivate WebConsole
@@ -95,7 +95,7 @@ import org.jgrapes.webconsole.base.events.RenderConletRequest;
  * end
  * deactivate KVStoreBasedConsolePolicy
  * 
- * Browser -> WebConsole: "portalLayout"
+ * Browser -> WebConsole: "consoleLayout"
  * activate WebConsole
  * WebConsole -> KVStoreBasedConsolePolicy: ConsoleLayoutChanged
  * deactivate WebConsole
@@ -160,7 +160,7 @@ public class KVStoreBasedConsolePolicy extends Component {
     }
 
     /**
-     * Handle portal page loaded.
+     * Handle web console page loaded.
      *
      * @param event the event
      * @param channel the channel
@@ -190,7 +190,7 @@ public class KVStoreBasedConsolePolicy extends Component {
     }
 
     /**
-     * Stores the data for the portal session.
+     * Stores the data for the web console session.
      */
     @SuppressWarnings("PMD.CommentRequired")
     private class ConsoleSessionDataStore {

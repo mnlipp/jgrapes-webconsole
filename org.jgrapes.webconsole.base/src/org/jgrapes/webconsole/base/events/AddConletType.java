@@ -43,7 +43,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
  * 
  * This in turn causes the browser to issue `GET` requests that
  * (usually) refer to the web console component's resources. These requests are
- * converted to {@link ConletResourceRequest}s by the portal and
+ * converted to {@link ConletResourceRequest}s by the web console and
  * sent to the web console components, which must respond to the requests.
  * 
  * The sequence of events is shown in the diagram.
@@ -54,15 +54,15 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
  * of the {@link ConletResourceRequest}.
  * 
  * A portelt's JavaScript may (and probably must) make use of
- * the functions provided by the portal page. See the 
- * <a href="../jsdoc/module-jgportal.html">JavaScript
+ * the functions provided by the web console page. See the 
+ * <a href="../jsdoc/module-jgconsole.html">JavaScript
  * documentation of these functions</a> for details.
  * 
  * @startuml AddConletTypeSeq.svg
  * hide footbox
  * 
  * activate Browser
- * Browser -> WebConsole: "portalReady"
+ * Browser -> WebConsole: "consoleReady"
  * deactivate Browser
  * activate WebConsole
  * WebConsole -> ConletX: ConsoleReady 
@@ -172,7 +172,7 @@ public class AddConletType extends ConsoleCommand {
 
     /**
      * Add the URI of a CSS resource that is to be added to the
-     * header section of the portal page.
+     * header section of the web console page.
      *
      * @param renderSupport the render support for mapping the `uri`
      * @param uri the URI

@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <!-- Portal -->
+  <!-- Console -->
   <link rel="icon" href="${renderSupport.consoleResource('favicon.ico')}">
   <title>${_("consoleTitle")}</title>
 
@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="${renderSupport.consoleResource('lib/jquery-dropdown-2.0.3/jquery.dropdown' + minifiedExtension + '.css')}">
   <link rel="stylesheet" href="${renderSupport.consoleResource('lib/jquery-dropdown-2.0.3/overrides-1.0.0.css')}">
   <link rel="stylesheet" href="${renderSupport.consoleResource('lib/jquery-fa-loading-0.3/jquery.faloading' + minifiedExtension + '.css')}">
-  <!-- Portal -->
+  <!-- Console -->
   <link rel="stylesheet"
     href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
   <link rel="stylesheet"
@@ -52,13 +52,13 @@
   <script src="${renderSupport.consoleResource('lib/jquery-dropdown-2.0.3/jquery.dropdown.js')}"></script>
   <script src="${renderSupport.consoleResource('lib/jquery-fa-loading-0.3/jquery.faloading' + minifiedExtension + '.js')}"></script>
 
-  <!-- Portal -->
+  <!-- Console -->
   <script type="module">
   import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
-  import JQUIPortal from "${renderSupport.consoleResource('jquiconsole.js')}"
+  import JQUIConsole from "${renderSupport.consoleResource('jquiconsole.js')}"
   JGConsole.init(
     "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
-    parseInt('${consoleSessionInactivityTimeout?c}'), new JQUIPortal.Renderer());    
+    parseInt('${consoleSessionInactivityTimeout?c}'), new JQUIConsole.Renderer());    
   </script>
   
 </head>
@@ -125,7 +125,7 @@
 </div>
 
 <div id="console-session-suspended-dialog" style="display:none;"
-  title="${_("Portal Session Suspended")}">
+  title="${_("Console Session Suspended")}">
   <p>
     <span class="ui-icon ui-icon-pause" style="float:left; margin:0 7px 50px 0;"></span>
     ${_("consoleSessionSuspendedMessage")}

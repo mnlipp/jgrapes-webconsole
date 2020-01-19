@@ -55,7 +55,7 @@ public class BrowserLocalBackedKVStore extends Component {
      * @param componentChannel the channel that the component's 
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
-     * @param consolePrefix the portal's prefix as returned by
+     * @param consolePrefix the web console's prefix as returned by
      * {@link ConsoleWeblet#prefix()}, i.e. staring and ending with a slash
      */
     public BrowserLocalBackedKVStore(
@@ -81,7 +81,7 @@ public class BrowserLocalBackedKVStore extends Component {
             // Already have store, nothing to do
             return;
         }
-        // Remove portal ready event from queue and save it
+        // Remove web console ready event from queue and save it
         event.cancel(false);
         channel.setAssociated(this, event);
         String keyStart = consolePrefix
@@ -114,7 +114,7 @@ public class BrowserLocalBackedKVStore extends Component {
         }
         channel.associated(this, ConsoleReady.class)
             .ifPresent(origEvent -> {
-                // We have intercepted the portal ready event, fill store.
+                // We have intercepted the web console ready event, fill store.
                 // Having a store now also shows that retrieval has been done.
                 final String keyStart = consolePrefix
                     + BrowserLocalBackedKVStore.class.getName() + "/";
@@ -130,7 +130,7 @@ public class BrowserLocalBackedKVStore extends Component {
                 });
                 // Don't intercept again
                 channel.setAssociated(this, null);
-                // Let others process the portal ready event
+                // Let others process the web console ready event
                 fire(new ConsoleReady(origEvent.renderSupport()), channel);
             });
     }

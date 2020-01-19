@@ -15,14 +15,14 @@
     org.jgrapes.http;version=latest,\
     org.jgrapes.io;version=latest,\
     org.jgrapes.util;version=latest,\
-    org.jgrapes.portal;version=latest,\
-    org.jgrapes.portal.themes.smoothness;version=latest,\
-    org.jgrapes.portal.providers.chartjs;version=latest,\
-    org.jgrapes.portal.providers.datatables;version=latest,\
-    org.jgrapes.portal.providers.markdownit;version=latest,\
+    org.jgrapes.webconsole;version=latest,\
+    org.jgrapes.webconsole.themes.smoothness;version=latest,\
+    org.jgrapes.webconsole.providers.chartjs;version=latest,\
+    org.jgrapes.webconsole.providers.datatables;version=latest,\
+    org.jgrapes.webconsole.providers.markdownit;version=latest,\
 	org.jgrapes.portlets.markdowndisplay;version=latest,\
 	org.jgrapes.portlets.sysinfo;version=latest,\
-    HttpPortalDemo;version=snapshot
+    WebConsoleDemo;version=snapshot
 -runrequires: \
     osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.shell)',\
     osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.command)',\

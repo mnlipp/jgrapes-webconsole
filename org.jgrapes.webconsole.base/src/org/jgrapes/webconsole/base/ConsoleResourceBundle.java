@@ -30,7 +30,7 @@ public class ConsoleResourceBundle extends ResourceBundle {
     private final Properties properties;
 
     /**
-     * Instantiates a new portal resource bundle.
+     * Instantiates a new web console resource bundle.
      *
      * @param properties the properties
      */

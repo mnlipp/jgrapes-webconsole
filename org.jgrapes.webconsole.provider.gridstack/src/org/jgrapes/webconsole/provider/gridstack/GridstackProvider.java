@@ -76,14 +76,15 @@ public class GridstackProvider extends PageResourceProvider {
      * On {@link ConsoleReady}, fire the appropriate {@link AddPageResources}.
      *
      * @param event the event
-     * @param portalSession the portal session
+     * @param consoleSession the web console session
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event,
+            ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()
@@ -118,6 +119,6 @@ public class GridstackProvider extends PageResourceProvider {
                 .setScriptUri(event.renderSupport().pageResource(
                     "gridstack/gridstack.all.js")));
         }
-        portalSession.respond(addRequest);
+        consoleSession.respond(addRequest);
     }
 }

@@ -13,8 +13,8 @@ api_version = 0.11.0.${tstamp}
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)",\
-    org.jgrapes.portal.page.resource;filter:="(name=chart.js)"
+    org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)",\
+    org.jgrapes.websondole.page.resource;filter:="(name=chart.js)"
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.ConletComponentFactory; \

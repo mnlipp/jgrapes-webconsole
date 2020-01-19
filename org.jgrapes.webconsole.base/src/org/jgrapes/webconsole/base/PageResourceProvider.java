@@ -32,7 +32,7 @@ import org.jgrapes.webconsole.base.events.PageResourceRequest;
 
 /**
  * Base class for implementing components that add resources to
- * the `<HEAD>` section of the portal page.
+ * the `<HEAD>` section of the web console page.
  * 
  * A derived class must implement a handler for {@link ConsoleReady}
  * that generates an {@link AddPageResources} event. This

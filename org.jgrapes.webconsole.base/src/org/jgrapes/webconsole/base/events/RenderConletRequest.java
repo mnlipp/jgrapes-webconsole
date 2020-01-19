@@ -24,10 +24,10 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * Sent to the portal (server) if an existing web console component instance 
- * should be updated. The portal server usually responds with 
+ * Sent to the web console (server) if an existing web console component 
+ * instance should be updated. The web console server usually responds with 
  * a {@link RenderConlet} event that has as payload the
- * HTML that displays the web console component on the portal page.
+ * HTML that displays the web console component on the web console page.
  * 
  * ![Event Sequence](RenderPortletRequestSeq.svg)
  * 

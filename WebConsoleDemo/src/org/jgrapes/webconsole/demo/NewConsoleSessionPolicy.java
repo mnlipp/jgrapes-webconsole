@@ -50,21 +50,22 @@ public class NewConsoleSessionPolicy extends Component {
     }
 
     @Handler
-    public void onConsoleReady(ConsoleReady event, ConsoleSession portalsession) {
-        portalsession.browserSession().put(renderedFlagName, false);
+    public void onConsoleReady(ConsoleReady event,
+            ConsoleSession consolesession) {
+        consolesession.browserSession().put(renderedFlagName, false);
     }
 
     @Handler
     public void onRenderConlet(RenderConlet event,
-            ConsoleSession portalsession) {
-        portalsession.browserSession().put(renderedFlagName, true);
+            ConsoleSession consolesession) {
+        consolesession.browserSession().put(renderedFlagName, true);
     }
 
     @Handler
     public void onConsoleConfigured(ConsoleConfigured event,
-            ConsoleSession portalSession)
+            ConsoleSession consoleSession)
             throws InterruptedException {
-        if ((Boolean) portalSession.browserSession().getOrDefault(
+        if ((Boolean) consoleSession.browserSession().getOrDefault(
             renderedFlagName, false)) {
             return;
         }
@@ -76,7 +77,7 @@ public class NewConsoleSessionPolicy extends Component {
 //                    "A Demo WebConsole")
 //                .addProperty(MarkdownDisplayConlet.EDITABLE_BY,
 //                    Collections.EMPTY_SET),
-//            portalSession);
+//            consoleSession);
     }
 
 }

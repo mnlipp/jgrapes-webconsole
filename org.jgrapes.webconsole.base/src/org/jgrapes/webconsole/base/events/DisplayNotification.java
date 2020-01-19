@@ -25,10 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Causes a notification to be display on the top of the portal page.
+ * Causes a notification to be display on the top of the web console page.
  * 
  * The event triggers the creation of a notification widget in the
- * portal page. 
+ * web console page. 
  */
 public class DisplayNotification extends ConsoleCommand {
 

@@ -22,7 +22,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
 
 /**
- * Signals that the theme for the portal has changed. This  event is
+ * Signals that the theme for the web console has changed. This  event is
  * handled by the {@link ConsoleWeblet} but may, of course, also be
  * used by other components.
  * 

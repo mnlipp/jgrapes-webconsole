@@ -14,7 +14,7 @@ Require-Capability: \
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \
         uses:="org.jgrapes.webconsole.base,org.jgrapes.core", \
-    org.jgrapes.portal.page.resource;name:List<String>="vuex"
+    org.jgrapes.webconsole.page.resource;name:List<String>="vuex"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

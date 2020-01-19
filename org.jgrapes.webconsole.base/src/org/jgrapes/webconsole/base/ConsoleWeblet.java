@@ -81,7 +81,7 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 public abstract class ConsoleWeblet extends Component {
 
     private static final String CONSOLE_SESSION_IDS
-        = ConsoleWeblet.class.getName() + ".portalSessionId";
+        = ConsoleWeblet.class.getName() + ".consoleSessionId";
     private static final String UTF_8 = "utf-8";
 
     private URI prefix;
@@ -112,26 +112,26 @@ public abstract class ConsoleWeblet extends Component {
      * Instantiates a new console weblet.
      *
      * @param webletChannel the weblet channel
-     * @param portalChannel the console channel
-     * @param portalPrefix the console prefix
+     * @param consoleChannel the console channel
+     * @param consolePrefix the console prefix
      */
     @SuppressWarnings("PMD.UseStringBufferForStringAppends")
-    public ConsoleWeblet(Channel webletChannel, Channel portalChannel,
-            URI portalPrefix) {
-        this(webletChannel, new WebConsole(portalChannel));
+    public ConsoleWeblet(Channel webletChannel, Channel consoleChannel,
+            URI consolePrefix) {
+        this(webletChannel, new WebConsole(consoleChannel));
 
-        prefix = URI.create(portalPrefix.getPath().endsWith("/")
-            ? portalPrefix.getPath()
-            : portalPrefix.getPath() + "/");
+        prefix = URI.create(consolePrefix.getPath().endsWith("/")
+            ? consolePrefix.getPath()
+            : consolePrefix.getPath() + "/");
         console.setView(this);
 
-        String portalPath = prefix.getPath();
-        if (portalPath.endsWith("/")) {
-            portalPath = portalPath.substring(0, portalPath.length() - 1);
+        String consolePath = prefix.getPath();
+        if (consolePath.endsWith("/")) {
+            consolePath = consolePath.substring(0, consolePath.length() - 1);
         }
-        portalPath = portalPath + "|**";
+        consolePath = consolePath + "|**";
         try {
-            requestPattern = new ResourcePattern(portalPath);
+            requestPattern = new ResourcePattern(consolePath);
         } catch (ParseException e) {
             throw new IllegalArgumentException(e);
         }
@@ -449,8 +449,7 @@ public abstract class ConsoleWeblet extends Component {
      * @throws InterruptedException the interrupted exception
      */
     protected abstract void renderConsole(Request.In.Get event,
-            IOSubchannel channel,
-            UUID portalSessionId)
+            IOSubchannel channel, UUID consoleSessionId)
             throws IOException, InterruptedException;
 
     /**
@@ -569,8 +568,8 @@ public abstract class ConsoleWeblet extends Component {
         event.event().get().process();
     }
 
-    private void handleSessionRequest(
-            Request.In.Get event, IOSubchannel channel, String portalSessionId)
+    private void handleSessionRequest(Request.In.Get event,
+            IOSubchannel channel, String consoleSessionId)
             throws InterruptedException, IOException, ParseException {
         // Must be WebSocket request.
         if (!event.httpRequest().findField(
@@ -590,12 +589,12 @@ public abstract class ConsoleWeblet extends Component {
             = (Map<URI, UUID>) browserSession.computeIfAbsent(
                 CONSOLE_SESSION_IDS,
                 newKey -> new ConcurrentHashMap<URI, UUID>());
-        if (!UUID.fromString(portalSessionId) // NOPMD, note negation
+        if (!UUID.fromString(consoleSessionId) // NOPMD, note negation
             .equals(knownIds.get(prefix))) {
             channel.setAssociated(this, new String[2]);
         } else {
             channel.setAssociated(this, new String[] {
-                portalSessionId,
+                consoleSessionId,
                 Optional.ofNullable(event.httpRequest().queryData()
                     .get("was")).map(vals -> vals.get(0)).orElse(null)
             });
@@ -662,8 +661,8 @@ public abstract class ConsoleWeblet extends Component {
         }
 
         // Check if reload required
-        String[] portalSessionIds = passedIn.get();
-        if (portalSessionIds[0] == null) {
+        String[] consoleSessionIds = passedIn.get();
+        if (consoleSessionIds[0] == null) {
             @SuppressWarnings("resource")
             CharBufferWriter out = new CharBufferWriter(wsChannel,
                 wsChannel.responsePipeline()).suppressClose();
@@ -677,21 +676,22 @@ public abstract class ConsoleWeblet extends Component {
         final Session browserSession
             = wsChannel.associated(Session.class).get();
         // Reuse old console session if still available
-        ConsoleSession portalSession = Optional.ofNullable(portalSessionIds[1])
-            .flatMap(opsId -> ConsoleSession.lookup(opsId))
-            .map(session -> session.replaceId(portalSessionIds[0]))
-            .orElse(ConsoleSession.lookupOrCreate(portalSessionIds[0],
-                console, supportedLocales.keySet(), psNetworkTimeout))
-            .setUpstreamChannel(wsChannel)
-            .setSession(browserSession);
-        wsChannel.setAssociated(ConsoleSession.class, portalSession);
+        ConsoleSession consoleSession
+            = Optional.ofNullable(consoleSessionIds[1])
+                .flatMap(opsId -> ConsoleSession.lookup(opsId))
+                .map(session -> session.replaceId(consoleSessionIds[0]))
+                .orElse(ConsoleSession.lookupOrCreate(consoleSessionIds[0],
+                    console, supportedLocales.keySet(), psNetworkTimeout))
+                .setUpstreamChannel(wsChannel)
+                .setSession(browserSession);
+        wsChannel.setAssociated(ConsoleSession.class, consoleSession);
         // Channel now used as JSON input
         wsChannel.setAssociated(this, new WebSocketInputReader(
-            event.processedBy().get(), portalSession));
-        // From now on, only portalSession.respond may be used to send on the
+            event.processedBy().get(), consoleSession));
+        // From now on, only consoleSession.respond may be used to send on the
         // upstream channel.
-        portalSession.upstreamChannel().responsePipeline()
-            .restrictEventSource(portalSession.responsePipeline());
+        consoleSession.upstreamChannel().responsePipeline()
+            .restrictEventSource(consoleSession.responsePipeline());
     }
 
     /**
@@ -728,7 +728,7 @@ public abstract class ConsoleWeblet extends Component {
             optWsInputReader.get().close();
         }
         wsChannel.associated(ConsoleSession.class).ifPresent(session -> {
-            // Restore channel to normal mode, see onPortalReady
+            // Restore channel to normal mode, see onConsoleReady
             session.responsePipeline().restrictEventSource(null);
             session.disconnected();
         });
@@ -738,17 +738,17 @@ public abstract class ConsoleWeblet extends Component {
      * Handles the {@link ConsoleReady} event.
      *
      * @param event the event
-     * @param portalSession the console session
+     * @param consoleSession the console session
      */
     @Handler(channels = ConsoleChannel.class)
     public void onConsoleReady(ConsoleReady event,
-            ConsoleSession portalSession) {
+            ConsoleSession consoleSession) {
         String principal
-            = WebConsoleUtils.userFromSession(portalSession.browserSession())
+            = WebConsoleUtils.userFromSession(consoleSession.browserSession())
                 .map(UserPrincipal::toString).orElse("");
         KeyValueStoreQuery query = new KeyValueStoreQuery(
-            "/" + principal + "/themeProvider", portalSession);
-        fire(query, portalSession);
+            "/" + principal + "/themeProvider", consoleSession);
+        fire(query, consoleSession);
     }
 
     /**

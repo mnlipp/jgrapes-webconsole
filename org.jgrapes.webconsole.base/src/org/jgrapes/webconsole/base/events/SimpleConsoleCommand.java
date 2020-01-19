@@ -35,7 +35,7 @@ public class SimpleConsoleCommand extends ConsoleCommand {
     private Object[] params;
 
     /**
-     * Instantiates a new portal command.
+     * Instantiates a new web console command.
      *
      * @param method the method
      * @param parameters the parameterss
@@ -46,7 +46,7 @@ public class SimpleConsoleCommand extends ConsoleCommand {
     }
 
     /**
-     * Instantiates a new portal session command.
+     * Instantiates a new web console session command.
      *
      * @param method the method
      */

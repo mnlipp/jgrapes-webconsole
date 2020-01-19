@@ -82,7 +82,7 @@ public class SysInfoConlet
      * On {@link ConsoleReady}, fire the {@link AddConletType}.
      *
      * @param event the event
-     * @param portalSession the portal session
+     * @param consoleSession the console session
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name
      *             exception
@@ -90,13 +90,14 @@ public class SysInfoConlet
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event,
+            ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add SysInfoConlet resources to page
-        portalSession.respond(new AddConletType(type())
+        consoleSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(portalSession.supportedLocales(), "conletName"))
+                displayNames(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires("chart.js")
                 .setScriptUri(event.renderSupport().conletResource(
@@ -138,38 +139,38 @@ public class SysInfoConlet
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private void renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession portalSession, SysInfoModel conletModel)
+            ConsoleSession consoleSession, SysInfoModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         if (event.renderPreview()) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-            portalSession.respond(new RenderConletFromTemplate(event,
+            consoleSession.respond(new RenderConletFromTemplate(event,
                 SysInfoConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, portalSession, conletModel))
+                tpl, fmModel(event, consoleSession, conletModel))
                     .setRenderMode(RenderMode.DeleteablePreview)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
-            updateView(portalSession, conletModel.getConletId());
+            updateView(consoleSession, conletModel.getConletId());
         }
         if (event.renderModes().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
-            portalSession.respond(new RenderConletFromTemplate(event,
+            consoleSession.respond(new RenderConletFromTemplate(event,
                 SysInfoConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, portalSession, conletModel))
+                tpl, fmModel(event, consoleSession, conletModel))
                     .setRenderMode(RenderMode.View)
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
         }
     }
 
-    private void updateView(ConsoleSession portalSession, String conletId) {
-        if (!portalSession.isConnected()) {
+    private void updateView(ConsoleSession consoleSession, String conletId) {
+        if (!consoleSession.isConnected()) {
             return;
         }
         Runtime runtime = Runtime.getRuntime();
-        portalSession.respond(new NotifyConletView(type(),
+        consoleSession.respond(new NotifyConletView(type(),
             conletId, "updateMemorySizes",
             System.currentTimeMillis(), runtime.maxMemory(),
             runtime.totalMemory(),
@@ -178,9 +179,9 @@ public class SysInfoConlet
 
     @Override
     protected void doDeleteConlet(DeleteConletRequest event,
-            ConsoleSession portalSession, String conletId,
+            ConsoleSession consoleSession, String conletId,
             SysInfoModel retrievedState) throws Exception {
-        portalSession.respond(new DeleteConlet(conletId));
+        consoleSession.respond(new DeleteConlet(conletId));
     }
 
     /**
@@ -200,12 +201,12 @@ public class SysInfoConlet
     @Override
     @SuppressWarnings("PMD.DoNotCallGarbageCollectionExplicitly")
     protected void doNotifyConletModel(NotifyConletModel event,
-            ConsoleSession portalSession, SysInfoModel conletState)
+            ConsoleSession consoleSession, SysInfoModel conletState)
             throws Exception {
         event.stop();
         System.gc();
-        for (String conletId : conletIds(portalSession)) {
-            updateView(portalSession, conletId);
+        for (String conletId : conletIds(consoleSession)) {
+            updateView(consoleSession, conletId);
         }
     }
 

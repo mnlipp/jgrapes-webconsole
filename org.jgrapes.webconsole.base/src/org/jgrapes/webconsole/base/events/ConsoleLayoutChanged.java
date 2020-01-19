@@ -24,7 +24,7 @@ import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Event;
 
 /**
- * Notifies the server about a change of the portal layout. This event
+ * Notifies the server about a change of the web console layout. This event
  * is sent by the browser when the layout changes due to user interaction
  * (e.g. moving the preview representations) or due to notifications
  * from the server (e.g. {@link RenderConlet}).

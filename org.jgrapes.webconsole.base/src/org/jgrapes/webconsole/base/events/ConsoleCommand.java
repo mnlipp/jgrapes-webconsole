@@ -27,7 +27,7 @@ import org.jgrapes.core.Event;
 
 /**
  * Events derived from this class are transformed to JSON messages
- * that are sent to the portal session. They may only be fired
+ * that are sent to the web console session. They may only be fired
  * on the {@link org.jgrapes.webconsole.base.ConsoleSession#responsePipeline()}
  * (usually with 
  * {@link org.jgrapes.webconsole.base.ConsoleSession#respond(org.jgrapes.core.Event)}).

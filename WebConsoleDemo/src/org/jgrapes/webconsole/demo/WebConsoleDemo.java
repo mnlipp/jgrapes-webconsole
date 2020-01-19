@@ -76,7 +76,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
     private WebConsoleDemo app;
 
     /**
-     * Instantiates a new http portal demo.
+     * Instantiates a new http web console demo.
      */
     public WebConsoleDemo() {
         super(new ClassChannel() {
@@ -143,41 +143,41 @@ public class WebConsoleDemo extends Component implements BundleActivator {
     }
 
     private void createJQueryUiConsole() throws URISyntaxException {
-        ConsoleWeblet portalWeblet
+        ConsoleWeblet consoleWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
                 new URI("/jqconsole/")))
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
-        WebConsole portal = portalWeblet.console();
-        portalWeblet.setConsoleSessionInactivityTimeout(300000);
-        portal.attach(new BrowserLocalBackedKVStore(
-            portal, portalWeblet.prefix().getPath()));
-        portal.attach(new KVStoreBasedConsolePolicy(portal));
-        portal.attach(new NewConsoleSessionPolicy(portal));
+        WebConsole console = consoleWeblet.console();
+        consoleWeblet.setConsoleSessionInactivityTimeout(300000);
+        console.attach(new BrowserLocalBackedKVStore(
+            console, consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console));
+        console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
-        portal.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, portal));
+        console.attach(new ComponentCollector<>(
+            PageResourceProviderFactory.class, console));
         // Add all available portlets
-        portal.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, portal));
+        console.attach(new ComponentCollector<>(
+            ConletComponentFactory.class, console));
     }
 
     private void createBootstrap4Console() throws URISyntaxException {
-        ConsoleWeblet portalWeblet
+        ConsoleWeblet consoleWeblet
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
                 new URI("/b4console/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
-        WebConsole portal = portalWeblet.console();
-        portalWeblet.setConsoleSessionInactivityTimeout(300000);
-        portal.attach(new BrowserLocalBackedKVStore(
-            portal, portalWeblet.prefix().getPath()));
-        portal.attach(new KVStoreBasedConsolePolicy(portal));
-        portal.attach(new NewConsoleSessionPolicy(portal));
+        WebConsole console = consoleWeblet.console();
+        consoleWeblet.setConsoleSessionInactivityTimeout(300000);
+        console.attach(new BrowserLocalBackedKVStore(
+            console, consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console));
+        console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
-        portal.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, portal,
+        console.attach(new ComponentCollector<>(
+            PageResourceProviderFactory.class, console,
             type -> {
                 switch (type) {
                 case "org.jgrapes.webconsole.providers.gridstack.GridstackProvider":
@@ -188,26 +188,26 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 }
             }));
         // Add all available portlets
-        portal.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, portal));
+        console.attach(new ComponentCollector<>(
+            ConletComponentFactory.class, console));
     }
 
     private void createVueJsConsole() throws URISyntaxException {
-        ConsoleWeblet portalWeblet
+        ConsoleWeblet consoleWeblet
             = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
                 new URI("/vjconsole/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
-        WebConsole portal = portalWeblet.console();
-        portalWeblet.setConsoleSessionInactivityTimeout(300000);
-        portal.attach(new BrowserLocalBackedKVStore(
-            portal, portalWeblet.prefix().getPath()));
-        portal.attach(new KVStoreBasedConsolePolicy(portal));
-        portal.attach(new NewConsoleSessionPolicy(portal));
+        WebConsole console = consoleWeblet.console();
+        consoleWeblet.setConsoleSessionInactivityTimeout(300000);
+        console.attach(new BrowserLocalBackedKVStore(
+            console, consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console));
+        console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
-        portal.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, portal,
+        console.attach(new ComponentCollector<>(
+            PageResourceProviderFactory.class, console,
             type -> {
                 switch (type) {
                 case "org.jgrapes.webconsole.providers.gridstack.GridstackProvider":
@@ -218,8 +218,8 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 }
             }));
         // Add all available portlets
-        portal.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, portal));
+        console.attach(new ComponentCollector<>(
+            ConletComponentFactory.class, console));
     }
 
     /*

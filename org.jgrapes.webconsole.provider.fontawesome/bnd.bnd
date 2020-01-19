@@ -1,4 +1,4 @@
-Bundle-Name: JGrapes Portal Font Awesome Provider
+Bundle-Name: JGrapes Web Console Font Awesome Provider
 Bundle-SymbolicName: org.jgrapes.webconsole.provider.fontawesome
 Bundle-Copyright: Michael N. Lipp (c) 2018, 2020
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
@@ -15,7 +15,7 @@ Require-Capability: \
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \
         uses:="org.jgrapes.webconsole.base,org.jgrapes.core", \
-    org.jgrapes.portal.page.resource;name:List<String>="fontawesome-free"
+    org.jgrapes.webconsole.page.resource;name:List<String>="fontawesome-free"
 
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

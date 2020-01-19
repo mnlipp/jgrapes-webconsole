@@ -24,7 +24,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * Signals that the locale for the portal has changed. Should be handled
+ * Signals that the locale for the web console has changed. Should be handled
  * by web console components that support localization by updating 
  * the representation.
  * 
@@ -92,7 +92,7 @@ public class SetLocale extends Event<Void> {
     }
 
     /**
-     * Returns `true` if the portal needs to be reloaded after
+     * Returns `true` if the web console needs to be reloaded after
      * changing the locale.
      *
      * @return true, if reload is required

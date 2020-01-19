@@ -55,19 +55,20 @@ public class MomentProvider extends PageResourceProvider {
      * On {@link ConsoleReady}, fire the appropriate {@link AddPageResources}.
      *
      * @param event the event
-     * @param portalSession the portal session
+     * @param consoleSession the web console session
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    public void onConsoleReady(ConsoleReady event, ConsoleSession portalSession)
+    public void onConsoleReady(ConsoleReady event,
+            ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()
             .useMinifiedResources() ? ".min" : "";
-        portalSession.respond(new AddPageResources()
+        consoleSession.respond(new AddPageResources()
             .addScriptResource(new ScriptResource()
                 .setProvides(new String[] { "moment", "moment-with-locales" })
                 .setScriptUri(event.renderSupport().pageResource(

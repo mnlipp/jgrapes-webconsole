@@ -24,7 +24,7 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
 
 /**
- * A JSON notification from the portal view (browser) to the portal. 
+ * A JSON notification from the web console view (browser) to the web console. 
  */
 public class JsonInput extends Event<Void> {
 

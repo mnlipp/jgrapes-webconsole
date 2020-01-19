@@ -17,6 +17,6 @@
  */
 
 /**
- * The base theme for the portal.
+ * The base theme for the web console.
  */
 package org.jgrapes.webconsole.jqueryui.themes.base;

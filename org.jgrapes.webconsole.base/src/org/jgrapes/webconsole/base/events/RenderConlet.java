@@ -30,7 +30,7 @@ import java.util.concurrent.Future;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 
 /**
- * A base class for portal rendering. Sent to the portal page for 
+ * A base class for web console rendering. Sent to the web console page for 
  * adding or updating a complete web console component representation. 
  * This class maintains all required information except the actual content
  * (the HTML) which must be provided by the derived classes.

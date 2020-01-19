@@ -39,12 +39,12 @@ public class Bootstrap4Weblet extends FreeMarkerConsoleWeblet {
      * Instantiates a new Bootstrap 3 UI weblet.
      *
      * @param webletChannel the weblet channel
-     * @param portalChannel the portal channel
-     * @param portalPrefix the portal prefix
+     * @param consoleChannel the web console channel
+     * @param consolePrefix the web console prefix
      */
-    public Bootstrap4Weblet(Channel webletChannel, Channel portalChannel,
-            URI portalPrefix) {
-        super(webletChannel, portalChannel, portalPrefix);
+    public Bootstrap4Weblet(Channel webletChannel, Channel consoleChannel,
+            URI consolePrefix) {
+        super(webletChannel, consoleChannel, consolePrefix);
     }
 
     @Override

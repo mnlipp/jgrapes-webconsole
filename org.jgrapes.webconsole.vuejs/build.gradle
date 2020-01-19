@@ -58,8 +58,8 @@ processResources.dependsOn 'prepareNpmLibs'
 //task webpack(type: NodeTask) {
 //    dependsOn(':npmInstall')
 //    inputs.file project.file('webpack.config.js')
-//    inputs.dir project.file('portalapp/javascript')
-//    outputs.dir project.file('portalapp')
+//    inputs.dir project.file('consoleapp/javascript')
+//    outputs.dir project.file('consoleapp')
 //    def osName = System.getProperty("os.name").toLowerCase();
 //    if (osName.contains("windows")) {
 //      script = file("${rootProject.projectDir}/node_modules/webpack/bin/webpack.js")

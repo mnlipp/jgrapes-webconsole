@@ -72,7 +72,7 @@ import Vue from "${renderSupport.pageResource('vue/vue.esm.browser.js')}";
 import Vuex from "${renderSupport.pageResource('vuex/vuex.esm.browser.js')}";
 import "${renderSupport.pageResource('jgwc-vue-components/jgwc-components.js')}";
 import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}";
-import VueJsPortal from "${renderSupport.consoleResource('vuejsconsole.js')}";
+import VueJsConsole from "${renderSupport.consoleResource('vuejsconsole.js')}";
 
 Vue.use(Vuex);
 Vue.prototype.$window = window;
@@ -93,7 +93,7 @@ const consoleMessages = {
     // </#list>    
 };
 
-const renderer = new VueJsPortal.Renderer(localeMenuitems, consoleMessages);
+const renderer = new VueJsConsole.Renderer(localeMenuitems, consoleMessages);
 
 JGConsole.init(
     "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 

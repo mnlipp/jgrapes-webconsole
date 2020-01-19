@@ -1,5 +1,5 @@
-Bundle-Name: JGrapes JQuery UI Portal
-Bundle-SymbolicName: org.jgrapes.portal.jqueryui
+Bundle-Name: JGrapes JQuery UI Console
+Bundle-SymbolicName: org.jgrapes.webconsole.jqueryui
 Bundle-Copyright: Michael N. Lipp (c) 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
@@ -11,25 +11,25 @@ api_version = 0.0.0
 -dsannotations: 
 
 Require-Capability: \
-    org.jgrapes.portal.page.resource;filter:="(name=fontawesome-free)", \
-    org.jgrapes.portal.page.resource;filter:="(name=jquery)", \
-    org.jgrapes.portal.page.resource;filter:="(name=moment)", \
-    org.jgrapes.portal.page.resource;filter:="(name=jquery-ui)", \
-    org.jgrapes.portal.page.resource;filter:="(name=jquery-ui.touch-punch)", \
+    org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)", \
+    org.jgrapes.webconsole.page.resource;filter:="(name=jquery)", \
+    org.jgrapes.webconsole.page.resource;filter:="(name=moment)", \
+    org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui)", \
+    org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui.touch-punch)", \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)", \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)", \
     osgi.serviceloader; \
-        filter:="(osgi.serviceloader=org.jgrapes.portal.jqueryui.ThemeProvider)"; \
+        filter:="(osgi.serviceloader=org.jgrapes.webconsole.jqueryui.ThemeProvider)"; \
             cardinality:=multiple
 
 Provide-Capability: osgi.serviceloader; \
-    osgi.serviceloader=org.jgrapes.portal.jqueryui.ThemeProvider; \
-    uses:="org.jgrapes.portal.jqueryui"
+    osgi.serviceloader=org.jgrapes.webconsole.jqueryui.ThemeProvider; \
+    uses:="org.jgrapes.webconsole.jqueryui"
 
 Export-Package: \
 	org.jgrapes.webconsole.jqueryui,\
 	org.jgrapes.webconsole.jqueryui.events,\
-	org.jgrapes.portal.jqueryui.themes.base
+	org.jgrapes.webconsole.jqueryui.themes.base
 
 -includeresource: resources
 

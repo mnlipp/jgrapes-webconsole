@@ -18,6 +18,6 @@
 
 /**
  * Provides a component for adding the [Lodash](https://lodash.com/)
- * library to a portal.
+ * library to a web console.
  */
 package org.jgrapes.webconsole.provider.lodash;

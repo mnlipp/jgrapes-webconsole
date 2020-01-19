@@ -28,7 +28,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
  * Sent to the console (server) if a new web console component instance of a given 
- * type should be added to the portal page. The console server usually 
+ * type should be added to the web console page. The console server usually 
  * responds with a {@link RenderConlet} event that has as payload the
  * HTML that displays the web console component on the console page.
  * 

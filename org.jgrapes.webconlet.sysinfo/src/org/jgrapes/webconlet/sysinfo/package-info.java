@@ -18,7 +18,7 @@
 
 /**
  * A portlet component for displaying system information in
- * a portal.
+ * a web console.
  */
 @org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconlet.sysinfo;
