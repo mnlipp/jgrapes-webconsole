@@ -41,12 +41,12 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * The event's result is the web console component id of the new 
  * web console component instance.
  * 
- * ![Event Sequence](AddPortletRequestSeq.svg)
+ * ![Event Sequence](AddConletRequestSeq.svg)
  * 
- * @startuml AddPortletRequestSeq.svg
+ * @startuml AddConletRequestSeq.svg
  * hide footbox
  * 
- * Browser -> WebConsole: "addPortlet"
+ * Browser -> WebConsole: "addConlet"
  * activate WebConsole
  * WebConsole -> Conlet: AddConletRequest
  * deactivate WebConsole
@@ -54,7 +54,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * Conlet -> WebConsole: RenderConlet
  * deactivate Conlet
  * activate WebConsole
- * WebConsole -> Browser: "renderPortlet"
+ * WebConsole -> Browser: "renderConlet"
  * deactivate WebConsole
  * 
  * @enduml

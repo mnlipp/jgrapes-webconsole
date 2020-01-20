@@ -9,4 +9,4 @@ eclipse.preferences.version=1
 connection.java.home=null
 derived.resources=.gradle,build
 connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
-project.path=\:org.jgrapes.portlets.sysinfo
+project.path=\:org.jgrapes.conlet.sysinfo

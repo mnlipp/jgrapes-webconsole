@@ -90,22 +90,22 @@ public interface RenderSupport {
     }
 
     /**
-     * Create a reference to a resource provided by a portlet
+     * Create a reference to a resource provided by a web console component
      * of the given type. Requesting the resulting URI results
      * in a {@link ConletResourceRequest}.
      * 
-     * @param portletType the portlet type
+     * @param conletType the web console component type
      * @param uri the URI made available as 
      * {@link ConletResourceRequest#resourceUri()}
      * @return the resulting URI
      */
-    URI conletResource(String portletType, URI uri);
+    URI conletResource(String conletType, URI uri);
 
     /**
      * Convenience method that converts the path to an URI
      * before calling {@link #conletResource(String, URI)}.
      * 
-     * @param conletType the portlet type
+     * @param conletType the web console component type
      * @param path the path 
      * @return the resulting URI
      */

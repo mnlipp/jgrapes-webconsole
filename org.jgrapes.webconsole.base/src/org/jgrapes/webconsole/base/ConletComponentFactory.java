@@ -21,7 +21,7 @@ package org.jgrapes.webconsole.base;
 import org.jgrapes.core.ComponentFactory;
 
 /**
- * A factory interface for portlet components.
+ * A factory interface for web console components.
  */
 public interface ConletComponentFactory
         extends ComponentFactory {

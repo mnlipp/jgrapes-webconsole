@@ -267,11 +267,11 @@ body > footer {
     border-radius: .25rem;
 }
 
-/* # Portlet Styling */
+/* # Conlet Styling */
 
 /* ## General */
 
-/* ## Portlet Preview Styling */
+/* ## Conlet Preview Styling */
 
 .conlet-preview {
     border: 1px solid rgb(var(--panel-border));
@@ -307,7 +307,7 @@ body > footer {
     padding: 1.25rem;
 }
 
-/* ## Portlet Content UI Styles (markup based) */
+/* ## Conlet Content UI Styles (markup based) */
 
 /* ### Button styling. */
 

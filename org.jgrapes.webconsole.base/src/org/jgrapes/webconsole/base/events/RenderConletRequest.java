@@ -29,15 +29,15 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * a {@link RenderConlet} event that has as payload the
  * HTML that displays the web console component on the web console page.
  * 
- * ![Event Sequence](RenderPortletRequestSeq.svg)
+ * ![Event Sequence](RenderConletRequestSeq.svg)
  * 
  * The event's result must be set to `true` by the rendering 
  * web console component.
  * 
- * @startuml RenderPortletRequestSeq.svg
+ * @startuml RenderConletRequestSeq.svg
  * hide footbox
  * 
- * Browser -> WebConsole: "renderPortletRequest"
+ * Browser -> WebConsole: "renderConletRequest"
  * activate WebConsole
  * WebConsole -> Conlet: RenderConletRequest
  * deactivate WebConsole
@@ -45,7 +45,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  * Conlet -> WebConsole: RenderConlet
  * deactivate Conlet
  * activate WebConsole
- * WebConsole -> Browser: "renderPortlet"
+ * WebConsole -> Browser: "renderConlet"
  * deactivate WebConsole
  * 
  * @enduml

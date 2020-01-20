@@ -547,7 +547,7 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
-     * Returns the web console component state of this portlet's type 
+     * Returns the state of this web console component's type 
      * with the given id from the session.
      *
      * @param session the session to use

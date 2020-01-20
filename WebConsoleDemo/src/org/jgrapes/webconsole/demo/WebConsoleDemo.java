@@ -157,7 +157,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console));
-        // Add all available portlets
+        // Add all available conlets
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console));
     }
@@ -187,7 +187,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                     return Arrays.asList(Collections.emptyMap());
                 }
             }));
-        // Add all available portlets
+        // Add all available conlets
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console));
     }
@@ -217,7 +217,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                     return Arrays.asList(Collections.emptyMap());
                 }
             }));
-        // Add all available portlets
+        // Add all available conlets
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console));
     }

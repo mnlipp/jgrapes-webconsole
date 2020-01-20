@@ -11,14 +11,14 @@ Require-Capability: \
     osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)"
 
 Provide-Capability: osgi.serviceloader; \
-    osgi.serviceloader=org.jgrapes.webconsole.PortletComponentFactory; \
+    osgi.serviceloader=org.jgrapes.webconsole.ConletComponentFactory; \
         uses:="org.jgrapes.webconsole,org.jgrapes.core"
 
 Export-Package: \
 	org.jgrapes.webconsole.demo,\
 	org.jgrapes.webconsole.demo.conlet.helloworld,\
-	org.jgrapes.webconsole.demo.portlets.tabledemo,\
-	org.jgrapes.webconsole.demo.portlets.formtest
+	org.jgrapes.webconsole.demo.conlet.tabledemo,\
+	org.jgrapes.webconsole.demo.conlet.formtest
 	
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

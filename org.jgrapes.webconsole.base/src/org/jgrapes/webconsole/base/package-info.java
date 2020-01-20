@@ -29,8 +29,7 @@
  * 
  * The {@link org.jgrapes.webconsole.base.WebConsole} component 
  * is conceptually the main component of the web console. It exchanges events 
- * with the portlets and helper components, using a channel that is 
- * independent of the channel used for the communication with the browser.
+ * with the web console components and helper components, using a channel that 
  *
  * The {@link org.jgrapes.webconsole.base.WebConsole} component is automatically
  * instantiated as a child component of a 
@@ -40,7 +39,7 @@
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet}/{@link org.jgrapes.webconsole.base.WebConsole}
  * pair as a gateway that translates the Input/Output related events on the 
  * HTTP/WebSocket side to web console and component related events on the 
- * portlet side and vice versa.
+ * web console component side and vice versa.
  * 
  * ![WebConsole Structure](ConsoleStructure.svg)
  * 
@@ -58,45 +57,47 @@
  * The initial HTML document already includes some basic JavaScript 
  * resources which are required to implement the basic functions 
  * (such as [jQuery](http://jquery.com/)).
- * The portlets may, however, require additional libraries in order to
- * work. While it is possible for the portlets to add libraries, it is
- * usually preferable to add such libraries independent from individual
- * portlets in order to avoid duplicate loading and version conflicts.
+ * The web console components may, however, require additional libraries 
+ * in order to work. While it is possible for the web console components 
+ * to add libraries, it is usually preferable to add such libraries 
+ * independent from individual web console components in order to avoid 
+ * duplicate loading and version conflicts.
  * This is done by {@link org.jgrapes.webconsole.base.PageResourceProvider}s
  * that fire the required events on web console startup (see below).
  * 
- * ### Portlets
+ * ### Web Console Components
  * 
- * Conlet components represent available portlet types. If a 
- * portlet is actually used (instantiated) in the web console, and state
- * is associated with this instance or instances have to be tracked,
- * the portlet has to create and maintain a server side representation
- * of the instance. How this is done is completely up to the portlet. 
- * A common approach, which is supported by the portlet base class 
+ * Web console components ("conlets") represent available component types. 
+ * If a web console component is actually used (instantiated) in the web 
+ * console, and state is associated with this instance or instances have 
+ * to be tracked, the web console component has to create and maintain a 
+ * server side representation of the instance. How this is done is 
+ * completely up to the web console component. A common approach, 
+ * which is supported by the web console component base class 
  * {@link org.jgrapes.webconsole.base.AbstractConlet}, is shown in the 
  * diagram above. 
  * 
- * Using this approach, the portlet creates a portlet data object 
+ * Using this approach, the web console component creates a data object 
  * for each instance as an item stored in the browser session. This
- * couples the lifetime of the portlet data instances with the 
+ * couples the lifetime of the web console component data instances with the 
  * lifetime of the general session data, which is what you'd 
  * usually expect. Note that the web console data object is conceptually 
  * a view of some model maintained elsewhere. If the state information
  * associated with this view (e.g. columns displayed or hidden in
  * a table representation) needs to be persisted across 
- * sessions, it's up to the portlet to do this, using a persistence 
- * mechanism of its choice.
+ * sessions, it's up to the web console component to do this, using 
+ * a persistence mechanism of its choice.
  * 
- * The functionality that must be provided by a portlet with respect 
- * to its display on the web console page will be discussed later, after
+ * The functionality that must be provided by a web console component with 
+ * respect to its display on the web console page will be discussed later, after
  * all components and their interactions have been introduced.
  * 
- * ### WebConsole Policies
+ * ### Web Console Policies
  * 
- * WebConsole policy components are responsible for establishing the initial
- * set of portlets shown after the web console page has loaded. Usually,
- * there will be a web console policy component that restores the layout 
- * from the previous session. 
+ * Web console policy components are responsible for establishing the initial
+ * set of web console components shown after the web console page has loaded. 
+ * Usually, there will be a web console policy component that restores the 
+ * layout from the previous session. 
  * {@link org.jgrapes.webconsole.base.KVStoreBasedConsolePolicy}
  * is an example of such a component.
  * 
@@ -130,7 +131,8 @@
  * to a higher level event that is again fired on the
  * {@link org.jgrapes.webconsole.base.ConsoleSession} channel.
  * 
- * Components such as portlets or web console policies respond by sending 
+ * Components such as web console components or web console policies respond 
+ * by sending 
  * {@link org.jgrapes.webconsole.base.events.ConsoleCommand}s on the
  * {@link org.jgrapes.webconsole.base.ConsoleSession} channel as responses.
  * The {@link org.jgrapes.webconsole.base.events.ConsoleCommand}s are handled 
@@ -164,10 +166,12 @@
  * These cause the web console page to load additional, global resources.
  * 
  * In parallel (also in response to the 
- * {@link org.jgrapes.webconsole.base.events.ConsoleReady} event), each portlet 
- * component fires an {@link org.jgrapes.webconsole.base.events.AddConletType} event.
- * This cause the web console page in the browser to register the portlet type 
- * in the web console's menu of instantiable portlets and to load any 
+ * {@link org.jgrapes.webconsole.base.events.ConsoleReady} event), each 
+ * web console component 
+ * fires an {@link org.jgrapes.webconsole.base.events.AddConletType} event.
+ * This cause the web console page in the browser to register the 
+ * web console component type in the web console's menu of 
+ * instantiable web console components and to load any 
  * additionally required resources.
  * 
  * When all previously mentioned events have
@@ -178,10 +182,11 @@
  * the web console policy to send the last known layout to the web console page
  * in the browser and to send 
  * {@link org.jgrapes.webconsole.base.events.RenderConletRequest} events 
- * for all portlets (portlet instances) in that last known layout.
- * These are the same events as those sent by the browser
- * when the user adds a new portlet instance to the web console page.
- * The web console policy thus "replays" the creation of the portlets.
+ * for all web console components (web console component instances) in 
+ * that last known layout. These are the same events as those sent by the 
+ * browser when the user adds a new web console component instance to the web 
+ * console page. The web console policy thus "replays" the creation of the 
+ * web console components.
  * 
  * As completion event of the {@link org.jgrapes.webconsole.base.events.ConsolePrepared}
  * event, the framework generates a 
@@ -198,31 +203,33 @@
  * {@link org.jgrapes.webconsole.base.events.DeleteConletRequest} and
  * {@link org.jgrapes.webconsole.base.events.RenderConletRequest}.
  * 
- * Actions on portlets trigger JSON messages that result in
+ * Actions on web console components trigger JSON messages that result in
  * {@link org.jgrapes.webconsole.base.events.NotifyConletModel} events
- * that are processed by the respective portlet component. If,
+ * that are processed by the respective web console component. If,
  * due to the results of the action, the representation of the
- * portlet on the web console page must be updated, the portlet 
- * component fires a 
+ * web console component on the web console page must be updated, the 
+ * web console component  fires a 
  * {@link org.jgrapes.webconsole.base.events.NotifyConletView} event.
  * 
  * {@link org.jgrapes.webconsole.base.events.NotifyConletView} events
- * can also be sent unsolicitedly by portlet components if
+ * can also be sent unsolicitedly by web console components if
  * the model data changes independent of user actions.
  * 
- * Writing a Conlet
- * -----------------
+ * Writing a web console component (Conlet)
+ * ----------------------------------------
  * 
- * Portlets are components that consume and produce events. They
+ * web console components ("conlets") are components that consume and 
+ * produce events. They
  * don't have to implement a specific interface. Rather they have
  * exhibit a specific behavior that can be derived from the
  * descriptions above. The documentation of the base class
  * {@link org.jgrapes.webconsole.base.AbstractConlet} summarizes
  * the responsibilities of a web console component.
  * 
- * Portlets consist of (at least one) Java class and HTML generated
- * by this class. Optionally, a portlet can contribute style information
- * and JavaScript (see {@link org.jgrapes.webconsole.base.events.AddConletType}).
+ * Web console components consist of (at least one) Java class and HTML 
+ * generated by this class. Optionally, a web console component can 
+ * contribute style information and JavaScript 
+ * (see {@link org.jgrapes.webconsole.base.events.AddConletType}).
  * It may (and should) make use of the styles and 
  * <a href="jsdoc/module-console-base-resource_jgconsole.html">functions</a> 
  * provided by the web console.
@@ -245,23 +252,23 @@
  * 
  * together {
  * 
- *   WebConsole "1" -right- "1" PortletB
- *   WebConsole "1" -right- "1" PortletA
+ *   WebConsole "1" -right- "1" ConletB
+ *   WebConsole "1" -right- "1" ConletA
  * 
- *   class PortletAData {
+ *   class ConletAData {
  *     -conletId: String
  *   }
  * 
- *   PortletAData "*" -up- "1" PortletA
+ *   ConletAData "*" -up- "1" ConletA
  * 
- *   class PortletBData {
+ *   class ConletBData {
  *     -conletId: String
  *   }
  * 
- *   PortletBData "*" -up- "1" PortletB
+ *   ConletBData "*" -up- "1" ConletB
  *   
- *   PortletAData "*" -up-* "1" Session
- *   PortletBData "*" -up-* "1" Session
+ *   ConletAData "*" -up-* "1" Session
+ *   ConletBData "*" -up-* "1" Session
  * }
  * 
  * WebConsole "1" -down- "*" PageResourceProvider
@@ -324,11 +331,11 @@
  *         deactivate WebConsole
  *     end
  * 
- *     loop for all portlets
- *         WebConsole -> PortletX: ConsoleReady
- *         activate PortletX
- *         PortletX -> WebConsole: AddConletType 
- *         deactivate PortletX
+ *     loop for all conlets
+ *         WebConsole -> ConletX: ConsoleReady
+ *         activate ConletX
+ *         ConletX -> WebConsole: AddConletType 
+ *         deactivate ConletX
  *         activate WebConsole
  *         WebConsole -> Browser: "addConletType"
  *         deactivate WebConsole
@@ -342,13 +349,13 @@
  * activate ConsolePolicy
  * ConsolePolicy -> WebConsole: LastConsoleLayout
  * WebConsole -> Browser: "lastConsoleLayout"
- * loop for all portlets to be displayed
- *     ConsolePolicy -> PortletX: RenderConletRequest
- *     activate PortletX
- *     PortletX -> WebConsole: RenderConlet
- *     deactivate PortletX
+ * loop for all conlets to be displayed
+ *     ConsolePolicy -> ConletX: RenderConletRequest
+ *     activate ConletX
+ *     ConletX -> WebConsole: RenderConlet
+ *     deactivate ConletX
  *     activate WebConsole
- *     WebConsole -> Browser: "renderPortlet"
+ *     WebConsole -> Browser: "renderConlet"
  *     deactivate WebConsole
  * end
  * deactivate ConsolePolicy

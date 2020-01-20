@@ -1,23 +1,23 @@
 /*
- * Portlet specific styles.
+ * Conlet specific styles.
  */
 
-.jgrapes-conlets-mdp-form {
+.jgrapes-conlet-mdp-form {
     display: block;
     min-width: 80vw;
 }
 
-.jgrapes-conlets-mdp-form section > p:first-of-type {
+.jgrapes-conlet-mdp-form section > p:first-of-type {
 	font-size: 150%;
     margin-bottom: 0;
 }
 
-.jgrapes-conlets-mdp-form p {
+.jgrapes-conlet-mdp-form p {
 	margin-top: 0.25em;
 }
 
-.jgrapes-conlets-mdp-form .jgrapes-conlets-mdp-preview-preview,
-.jgrapes-conlets-mdp-form .jgrapes-conlets-mdp-view-preview {
+.jgrapes-conlet-mdp-form .jgrapes-conlet-mdp-preview-preview,
+.jgrapes-conlet-mdp-form .jgrapes-conlet-mdp-view-preview {
 	padding: 0.5em 0.5em;
 	border: 1px solid black;
 	max-height: 20vh;
@@ -26,17 +26,17 @@
 }
 
 /* Put preview input and preview side by side. */
-.jgrapes-conlets-mdp-preview {
+.jgrapes-conlet-mdp-preview {
     width: 100%;
     display: flex;
     align-items: stretch;
 }
 
-.jgrapes-conlets-mdp-preview > p {
+.jgrapes-conlet-mdp-preview > p {
 	margin-bottom: 0;
 }
 	
-.jgrapes-conlets-mdp-preview p:nth-child(1) {
+.jgrapes-conlet-mdp-preview p:nth-child(1) {
     padding-right: 0.5em;
     flex-basis: 50%;
     flex-grow: 1;
@@ -45,28 +45,28 @@
     flex-direction: column;
 }
 
-.jgrapes-conlets-mdp-preview p:nth-child(1) label {
+.jgrapes-conlet-mdp-preview p:nth-child(1) label {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 }
 
-.jgrapes-conlets-mdp-preview p:nth-child(1) label textarea {
+.jgrapes-conlet-mdp-preview p:nth-child(1) label textarea {
     height: 100%;
     flex-grow: 1;
 }
 
-.jgrapes-conlets-mdp-preview p:nth-child(2) {
+.jgrapes-conlet-mdp-preview p:nth-child(2) {
     padding-left: 0.5em;
     flex-basis: 50%;
     flex-grow: 1;
 }
 
-.jgrapes-conlets-mdp-preview .form-group:nth-child(1) 
+.jgrapes-conlet-mdp-preview .form-group:nth-child(1) 
     .form-item:last-child {
 	flex-grow: 1;
 }
 
-.jgrapes-conlets-mdp-view label {
+.jgrapes-conlet-mdp-view label {
 	width: 100%;
 }

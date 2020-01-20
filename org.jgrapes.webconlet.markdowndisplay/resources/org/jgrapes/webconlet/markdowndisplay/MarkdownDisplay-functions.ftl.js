@@ -63,11 +63,11 @@ var orgJGrapesConletsMarkdownDisplay = {
     orgJGrapesConletsMarkdownDisplay.init = function(content) {
         content = $(content);
         // Title
-        let titleSource = content.find('.jgrapes-conlets-mdp-title-input');
+        let titleSource = content.find('.jgrapes-conlet-mdp-title-input');
         
         // Preview
-        let previewSource = content.find('.jgrapes-conlets-mdp-preview-input');
-        let previewPreview = content.find('.jgrapes-conlets-mdp-preview-preview');
+        let previewSource = content.find('.jgrapes-conlet-mdp-preview-input');
+        let previewPreview = content.find('.jgrapes-conlet-mdp-preview-preview');
         let updatePreview = function() {
             let input = previewSource.val();
             let result = mdProc.render(input);
@@ -77,8 +77,8 @@ var orgJGrapesConletsMarkdownDisplay = {
         previewSource.on("keyup", function() { debounce(updatePreview); });
         
         // View
-        let viewSource = content.find('.jgrapes-conlets-mdp-view-input');
-        let viewPreview = content.find('.jgrapes-conlets-mdp-view-preview');
+        let viewSource = content.find('.jgrapes-conlet-mdp-view-input');
+        let viewPreview = content.find('.jgrapes-conlet-mdp-view-preview');
         let updateView = function() {
             let input = viewSource.val();
             let result = mdProc.render(input);
@@ -91,9 +91,9 @@ var orgJGrapesConletsMarkdownDisplay = {
     orgJGrapesConletsMarkdownDisplay.apply = function(element) {
         element = $(element);
         let conletId = element.closest("[data-conlet-id]").attr("data-conlet-id");
-        let titleSource = element.find('.jgrapes-conlets-mdp-title-input');
-        let previewSource = element.find('.jgrapes-conlets-mdp-preview-input');
-        let viewSource = element.find('.jgrapes-conlets-mdp-view-input');
+        let titleSource = element.find('.jgrapes-conlet-mdp-title-input');
+        let previewSource = element.find('.jgrapes-conlet-mdp-preview-input');
+        let viewSource = element.find('.jgrapes-conlet-mdp-view-input');
         JGConsole.notifyConletModel(conletId, "update", titleSource.val(),
                 previewSource.val(), viewSource.val());
     }

@@ -8,5 +8,5 @@ natures=org.eclipse.jdt.groovy.core.groovyNature,org.eclipse.jdt.core.javanature
 eclipse.preferences.version=1
 connection.java.home=null
 derived.resources=.gradle,build
-project.path=\:org.jgrapes.portlets.sysinfo
+project.path=\:org.jgrapes.webconlet.sysinfo
 connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)

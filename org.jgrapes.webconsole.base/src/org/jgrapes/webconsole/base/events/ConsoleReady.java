@@ -24,7 +24,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
  * Signals the successful loading of the web console structure
- * in the browser. Portlets should respond to this event by
+ * in the browser. web console components should respond to this event by
  * adding their types (using {@link AddConletType} events).
  * 
  * After the web console ready event has been processed, a 

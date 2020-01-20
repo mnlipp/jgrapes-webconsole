@@ -2,30 +2,30 @@
     data-jgwc-on-load="orgJGrapesConletsMarkdownDisplay.init"
     data-jgwc-on-apply="orgJGrapesConletsMarkdownDisplay.apply">
 
-  <form class="jgrapes-conlets-mdp-form">
+  <form class="jgrapes-conlet-mdp-form">
 
     <p>
       <label class="form__label--topAligned">
         <span>${_("Title")}</span>
-        <input class="jgrapes-conlets-mdp-title-input"
+        <input class="jgrapes-conlet-mdp-title-input"
           type="text" value="${conlet.title}">
       </label>
     </p>
 
     <section>
       <p>${_("Preview Text")}</p>
-      <div class="jgrapes-conlets-mdp-preview">
+      <div class="jgrapes-conlet-mdp-preview">
         <p>
           <label class="form__label--topAligned">
             <span>${_("Markdown Source")}</span>
             <textarea 
-              class="jgrapes-conlets-mdp-preview-input">${conlet.previewContent}</textarea>
+              class="jgrapes-conlet-mdp-preview-input">${conlet.previewContent}</textarea>
           </label>
         </p>
         <p>
           <label class="form__label--topAligned">
             <span>${_("Preview")}</span>
-            <span style="display:block;" class="jgrapes-conlets-mdp-preview-preview"></span>
+            <span style="display:block;" class="jgrapes-conlet-mdp-preview-preview"></span>
           </label>
         </p>
       </div>
@@ -33,19 +33,19 @@
 
     <section>
       <p>${_("View Text")}</p>
-      <div class="jgrapes-conlets-mdp-view">
+      <div class="jgrapes-conlet-mdp-view">
         <p>
           <label class="form__label--topAligned">
             <span>${_("Markdown Source")}</span>
             <textarea  
-              class="jgrapes-conlets-mdp-view-input">${conlet.viewContent}</textarea>
+              class="jgrapes-conlet-mdp-view-input">${conlet.viewContent}</textarea>
           </label>
         </p>
         <p>
           <label>
             <span>${_("Preview")}</span>
             <span style="display:block;" 
-              class="jgrapes-conlets-mdp-view-preview"></span>
+              class="jgrapes-conlet-mdp-view-preview"></span>
           </label>
         </p>
       </div>

@@ -1,4 +1,4 @@
-Bundle-Name: JGrapes System Info Portlet
+Bundle-Name: JGrapes System Info Conlet
 Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 Export-Package: org.jgrapes.webconlet.sysinfo

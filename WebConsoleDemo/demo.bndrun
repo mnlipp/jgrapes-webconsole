@@ -20,8 +20,8 @@
     org.jgrapes.webconsole.providers.chartjs;version=latest,\
     org.jgrapes.webconsole.providers.datatables;version=latest,\
     org.jgrapes.webconsole.providers.markdownit;version=latest,\
-	org.jgrapes.portlets.markdowndisplay;version=latest,\
-	org.jgrapes.portlets.sysinfo;version=latest,\
+	org.jgrapes.webconlet.markdowndisplay;version=latest,\
+	org.jgrapes.webconlet.sysinfo;version=latest,\
     WebConsoleDemo;version=snapshot
 -runrequires: \
     osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.shell)',\
@@ -31,8 +31,8 @@
     osgi.identity;filter:='(osgi.identity=org.jgrapes.webconsole.providers.datatables)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.webconsole.providers.markdownit)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.webconsole.demo.conlet.helloworld)',\
-    osgi.identity;filter:='(osgi.identity=org.jgrapes.portlets.sysinfo)',\
-    osgi.identity;filter:='(osgi.identity=org.jgrapes.portlets.markdowndisplay)'
+    osgi.identity;filter:='(osgi.identity=org.jgrapes.webconlet.sysinfo)',\
+    osgi.identity;filter:='(osgi.identity=org.jgrapes.webconlet.markdowndisplay)'
 -runprogramargs: -console
 -runproperties: java.util.logging.config.file=jul-debug.properties
 -runee: JavaSE-1.8

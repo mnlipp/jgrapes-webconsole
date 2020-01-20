@@ -23,7 +23,7 @@ var orgJGrapesConletsSysInfo = {
 
 (function() {
 
-    $("body").on("click", ".jgrapes-conlets-sysinfo-view .GarbageCollection-action",
+    $("body").on("click", ".jgrapes-conlet-sysinfo-view .GarbageCollection-action",
             function(event) {
         let conletId = $(this).closest("[data-conlet-id]").attr("data-conlet-id");
         JGConsole.notifyConletModel(conletId, "garbageCollection");

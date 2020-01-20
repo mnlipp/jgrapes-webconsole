@@ -17,7 +17,7 @@
  */
 
 /**
- * A portlet component for displaying system information in
+ * A web console component for displaying system information in
  * a web console.
  */
 @org.osgi.annotation.versioning.Version("${api_version}")

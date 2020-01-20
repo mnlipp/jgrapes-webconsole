@@ -1,15 +1,15 @@
 /*
- * Portlet specific styles.
+ * Conlet specific styles.
  */
- .jgrapes-conlets-sysinfo-view .memoryChart-wrapper {
+ .jgrapes-conlet-sysinfo-view .memoryChart-wrapper {
     height: 50vh;
     width: 100%;
 }
  
-.jgrapes-conlets-sysinfo-view .GarbageCollection-action {
+.jgrapes-conlet-sysinfo-view .GarbageCollection-action {
 	float: right;
 }
 
-.jgrapes-conlets-sysinfo-view button span.fa {
+.jgrapes-conlet-sysinfo-view button span.fa {
     margin-right: 0.5em;
 }

@@ -51,8 +51,9 @@ import org.jgrapes.webconsole.jqueryui.themes.base.Provider;
 
 /**
  * Provides resources using {@link Request}/{@link Response}
- * events. Some resource requests (page resource, portlet resource)
- * are forwarded via the {@link WebConsole} component to the portlets.
+ * events. Some resource requests (page resource, conlet resource)
+ * are forwarded via the {@link WebConsole} component to the 
+ * web console components.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods" })
@@ -183,7 +184,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     @Handler(channels = ConsoleChannel.class)
     public void onJsonInput(JsonInput event, ConsoleSession channel)
             throws InterruptedException, IOException {
-        // Send events to portlets on web console's channel
+        // Send events to conlets on web console's channel
         JsonArray params = event.request().params();
         switch (event.request().method()) { // NOPMD
         case "setTheme": {
@@ -289,7 +290,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 //
 //    /**
 //     * The channel used to send {@link PageResourceRequest}s and
-//     * {@link ConletResourceRequest}s to the portlets (via the
+//     * {@link ConletResourceRequest}s to the conlets (via the
 //     * web console).
 //     */
 //    public class ConsoleResourceChannel extends LinkedIOSubchannel {
@@ -313,9 +314,9 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 //    private class RenderSupportImpl implements RenderSupport {
 //
 //        @Override
-//        public URI portletResource(String portletType, URI uri) {
+//        public URI conletResource(String conletType, URI uri) {
 //            return console.prefix().resolve(uriFromPath(
-//                "portlet-resource/" + portletType + "/")).resolve(uri);
+//                "conlet-resource/" + conletType + "/")).resolve(uri);
 //        }
 //
 //        @Override

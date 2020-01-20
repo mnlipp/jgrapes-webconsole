@@ -28,8 +28,9 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
 
 /**
  * Provides resources using {@link Request}/{@link Response}
- * events. Some resource requests (page resource, portlet resource)
- * are forwarded via the {@link WebConsole} component to the portlets.
+ * events. Some resource requests (page resource, conlet resource)
+ * are forwarded via the {@link WebConsole} component to the 
+ * web console components.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods" })
