@@ -19,7 +19,7 @@ Require-Capability: \
     org.jgrapes.webconsole.page.resource;filter:="(name=vuex)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jgwc-vue-components)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)",\
-    org.jgrapes.powebconsolertal.page.resource;filter:="(name=lodash)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=lodash)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=gridstack)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui.touch-punch)"
