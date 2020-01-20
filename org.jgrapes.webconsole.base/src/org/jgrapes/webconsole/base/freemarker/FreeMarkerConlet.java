@@ -63,7 +63,7 @@ import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 /**
  * 
  */
-public abstract class FreeMarkerComponent<S extends Serializable>
+public abstract class FreeMarkerConlet<S extends Serializable>
         extends AbstractConlet<S> {
 
     @SuppressWarnings("PMD.VariableNamingConventions")
@@ -79,19 +79,19 @@ public abstract class FreeMarkerComponent<S extends Serializable>
      * 
      * @param componentChannel
      */
-    public FreeMarkerComponent(Channel componentChannel) {
+    public FreeMarkerConlet(Channel componentChannel) {
         super(componentChannel);
     }
 
     /**
-     * Like {@link #FreeMarkerComponent(Channel)}, but supports
+     * Like {@link #FreeMarkerConlet(Channel)}, but supports
      * the specification of channel replacements.
      * 
      * @param componentChannel
      * @param channelReplacements the channel replacements (see
      * {@link Component})
      */
-    public FreeMarkerComponent(Channel componentChannel,
+    public FreeMarkerConlet(Channel componentChannel,
             ChannelReplacements channelReplacements) {
         super(componentChannel, channelReplacements);
     }
@@ -144,7 +144,7 @@ public abstract class FreeMarkerComponent<S extends Serializable>
                         throw new TemplateModelException("Not a string.");
                     }
                     return renderSupport.conletResource(
-                        FreeMarkerComponent.this.getClass().getName(),
+                        FreeMarkerConlet.this.getClass().getName(),
                         ((SimpleScalar) args.get(0)).getAsString())
                         .getRawPath();
                 }

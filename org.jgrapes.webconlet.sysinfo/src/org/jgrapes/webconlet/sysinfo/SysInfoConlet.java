@@ -49,13 +49,13 @@ import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
-import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
+import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
 /**
  * 
  */
 public class SysInfoConlet
-        extends FreeMarkerComponent<SysInfoConlet.SysInfoModel> {
+        extends FreeMarkerConlet<SysInfoConlet.SysInfoModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);

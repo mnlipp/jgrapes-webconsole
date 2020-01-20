@@ -42,12 +42,12 @@ import org.jgrapes.webconsole.base.events.DeleteConlet;
 import org.jgrapes.webconsole.base.events.DeleteConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
-import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
+import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
 /**
  * 
  */
-public class TableDemoConlet extends FreeMarkerComponent<ConletBaseModel> {
+public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);

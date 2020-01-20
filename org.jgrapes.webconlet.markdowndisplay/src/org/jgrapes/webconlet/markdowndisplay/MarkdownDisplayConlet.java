@@ -60,7 +60,7 @@ import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.UpdateConletModel;
-import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
+import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
 /**
  * A web console component used to display information to the user. Instances
@@ -71,7 +71,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
 @SuppressWarnings("PMD.DataClass")
 public class MarkdownDisplayConlet
         extends
-        FreeMarkerComponent<MarkdownDisplayConlet.MarkdownDisplayModel> {
+        FreeMarkerConlet<MarkdownDisplayConlet.MarkdownDisplayModel> {
 
     /** Property for forcing a conlet id (used for singleton instances). */
     public static final String CONLET_ID = "ConletId";

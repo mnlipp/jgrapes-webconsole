@@ -54,14 +54,14 @@ import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
-import org.jgrapes.webconsole.base.freemarker.FreeMarkerComponent;
+import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 import org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldConlet;
 
 /**
  * 
  */
 public class HelloWorldConlet
-        extends FreeMarkerComponent<HelloWorldConlet.HelloWorldModel> {
+        extends FreeMarkerConlet<HelloWorldConlet.HelloWorldModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.DeleteablePreview, RenderMode.View);
