@@ -49,8 +49,6 @@ task prepareNpmLibs(type: Copy) {
     dependsOn(':npmInstall')
     into('build/generated/resources/org/jgrapes/webconsole/vuejs/lib')
     from file("${rootProject.projectDir}/node_modules/normalize.css/normalize.css")
-    from file("${rootProject.projectDir}/node_modules/vuex/dist/vuex.esm.browser.js")
-    from file("${rootProject.projectDir}/node_modules/vuex/dist/vuex.esm.browser.min.js")
 }
 
 processResources.dependsOn 'prepareNpmLibs'

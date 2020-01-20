@@ -26,10 +26,10 @@
 -runrequires: \
     osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.shell)',\
     osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.command)',\
-    osgi.identity;filter:='(osgi.identity=HttpPortalDemo)',\
-    osgi.identity;filter:='(osgi.identity=org.jgrapes.portal.providers.chartjs)',\
-    osgi.identity;filter:='(osgi.identity=org.jgrapes.portal.providers.datatables)',\
-    osgi.identity;filter:='(osgi.identity=org.jgrapes.portal.providers.markdownit)',\
+    osgi.identity;filter:='(osgi.identity=WebConsoleDemo)',\
+    osgi.identity;filter:='(osgi.identity=org.jgrapes.webconsole.providers.chartjs)',\
+    osgi.identity;filter:='(osgi.identity=org.jgrapes.webconsole.providers.datatables)',\
+    osgi.identity;filter:='(osgi.identity=org.jgrapes.webconsole.providers.markdownit)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.webconsole.demo.conlet.helloworld)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.portlets.sysinfo)',\
     osgi.identity;filter:='(osgi.identity=org.jgrapes.portlets.markdowndisplay)'

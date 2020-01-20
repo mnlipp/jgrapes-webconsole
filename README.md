@@ -1,24 +1,18 @@
-JGrapes-Portal
-==============
+JGrapes-WebConsole
+==================
 
-[![Build Status](https://travis-ci.org/mnlipp/jgrapes-portal.svg?branch=master)](https://travis-ci.org/mnlipp/jgrapes-portal)
+[![Build Status](https://travis-ci.org/mnlipp/jgrapes-webconsole.svg?branch=master)](https://travis-ci.org/mnlipp/jgrapes-webconsole)
 
 | Package | Bintray |
 | ------- | ------- |
-| base    | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.base/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.base/_latestVersion)
-| jqueryui | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.jqueryui/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.jqueryui/_latestVersion)
-| bootstrap4 | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.bootstrap4/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.portal.bootstrap4/_latestVersion)
+| base    | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.base/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.base/_latestVersion)
+| jqueryui | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.jqueryui/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.jqueryui/_latestVersion)
+| bootstrap4 | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.bootstrap4/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.bootstrap4/_latestVersion)
 
 See the [project's home page](https://mnlipp.github.io/jgrapes/).
 
 This repository comprises the sources for jars that provide
-the portal components.
-
-Themes
-------
-
-Additional themes are maintained in an 
-[independant repository](https://github.com/mnlipp/jgrapes-portal-themes).
+the web console components.
 
 Demo
 ----
