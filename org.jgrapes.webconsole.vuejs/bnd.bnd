@@ -1,5 +1,4 @@
 Bundle-Name: JGrapes Bootstrap 4 Web Console
-Bundle-SymbolicName: org.jgrapes.webconsole.vuejs
 Bundle-Copyright: Michael N. Lipp (c) 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
@@ -18,7 +17,7 @@ Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=vue)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=vuex)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=jgp-vue-components)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=jgwc-vue-components)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)",\
     org.jgrapes.powebconsolertal.page.resource;filter:="(name=lodash)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui)",\

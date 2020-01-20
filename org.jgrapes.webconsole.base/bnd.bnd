@@ -11,8 +11,8 @@ api_version = 0.0.0
 
 Export-Package: \
 	org.jgrapes.webconsole.base,\
-	org.jgrapes.webcon.base.util,\
-	org.jgrapes.webcon.base.events,\
+	org.jgrapes.webconsole.base.util,\
+	org.jgrapes.webconsole.base.events,\
 	org.jgrapes.webconsole.base.freemarker
 
 -includeresource: resources

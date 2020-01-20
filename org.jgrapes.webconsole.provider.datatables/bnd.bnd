@@ -1,5 +1,4 @@
 Bundle-Name: JGrapes Web Console datatables.js Provider
-Bundle-SymbolicName: org.jgrapes.webconsole.provider.datatables
 Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 Export-Package: org.jgrapes.webconsole.provider.datatables

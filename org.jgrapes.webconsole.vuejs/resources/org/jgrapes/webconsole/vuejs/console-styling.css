@@ -120,14 +120,14 @@ body > footer {
 /* ## JGP Component styling */
 
 /*
- * The jgp-tablist is considered an implementation of a general tablist
+ * The jgwc-tablist is considered an implementation of a general tablist
  * as presented in
  * https://www.w3.org/TR/wai-aria-practices/examples/tabs/tabs-2/tabs.html.
  *
  * Hoever, the element with [role=tab] isn't the activating button, because
  * there is also an additional remove button. Therefore, there is role based
  * styling that should work for any tablist following the basic structure
- * and styling for the special case of a jgp-tablist.
+ * and styling for the special case of a jgwc-tablist.
  */
 
 [role=tablist] {
@@ -175,11 +175,11 @@ body > footer {
     color: rgb(var(--primary));
 }
 
-.jgp-tablist > span button:first-child:-moz-focusring {
+.jgwc-tablist > span button:first-child:-moz-focusring {
     outline-offset: -0.25rem;
 }
 
-.jgp-tablist > span button:not(:first-child) {
+.jgwc-tablist > span button:not(:first-child) {
     padding-left: 0;
     padding-right: 0;
     position: relative;
@@ -189,20 +189,20 @@ body > footer {
     color: rgb(var(--primary));
 }
 
-.jgp-tablist > span button:not(:first-child):hover {
+.jgwc-tablist > span button:not(:first-child):hover {
     transform: scale(1.25);
 }
 
-.jgp-tablist > span[aria-selected="true"] button:first-child {
+.jgwc-tablist > span[aria-selected="true"] button:first-child {
     color: inherit;
 }
 
-.jgp-tablist > span[aria-selected="false"] button:not(:first-child) {
+.jgwc-tablist > span[aria-selected="false"] button:not(:first-child) {
     display: none;
 }
 
 /*
- * The jgp-pulldown-menu is considered an implementation of a general pulldown
+ * The jgwc-pulldown-menu is considered an implementation of a general pulldown
  * menu as presented in
  * https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-actions.html.
  *

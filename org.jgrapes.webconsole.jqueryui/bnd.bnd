@@ -1,5 +1,4 @@
 Bundle-Name: JGrapes JQuery UI Console
-Bundle-SymbolicName: org.jgrapes.webconsole.jqueryui
 Bundle-Copyright: Michael N. Lipp (c) 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
