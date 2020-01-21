@@ -17,99 +17,122 @@
  */
 
 /**
- * Provides the components for building a web console based on the
+ * Provides the components for building web consoles based on the
  * core, io and http packages. 
  * 
  * [TOC formatted]
+ * 
+ * Overview
+ * --------
+ * 
+ * A web console built with the components provided here is a single
+ * page application (SPA) that &mdash;from the user's point of view&mdash;
+ * consists of a fixed frame with configurable content. The frame provides
+ * some means to add content (typically by using a dropdown menu) and to 
+ * configure global settings such as the locale.
+ * 
+ * The content of the frame is provided by web console display components 
+ * or "conlets" for short. These components typically provide a summary
+ * or preview display that can be put on an overview panel in a dashboard
+ * style and a large view that is supposed to fill the complete frame.
+ * 
+ * Typically, tabs or a menu in a side bar are used to switch between
+ * the overview panel(s) and the large views of the different conlets. 
  *
- * WebConsole Components
- * -----------------
+ * Web Console Components
+ * ----------------------
  *
  * ### WebConsole and ConsoleWeblet 
  * 
  * The {@link org.jgrapes.webconsole.base.WebConsole} component 
- * is conceptually the main component of the web console. It exchanges events 
- * with the web console components and helper components, using a channel that 
+ * is conceptually the main component of a web console. It exchanges events 
+ * with the display components and helper components, 
+ * using a channel that is independent of the channel used for the 
+ * communication with the browser.
  *
- * The {@link org.jgrapes.webconsole.base.WebConsole} component is automatically
- * instantiated as a child component of a 
+ * The {@link org.jgrapes.webconsole.base.WebConsole} component is 
+ * automatically instantiated as a child component of a 
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet} which handles the 
  * communication with the {@link org.jgrapes.http.HttpServer} and thus
  * with the browser. You can think of the 
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet}/{@link org.jgrapes.webconsole.base.WebConsole}
  * pair as a gateway that translates the Input/Output related events on the 
- * HTTP/WebSocket side to web console and component related events on the 
- * web console component side and vice versa.
+ * HTTP/WebSocket side to web console related events and vice versa.
  * 
- * ![WebConsole Structure](ConsoleStructure.svg)
+ * ![Web Console Structure](ConsoleStructure.svg)
  * 
  * In the browser, the web console is implemented as a single page 
- * application. The {@link org.jgrapes.webconsole.base.ConsoleWeblet} provides
- * an initial HTML document that implements the basic structure of
+ * application (SPA). The {@link org.jgrapes.webconsole.base.ConsoleWeblet} 
+ * provides the initial HTML document that implements the basic structure of
  * the web console. Aside from additional HTTP requests for static resources
  * like JavaScript libraries, CSS, images etc. all information is
- * then exchanged using JSON messages exchanged over a web socket 
+ * then exchanged using JSON messages sent over a web socket 
  * connection that is established immediately after the initial 
  * HTML has been loaded.
  * 
+ * The information exchanged includes, in particular, the registration 
+ * of web console display components and helper components,
+ * which are described below.
+ * 
  * ### Page Resource Providers
  * 
- * The initial HTML document already includes some basic JavaScript 
+ * The initial HTML document may already includes some JavaScript 
  * resources which are required to implement the basic functions 
- * (such as [jQuery](http://jquery.com/)).
- * The web console components may, however, require additional libraries 
- * in order to work. While it is possible for the web console components 
+ * (such as providing the header with the web console related menus).
+ * The web console display components may, however, require additional libraries 
+ * in order to work. While it is possible for the web console display components 
  * to add libraries, it is usually preferable to add such libraries 
- * independent from individual web console components in order to avoid 
+ * independent from individual web console display components in order to avoid 
  * duplicate loading and version conflicts.
  * This is done by {@link org.jgrapes.webconsole.base.PageResourceProvider}s
  * that fire the required events on web console startup (see below).
  * 
- * ### Web Console Components
+ * ### Web Console Display Components
  * 
- * Web console components ("conlets") represent available component types. 
- * If a web console component is actually used (instantiated) in the web 
- * console, and state is associated with this instance or instances have 
- * to be tracked, the web console component has to create and maintain a 
- * server side representation of the instance. How this is done is 
- * completely up to the web console component. A common approach, 
- * which is supported by the web console component base class 
+ * Web console display components ("conlet components") represent available 
+ * content types. When a display component is actually used 
+ * (instantiated) in the web console, state information that represents
+ * the instance has to be created and maintained on the server side. 
+ * How this is done is completely up to the web console display component. 
+ * A common approach, which is supported by the display component base class 
  * {@link org.jgrapes.webconsole.base.AbstractConlet}, is shown in the 
  * diagram above. 
  * 
- * Using this approach, the web console component creates a data object 
+ * Using this approach, the display component creates a data object 
  * for each instance as an item stored in the browser session. This
- * couples the lifetime of the web console component data instances with the 
+ * couples the lifetime of the data instances with the 
  * lifetime of the general session data, which is what you'd 
- * usually expect. Note that the web console data object is conceptually 
+ * usually expect. Note that the data object is conceptually 
  * a view of some model maintained elsewhere. If the state information
  * associated with this view (e.g. columns displayed or hidden in
  * a table representation) needs to be persisted across 
  * sessions, it's up to the web console component to do this, using 
  * a persistence mechanism of its choice.
  * 
- * The functionality that must be provided by a web console component with 
- * respect to its display on the web console page will be discussed later, after
- * all components and their interactions have been introduced.
+ * The functionality that must be provided by a web console display 
+ * component with respect to its presentation on the web console page 
+ * will be discussed later, after all component types and their interactions 
+ * have been introduced.
  * 
  * ### Web Console Policies
  * 
  * Web console policy components are responsible for establishing the initial
- * set of web console components shown after the web console page has loaded. 
- * Usually, there will be a web console policy component that restores the 
- * layout from the previous session. 
+ * set of web console display components shown after the web console page has 
+ * loaded. Usually, there will be a web console policy component that 
+ * restores the layout from the previous session. 
  * {@link org.jgrapes.webconsole.base.KVStoreBasedConsolePolicy}
  * is an example of such a component.
  * 
  * There can be more than one web console policy component. A common use case
  * is to have one policy component that maintains the web console layout
- * and another component that ensures that the web console is not empty when
- * a new session is initially created. The demo includes such a component.
+ * across reloads and another component that ensures that the web console 
+ * is not empty when a new session is initially created. The demo 
+ * includes such a component.
  * 
- * WebConsole Session Startup
- * ----------------------
+ * Web Console Session Startup
+ * ---------------------------
  * 
- * ### WebConsole Page Loading
+ * ### Web Console Page Loading
  * 
  * The following diagram shows the start of a web console session 
  * up to the exchange of the first messages on the web socket connection.
@@ -140,7 +163,7 @@
  * the data and sends it to the websocket using 
  * {@link org.jgrapes.io.events.Output} events.
  * 
- * ### WebConsole Session Preparation and Configuration
+ * ### Web Console Session Preparation and Configuration
  * 
  * The diagram below shows the complete mandatory sequence of events 
  * following the web console ready message. The diagram uses a 
@@ -167,11 +190,11 @@
  * 
  * In parallel (also in response to the 
  * {@link org.jgrapes.webconsole.base.events.ConsoleReady} event), each 
- * web console component 
+ * display component 
  * fires an {@link org.jgrapes.webconsole.base.events.AddConletType} event.
- * This cause the web console page in the browser to register the 
+ * This causes the web console page in the browser to register the 
  * web console component type in the web console's menu of 
- * instantiable web console components and to load any 
+ * instantiable display components and to load any 
  * additionally required resources.
  * 
  * When all previously mentioned events have
@@ -182,19 +205,20 @@
  * the web console policy to send the last known layout to the web console page
  * in the browser and to send 
  * {@link org.jgrapes.webconsole.base.events.RenderConletRequest} events 
- * for all web console components (web console component instances) in 
+ * for all display components (instances, to be precise) in 
  * that last known layout. These are the same events as those sent by the 
  * browser when the user adds a new web console component instance to the web 
  * console page. The web console policy thus "replays" the creation of the 
- * web console components.
+ * web console components and the portal page uses the last layout 
+ * information to restore the previous positions.
  * 
  * As completion event of the {@link org.jgrapes.webconsole.base.events.ConsolePrepared}
  * event, the framework generates a 
  * {@link org.jgrapes.webconsole.base.events.ConsoleConfigured} event which is sent to
  * the web console, indicating that it is now ready for use.
  * 
- * WebConsole Session Use
- * ------------------
+ * Web Console Session Use
+ * -----------------------
  * 
  * After the web console session has been configured, the system usually
  * waits for input from the user. Changes of the layout of the
@@ -205,9 +229,9 @@
  * 
  * Actions on web console components trigger JSON messages that result in
  * {@link org.jgrapes.webconsole.base.events.NotifyConletModel} events
- * that are processed by the respective web console component. If,
+ * that are processed by the respective display component. If,
  * due to the results of the action, the representation of the
- * web console component on the web console page must be updated, the 
+ * display component on the web console page must be updated, the 
  * web console component  fires a 
  * {@link org.jgrapes.webconsole.base.events.NotifyConletView} event.
  * 
@@ -215,24 +239,24 @@
  * can also be sent unsolicitedly by web console components if
  * the model data changes independent of user actions.
  * 
- * Writing a web console component (Conlet)
- * ----------------------------------------
+ * Writing a web console display component (Conlet)
+ * ------------------------------------------------
  * 
- * web console components ("conlets") are components that consume and 
+ * Web console display components ("conlets") are components that consume and 
  * produce events. They
  * don't have to implement a specific interface. Rather they have
- * exhibit a specific behavior that can be derived from the
+ * to exhibit a specific behavior that can be derived from the
  * descriptions above. The documentation of the base class
  * {@link org.jgrapes.webconsole.base.AbstractConlet} summarizes
  * the responsibilities of a web console component.
  * 
- * Web console components consist of (at least one) Java class and HTML 
- * generated by this class. Optionally, a web console component can 
+ * Display components consist of (at least one) Java class and HTML 
+ * generated by this class. Optionally, a display component can 
  * contribute style information and JavaScript 
  * (see {@link org.jgrapes.webconsole.base.events.AddConletType}).
  * It may (and should) make use of the styles and 
  * <a href="jsdoc/module-console-base-resource_jgconsole.html">functions</a> 
- * provided by the web console.
+ * provided by the web console JavaScript object in the browser page.
  * 
  * 
  * @startuml ConsoleStructure.svg
