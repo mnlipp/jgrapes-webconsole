@@ -20,10 +20,10 @@ dependencies {
     compile project(':org.jgrapes.webconsole.vuejs')
     compile project(':org.jgrapes.webconsole.bootstrap4')
     compile project(':org.jgrapes.webconsole.jqueryui')
+    compile project(':org.jgrapes.webconlet.markdowndisplay')
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
     runtimeOnly project(':org.jgrapes.webconsole.provider.datatables')
     runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vuejs')
     runtimeOnly project(':org.jgrapes.webconlet.sysinfo')
-    runtimeOnly project(':org.jgrapes.webconlet.markdowndisplay')
 }
