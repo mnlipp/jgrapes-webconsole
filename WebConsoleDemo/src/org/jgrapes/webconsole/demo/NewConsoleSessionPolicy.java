@@ -18,10 +18,14 @@
 
 package org.jgrapes.webconsole.demo;
 
+import java.util.Collections;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.webconlet.markdowndisplay.MarkdownDisplayConlet;
+import org.jgrapes.webconsole.base.Conlet;
 import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.ConsoleConfigured;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.RenderConlet;
@@ -69,15 +73,15 @@ public class NewConsoleSessionPolicy extends Component {
             renderedFlagName, false)) {
             return;
         }
-//        fire(new AddConletRequest(event.event().event().renderSupport(),
-//            MarkdownDisplayConlet.class.getName(),
-//            Conlet.RenderMode.Preview)
-//                .addProperty(MarkdownDisplayConlet.TITLE, "Demo WebConsole")
-//                .addProperty(MarkdownDisplayConlet.PREVIEW_SOURCE,
-//                    "A Demo WebConsole")
-//                .addProperty(MarkdownDisplayConlet.EDITABLE_BY,
-//                    Collections.EMPTY_SET),
-//            consoleSession);
+        fire(new AddConletRequest(event.event().event().renderSupport(),
+            MarkdownDisplayConlet.class.getName(),
+            Conlet.RenderMode.asSet(Conlet.RenderMode.Preview))
+                .addProperty(MarkdownDisplayConlet.TITLE, "Demo WebConsole")
+                .addProperty(MarkdownDisplayConlet.PREVIEW_SOURCE,
+                    "A Demo WebConsole")
+                .addProperty(MarkdownDisplayConlet.EDITABLE_BY,
+                    Collections.EMPTY_SET),
+            consoleSession);
     }
 
 }
