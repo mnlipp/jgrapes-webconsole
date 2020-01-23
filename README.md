@@ -31,7 +31,7 @@ style and a large view that is supposed to fill the complete frame.
 Tabs or a menu in a side bar can be used to switch between
 the overview panel(s) and the large views of the different conlets. 
 
-![Web Console Demo](README-pic1.png)
+![Web Console Demo](README-pic1.png | width=250)
 
 Demo
 ----
