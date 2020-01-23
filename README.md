@@ -11,8 +11,27 @@ JGrapes-WebConsole
 
 See the [project's home page](https://mnlipp.github.io/jgrapes/).
 
-This repository comprises the sources for jars that provide
-the web console components.
+This repository holds the sources for jars that provide
+the web console components of the JGrapes framework.
+
+Overview
+--------
+
+A web console built with the components provided here is a single
+page application (SPA) that &mdash;from the user's point of view&mdash;
+consists of a fixed frame with configurable content. The frame provides
+some means to add content (typically by using a dropdown menu) and to 
+configure global settings such as the locale.
+
+The content of the frame is provided by web console display components 
+or "conlets" for short. These components typically provide a summary
+or preview display that can be put on an overview panel in a dashboard
+style and a large view that is supposed to fill the complete frame.
+
+Tabs or a menu in a side bar can be used to switch between
+the overview panel(s) and the large views of the different conlets. 
+
+![Web Console Demo](README-pic1.png)
 
 Demo
 ----

@@ -36,7 +36,7 @@
  * or preview display that can be put on an overview panel in a dashboard
  * style and a large view that is supposed to fill the complete frame.
  * 
- * Typically, tabs or a menu in a side bar are used to switch between
+ * Tabs or a menu in a side bar can be used to switch between
  * the overview panel(s) and the large views of the different conlets. 
  *
  * Web Console Components
