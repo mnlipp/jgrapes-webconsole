@@ -1,7 +1,7 @@
 <div data-conlet-title="${_("conletName")}"
     data-conlet-grid-rows="2">${_("HelloWorld")} 
     <img style='vertical-align: bottom;'
-        src="${conletResource('globe.ico')}" height='20'>
-    <!-- World icon from http://apathae.deviantart.com/ -->
+        src="${conletResource('Icojam-Blue-Bits-Globe.ico')}" height='20'>
+    <!-- Globe icon from https://web.archive.org/web/20190618095520/http://www.iconarchive.com/show/blue-bits-icons-by-icojam/globe-icon.html -->
 </div>
 
