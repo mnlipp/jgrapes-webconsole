@@ -26,7 +26,7 @@
     white-space: nowrap;
 } 
 
-:not(.table--no-basic-style) {
+:not(.table--no-basic-style) table:not(.table--no-basic-style) {
     display: block;
     overflow-x: auto;
 }
