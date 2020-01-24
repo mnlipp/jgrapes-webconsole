@@ -52,6 +52,7 @@ import org.jgrapes.http.Session;
 import org.jgrapes.http.annotation.RequestHandler;
 import org.jgrapes.http.events.ProtocolSwitchAccepted;
 import org.jgrapes.http.events.Request;
+import org.jgrapes.http.events.Request.In.Get;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.http.events.Upgraded;
 import org.jgrapes.io.IOSubchannel;
@@ -64,6 +65,7 @@ import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.ConsoleCommand;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.JsonInput;
 import org.jgrapes.webconsole.base.events.PageResourceRequest;
 import org.jgrapes.webconsole.base.events.ResourceRequestCompleted;
 import org.jgrapes.webconsole.base.events.SetLocale;
@@ -71,10 +73,23 @@ import org.jgrapes.webconsole.base.events.SetLocaleCompleted;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 
 /**
- * Provides resources using {@link Request}/{@link Response}
- * events. Some resource requests (console resource, web console 
- * component resource) are forwarded via the {@link WebConsole} 
- * component to the web console components.
+ * The server side base class for a web console single page 
+ * application (SPA). Its two main tasks are to provide resources using 
+ * {@link Request}/{@link Response} events (see 
+ * {@link #onGet(org.jgrapes.http.events.Request.In.Get, IOSubchannel)}
+ * for details about the different kinds of resources) and to convert
+ * the JSON RPC messages received from the browser via the web socket
+ * to {@link JsonInput} events and fire them on the
+ * {@link ConsoleSession} channel.
+ * 
+ * The class has a counter part in the browser, the `jgconsole`
+ * JavaScript module (see 
+ * <a href="jsdoc/module-console-base-resource_jgconsole.html">functions</a>)
+ * that can be loaded as `console-base-resource/jgconsole.js` 
+ * (relative to the configured prefix). 
+ * 
+ * The class also provides handlers for some console related events
+ * that affect the console representation in the browser.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods" })
@@ -109,7 +124,10 @@ public abstract class ConsoleWeblet extends Component {
     }
 
     /**
-     * Instantiates a new console weblet.
+     * Instantiates a new console weblet. The weblet handles
+     * {@link Get} events for URIs that start with the
+     * specified prefix (see 
+     * {@link #onGet(org.jgrapes.http.events.Request.In.Get, IOSubchannel)}).
      *
      * @param webletChannel the weblet channel
      * @param consoleChannel the console channel
@@ -378,7 +396,27 @@ public abstract class ConsoleWeblet extends Component {
     }
 
     /**
-     * Handle the `GET` requests for the various resources.
+     * Handle the `GET` requests for the various resources. The requests
+     * have to start with the prefix passed to the constructor. Further
+     * processing depends on the next path segment:
+     * 
+     * * `.../console-base-resource`: Provide a resource associated
+     *   with this class. The resources are:
+     *   
+     *   * `jgconsole.js`: The JavaScript module with helper classes
+     *   * `console.css`: Some basic styles for conlets
+     *
+     * * `.../console-resource`: Invokes {@link #provideConsoleResource}
+     *   with the remainder of the path.
+     *   
+     * * `.../page-resource`: Invokes {@link #providePageResource}
+     *   with the remainder of the path.
+     *   
+     * * `.../conlet-resource`: Invokes {@link #provideConletResource}
+     *   with the remainder of the path.
+     *   
+     * * `.../console-session`: Handled by this class. Used
+     *   e.g. for initiating the web socket connection.
      *
      * @param event the event
      * @param channel the channel

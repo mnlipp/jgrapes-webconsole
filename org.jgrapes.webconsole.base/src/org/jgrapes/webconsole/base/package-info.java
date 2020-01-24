@@ -68,15 +68,23 @@
  * like JavaScript libraries, CSS, images etc. all information is
  * then exchanged using JSON messages sent over a web socket 
  * connection that is established immediately after the initial 
- * HTML has been loaded.
+ * HTML has been loaded. The information exchanged includes, 
+ * in particular, the registration of web console display components 
+ * and helper components, which are described below.
  * 
- * The information exchanged includes, in particular, the registration 
- * of web console display components and helper components,
- * which are described below.
+ * {@link org.jgrapes.webconsole.base.ConsoleWeblet} is an abstract
+ * class that has to be extended by derived classes such as
+ * {@link org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet}.
+ * The derived classes provide the resources for an actual console 
+ * page. This allows differently styles consoles to be build on a
+ * common foundation. The {@link org.jgrapes.webconsole.base.ConsoleWeblet}
+ * provides some JavaScript classes
+ * <a href="jsdoc/module-console-base-resource_jgconsole.html">functions</a>
+ * that can be used to build the SPA.
  * 
  * ### Page Resource Providers
  * 
- * The initial HTML document may already includes some JavaScript 
+ * The initial HTML document may already include some JavaScript 
  * resources which are required to implement the basic functions 
  * (such as providing the header with the web console related menus).
  * The web console display components may, however, require additional libraries 
@@ -229,7 +237,7 @@
  * 
  * Actions on web console components trigger JSON messages that result in
  * {@link org.jgrapes.webconsole.base.events.NotifyConletModel} events
- * that are processed by the respective display component. If,
+ * which are processed by the respective display component. If,
  * due to the results of the action, the representation of the
  * display component on the web console page must be updated, the 
  * web console component  fires a 
@@ -244,7 +252,7 @@
  * 
  * Web console display components ("conlets") are components that consume and 
  * produce events. They
- * don't have to implement a specific interface. Rather they have
+ * don't have to implement a specific interface. Rather, they have
  * to exhibit a specific behavior that can be derived from the
  * descriptions above. The documentation of the base class
  * {@link org.jgrapes.webconsole.base.AbstractConlet} summarizes
