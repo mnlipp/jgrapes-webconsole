@@ -41,9 +41,9 @@ configurePublishing {
         asNode().with {
             appendNode('url', 'http://mnlipp.github.io/jgrapes/')
             appendNode('scm').with {
-                appendNode('url', 'scm:git@github.com:mnlipp/jgrapes.git')
-                appendNode('connection', 'scm:git@github.com:mnlipp/jgrapes.git')
-                appendNode('developerConnection', 'git@github.com:mnlipp/jgrapes.git')
+                appendNode('url', 'scm:git@github.com:mnlipp/jgrapes-webconsole.git')
+                appendNode('connection', 'scm:git@github.com:mnlipp/jgrapes-webconsole.git')
+                appendNode('developerConnection', 'git@github.com:mnlipp/jgrapes-webconsole.git')
             }
             appendNode('licenses').with {
                 appendNode('license').with {
