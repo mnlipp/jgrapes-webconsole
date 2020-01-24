@@ -1,6 +1,8 @@
 JGrapes-WebConsole
 ==================
 
+See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
+
 [![Build Status](https://travis-ci.org/mnlipp/jgrapes-webconsole.svg?branch=master)](https://travis-ci.org/mnlipp/jgrapes-webconsole)
 
 | Package | Bintray |
@@ -9,13 +11,11 @@ JGrapes-WebConsole
 | jqueryui | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.jqueryui/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.jqueryui/_latestVersion)
 | bootstrap4 | [ ![Download](https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.bootstrap4/images/download.svg) ](https://bintray.com/mnlipp/jgrapes/org.jgrapes%3Aorg.jgrapes.webconsole.bootstrap4/_latestVersion)
 
-See the [project's home page](https://mnlipp.github.io/jgrapes/).
-
 This repository holds the sources for jars that provide
 the web console components of the JGrapes framework.
 
-Overview
---------
+Short Overview
+--------------
 
 A web console built with the components provided here is a single
 page application (SPA) that &mdash;from the user's point of view&mdash;
@@ -32,6 +32,8 @@ Tabs or a menu in a side bar can be used to switch between
 the overview panel(s) and the large views of the different conlets. 
 
 <img src="README-pic1.png" width="75%" alt="Web Console Demo">
+
+See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 Demo
 ----
