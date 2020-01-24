@@ -22,28 +22,28 @@
  * Very basic table styling that should make simple tables look good
  * in any context. 
  */
-.table--basic thead th {
+:not(.table--no-basic-style) thead th {
     white-space: nowrap;
 } 
 
-.table--basic {
+:not(.table--no-basic-style) {
     display: block;
     overflow-x: auto;
 }
 
-.table--basic thead th {
+:not(.table--no-basic-style) thead th {
     white-space: nowrap;
 } 
 
-.table--basic thead th.sortable {
+:not(.table--no-basic-style) thead th.sortable {
     cursor: pointer;
 }
 
-.table--basic thead th:not(:last-child) {
+:not(.table--no-basic-style) thead th:not(:last-child) {
     padding-right: 1em;
 } 
 
-.table--basic tbody td:not(:last-child) {
+:not(.table--no-basic-style) tbody td:not(:last-child) {
     padding-right: 1em;
 } 
 
