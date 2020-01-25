@@ -15,11 +15,10 @@ dependencies {
     compile 'org.jdrupes.json:json:[2.0.0,2.1.0)'
     compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquery')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.moment')
 }
 
-ext.releaseVersion = "0.28.1"
-ext.isSnapshot = false
+ext.releaseVersion = "0.28.2"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 jar {

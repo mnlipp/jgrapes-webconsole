@@ -43,7 +43,7 @@ JGConsole.Log = class Log {
      */
     static debug (message) {
         if (console && console.debug) {
-            console.debug(message)
+            console.debug(JGConsole.Log.format(new Date()) + ": " + message);
         }
     }
     
@@ -53,7 +53,7 @@ JGConsole.Log = class Log {
      */
     static info(message) {
         if (console && console.info) {
-            console.info(message)
+            console.info(JGConsole.Log.format(new Date()) + ": " + message)
         }
     }
     
@@ -63,7 +63,7 @@ JGConsole.Log = class Log {
      */
     static warn(message) {
         if (console && console.warn) {
-            console.warn(message)
+            console.warn(JGConsole.Log.format(new Date()) + ": " + message);
         }
     }
     
@@ -73,13 +73,33 @@ JGConsole.Log = class Log {
      */
     static error(message) {
         if (console && console.error) {
-            console.error(message)
+            console.error(JGConsole.Log.format(new Date()) + ": " + message);
         }
     }
 };
 
-// For Backward compatibility
-JGConsole.log = JGConsole.Log;
+var logDateTimeFormat = new Intl.DateTimeFormat(undefined, {
+    dateStyle: "short",
+    year: undefined,
+    month: undefined,
+    day: undefined,            
+    timeStyle: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+});
+
+var logDateTimeMillis = new Intl.NumberFormat(undefined, {
+    minimumIntegerDigits: 1,
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+});
+
+JGConsole.Log.format = function(date) {
+    return logDateTimeFormat.format(date) 
+        + logDateTimeMillis.format(date.getMilliseconds()/1000).substring(1);
+}
+
 // Local access
 var log = JGConsole.Log;
 
@@ -365,7 +385,7 @@ class ResourceManager {
                 n => this._providedScriptResources.add(n.trim()));
         });
         if (this._debugLoading) {
-            log.debug(moment().format("HH:mm:ss.SSS") + ": Initially provided: "
+            log.debug("Initially provided: "
              + [...this._providedScriptResources].join(", "));
         }
         this._unresolvedScriptRequests = []; // ScriptResource objects
@@ -377,7 +397,7 @@ class ResourceManager {
 
     _loadingMsg(msg) {
         if (this._debugLoading) {
-            log.debug(moment().format("HH:mm:ss.SSS") + ": " + msg());
+            log.debug(msg());
         }
     }
 
