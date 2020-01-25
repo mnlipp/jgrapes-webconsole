@@ -26,7 +26,7 @@ import JGConsole from "../console-base-resource/jgconsole.js"
 export const JQUIConsole = {};
 export default JQUIConsole;
 
-var log = JGConsole.log;
+var log = JGConsole.Log;
 
 JQUIConsole.Renderer = class extends JGConsole.Renderer {
 
