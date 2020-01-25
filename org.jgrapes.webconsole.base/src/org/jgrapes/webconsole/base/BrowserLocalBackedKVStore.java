@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
