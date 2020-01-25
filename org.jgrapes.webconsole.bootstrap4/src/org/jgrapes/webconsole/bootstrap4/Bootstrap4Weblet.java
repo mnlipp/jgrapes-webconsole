@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.bootstrap4;
 
 import java.net.URI;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
