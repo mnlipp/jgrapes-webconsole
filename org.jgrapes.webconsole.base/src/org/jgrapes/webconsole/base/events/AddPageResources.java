@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.jdrupes.json.JsonArray;
 import org.jdrupes.json.JsonObject;
 import org.jgrapes.webconsole.base.PageResourceProvider;

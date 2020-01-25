@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.base;
 
 import java.net.URI;
-
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.PageResourceRequest;
 

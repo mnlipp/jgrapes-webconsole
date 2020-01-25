@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.base.events;
 
 import java.util.Set;
-
 import org.jgrapes.core.Event;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;

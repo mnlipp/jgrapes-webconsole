@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.base.events;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-
 import org.jdrupes.json.JsonObject;
 
 /**

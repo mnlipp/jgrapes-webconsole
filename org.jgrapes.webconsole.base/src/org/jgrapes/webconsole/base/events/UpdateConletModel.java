@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.base.events;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-
 import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Event;
 

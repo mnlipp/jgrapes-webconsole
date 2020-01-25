@@ -29,7 +29,6 @@ import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -44,7 +43,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.UUID;
-
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;

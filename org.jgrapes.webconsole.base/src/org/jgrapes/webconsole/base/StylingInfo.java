@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.base;
 
 import java.util.Map;
-
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.core.Components;
 

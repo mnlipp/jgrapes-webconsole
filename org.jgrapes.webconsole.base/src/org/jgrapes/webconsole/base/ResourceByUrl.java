@@ -20,7 +20,6 @@ package org.jgrapes.webconsole.base;
 
 import java.io.IOException;
 import java.net.URL;
-
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.webconsole.base.events.ResourceRequest;

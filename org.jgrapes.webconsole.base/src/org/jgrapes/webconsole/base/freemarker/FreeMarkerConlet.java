@@ -26,7 +26,6 @@ import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -42,7 +41,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
-
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;

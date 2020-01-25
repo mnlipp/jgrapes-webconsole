@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.base;
 
 import java.io.IOException;
-
 import org.jgrapes.webconsole.base.events.ResourceRequest;
 
 /**

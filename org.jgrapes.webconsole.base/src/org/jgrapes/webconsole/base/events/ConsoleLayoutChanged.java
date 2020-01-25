@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.base.events;
 
 import java.util.List;
-
 import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Event;
 

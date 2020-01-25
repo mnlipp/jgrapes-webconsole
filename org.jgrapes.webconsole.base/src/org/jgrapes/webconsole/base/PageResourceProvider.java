@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.base;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;

@@ -20,7 +20,6 @@ package org.jgrapes.webconsole.base.events;
 
 import java.io.IOException;
 import java.io.Writer;
-
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jdrupes.json.JsonRpc;
 import org.jgrapes.core.Event;

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.jdrupes.json.JsonArray;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;

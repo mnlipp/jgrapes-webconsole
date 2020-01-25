@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 
 /**

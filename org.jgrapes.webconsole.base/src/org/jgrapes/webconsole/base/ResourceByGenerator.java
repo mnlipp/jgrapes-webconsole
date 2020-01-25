@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.base;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Instant;
-
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;

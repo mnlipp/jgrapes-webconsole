@@ -22,7 +22,6 @@ import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Optional;
-
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jgrapes.core.Event;
 import org.jgrapes.http.Session;

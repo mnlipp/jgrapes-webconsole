@@ -25,7 +25,6 @@ import java.io.Reader;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.nio.CharBuffer;
-
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonDecodeException;
 import org.jdrupes.json.JsonRpc;

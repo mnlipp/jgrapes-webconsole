@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 

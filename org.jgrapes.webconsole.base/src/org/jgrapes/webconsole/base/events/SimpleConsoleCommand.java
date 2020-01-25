@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.base.events;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 

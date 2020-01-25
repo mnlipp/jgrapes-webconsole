@@ -20,7 +20,6 @@ package org.jgrapes.webconsole.base.events;
 
 import java.net.URI;
 import java.time.Instant;
-
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;

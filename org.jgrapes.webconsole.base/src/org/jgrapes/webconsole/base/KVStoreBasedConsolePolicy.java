@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jdrupes.json.JsonDecodeException;
