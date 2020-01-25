@@ -26,7 +26,7 @@ import JGConsole from "../console-base-resource/jgconsole.js"
 export const B4UIConsole = {};
 export default B4UIConsole;
 
-var log = JGConsole.log;
+var log = JGConsole.Log;
 
 B4UIConsole.Renderer = class extends JGConsole.Renderer {
 
