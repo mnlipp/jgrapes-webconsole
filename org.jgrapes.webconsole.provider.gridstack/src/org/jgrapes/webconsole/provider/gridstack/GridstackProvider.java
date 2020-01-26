@@ -21,11 +21,9 @@ package org.jgrapes.webconsole.provider.gridstack;
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.TemplateNotFoundException;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
