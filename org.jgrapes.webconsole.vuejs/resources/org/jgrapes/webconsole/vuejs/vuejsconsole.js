@@ -40,6 +40,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         this._lastPreviewLayout = [];
         this._lastTabsLayout = [];
         this._lastXtraInfo = {};
+        this._connectionLostNotification = null;
         let _this = this;
         // Make renderer available
         Vue.prototype.$consoleRenderer = this;
@@ -163,16 +164,42 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         _this._vuexStore.commit('addConletType', [label, conletType, renderModes]);
     }
     
-    connectionLost() {
+    consoleConfigured() {
+    }
+
+    connectionSuspended(resume) {
+        let _this = this;
+        let dialog = new (Vue.component('jgwc-modal-dialog'))({
+            propsData: {
+                title: _this.translate("Console Session Suspended"),
+                showCancel: false,
+                content: _this.translate("consoleSessionSuspendedMessage"),
+                contentClasses: [],
+                closeLabel: _this.translate("Resume"),
+                onClose: function(applyChanges) {
+                    document.querySelector("body").removeChild(dialog.$el);
+                    resume();
+                }
+            }
+        });
+        dialog.$mount();
+        $("body").append(dialog.$el);
+        dialog.open();
     }
 
     connectionRestored() {
     }
 
-    connectionSuspended(resume) {
-    }
-
-    consoleConfigured() {
+    connectionLost() {
+        if (this._connectionLostNotification == null) {
+            this._connectionLostNotification =
+                this.notification(
+                    JGConsole.forLang(this._l10nMessages, 
+                        _this._vuexStore.state.lang).serverConnectionLost, {
+                    error: true,
+                    closeable: false,
+                });
+        }
     }
 
     lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
@@ -393,4 +420,44 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         $(container).append(dialog.$el);
         dialog.open();
     }
+    
+    notification(content, options) {
+        let notification = $('<div class="alert alert-dismissible fade show"'
+            + ' role="alert"></div>');
+        if (('error' in options) && options.error) {
+            notification.addClass("alert-danger");
+        } else if ('type' in options) {
+            if (options.type == 'success') {
+                notification.addClass("alert-success");
+            } else if (options.type == 'success') {
+                notification.addClass("alert-success");
+            } else if (options.type == 'warning') {
+                notification.addClass("alert-warning");
+            } else if (options.type == 'error') {
+                notification.addClass("alert-danger");
+            } else {
+                notification.addClass("alert-info");
+            }
+        } else {
+            notification.addClass("alert-info");
+        }
+        let parsed = $("<div>" + content + "</div>");
+        if (parsed.text() == "" && parsed.children.size() > 0) {
+            parsed = parsed.children();
+        }
+        notification.append(parsed);
+        if (!('closeable' in options) || options.closeable) {
+            notification.append($('<button type="button" class="close"'
+                + ' data-dismiss="alert" aria-label="Close">'
+                + '<span aria-hidden="true">&times;</span></button>'));
+        }
+        $("#notification-area").prepend(notification);
+        if ('autoClose' in options) {
+            setTimeout(function() {
+                notification.alert('close');
+            }, options.autoClose);
+        }
+        return notification;
+    }
+
 }

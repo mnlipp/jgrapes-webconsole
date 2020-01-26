@@ -261,11 +261,75 @@ body > footer {
 }
 
 [role="dialog"] {
-    padding: 15px;
     background-color: rgb(var(--body-background));
     border: 1px solid rgb(var(--panel-border));
     border-radius: .25rem;
 }
+
+[role="dialog"] > header,
+[role="dialog"] > footer {
+    padding: 0.5rem 1rem;
+}
+
+[role="dialog"] > section {
+    padding: 1rem;
+}
+
+[role="dialog"] header p,
+[role="dialog"] footer p {
+    margin: 0;
+}
+
+[role="dialog"] header {
+    background-color: rgb(var(--panel-background));
+    border-bottom: 1px solid rgb(var(--panel-border));
+}
+
+[role="dialog"] header p {
+    font-size: 125%;
+    font-weight: 500;
+}
+
+[role="dialog"] footer {
+    border-top: 1px solid rgb(var(--panel-border));
+}
+
+
+.jgwc-modal-dialog header button {
+    display: inline-block;
+    border: none;
+    font-size: 1rem;
+    padding: 0;
+    margin-left: 0.5rem;
+    color: rgb(var(--primary));
+    background-color: transparent;
+}
+
+.jgwc-modal-dialog header button:hover {
+    transform: scale(1.25);
+}
+
+.jgwc-modal-dialog footer button[type="button"] {
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: .25rem;
+    text-align: center;
+    vertical-align: middle;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .jgwc-modal-dialog footer button[type="button"] {
+        transition: none;
+    }
+}
+
 
 /* # Conlet Styling */
 
