@@ -145,6 +145,87 @@ body > footer {
     100% { transform: rotate(360deg); }
 }
 
+#notification-area [role="alert"] {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+
+#notification-area .notification--info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+#notification-area .notification--info p::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f05a";
+    display: inline-block;
+    font-weight: 900;
+    padding-right: 0.5rem;
+}
+
+#notification-area .notification--success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+#notification-area .notification--success p::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f058";
+    display: inline-block;
+    font-weight: 900;
+    padding-right: 0.5rem;
+}
+
+#notification-area .notification--warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+#notification-area .notification--warning p::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f06a";
+    display: inline-block;
+    font-weight: 900;
+    padding-right: 0.5rem;
+}
+
+#notification-area .notification--error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+#notification-area .notification--error p::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f057";
+    display: inline-block;
+    font-weight: 900;
+    padding-right: 0.5rem;
+}
+
+#notification-area [role="alert"] p {
+    margin: 0;
+}
+
+#notification-area [role="alert"] button {
+    display: inline-block;
+    border: none;
+    font-size: 1rem;
+    padding: 0;
+    margin-left: 0.5rem;
+    background-color: transparent;
+}
+
+#notification-area [role="alert"] button:hover {
+    transform: scale(1.25);
+}
+
 /* ## JGP Component styling */
 
 /*
@@ -321,7 +402,6 @@ body > footer {
 [role="dialog"] footer {
     border-top: 1px solid rgb(var(--panel-border));
 }
-
 
 .jgwc-modal-dialog header button {
     display: inline-block;

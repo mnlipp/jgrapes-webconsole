@@ -193,14 +193,21 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
     }
 
     connectionRestored() {
+        if (this._connectionLostNotification != null) {
+            this._connectionLostNotification.close();
+        }
+        this.notification(this.translate("serverConnectionRestoredMessage"), {
+            type: "success",
+            autoClose: 2000,
+        });
     }
 
     connectionLost() {
+        let _this = this;
         if (this._connectionLostNotification == null) {
             this._connectionLostNotification =
                 this.notification(
-                    JGConsole.forLang(this._l10nMessages, 
-                        _this._vuexStore.state.lang).serverConnectionLost, {
+                    _this.translate("serverConnectionLostMessage"), {
                     error: true,
                     closeable: false,
                 });
@@ -367,6 +374,57 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
     }
 
     notification(content, options) {
+        let notification = new Vue({
+            data: {
+                message: content,
+                error: ('error' in options) ? options.error : false,
+                type: ('type' in options) ? options.type : "info",
+                closeable: ('closeable' in options) ? options.closeable : true,
+                autoClose: ('autoClose' in options) ? options.autoClose : false,
+            },
+            computed: {
+                notificationClass: function() {
+                    if (this.error) {
+                        return "notification--error"
+                    }
+                    if (this.type == "success") {
+                        return "notification--success";
+                    }
+                    if (this.type == "warning") {
+                        return "notification--warning";
+                    }
+                    if (this.type == "danger") {
+                        return "notification--danger";
+                    }
+                    return "notification--info";
+                }
+            },
+            methods: {
+                close: function() {
+                    if (this.$el && this.$el.parentNode) {
+                        this.$el.parentNode.removeChild(this.$el);
+                    }
+                }
+            },
+            mounted: function() {
+                let _this = this;
+                if (this.autoClose) {
+                    setTimeout(function() {
+                            _this.close();
+                        }, this.autoClose);
+                }
+            },
+            template: `
+                <div role="alert" :class="notificationClass">
+                  <p v-html="message"></p>
+                  <button v-if="closeable" type="button" class="fa fa-times"
+                    v-on:click="close()"></button>
+                </div>
+            `,
+        });
+        notification.$mount();
+        $("#notification-area").append(notification.$el);
+        return notification;
     }
 
     /**
@@ -426,43 +484,4 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         dialog.open();
     }
     
-    notification(content, options) {
-        let notification = $('<div class="alert alert-dismissible fade show"'
-            + ' role="alert"></div>');
-        if (('error' in options) && options.error) {
-            notification.addClass("alert-danger");
-        } else if ('type' in options) {
-            if (options.type == 'success') {
-                notification.addClass("alert-success");
-            } else if (options.type == 'success') {
-                notification.addClass("alert-success");
-            } else if (options.type == 'warning') {
-                notification.addClass("alert-warning");
-            } else if (options.type == 'error') {
-                notification.addClass("alert-danger");
-            } else {
-                notification.addClass("alert-info");
-            }
-        } else {
-            notification.addClass("alert-info");
-        }
-        let parsed = $("<div>" + content + "</div>");
-        if (parsed.text() == "" && parsed.children.size() > 0) {
-            parsed = parsed.children();
-        }
-        notification.append(parsed);
-        if (!('closeable' in options) || options.closeable) {
-            notification.append($('<button type="button" class="close"'
-                + ' data-dismiss="alert" aria-label="Close">'
-                + '<span aria-hidden="true">&times;</span></button>'));
-        }
-        $("#notification-area").prepend(notification);
-        if ('autoClose' in options) {
-            setTimeout(function() {
-                notification.alert('close');
-            }, options.autoClose);
-        }
-        return notification;
-    }
-
 }
