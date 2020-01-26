@@ -4,12 +4,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-
 import org.jgrapes.core.Components;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
-
 import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class QueryUtilTests {
