@@ -22,14 +22,12 @@ import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
-
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
