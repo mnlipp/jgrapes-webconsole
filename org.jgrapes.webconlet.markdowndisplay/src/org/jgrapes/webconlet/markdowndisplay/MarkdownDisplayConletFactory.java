@@ -20,7 +20,6 @@ package org.jgrapes.webconlet.markdowndisplay;
 
 import java.util.Map;
 import java.util.Optional;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
