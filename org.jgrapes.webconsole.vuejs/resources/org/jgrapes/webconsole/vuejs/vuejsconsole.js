@@ -31,7 +31,7 @@ import Vuex from "../page-resource/vuex/vuex.esm.browser.js";
 export const VueJsConsole = {};
 export default VueJsConsole;
 
-var log = JGConsole.log;
+var log = JGConsole.Log;
 
 VueJsConsole.Renderer = class extends JGConsole.Renderer {
 
@@ -73,6 +73,8 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
     
     init() {
         let _this = this;
+        log.debug("Locking screen");
+        
         // Start Vue
         let store = this._vuexStore;
         new Vue({ el: 'header', store });
@@ -165,6 +167,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
     }
     
     consoleConfigured() {
+        this._layoutChanged();
+        log.debug("Unlocking screen");
+        $("#loader-overlay").fadeOut("100");
     }
 
     connectionSuspended(resume) {
