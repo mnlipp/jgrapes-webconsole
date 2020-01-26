@@ -50,22 +50,6 @@
   src="${renderSupport.pageResource('jquery-ui-touch-punch/jquery.ui.touch-punch' + minifiedExtension + '.js')}"></script>
 <!-- More... -->
 
-<!-- Console -->
-  <script type="module">
-  import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
-  import B4UIConsole from "${renderSupport.consoleResource('b4uiconsole.js')}"
-  JGConsole.init("${consoleSessionId}", 
-    parseInt("${consoleSessionRefreshInterval?c}"),
-    parseInt("${consoleSessionInactivityTimeout?c}"), new B4UIConsole.Renderer({
-      ok: '${_("OK")}',
-      close: '${_("Close")}',
-      sessionSuspendedTitle: '${_("Console Session Suspended")}',
-      sessionSuspendedMessage: '${_("consoleSessionSuspendedMessage")}',
-      serverConnectionLost: '${_("serverConnectionLostMessage")}',
-      serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
-    }));
-  </script>
-
 </head>
 
 <body id="page-top" class="index console-bootstrap4">
@@ -102,6 +86,23 @@
   <div id="loader-overlay">
     <div></div>
   </div> 
- 
+
+  <!-- Console -->
+  <script type="module">
+  import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
+  import B4UIConsole from "${renderSupport.consoleResource('b4uiconsole.js')}"
+  JGConsole.init("${consoleSessionId}", 
+    parseInt("${consoleSessionRefreshInterval?c}"),
+    parseInt("${consoleSessionInactivityTimeout?c}"), new B4UIConsole.Renderer({
+      ok: '${_("OK")}',
+      close: '${_("Close")}',
+      resume: '${_("Resume")}',
+      sessionSuspendedTitle: '${_("Console Session Suspended")}',
+      sessionSuspendedMessage: '${_("consoleSessionSuspendedMessage")}',
+      serverConnectionLost: '${_("serverConnectionLostMessage")}',
+      serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
+    }));
+  </script>
+
 </body>
 </html>
