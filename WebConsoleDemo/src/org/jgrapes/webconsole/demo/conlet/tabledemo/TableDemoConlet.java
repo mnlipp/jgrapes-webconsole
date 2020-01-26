@@ -22,11 +22,9 @@ import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
-
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
@@ -65,7 +63,8 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
     }
 
     @Handler
-    public void onConsoleReady(ConsoleReady event, ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event,
+            ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page

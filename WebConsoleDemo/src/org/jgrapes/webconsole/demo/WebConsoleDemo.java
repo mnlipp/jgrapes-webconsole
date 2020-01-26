@@ -34,10 +34,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Collections;
-
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;

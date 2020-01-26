@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.demo;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Optional;
-
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
