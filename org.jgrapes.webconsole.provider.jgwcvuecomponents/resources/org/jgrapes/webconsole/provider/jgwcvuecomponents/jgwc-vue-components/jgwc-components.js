@@ -184,6 +184,10 @@ Vue.component('jgwc-modal-dialog', {
   props: {
     id: String,
     title: String,
+    showCancel: {
+        type: Boolean,
+        default: true
+    },
     content: String,
     contentClasses: Array,
     closeLabel: String,
@@ -201,7 +205,8 @@ Vue.component('jgwc-modal-dialog', {
         aria-modal="true">
         <header :id="effectiveId + '-label'">
           <p>{{ title }}</p>
-          <button type="button" class="fa fa-times" v-on:click="cancel()"></button>
+          <button v-if="showCancel" type="button" class="fa fa-times" 
+            v-on:click="cancel()"></button>
         </header>
         <section v-if="content" v-html="content" :class="contentClasses"></section>
         <section v-else :class="contentClasses"><slot></slot></section>
