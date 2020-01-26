@@ -20,7 +20,6 @@ package org.jgrapes.webconsole.provider.moment;
 
 import java.util.Map;
 import java.util.Optional;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.webconsole.base.PageResourceProviderFactory;
