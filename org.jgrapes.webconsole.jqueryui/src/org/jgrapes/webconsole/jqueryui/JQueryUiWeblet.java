@@ -27,7 +27,6 @@ import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.StreamSupport;
-
 import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.annotation.Handler;

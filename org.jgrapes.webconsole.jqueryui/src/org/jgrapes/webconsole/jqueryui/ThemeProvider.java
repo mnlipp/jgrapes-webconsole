@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.jqueryui;
 
 import java.net.URL;
-
 import org.jgrapes.webconsole.base.ResourceNotFoundException;
 
 /**
