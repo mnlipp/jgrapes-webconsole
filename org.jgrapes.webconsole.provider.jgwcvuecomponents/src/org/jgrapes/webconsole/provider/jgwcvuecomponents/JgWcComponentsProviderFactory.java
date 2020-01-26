@@ -20,7 +20,6 @@ package org.jgrapes.webconsole.provider.jgwcvuecomponents;
 
 import java.util.Map;
 import java.util.Optional;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.webconsole.base.PageResourceProviderFactory;
@@ -28,7 +27,8 @@ import org.jgrapes.webconsole.base.PageResourceProviderFactory;
 /**
  * A factory for creating {@link JgWcComponentsProvider}s.
  */
-public class JgWcComponentsProviderFactory implements PageResourceProviderFactory {
+public class JgWcComponentsProviderFactory
+        implements PageResourceProviderFactory {
 
     /*
      * (non-Javadoc)
