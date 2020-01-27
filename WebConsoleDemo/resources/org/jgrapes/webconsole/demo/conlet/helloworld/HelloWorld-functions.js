@@ -17,6 +17,8 @@
  */
 'use strict';
 
+var orgJGrapesConletsWorldDemoConlet = {};
+
 (function() {
 
     $("body").on("click", ".HelloWorld-view .HelloWorld-toggle",
@@ -37,6 +39,11 @@
                     image.hide();
                 }
             });
+
+    orgJGrapesConletsWorldDemoConlet.onUnload = function(preview) {
+        JGConsole.notification("World Removed!", { type: "warning",
+            autoClose: 5000 });
+    }
     
 })();
 

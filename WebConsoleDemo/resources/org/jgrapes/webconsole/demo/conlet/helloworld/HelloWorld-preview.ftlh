@@ -1,5 +1,7 @@
 <div data-conlet-title="${_("conletName")}"
-    data-conlet-grid-rows="2">${_("HelloWorld")} 
+    data-conlet-grid-rows="2"
+    data-jgwc-on-unload="orgJGrapesConletsWorldDemoConlet.onUnload"
+    >${_("HelloWorld")} 
     <img style='vertical-align: bottom;'
         src="${conletResource('Icojam-Blue-Bits-Globe.ico')}" height='20'>
     <!-- Globe icon from https://web.archive.org/web/20190618095520/http://www.iconarchive.com/show/blue-bits-icons-by-icojam/globe-icon.html -->
