@@ -690,10 +690,30 @@ JGConsole.Renderer = class {
         log.warn("Not implemented!");
     }
 
+    /**
+     * Opens an edit dialog.
+     * 
+     * @param {HTMLElement} container the container for the dialog
+     * @param {Array.string} modes the modes
+     * @param {string} content the content as HTML
+     */
     showEditDialog(container, modes, content) {
         log.warn("Not implemented!");
     }
 
+    /**
+     * Displays a notification.
+     *
+     * @param {string} content the content to display
+     * @param {object} options the options
+     * @param {boolean} options.error if this is an error notification (deprecated)
+     * @param {string} options.type one of "error", "success", "warning",
+     *                          "danger", "info" (default)
+     * @param {boolean} options.closeable if the notification may be closed by 
+     *                          the user
+     * @param {number} options.autoClose close the notification automatically 
+     *                          after the given number of milliseconds
+     */
     notification(content, options) {
         log.warn("Not implemented!");
     }
@@ -922,6 +942,9 @@ class Console {
                 let conletDisplays = _this._renderer.findConletContainers(conletId);
                 if (conletDisplays.length > 0) {
                     _this._renderer.removeConletDisplays(conletDisplays);
+                    conletDisplays.forEach(function(container) {
+                            _this._execOnUnload($(container));
+                    });
                 }
             });
         this._webSocket.addMessageHandler('displayNotification',
@@ -1090,6 +1113,20 @@ class Console {
         });
     }
 
+    _execOnUnload(container) {
+        container.find("[data-jgwc-on-unload]").each(function() {
+            let onUnload = $(this).data("jgwc-on-unload");
+            let segs = onUnload.split(".");
+            let obj = window;
+            while (obj && segs.length > 0) {
+                obj = obj[segs.shift()];
+            }
+            if (obj && typeof obj === "function") {
+                obj(this);
+            }
+        });
+    }
+
     /**
      * Invokes the functions defined in `data-jgwc-on-apply`
      * attributes. Must be invoked by edit dialogs when 
@@ -1199,6 +1236,7 @@ class Console {
             let view = this._renderer.findConletView(conletId);
             if (view) {
                 this._renderer.removeConletDisplays($(view).get());
+                this._execOnUnload($(view));
             }
         } else {
             this.send("deleteConlet", conletId);
@@ -1329,6 +1367,15 @@ JGConsole.findConletPreview = function(...params) {
  */
 JGConsole.findConletView = function(...params) {
     return theConsole.renderer.findConletView(...params);
+}
+
+/**
+ * Delegates to the console's {@link JGConsole.Renderer#notification}.
+ * 
+ * @memberof JGConsole
+ */
+JGConsole.notification = function(...params) {
+    return theConsole.renderer.notification(...params);
 }
 
 /**
