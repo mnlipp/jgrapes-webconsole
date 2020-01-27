@@ -182,7 +182,8 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
                 contentClasses: [],
                 closeLabel: _this.translate("Resume"),
                 onClose: function(applyChanges) {
-                    document.querySelector("body").removeChild(dialog.$el);
+                    this.$destroy();
+                    this.$el.remove();
                     resume();
                 }
             }
@@ -373,60 +374,6 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         this._layoutChanged();
     }
 
-    notification(content, options) {
-        let notification = new Vue({
-            data: {
-                message: content,
-                error: ('error' in options) ? options.error : false,
-                type: ('type' in options) ? options.type : "info",
-                closeable: ('closeable' in options) ? options.closeable : true,
-                autoClose: ('autoClose' in options) ? options.autoClose : false,
-            },
-            computed: {
-                notificationClass: function() {
-                    if (this.error) {
-                        return "notification--error"
-                    }
-                    if (this.type == "success") {
-                        return "notification--success";
-                    }
-                    if (this.type == "warning") {
-                        return "notification--warning";
-                    }
-                    if (this.type == "danger") {
-                        return "notification--danger";
-                    }
-                    return "notification--info";
-                }
-            },
-            methods: {
-                close: function() {
-                    if (this.$el && this.$el.parentNode) {
-                        this.$el.parentNode.removeChild(this.$el);
-                    }
-                }
-            },
-            mounted: function() {
-                let _this = this;
-                if (this.autoClose) {
-                    setTimeout(function() {
-                            _this.close();
-                        }, this.autoClose);
-                }
-            },
-            template: `
-                <div role="alert" :class="notificationClass">
-                  <p v-html="message"></p>
-                  <button v-if="closeable" type="button" class="fa fa-times"
-                    v-on:click="close()"></button>
-                </div>
-            `,
-        });
-        notification.$mount();
-        $("#notification-area").append(notification.$el);
-        return notification;
-    }
-
     /**
      * Update the title of the conlet with the given id.
      *
@@ -470,7 +417,8 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
                     if (applyChanges) {
                         _this.console().execOnApply(container);
                     }
-                    container.parentNode.removeChild(container);
+                    this.$destroy();
+                    container.remove();
                 }
             }
         });
@@ -484,4 +432,59 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         dialog.open();
     }
     
+    notification(content, options) {
+        let notification = new Vue({
+            data: {
+                message: content,
+                error: ('error' in options) ? options.error : false,
+                type: ('type' in options) ? options.type : "info",
+                closeable: ('closeable' in options) ? options.closeable : true,
+                autoClose: ('autoClose' in options) ? options.autoClose : false,
+            },
+            computed: {
+                notificationClass: function() {
+                    if (this.error || this.type == "error") {
+                        return "notification--error"
+                    }
+                    if (this.type == "success") {
+                        return "notification--success";
+                    }
+                    if (this.type == "warning") {
+                        return "notification--warning";
+                    }
+                    if (this.type == "danger") {
+                        return "notification--danger";
+                    }
+                    return "notification--info";
+                }
+            },
+            methods: {
+                close: function() {
+                    this.$destroy();
+                    if (this.$el && this.$el.parentNode) {
+                        this.$el.remove();
+                    }
+                }
+            },
+            mounted: function() {
+                let _this = this;
+                if (this.autoClose) {
+                    setTimeout(function() {
+                            _this.close();
+                        }, this.autoClose);
+                }
+            },
+            template: `
+                <div role="alert" :class="notificationClass">
+                  <p v-html="message"></p>
+                  <button v-if="closeable" type="button" class="fa fa-times"
+                    v-on:click="close()"></button>
+                </div>
+            `,
+        });
+        notification.$mount();
+        $("#notification-area").append(notification.$el);
+        return notification;
+    }
+
 }
