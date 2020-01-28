@@ -353,7 +353,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param channel the channel that the request was recived on
      */
     @Handler
-    public final void onResourceRequest(
+    public final void onConletResourceRequest(
             ConletResourceRequest event, IOSubchannel channel) {
         // For me?
         if (!event.conletClass().equals(type())) {
@@ -495,7 +495,10 @@ public abstract class AbstractConlet<S extends Serializable>
      * Track the given web console component from the given session. 
      * This is invoked by 
      * {@link #onAddConletRequest(AddConletRequest, ConsoleSession)} and
-     * needs only be used if {@link #onAddConletRequest} is overridden.
+     * needs only be used if 
+     * {@link #onAddConletRequest(AddConletRequest, ConsoleSession)} 
+     * or {@link #onRenderConletRequest(RenderConletRequest, ConsoleSession)}
+     * is overridden.
      *
      * @param consoleSession the web console session
      * @param conletId the web console component id
@@ -720,7 +723,7 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public final void onRenderConlet(RenderConletRequest event,
+    public final void onRenderConletRequest(RenderConletRequest event,
             ConsoleSession consoleSession) throws Exception {
         Optional<S> optConletState = stateFromSession(
             consoleSession.browserSession(), event.conletId());
@@ -735,8 +738,9 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
-     * Called by {@link #onRenderConlet} to complete rendering
-     * the web console component.
+     * Called by 
+     * {@link #onRenderConletRequest(RenderConletRequest, ConsoleSession)} 
+     * to complete rendering the web console component.
      * 
      * @param event the event
      * @param channel the channel
