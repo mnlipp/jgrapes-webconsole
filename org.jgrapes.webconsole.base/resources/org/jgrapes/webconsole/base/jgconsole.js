@@ -35,7 +35,7 @@ window.JGConsole = JGConsole;
 /**
  * Easy access to logging.
  */
-JGConsole.Log = class Log {
+class Log {
 
     /**
      * Output a debug message.
@@ -78,6 +78,11 @@ JGConsole.Log = class Log {
     }
 };
 
+/**
+ * Make class Log available as property of JGConsole.
+ */
+JGConsole.Log = Log;
+
 var logDateTimeFormat = new Intl.DateTimeFormat(undefined, {
     dateStyle: "short",
     year: undefined,
@@ -95,7 +100,12 @@ var logDateTimeMillis = new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 3,
 });
 
-JGConsole.Log.format = function(date) {
+/**
+ * Format the given date as appropriate for a log time stamp.
+ *
+ * @param {Date} date the date to format
+ */
+Log.format = function(date) {
     return logDateTimeFormat.format(date) 
         + logDateTimeMillis.format(date.getMilliseconds()/1000).substring(1);
 }
@@ -548,7 +558,7 @@ class ResourceManager {
  * A base class for implementing a portral renderer. The renderer
  * provides the DOM, based on the initial DOM from the console page.
  */
-JGConsole.Renderer = class {
+class Renderer {
 
     init() {
     }
@@ -871,6 +881,11 @@ JGConsole.Renderer = class {
     }
 
 }
+
+/**
+ * Make class Renderer available as property of JGConsole.
+ */
+JGConsole.Renderer = Renderer;
 
 /**
  * Provides console related methods. A singleton is automatically
@@ -1432,7 +1447,7 @@ JGConsole.createIfMissing = function(node, key, supplier) {
  * sort order and direction. In addition, it supports simple
  * filtering based on cell content.
  */
-JGConsole.TableController = class {
+class TableController {
 
     /**
      * Creates a new controller for a table with the given numer
@@ -1604,11 +1619,17 @@ JGConsole.TableController = class {
 }
 
 /**
+ * Make class OptionsSet available as property of JGConsole.
+ */
+JGConsole.TableController = TableController;
+
+
+/**
  * Helps to manage options. The main addition to simply using
  * a Set are the toggle functions and the support for temporarily
  * disabling an option.
  */
-JGConsole.OptionsSet = class {
+class OptionsSet {
 
     /**
      * Creates a new option set.
@@ -1732,3 +1753,10 @@ JGConsole.OptionsSet = class {
         }
     }
 }
+
+/**
+ * Make class OptionsSet available as property of JGConsole.
+ */
+JGConsole.OptionsSet = OptionsSet;
+
+
