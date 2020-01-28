@@ -142,10 +142,6 @@ form:not(.form--no-markup-styles) label.form__label--top-aligned > :nth-child(2)
     width: 100%;
 }
 
-form:not(.form--no-markup-styles) label.form__label--top-aligned > :nth-child(1) {
-    margin-right: 0.25em;
-}
-
 form:not(.form--no-markup-styles) label.form__label--top-aligned > :nth-child(2) {
     flex-grow: 1;
 }
