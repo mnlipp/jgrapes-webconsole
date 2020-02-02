@@ -119,35 +119,35 @@ span[role="button"] {
     color: var(--primary);
 }
 
-form:not(.form--no-markup-styling) label {
+:not(.form--no-markup-styling) form label {
     margin-bottom: 0;
 }
 
 /* ## Bootstrap4 like forms/input groups. */
 
 /* Override Bootstrap4 style. */
-form:not(.form--no-markup-styling) fieldset.form__fieldset--horizontal > span > legend {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--horizontal > span > legend {
 	width: auto;
 	font-size: inherit;
 }
 
-form:not(.form--no-markup-styling) fieldset legend {
+:not(.form--no-markup-styling) form fieldset legend {
 	font-size: inherit;
 }
 
-form:not(.form--no-markup-styling) p ~ fieldset {
+:not(.form--no-markup-styling) form p ~ fieldset {
     margin-bottom: 1rem;	
 }
 
-form:not(.form--no-markup-styling) label.form__label--top-aligned {
+:not(.form--no-markup-styling) form label.form__label--top-aligned {
 	display: block;
 }
 
-form:not(.form--no-markup-styling) li label {
+:not(.form--no-markup-styling) form li label {
     margin-bottom: 0;
 }
 
-form:not(.form--no-markup-styling) li label :first-child {
+:not(.form--no-markup-styling) form li label :first-child {
     margin-bottom: 0rem;
 }
 
@@ -156,14 +156,14 @@ form:not(.form--no-markup-styling) li label :first-child {
 
 /* ### Plain form styles */
 
-form:not(.form--no-markup-styling) fieldset ul {
+:not(.form--no-markup-styling) form fieldset ul {
     margin: 0;
     padding: 0;
 }
 
-form:not(.form--no-markup-styling) label input,
-form:not(.form--no-markup-styling) label select,
-form:not(.form--no-markup-styling) label textarea {
+:not(.form--no-markup-styling) form label input,
+:not(.form--no-markup-styling) form label select,
+:not(.form--no-markup-styling) form label textarea {
     color: #495057;
     line-height: 1.5;
     background-color: #fff;
@@ -171,46 +171,46 @@ form:not(.form--no-markup-styling) label textarea {
     padding: .375rem .75rem;
 }
 
-form:not(.form--no-markup-styling) label:not(.form__label--panel) input,
-form:not(.form--no-markup-styling) label:not(.form__label--panel) select,
-form:not(.form--no-markup-styling) label:not(.form__label--panel) textarea {
+:not(.form--no-markup-styling) form label:not(.form__label--panel) input,
+:not(.form--no-markup-styling) form label:not(.form__label--panel) select,
+:not(.form--no-markup-styling) form label:not(.form__label--panel) textarea {
     border: 1px solid #ced4da;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    form:not(.form--no-markup-styling) label * {
+    :not(.form--no-markup-styling) form label * {
         transition: none;
     }
 }
 
-form:not(.form--no-markup-styling) input:focus,
-form:not(.form--no-markup-styling) textarea:focus,
-form:not(.form--no-markup-styling) select:focus {
+:not(.form--no-markup-styling) form input:focus,
+:not(.form--no-markup-styling) form textarea:focus,
+:not(.form--no-markup-styling) form select:focus {
     border-color: #80bdff;
     outline: 0;
     box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
 }
 
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     fieldset.form__fieldset--horizontal > span > :not(legend) {
     margin-left: .25em;
 }
 
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     label.form__label--full-width > :nth-child(1) {
     margin-right: .25em;
 }
 
 /* ### Panel form styles */
 
-form:not(.form--no-markup-styling) label.form__label--panel:not(.form__label--full-width):not(.form__label--top-aligned) {
+:not(.form--no-markup-styling) form label.form__label--panel:not(.form__label--full-width):not(.form__label--top-aligned) {
     display: inline-flex;
     align-items: stretch;
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel > * {
+:not(.form--no-markup-styling) form label.form__label--panel > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -218,30 +218,30 @@ form:not(.form--no-markup-styling) label.form__label--panel > * {
     border-color: #ced4da;
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel:not(.form__label--top-aligned) > :not(:last-child) {
+:not(.form--no-markup-styling) form label.form__label--panel:not(.form__label--top-aligned) > :not(:last-child) {
     margin-right: -1px;
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel * {
+:not(.form--no-markup-styling) form label.form__label--panel * {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel > :first-child {
+:not(.form--no-markup-styling) form label.form__label--panel > :first-child {
     background-color: #e9ecef;
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel:not(.form__label--top-aligned) > :first-child {
+:not(.form--no-markup-styling) form label.form__label--panel:not(.form__label--top-aligned) > :first-child {
     border-top-left-radius: .25rem;  
     border-bottom-left-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel:not(.form__label--top-aligned) > :last-child {
+:not(.form--no-markup-styling) form label.form__label--panel:not(.form__label--top-aligned) > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel select {
+:not(.form--no-markup-styling) form label.form__label--panel select {
     height: 100%;
     background: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%205'%3e%3cpath%20fill='%23343a40'%20d='M2%200L0%202h4zm0%205L0%203h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
     background-color: rgba(0, 0, 0, 0);
@@ -250,33 +250,33 @@ form:not(.form--no-markup-styling) label.form__label--panel select {
     -moz-appearance: none;
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel.form__label--top-aligned {
+:not(.form--no-markup-styling) form label.form__label--panel.form__label--top-aligned {
     display: flex;
     align-items: stretch;
 	flex-direction: column;
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel.form__label--top-aligned > :not(:last-child) {
+:not(.form--no-markup-styling) form label.form__label--panel.form__label--top-aligned > :not(:last-child) {
     margin-bottom: -1px;
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel.form__label--top-aligned > :first-child {
+:not(.form--no-markup-styling) form label.form__label--panel.form__label--top-aligned > :first-child {
     border-top-left-radius: .25rem;  
     border-top-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styling) label.form__label--panel.form__label--top-aligned > :last-child {
+:not(.form--no-markup-styling) form label.form__label--panel.form__label--top-aligned > :last-child {
     border-bottom-left-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) {
     display: inline-flex;
     align-items: stretch;
     flex-direction: column;
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > * {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -284,37 +284,37 @@ form:not(.form--no-markup-styling) fieldset.form__fieldset--panel:not(.form__fie
     border-color: #ced4da;
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel * {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel * {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel legend {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel legend {
 	display: inline-block;
     line-height: 1.5;
     padding: .375rem .75rem;
 	background-color: #e9ecef;
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :not(:last-child) {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :not(:last-child) {
     margin-bottom: -1px;
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :first-child {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :first-child {
     border-top-left-radius: .25rem;  
     border-top-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :last-child {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > :last-child {
     border-bottom-left-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :not(legend) {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :not(legend) {
 	margin-left: -1px;
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel.form__fieldset--horizontal > span > * {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel.form__fieldset--horizontal > span > * {
     line-height: 1.5;
     padding: .375rem .75rem;
     border-width: 1px;
@@ -322,18 +322,18 @@ form:not(.form--no-markup-styling) fieldset.form__fieldset--panel.form__fieldset
     border-color: #ced4da;
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :first-child {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :first-child {
     border-top-left-radius: .25rem;  
     border-bottom-left-radius: .25rem;  
 }
 
-form:not(.form--no-markup-styling) fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :last-child {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
 }
 
 /* Button styling. */
-form:not(.form--no-markup-styling) button {
+:not(.form--no-markup-styling) form button {
     display: inline-block;
     font-weight: 400;
     color: #fff;
@@ -353,12 +353,12 @@ form:not(.form--no-markup-styling) button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    form:not(.form--no-markup-styling) button {
+    :not(.form--no-markup-styling) form button {
         transition: none;
     }
 }
 
-form:not(.form--no-markup-styling) button:hover {
+:not(.form--no-markup-styling) form button:hover {
     color: #fff;
     background-color: #0069d9;
     border-color: #0062cc;

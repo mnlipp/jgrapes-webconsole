@@ -59,98 +59,98 @@
  * # Markup mostly forms.
  */
 
-form:not(.form--no-markup-styling) {
+:not(.form--no-markup-styling) form {
 	box-sizing: border-box;
 }
 
-form:not(.form--no-markup-styling) * {
+:not(.form--no-markup-styling) form * {
     box-sizing: border-box;
 }
 
-form:not(.form--no-markup-styling) input,
-form:not(.form--no-markup-styling) textarea,
-form:not(.form--no-markup-styling) select {
+:not(.form--no-markup-styling) form input,
+:not(.form--no-markup-styling) form textarea,
+:not(.form--no-markup-styling) form select {
     position: relative; /* Puts element on top of the others. */
 }
 
-form:not(.form--no-markup-styling) fieldset {
+:not(.form--no-markup-styling) form fieldset {
     display: inline-block;
 }
 
 /* Use of unnumbered list to specify inputs. */
-form:not(.form--no-markup-styling) fieldset ul {
+:not(.form--no-markup-styling) form fieldset ul {
     list-style: none;
 }
 
-form:not(.form--no-markup-styling) label > * {
+:not(.form--no-markup-styling) form label > * {
 	display: inline-block;
 }
 
-form:not(.form--no-markup-styling) label > input[type="radio"],
-form:not(.form--no-markup-styling) label > input[type="checkbox"],
-form:not(.form--no-markup-styling) input[type="radio"] + span,
-form:not(.form--no-markup-styling) input[type="checkbox"] + span {
+:not(.form--no-markup-styling) form label > input[type="radio"],
+:not(.form--no-markup-styling) form label > input[type="checkbox"],
+:not(.form--no-markup-styling) form input[type="radio"] + span,
+:not(.form--no-markup-styling) form input[type="checkbox"] + span {
     vertical-align: middle;
 }
 
-form:not(.form--no-markup-styling) label textarea {
+:not(.form--no-markup-styling) form label textarea {
     vertical-align: top;
 }
 
 /* Use form__fieldset--horizontal to layout legend and inputs side-by-side. */
-form:not(.form--no-markup-styling) fieldset.form__fieldset--horizontal {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--horizontal {
     display: inline-block;
     vertical-align: middle;
 }
     
-form:not(.form--no-markup-styling) fieldset.form__fieldset--horizontal label,
-form:not(.form--no-markup-styling) label.form__label--horizontal {
+:not(.form--no-markup-styling) form fieldset.form__fieldset--horizontal label,
+:not(.form--no-markup-styling) form label.form__label--horizontal {
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
 }
     
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     fieldset.form__fieldset--horizontal label > :not(:first-child),
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     label.form__label--horizontal > :not(:first-child) {
     margin-left: 0.25rem;
 }
     
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     fieldset.form__fieldset--horizontal > span {
     display: inline-flex;
 }
 
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     fieldset.form__fieldset--horizontal > span > legend {
     display: inline;
 }
 
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     label.form__label--full-width {
     display: flex;
     align-items: center;
 }
 
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     label.form__label--full-width > :nth-child(2) {
     flex-grow: 1;
 }
 
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     label.form__label--top-aligned {
     display: block;
 }
 
 /* div cannot be used in label context. */
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     label.form__label--top-aligned > :nth-child(2) {
     display: block;
     width: 100%;
 }
 
-form:not(.form--no-markup-styling) 
+:not(.form--no-markup-styling) form 
     label.form__label--top-aligned > :nth-child(2) {
     flex-grow: 1;
 }
