@@ -536,9 +536,91 @@ body > footer {
     color: rgba(var(--primary), 0.9);
 }
 
-/* # Markup (mostly) form styles (not conlet specific) */
 
-/* ## Plain form styles */
+/* # UI Styles (markup based) */
+
+/* ## Button Styling */
+
+:not(.form--no-markup-styling) form button {
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: .25rem;
+    text-align: center;
+    vertical-align: middle;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :not(.form--no-markup-styling) form button {
+        transition: none;
+    }
+}
+
+:not(.form--no-markup-styling) form button:hover {
+    color: #fff;
+    background-color: #0069d9;
+    border-color: #0062cc;
+    text-decoration: none;
+}
+
+:not(.form--no-markup-styling) form span[role="button"] {
+    color: rgb(var(--primary));
+}
+
+:not(.form--no-markup-styling) form span[role="button"]:hover {
+    color:rgba(var(--primary), 0.9);
+}
+
+
+/* ## Tree grid */
+
+[role="treegrid"] [role="row"] td:first-child {
+    pointer-events: none;
+}
+
+[role="treegrid"] [role="row"] td:first-child::before {
+    pointer-events: all;
+    content: "";
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: middle;
+    border-style: solid;
+    margin-right: 0.125rem;
+}
+
+[role="treegrid"] [role="row"][aria-expanded="false"] td:first-child::before {
+    padding-right: 0.375rem;
+    border-width: 0.5rem 0 0.5rem 0.625rem;
+    border-color: transparent transparent transparent rgb(var(--primary));
+}
+
+[role="treegrid"] [role="row"][aria-expanded="false"] td:first-child:hover::before {
+    transform: scale(1.25);
+    position: relative;
+    left: 0.1rem;
+}
+
+[role="treegrid"] [role="row"][aria-expanded="true"] td:first-child::before {
+    border-width: 0.625rem 0.5rem 0 0.5rem;
+    border-color: rgb(var(--primary)) transparent transparent transparent;
+}
+
+[role="treegrid"] [role="row"][aria-expanded="true"] td:first-child:hover::before {
+    position: relative;
+    transform: scale(1.25);
+}
+
+
+/* ## Form styles */
+
+/* ### Plain form styles */
 
 :not(.form--no-markup-styling) form fieldset {
     min-width: 0;
@@ -594,7 +676,7 @@ body > footer {
     margin-right: .25em;
 }
 
-/* ## Panel form styles */
+/* ### Panel form styles */
 
 :not(.form--no-markup-styling) form 
     label.form__label--panel > * {
@@ -721,42 +803,4 @@ body > footer {
     fieldset.form__fieldset--panel.form__fieldset--horizontal > span > :last-child {
     border-top-right-radius: .25rem;  
     border-bottom-right-radius: .25rem;  
-}
-
-/* ## Button Styling */
-
-:not(.form--no-markup-styling) form button {
-    display: inline-block;
-    font-weight: 400;
-    color: #fff;
-    background-color: #007bff;
-    border: 1px solid #007bff;
-    border-radius: .25rem;
-    text-align: center;
-    vertical-align: middle;
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    :not(.form--no-markup-styling) form button {
-        transition: none;
-    }
-}
-
-:not(.form--no-markup-styling) form button:hover {
-    color: #fff;
-    background-color: #0069d9;
-    border-color: #0062cc;
-    text-decoration: none;
-}
-
-:not(.form--no-markup-styling) form span[role="button"] {
-    color: rgb(var(--primary));
-}
-
-:not(.form--no-markup-styling) form span[role="button"]:hover {
-    color:rgba(var(--primary), 0.9);
 }
