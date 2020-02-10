@@ -101,3 +101,45 @@
     margin: .5em 1em;
 }
 
+/* # UI Styles (markup based) */
+
+/* ## Tree grid */
+
+[role="treegrid"] [role="row"] td:first-child {
+    vertical-align: top;
+    pointer-events: none;
+}
+
+[role="treegrid"] [role="row"] td:first-child::before {
+    pointer-events: all;
+    content: "";
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: middle;
+    border-style: solid;
+    margin-right: 0.125rem;
+}
+
+[role="treegrid"] [role="row"][aria-expanded="false"] td:first-child::before {
+    padding-right: 0.375rem;
+    border-width: 0.5rem 0 0.5rem 0.625rem;
+    border-color: transparent transparent transparent #333;
+}
+
+[role="treegrid"] [role="row"][aria-expanded="false"] td:first-child:hover::before {
+    transform: scale(1.25);
+    position: relative;
+    left: 0.1rem;
+}
+
+[role="treegrid"] [role="row"][aria-expanded="true"] td:first-child::before {
+    border-width: 0.625rem 0.5rem 0 0.5rem;
+    border-color: #333 transparent transparent transparent;
+}
+
+[role="treegrid"] [role="row"][aria-expanded="true"] td:first-child:hover::before {
+    position: relative;
+    transform: scale(1.25);
+}
+
