@@ -1,0 +1,7 @@
+/*
+ * Conlet specific styles.
+ */
+ 
+.jgrapes-osgi-style-test-treegrid-table .details td:first-child {
+    padding-left: 1rem;
+}

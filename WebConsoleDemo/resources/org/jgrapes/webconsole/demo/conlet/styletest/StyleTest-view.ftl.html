@@ -1,0 +1,43 @@
+<div class="FormTest-view" data-conlet-title="${_("conletName")}"
+  data-jgwc-on-load="orgJGrapesOsgiConletStyleTest.initView"
+  data-jgwc-on-unload="orgJGrapesOsgiConletStyleTest.onUnload">
+
+<h1>Style Tests</h1>
+
+<h2>Tree Grid</h2>
+
+  <table role="treegrid" 
+    class="table--basic--striped jgrapes-osgi-style-test-treegrid-table">
+    <thead>
+      <tr>
+        <th v-for="key in controller.keys"
+          class="sortable" v-on:click="controller.sortBy(key)">
+          {{ controller.label(key) }}<span v-if="controller.sortedByAsc(key)"
+            role="button" tabindex="0">&#x25B2;</span><span
+            v-if="controller.sortedByDesc(key)" role="button" 
+            tabindex="0">&#x25BC;</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <template v-for="(entry, rowIndex) in filteredData">
+        <tr role="row" :class="[(rowIndex % 2) ? 'odd' : 'even']"
+          :aria-expanded="expanded(entry) ? 'true' : 'false'">
+          <td v-for="(key, colIndex) in controller.keys" 
+            v-on:click="colIndex == 0 ? toggleDetails(entry) : false">
+            <span v-html="controller.breakBeforeDots(entry[key])"></span>
+          </td>
+        </tr>
+        <template v-if="expanded(entry)"> 
+          <tr class="details" :class="[(rowIndex % 2) ? 'odd' : 'even']">
+            <td colspan="3">
+              Those are the details...
+            </td>
+          </tr>
+        </template>
+      </template>
+    </tbody>
+  </table>
+
+
+</div>
