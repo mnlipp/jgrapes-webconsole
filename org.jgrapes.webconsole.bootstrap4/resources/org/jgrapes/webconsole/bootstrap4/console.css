@@ -144,7 +144,7 @@ span[role="button"] {
 [role="treegrid"] [role="row"][aria-expanded="false"] td:first-child::before {
     padding-right: 0.375rem;
     border-width: 0.5rem 0 0.5rem 0.625rem;
-    border-color: transparent transparent transparent rgb(var(--primary));
+    border-color: transparent transparent transparent var(--primary);
 }
 
 [role="treegrid"] [role="row"][aria-expanded="false"] td:first-child:hover::before {
@@ -155,7 +155,7 @@ span[role="button"] {
 
 [role="treegrid"] [role="row"][aria-expanded="true"] td:first-child::before {
     border-width: 0.625rem 0.5rem 0 0.5rem;
-    border-color: rgb(var(--primary)) transparent transparent transparent;
+    border-color: var(--primary) transparent transparent transparent;
 }
 
 [role="treegrid"] [role="row"][aria-expanded="true"] td:first-child:hover::before {
