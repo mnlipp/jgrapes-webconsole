@@ -77,11 +77,15 @@ Vue.component('jgwc-pulldown-menu', {
     // Any click event that is not the one handled by this component
     // causes the menu to be closed.
     let self = this;
-    document.addEventListener("click", function(event) {
+    this._globalClickHandler = function(event) {
         if (self.$lastEvent && event.target !== self.$lastEvent.target) {
             self.expanded = false;
         }
-    });
+    };
+    document.addEventListener("click", this._globalClickHandler);
+  },
+  beforeDestroy: function() {
+    document.removeEventListener("click", this._globalClickHandler);
   }
 });
 
