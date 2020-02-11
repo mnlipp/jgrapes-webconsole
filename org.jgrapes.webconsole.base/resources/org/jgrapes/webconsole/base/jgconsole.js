@@ -1300,23 +1300,6 @@ class Console {
         }
     };
 
-    // Utility methods
-
-    // https://gist.github.com/jed/982883
-    generateUUID() {
-        var r = crypto.getRandomValues(new Uint8Array(16));
-        r[6] = r[6] & 0x0f | 0x40;
-        r[8] = r[8] & 0x3f | 0x80;
-        return (r[0].toString(16) + r[1].toString(16) +
-            r[2].toString(16) + r[3].toString(16) +
-            "-" + r[4].toString(16) + r[5].toString(16) +
-            "-" + r[6].toString(16) + r[7].toString(16) +
-            "-" + r[8].toString(16) + r[9].toString(16) +
-            "-" + r[0].toString(10) + r[0].toString(11) +
-            r[0].toString(12) + r[0].toString(13) +
-            r[0].toString(14) + r[0].toString(15));
-    };
-
 }
 
 var theConsole = new Console();
@@ -1392,6 +1375,25 @@ JGConsole.findConletView = function(...params) {
 JGConsole.notification = function(...params) {
     return theConsole.renderer.notification(...params);
 }
+
+/**
+ * Generates a UUID. 
+ * @return {string}
+ * @memberof JGConsole
+ */
+JGConsole.uuid = function() {
+    var r = crypto.getRandomValues(new Uint8Array(16));
+    r[6] = r[6] & 0x0f | 0x40;
+    r[8] = r[8] & 0x3f | 0x80;
+    return (r[0].toString(16) + r[1].toString(16) +
+        r[2].toString(16) + r[3].toString(16) +
+        "-" + r[4].toString(16) + r[5].toString(16) +
+        "-" + r[6].toString(16) + r[7].toString(16) +
+        "-" + r[8].toString(16) + r[9].toString(16) +
+        "-" + r[0].toString(10) + r[0].toString(11) +
+        r[0].toString(12) + r[0].toString(13) +
+        r[0].toString(14) + r[0].toString(15));
+};
 
 /**
  * Finds the lang specific item in a map of items by language.
