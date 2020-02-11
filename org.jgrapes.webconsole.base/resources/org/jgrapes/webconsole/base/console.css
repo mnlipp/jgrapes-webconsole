@@ -26,11 +26,6 @@
     white-space: nowrap;
 } 
 
-:not(.table--no-basic-styling) table:not(.table--no-basic-styling) {
-    display: block;
-    overflow-x: auto;
-}
-
 :not(.table--no-basic-styling) thead th {
     white-space: nowrap;
 } 
