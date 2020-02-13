@@ -300,7 +300,7 @@ Vue.component('jgwc-disclosure-button', {
     }
   },
   template: `
-    <button type="button" 
+    <button type="button" class="disclosure-button"
       :aria-expanded="disclosed ? 'true' : 'false'"
       :aria-controls="idRef"
       @click="toggleDisclosed()"><slot></slot></button>
