@@ -18,6 +18,37 @@
 
 import Vue from "../vue/vue.esm.browser.js"
 
+var scopeCounter = 1;
+
+var jgwcIdScopeMixin = {
+    created: function() {
+        this._idScope = scopeCounter++;
+    },
+    methods: {
+        scopedId: function(id) {
+            return "jgwc-id-" + this._idScope + "-" + id;
+        }
+    }
+};
+
+/*
+Vue.component('jgwc-id-scope', {
+  data: function() {
+    return {
+        scope: "test"
+    }
+  },
+  methods: {
+    testIt: function() {
+        return "Test";
+    }
+  },
+  render: function() {
+    return this.$slots.default;
+  },
+});
+*/
+
 Vue.component('jgwc-pulldown-menu', {
   props: {
     id: String,
@@ -248,3 +279,121 @@ Vue.component('jgwc-modal-dialog', {
     this.effectiveId = "jgwc-modal-dialog-" + ++this.constructor.prototype.$instanceCounter;
   }
 });
+
+var disclosures = {};
+
+Vue.component('jgwc-disclosure-button', {
+  props: {
+    idRef: {
+        type: String,
+        required: true,
+    },
+  },
+  data: function () {
+    return {
+        disclosed: false,
+    }
+  },
+  methods: {
+    toggleDisclosed: function() {
+        this.disclosed = !this.disclosed;
+    }
+  },
+  template: `
+    <button type="button" 
+      :aria-expanded="disclosed ? 'true' : 'false'"
+      :aria-controls="idRef"
+      @click="toggleDisclosed()"><slot></slot></button>
+  `,
+  beforeMount: function() {
+      Vue.set(disclosures, this.idRef, this);
+  },
+  beforeDestroy: function() {
+      Vue.delete(disclosures, this.idRef);
+  },
+});
+
+Vue.component('jgwc-disclosure-section', {
+  render: function(createElement) {
+    let id = this.$attrs.id;
+    let button = disclosures[id];
+    if (button.disclosed) {
+        let tag = this.$vnode.data.tag;
+        return createElement(tag, this.$slots.default);
+    }
+    return null;
+  },
+});
+
+export { jgwcIdScopeMixin };
+
+/*
+function vnodeAttr(vnode, attr) {
+    let obj = vnode.data;
+    if (!obj) {
+        return undefined;
+    }
+    obj = obj.attrs;
+    if (!obj) {
+        return undefined;
+    }
+    obj = obj[attr];
+    if (!obj) {
+        return undefined;
+    }
+    return obj;
+}
+
+function processDisclosures(collected, vnode) {
+    let role = vnodeAttr(vnode, "role");
+    if (role && role.toLowerCase() === "button") {
+        vnode.data.attrs.test="yes";
+    }
+    if (vnode.children) {
+        for (let child of vnode.children) {
+            processDisclosures(collected, child);
+        }
+    }
+}
+
+var disclosureMixin = {
+    data: function() {
+        return {
+            disclosed: {}
+        }
+    },
+    methods: {
+        isDisclosed: function(key) {
+            return (key in this.disclosed);
+        },
+        toggleDisclosure: function(key) {
+            if (key in this.disclosed) {
+                Vue.delete(this.disclosed, key);
+                return;
+            }
+            Vue.set(this.disclosed, key, true);
+        }
+    },
+    beforeMount: function() {
+        let vm = this;
+        let origRender = this.$options.render;
+        this.$options.render = function() {
+            let result = origRender.call(vm);
+            processDisclosures({}, result);
+            return result;
+        }
+    },
+}
+
+Vue.component('jgwc-aria', {
+    template: '<td><slot></slot></td>',
+    beforeMount: function() {
+        let vm = this;
+        let origRender = this.$options.render;
+        this.$options.render = function() {
+            let result = origRender.call(vm);
+            return result;
+        }
+    }
+});
+*/
