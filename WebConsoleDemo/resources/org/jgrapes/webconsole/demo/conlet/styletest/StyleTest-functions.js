@@ -18,12 +18,14 @@
 'use strict';
 
 import Vue from "../../page-resource/vue/vue.esm.browser.js"
+import { jgwcIdScopeMixin } from "../../page-resource/jgwc-vue-components/jgwc-components.js";
 
 window.orgJGrapesOsgiConletStyleTest = {};
 
 window.orgJGrapesOsgiConletStyleTest.initView = function(content) {
-    let cont = $(content).find(".jgrapes-osgi-style-test-treegrid-table");
+    let cont = $(content).find(".jgrapes-osgi-style-test-table-with-disclosures");
     new Vue({
+        mixins: [jgwcIdScopeMixin],
         el: $(cont)[0],
         data: {
             conletId: $(content).closest("[data-conlet-id]").data("conlet-id"),
@@ -47,20 +49,6 @@ window.orgJGrapesOsgiConletStyleTest.initView = function(content) {
                 return this.controller.filter(infos);
             }
         },
-        methods: {
-            toggleDetails: function(issue) {
-                let key = [issue.year, issue.month];
-                if (key in this.detailsByKey) {
-                    Vue.delete(this.detailsByKey, key);
-                    return;
-                }
-                Vue.set(this.detailsByKey, key, true);
-            },
-            expanded: function(issue) {
-                let key = [issue.year, issue.month];
-                return (key in this.detailsByKey);                
-            }
-        }
     });
 }
 

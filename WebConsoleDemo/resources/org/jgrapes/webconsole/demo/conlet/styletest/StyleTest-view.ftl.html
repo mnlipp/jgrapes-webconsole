@@ -4,10 +4,9 @@
 
 <h1>Style Tests</h1>
 
-<h2>Tree Grid</h2>
+<h2>Disclosure (in table)</h2>
 
-  <table role="treegrid" 
-    class="table--basic--striped jgrapes-osgi-style-test-treegrid-table">
+  <table class="table--basic--striped jgrapes-osgi-style-test-table-with-disclosures">
     <thead>
       <tr>
         <th v-for="key in controller.keys"
@@ -21,23 +20,24 @@
     </thead>
     <tbody>
       <template v-for="(entry, rowIndex) in filteredData">
-        <tr role="row" :class="[(rowIndex % 2) ? 'odd' : 'even']"
-          :aria-expanded="expanded(entry) ? 'true' : 'false'">
-          <td v-for="(key, colIndex) in controller.keys" 
-            v-on:click="colIndex == 0 ? toggleDetails(entry) : false">
-            <span v-html="controller.breakBeforeDots(entry[key])"></span>
+        <tr role="row" :class="[(rowIndex % 2) ? 'odd' : 'even']">
+          <td>
+            <jgwc-disclosure-button v-bind:id-ref="scopedId(rowIndex)">
+              <span v-html="entry[controller.keys[0]]"></span>
+            </jgwc-disclosure-button>
+          </td>
+          <td v-for="(key, colIndex) in controller.keys.slice(1)">
+            <span v-html="entry[key]"></span>
           </td>
         </tr>
-        <template v-if="expanded(entry)"> 
-          <tr class="details" :class="[(rowIndex % 2) ? 'odd' : 'even']">
-            <td colspan="3">
-              Those are the details...
-            </td>
-          </tr>
-        </template>
+        <tr :id="scopedId(rowIndex)" is="jgwc-disclosure-section"
+          class="details" :class="[(rowIndex % 2) ? 'odd' : 'even']">
+          <td colspan="3">
+            Those are the details...
+          </td>
+        </tr>
       </template>
     </tbody>
   </table>
-
 
 </div>
