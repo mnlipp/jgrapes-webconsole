@@ -91,7 +91,7 @@ span[role="button"] {
 /* ## Button styling. */
 
 .conlet-content:not(.conlet--no-markup-styling) 
-    button[type="button"]:not([aria-expanded]) {
+    button[type="button"]:not(.disclosure-button) {
     display: inline-block;
     font-weight: 400;
     color: #fff;
@@ -128,15 +128,14 @@ span[role="button"] {
 
 /* ## Disclosure */
 
-button[aria-controls][aria-expanded],
-[role="button"][aria-controls][aria-expanded] {
+.disclosure-button {
     pointer-events: none;
     border: none;
     padding: 0;
+    text-align: inherit;
 }
 
-button[aria-controls][aria-expanded]::before,
-[role="button"][aria-controls][aria-expanded]::before {
+.disclosure-button::before {
     pointer-events: all;
     content: "";
     width: 0;
@@ -147,28 +146,24 @@ button[aria-controls][aria-expanded]::before,
     margin-right: 0.125rem;
 }
 
-button[aria-controls][aria-expanded="false"]::before,
-[role="button"][aria-controls][aria-expanded="false"]::before {
+.disclosure-button[aria-expanded="false"]::before {
     padding-right: 0.375rem;
     border-width: 0.5rem 0 0.5rem 0.625rem;
     border-color: transparent transparent transparent var(--primary);
 }
 
-button[aria-controls][aria-expanded="false"]:hover::before,
-[role="button"][aria-controls][aria-expanded="false"]:hover::before {
+.disclosure-button[aria-expanded="false"]:hover::before {
     transform: scale(1.25);
     position: relative;
     left: 0.1rem;
 }
 
-button[aria-controls][aria-expanded="true"]::before,
-[role="button"][aria-controls][aria-expanded="true"]::before {
+.disclosure-button[aria-expanded="true"]::before {
     border-width: 0.625rem 0.5rem 0 0.5rem;
     border-color: var(--primary) transparent transparent transparent;
 }
 
-button[aria-controls][aria-expanded="true"]:hover::before,
-[role="button"][aria-controls][aria-expanded="true"]:hover::before {
+.disclosure-button[aria-expanded="true"]:hover::before {
     transform: scale(1.25);
     position: relative;
 }
