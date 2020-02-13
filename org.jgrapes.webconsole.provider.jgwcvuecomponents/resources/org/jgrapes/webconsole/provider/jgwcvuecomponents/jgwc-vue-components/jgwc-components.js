@@ -317,7 +317,7 @@ Vue.component('jgwc-disclosure-section', {
   render: function(createElement) {
     let id = this.$attrs.id;
     let button = disclosures[id];
-    if (button.disclosed) {
+    if (button && button.disclosed) {
         let tag = this.$vnode.data.tag;
         return createElement(tag, this.$slots.default);
     }
