@@ -584,6 +584,7 @@ body > footer {
     border: none;
     padding: 0;
     text-align: inherit;
+    background-color: transparent;
 }
 
 .disclosure-button::before {
