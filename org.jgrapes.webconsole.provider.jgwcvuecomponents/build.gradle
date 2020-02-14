@@ -5,7 +5,7 @@ dependencies {
     
 }
 
-ext.releaseVersion = "0.1.4"
+ext.releaseVersion = "0.2.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 

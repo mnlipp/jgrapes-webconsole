@@ -18,6 +18,8 @@
 
 import Vue from "../vue/vue.esm.browser.js"
 
+Vue.prototype.jgwc = {};
+
 var scopeCounter = 1;
 
 var jgwcIdScopeMixin = {
@@ -280,13 +282,25 @@ Vue.component('jgwc-modal-dialog', {
   }
 });
 
-var disclosures = {};
+var disclosures = Vue.observable({});
 
 Vue.component('jgwc-disclosure-button', {
   props: {
     idRef: {
         type: String,
         required: true,
+    },
+    onShow: {
+        type: Function,
+        default: null,
+    },
+    onHide: {
+        type: Function,
+        default: null,
+    },
+    onToggle: {
+        type: Function,
+        default: null,
     },
   },
   data: function () {
@@ -297,6 +311,18 @@ Vue.component('jgwc-disclosure-button', {
   methods: {
     toggleDisclosed: function() {
         this.disclosed = !this.disclosed;
+        if (this.onToggle) {
+            this.onToggle.call(this, this.disclosed);
+        }
+        if (this.disclosed) {
+            if (this.onShow) {
+                this.onShow.call(this);
+            }
+        } else {
+            if (this.onHide) {
+                this.onHide.call(this);
+            }
+        }
     }
   },
   template: `
@@ -305,13 +331,29 @@ Vue.component('jgwc-disclosure-button', {
       :aria-controls="idRef"
       @click="toggleDisclosed()"><slot></slot></button>
   `,
-  beforeMount: function() {
+  created: function() {
       Vue.set(disclosures, this.idRef, this);
   },
   beforeDestroy: function() {
       Vue.delete(disclosures, this.idRef);
   },
 });
+
+var jgwcDisclosureButton = Vue.prototype.jgwc.disclosureButton = function(idRef) {
+    // We have no control about when the component is created, so
+    // it may not have been created yet. Vue's reactivity doesn't track
+    // addition of properties, only changes to properties. So we
+    // have to make sure that the property exists.
+    if (disclosures[idRef] === undefined) {
+        Vue.set(disclosures, idRef, null);
+    }
+    return disclosures[idRef];
+}
+
+Vue.prototype.jgwc.isDisclosed = function(idRef) {
+    let button = jgwcDisclosureButton(idRef);
+    return button ? button.disclosed : false;
+}
 
 Vue.component('jgwc-disclosure-section', {
   render: function(createElement) {
