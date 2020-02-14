@@ -8,25 +8,21 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 ### Consoles
 
 <table>
-  <tbody>
     <tr>
       <td>
 
 <table>
-  <tbody>
     <tr>
       <td>base</td>
       <td><a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/_latestVersion">
         <img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/images/download.svg"></a>
       </td>
     </tr>
-  </tbody>
 </table>
 
 
       </td>
     </tr>
-  </tbody>
 </table>
 
 
