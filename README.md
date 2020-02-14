@@ -23,49 +23,6 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-    </td>
-    <td>
-    
-<table>
-  <tbody>
-    <tr>
-      <td>bootstrap4</td>
-      <td><a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.bootstrap4.base/_latestVersion">
-        <img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.bootstrap4/images/download.svg"/></a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-    </td>
-    <td>
-
-<table>
-  <tbody>
-    <tr>
-      <td>jqueryui</td>
-      <td><a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.jqueryui/_latestVersion">
-        <img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.jqueryui/images/download.svg"/></a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-    </td>
-  </tr>
-  <tr>
-    <td>
-
-<table>
-  <tbody>
-    <tr>
-      <td>vuejs</td>
-      <td><a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.vuejs/_latestVersion">
-        <img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.vuejs/images/download.svg"/></a>
-      </td>
-    </tr>
-  </tbody>
-</table>
 
       </td>
     </tr>
