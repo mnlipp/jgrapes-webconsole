@@ -1372,8 +1372,8 @@ JGConsole.findConletView = function(...params) {
  * 
  * @memberof JGConsole
  */
-JGConsole.notification = function(...params) {
-    return theConsole.renderer.notification(...params);
+JGConsole.notification = function(content, options = {}) {
+    return theConsole.renderer.notification(content, options);
 }
 
 /**
