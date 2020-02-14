@@ -7,21 +7,13 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 ### Consoles
 
-<table>
-    <tr>
-      <td>
+<a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/_latestVersion"><img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/images/download.svg"></a>, 
 
-<table>
-    <tr>
-      <td>base</td>
-    </tr>
-</table>
+<a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.bootstrap4.base/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.bootstrap4/images/download.svg"></a>, 
 
+<a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.jqueryui/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.jqueryui/images/download.svg"></a>
 
-      </td>
-    </tr>
-</table>
-
+<a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.vuejs/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.vuejs/images/download.svg"></a>
 
 ### Providers
 
