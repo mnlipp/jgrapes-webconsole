@@ -7,11 +7,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 ### Consoles
 
-<div style="display: flex; justify-content: flex-start; align-items: flex-start; flex-wrap: wrap;">
-
 <table>
-  <tr>
-    <td>
+  <tbody>
+    <tr>
+      <td>
 
 <table>
   <tbody>
@@ -68,19 +67,18 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-    </td>
-  </tr>
+      </td>
+    </tr>
+  </tbody>
 </table>
-</div>
 
 
 ### Providers
 
-<div style="display: flex; justify-content: flex-start; align-items: flex-start; flex-wrap: wrap;">
-
 <table>
-  <tr>
-    <td>
+  <tbody>
+    <tr>
+      <td>
     
 <table>
   <tbody>
@@ -283,18 +281,18 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-    </td>
-  </tr>
+      </td>
+    </tr>
+  </tbody>
 </table>
-
-</div>
 
 
 ### Conlets
 
 <table>
-  <tr>
-    <td>
+  <tbody>
+    <tr>
+      <td>
 
 <table>
   <tbody>
@@ -321,8 +319,9 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-    </td>
-  </tr>
+      </td>
+    </tr>
+  </tbody>
 </table>
 
 
