@@ -22,12 +22,23 @@
       <template v-for="(entry, rowIndex) in filteredData">
         <tr role="row" :class="[(rowIndex % 2) ? 'odd' : 'even']">
           <td>
-            <jgwc-disclosure-button v-bind:id-ref="scopedId(rowIndex)">
+            <jgwc-disclosure-button v-if="rowIndex === 0" 
+              v-bind:id-ref="scopedId(rowIndex)"
+              :on-toggle="function() { $window.JGConsole.notification('Changed.') }"
+              :on-show="function() { $window.JGConsole.notification('Now showing.') }"
+              :on-hide="function() { $window.JGConsole.notification('Now hidden.') }"
+              >
+              <span v-html="entry[controller.keys[0]]"></span>
+            </jgwc-disclosure-button>
+            <jgwc-disclosure-button v-else 
+              v-bind:id-ref="scopedId(rowIndex)">
               <span v-html="entry[controller.keys[0]]"></span>
             </jgwc-disclosure-button>
           </td>
           <td v-for="(key, colIndex) in controller.keys.slice(1)">
             <span v-html="entry[key]"></span>
+            <span v-if="key === 'title' 
+              && jgwc.isDisclosed(scopedId(rowIndex))">(see below)</span>
           </td>
         </tr>
         <tr :id="scopedId(rowIndex)" is="jgwc-disclosure-section"
