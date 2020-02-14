@@ -5,6 +5,9 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 [![Build Status](https://travis-ci.org/mnlipp/jgrapes-webconsole.svg?branch=master)](https://travis-ci.org/mnlipp/jgrapes-webconsole)
 
+This repository holds the sources for jars that provide
+the web console components of the JGrapes framework.
+
 ### Consoles
 
 base <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/_latestVersion"><img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/images/download.svg"></a>, 
@@ -27,48 +30,12 @@ markdownit <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.w
 moment <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.moment/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.moment/images/download.svg"></a>,
 vue <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.vue/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.vue/images/download.svg"></a>,
 vuejs <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.vuejs/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.vuejs/images/download.svg"></a>,
-vuex <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.vuex/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.vuex/images/download.svg"></a>,
+vuex <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.vuex/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.vuex/images/download.svg"></a>
 
 ### Conlets
 
-<table>
-  <tbody>
-    <tr>
-      <td>
-
-<table>
-  <tbody>
-    <tr>
-      <td>markdowndisplay</td>
-      <td><a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.markdowndisplay/_latestVersion">
-        <img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.markdowndisplay/images/download.svg"/></a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-    </td>
-    <td>
-    
-<table>
-  <tbody>
-    <tr>
-      <td>sysinfo</td>
-      <td><a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.sysinfo/_latestVersion">
-        <img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.sysinfo/images/download.svg"/></a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
-This repository holds the sources for jars that provide
-the web console components of the JGrapes framework.
+markdowndisplay <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.markdowndisplay/_latestVersion"><img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.markdowndisplay/images/download.svg"></a>,
+sysinfo <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.sysinfo/_latestVersion"><img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.sysinfo/images/download.svg"></a>
 
 Short Overview
 --------------
