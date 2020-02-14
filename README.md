@@ -9,7 +9,11 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 <div style="display: flex; justify-content: flex-start; align-items: flex-start; flex-wrap: wrap;">
 
-<table style="width: auto; margin-right: 1rem;">
+<table>
+  <tr>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>base</td>
@@ -20,7 +24,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+    
+<table>
   <tbody>
     <tr>
       <td>bootstrap4</td>
@@ -31,7 +38,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>jqueryui</td>
@@ -42,7 +52,12 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>vuejs</td>
@@ -53,6 +68,9 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
+    </td>
+  </tr>
+</table>
 </div>
 
 
@@ -60,7 +78,11 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 <div style="display: flex; justify-content: flex-start; align-items: flex-start; flex-wrap: wrap;">
 
-<table style="width: auto; margin-right: 1rem;">
+<table>
+  <tr>
+    <td>
+    
+<table>
   <tbody>
     <tr>
       <td>chartjs</td>
@@ -71,7 +93,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>datatables</td>
@@ -82,7 +107,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>fontawesome</td>
@@ -93,7 +121,12 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>gridstack</td>
@@ -104,7 +137,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>jgwcvuecomponents</td>
@@ -115,7 +151,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>jquery</td>
@@ -126,7 +165,12 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>jqueryui</td>
@@ -137,7 +181,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>jquitouchpunch</td>
@@ -148,7 +195,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>lodash</td>
@@ -159,7 +209,12 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>markdownit</td>
@@ -170,7 +225,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>moment</td>
@@ -181,7 +239,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>vue</td>
@@ -192,7 +253,12 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>vuejs</td>
@@ -203,7 +269,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+
+<table>
   <tbody>
     <tr>
       <td>vuex</td>
@@ -214,16 +283,23 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
+    </td>
+  </tr>
+</table>
+
 </div>
 
 
 ### Conlets
 
-<div style="display: flex; justify-content: flex-start; align-items: flex-start; flex-wrap: wrap;">
-<table style="width: auto; margin-right: 1rem;">
+<table>
+  <tr>
+    <td>
+
+<table>
   <tbody>
     <tr>
-      <td>makdowndisplay</td>
+      <td>markdowndisplay</td>
       <td><a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.markdowndisplay/_latestVersion">
         <img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconlet.markdowndisplay/images/download.svg"/></a>
       </td>
@@ -231,7 +307,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-<table style="width: auto; margin-right: 1rem;">
+    </td>
+    <td>
+    
+<table>
   <tbody>
     <tr>
       <td>sysinfo</td>
@@ -242,7 +321,9 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
   </tbody>
 </table>
 
-</div>
+    </td>
+  </tr>
+</table>
 
 
 This repository holds the sources for jars that provide
