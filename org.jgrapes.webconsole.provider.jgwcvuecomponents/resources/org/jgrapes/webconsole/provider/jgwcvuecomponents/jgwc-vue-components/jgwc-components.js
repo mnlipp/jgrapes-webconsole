@@ -124,27 +124,34 @@ Vue.component('jgwc-pulldown-menu', {
 
 Vue.component('jgwc-tablist', {
   props: {
-    id: String,
-    initialTabs: Array,
+    id: {
+      type: String,
+      required: true,
+    },
+    initialPanels: Array,
     l10n: Function,
   },
   data: function () {
     return {
-      tabs: this.initialTabs || [],
+      panels: this.initialPanels || [],
       selected: null
     }
   },
   methods: {
-    label: function(tab) {
-        if (tab.l10n) {
-            return tab.l10n(tab.label);
+    label: function(panel) {
+        if (panel.l10n) {
+            return panel.l10n(panel.label);
         }
         if (this.l10n) {
-            return this.l10n(tab.label);
+            return this.l10n(panel.label);
         }
-        return tab.label;
+        return panel.label;
     },
-    setupTabpanel: function(tabpanel) {
+    setupTabpanel: function(panel) {
+        let tabpanel = document.querySelector("[id='" + panel.id + "']");
+        if (tabpanel == null) {
+            return;
+        }
         tabpanel.setAttribute("role", "tabpanel");
         tabpanel.setAttribute("aria-labelledby", 
             tabpanel.getAttribute('id') + '-tab');
@@ -154,30 +161,31 @@ Vue.component('jgwc-tablist', {
             tabpanel.setAttribute("hidden", "");
         }
     },
-    addTab: function(tab) {
-        this.tabs.push(tab);
+    addPanel: function(panel) {
+        this.panels.push(panel);
+        this.setupTabpanel(panel)
     },
-    removeTab: function(tabId) {
-        let prevTab = 0;
-        for (let i in this.tabs) {
-            if (this.tabs[i].id === tabId) {
-                this.tabs.splice(i, 1);
+    removePanel: function(panelId) {
+        let prevPanel = 0;
+        for (let i in this.panels) {
+            if (this.panels[i].id === panelId) {
+                this.panels.splice(i, 1);
                 break;
             }
-            prevTab = i;
+            prevPanel = i;
         }
-        if (this.tabs.length > 0) {
-            this.selectTab(this.tabs[prevTab].id);
+        if (this.panels.length > 0) {
+            this.selectPanel(this.panels[prevPanel].id);
         }
     },
-    selectTab: function(id) {
+    selectPanel: function(panelId) {
         if (this.selected) {
             let tabpanel = document.querySelector("[id='" + this.selected + "']");
             if (tabpanel) {
                 tabpanel.setAttribute("hidden", "");
             }
         }
-        this.selected=id;
+        this.selected=panelId;
         let tabpanel = document.querySelector("[id='" + this.selected + "']");
         if (tabpanel) {
             tabpanel.removeAttribute("hidden");
@@ -185,34 +193,30 @@ Vue.component('jgwc-tablist', {
     },
   },
   watch: {
-    tabs: function(newValue) {
+    panels: function(newValue) {
         if (this.selected === null && newValue.length > 0) {
-            this.selectTab(this.tabs[0].id);
+            this.selectPanel(this.panels[0].id);
         }
     },
   },
   template: `
     <div v-bind:id="id" class="jgwc-tablist" role="tablist">
-      <span v-for="tab of tabs" role="tab"
-          v-bind:aria-selected="tab.id == selected ? 'true' : 'false'"
-          v-bind:aria-controls="tab.id">
-        <button v-bind:id="tab.id + '-tab'" type="button"  
-          v-on:click="selectTab(tab.id)">{{ label(tab) }}</button><button
-        type="button" v-if="tab.removeCallback" class="fa fa-times"
-          v-on:click="tab.removeCallback()"></button>
+      <span v-for="panel of panels" role="tab"
+          v-bind:aria-selected="panel.id == selected ? 'true' : 'false'"
+          v-bind:aria-controls="panel.id">
+        <button :id="panel.id + '-tab'" type="button"  
+          v-on:click="selectPanel(panel.id)">{{ label(panel) }}</button><button
+        type="button" v-if="panel.removeCallback" class="fa fa-times"
+          v-on:click="panel.removeCallback()"></button>
       </span>
     </div>
   `,
   mounted: function() {
-    if (this.tabs.length > 0) {
-        this.selected = this.tabs[0].id;
+    if (this.panels.length > 0) {
+        this.selected = this.panels[0].id;
     }
-    for (let tab of this.tabs) {
-        let tabpanel = document.querySelector("[id='" + tab.id + "']");
-        if (tabpanel == null) {
-            continue;
-        }
-        this.setupTabpanel(tabpanel);
+    for (let panel of this.panels) {
+        this.setupTabpanel(panel);
     }
   }
 });

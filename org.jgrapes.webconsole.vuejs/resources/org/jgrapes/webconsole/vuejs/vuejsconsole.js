@@ -81,8 +81,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         new Vue({ el: '.consoleVue', store });
 
         // Init tabs
-        this._consoleTabs().addTab({ label: "Overview", 
-            id: "consoleOverviewPanel", 
+        this._consoleTabs().addPanel({  
+            id: "consoleOverviewPanel",
+            label: "Overview", 
             l10n: window.consoleL10n });
 
         // Grid
@@ -147,9 +148,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         });
 
         let tabsLayout = [];
-        for (let tab of this._consoleTabs().tabs) {
-            let panel = $("[id='" + tab.id + "']");
-            let conletId = panel.attr("data-conlet-id");
+        for (let panel of this._consoleTabs().panels) {
+            let tabpanel = $("[id='" + panel.id + "']");
+            let conletId = tabpanel.attr("data-conlet-id");
             if (conletId) {
                 tabsLayout.push(conletId);
             }
@@ -280,7 +281,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         previewContent.empty();
         previewContent.append(newContent);
         if (foreground) {
-            this._consoleTabs().selectTab("consoleOverviewPanel");
+            this._consoleTabs().selectPanel("consoleOverviewPanel");
         }
     }
 
@@ -296,9 +297,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         if (!isNew) {
             container.children().detach();
             container.append(newContent);
-            for (let tab of this._consoleTabs().tabs) {
-                if (tab.id === panelId) {
-                    tab.label = newContent.attr("data-conlet-title");
+            for (let panel of this._consoleTabs().panels) {
+                if (panel.id === panelId) {
+                    panel.label = newContent.attr("data-conlet-title");
                 }
             }
         } else {
@@ -309,16 +310,16 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             // JQuery append seems to have a delay.
             consolePanels[0].appendChild(container[0]);
             // Add to tab list
-            this._consoleTabs().addTab({ 
-                label: newContent.attr("data-conlet-title"), 
+            this._consoleTabs().addPanel({
                 id: panelId, 
+                label: newContent.attr("data-conlet-title"), 
                 l10n: window.consoleL10n,
                 removeCallback: function() { _this.console().removeView(conletId); }
             });
             this._layoutChanged();
         }
         if (foreground) {
-            this._consoleTabs().selectTab(panelId);
+            this._consoleTabs().selectPanel(panelId);
         }
     }
 
@@ -365,12 +366,12 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             }
             if (container.hasClass('conlet-view')) {
                 let panelId = container.attr("id");
-                _this._consoleTabs().removeTab(panelId);
+                _this._consoleTabs().removePanel(panelId);
                 container.remove();
                 _this._layoutChanged();
             }
         });
-        this._consoleTabs().selectTab("consoleOverviewPanel");
+        this._consoleTabs().selectPanel("consoleOverviewPanel");
         this._layoutChanged();
     }
 
@@ -386,9 +387,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             let conletHeader = $(preview).children("section:first-child > header");
             conletHeader.children("p:first-child").text(title);
         }
-        for (let tab of this._consoleTabs().tabs) {
-            if (tab.id === "conlet-panel-" + conletId) {
-                tab.label = title;
+        for (let panel of this._consoleTabs().panels) {
+            if (panel.id === "conlet-panel-" + conletId) {
+                panel.label = title;
             }
         }
     }
