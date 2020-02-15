@@ -5,10 +5,10 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 [![Build Status](https://travis-ci.org/mnlipp/jgrapes-webconsole.svg?branch=master)](https://travis-ci.org/mnlipp/jgrapes-webconsole)
 
-* *Consoles*: base <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/_latestVersion"><img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/images/download.svg"></a>, 
-bootstrap4 <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.bootstrap4.base/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.bootstrap4/images/download.svg"></a>, 
-jqueryui <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.jqueryui/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.jqueryui/images/download.svg"></a>
-vuejs <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.vuejs/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.vuejs/images/download.svg"></a>
+ * Web Console Base <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/_latestVersion"><img style=" vertical-align: middle;" src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.base/images/download.svg"></a>
+
+ * *Consoles*: vuejs <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.vuejs/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.vuejs/images/download.svg"></a>, bootstrap4 <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.bootstrap4.base/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.bootstrap4/images/download.svg"></a> (deprecated), 
+jqueryui <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.jqueryui/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.jqueryui/images/download.svg"></a> (deprecated)
 
  * *Providers*: chartjs <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.chartjs/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.chartjs/images/download.svg"></a>,
 datatables <a href="https://bintray.com/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.datatables/_latestVersion"><img src="https://api.bintray.com/packages/mnlipp/jgrapes/org.jgrapes:org.jgrapes.webconsole.provider.datatables/images/download.svg"></a>,
