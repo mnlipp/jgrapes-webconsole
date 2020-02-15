@@ -18,6 +18,18 @@
 
 import Vue from "../vue/vue.esm.browser.js"
 
+const keys = {
+    end: 35,
+    home: 36,
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+    delete: 46,
+    enter: 13,
+    space: 32
+};
+  
 Vue.prototype.jgwc = {};
 
 var scopeCounter = 1;
@@ -137,33 +149,16 @@ Vue.component('jgwc-tablist', {
       selected: null
     }
   },
+  computed: {
+    isVertical: function() {
+        return this.$attrs["aria-orientation"] !== undefined
+            && this.$attrs["aria-orientation"] === "vertical";
+    }
+  },
   methods: {
-    label: function(panel) {
-        if (panel.l10n) {
-            return panel.l10n(panel.label);
-        }
-        if (this.l10n) {
-            return this.l10n(panel.label);
-        }
-        return panel.label;
-    },
-    setupTabpanel: function(panel) {
-        let tabpanel = document.querySelector("[id='" + panel.id + "']");
-        if (tabpanel == null) {
-            return;
-        }
-        tabpanel.setAttribute("role", "tabpanel");
-        tabpanel.setAttribute("aria-labelledby", 
-            tabpanel.getAttribute('id') + '-tab');
-        if (tabpanel.getAttribute('id') === this.selected) {
-            tabpanel.removeAttribute("hidden");
-        } else {
-            tabpanel.setAttribute("hidden", "");
-        }
-    },
     addPanel: function(panel) {
         this.panels.push(panel);
-        this.setupTabpanel(panel)
+        this._setupTabpanel(panel)
     },
     removePanel: function(panelId) {
         let prevPanel = 0;
@@ -185,12 +180,91 @@ Vue.component('jgwc-tablist', {
                 tabpanel.setAttribute("hidden", "");
             }
         }
-        this.selected=panelId;
+        this.selected = panelId;
         let tabpanel = document.querySelector("[id='" + this.selected + "']");
         if (tabpanel) {
             tabpanel.removeAttribute("hidden");
         }
     },
+    _label: function(panel) {
+        if (panel.l10n) {
+            return panel.l10n(panel.label);
+        }
+        if (this.l10n) {
+            return this.l10n(panel.label);
+        }
+        return panel.label;
+    },
+    _setupTabpanel: function(panel) {
+        let tabpanel = document.querySelector("[id='" + panel.id + "']");
+        if (tabpanel == null) {
+            return;
+        }
+        tabpanel.setAttribute("role", "tabpanel");
+        tabpanel.setAttribute("aria-labelledby", 
+            tabpanel.getAttribute('id') + '-tab');
+        if (tabpanel.getAttribute('id') === this.selected) {
+            tabpanel.removeAttribute("hidden");
+        } else {
+            tabpanel.setAttribute("hidden", "");
+        }
+    },
+    _selectedPanel: function() {
+        for (let i = 0; i < this.panels.length; i++) {
+            let panel = this.panels[i];
+            if (panel.id === this.selected) {
+                return [panel, i];
+            }
+        }
+        return [undefined, undefined];
+    },
+    _onKey: function(event) {
+        if (event.type === "keydown") {
+            if (this.isVertical 
+                && [keys.up, keys.down].includes(event.keyCode)) {
+                event.preventDefault();
+            }
+            return;
+        }
+        if (event.type !== "keyup") {
+            return;
+        }
+        let [panel, panelIndex] = this._selectedPanel();
+        if (!panel) {
+            return;
+        }
+        let panels = this.panels;
+        let handled = false;
+        if (this.isVertical ? event.keyCode === keys.up
+            : event.keyCode === keys.left) {
+            this.selectPanel(panels[
+                    (panelIndex-1+panels.length)%panels.length].id);
+            handled = true;
+        } else if (this.isVertical ? event.keyCode === keys.down
+            : event.keyCode === keys.right) {
+            this.selectPanel(panels[(panelIndex+1)%panels.length].id);
+            handled = true;
+        } else if (event.keyCode === keys.delete) {
+            if (panel.removeCallback) {
+                panel.removeCallback();
+                handled = true;
+            }
+        } else if (event.keyCode === keys.home) {
+            this.selectPanel(panels[0].id);
+            handled = true;
+        } else if (event.keyCode === keys.end) {
+            this.selectPanel(panels[panels.length-1].id);
+            handled = true;
+        }
+        if (handled) {
+            event.preventDefault();
+            let tab = document.querySelector(
+                "[id='" + this.selected + "-tab'] > button");
+            if (tab) {
+                tab.focus();
+            }
+        }
+    }
   },
   watch: {
     panels: function(newValue) {
@@ -200,14 +274,15 @@ Vue.component('jgwc-tablist', {
     },
   },
   template: `
-    <div v-bind:id="id" class="jgwc-tablist" role="tablist">
-      <span v-for="panel of panels" role="tab"
-          v-bind:aria-selected="panel.id == selected ? 'true' : 'false'"
-          v-bind:aria-controls="panel.id">
-        <button :id="panel.id + '-tab'" type="button"  
-          v-on:click="selectPanel(panel.id)">{{ label(panel) }}</button><button
+    <div v-bind:id="id" class="jgwc-tablist" role="tablist"
+      @keydown="_onKey($event)" @keyup="_onKey($event)">
+      <span v-for="panel of panels" :id="panel.id + '-tab'" role="tab"
+          :aria-selected="panel.id == selected ? 'true' : 'false'"
+          :aria-controls="panel.id">
+        <button type="button" :tabindex="panel.id == selected ? 0 : -1"
+          v-on:click="selectPanel(panel.id)">{{ _label(panel) }}</button><button
         type="button" v-if="panel.removeCallback" class="fa fa-times"
-          v-on:click="panel.removeCallback()"></button>
+          v-on:click="panel.removeCallback()" tabindex="-1"></button>
       </span>
     </div>
   `,
@@ -216,7 +291,7 @@ Vue.component('jgwc-tablist', {
         this.selected = this.panels[0].id;
     }
     for (let panel of this.panels) {
-        this.setupTabpanel(panel);
+        this._setupTabpanel(panel);
     }
   }
 });

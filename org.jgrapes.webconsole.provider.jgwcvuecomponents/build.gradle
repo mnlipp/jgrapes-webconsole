@@ -5,8 +5,8 @@ dependencies {
     
 }
 
-ext.releaseVersion = "0.2.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.2.1"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 jar {
