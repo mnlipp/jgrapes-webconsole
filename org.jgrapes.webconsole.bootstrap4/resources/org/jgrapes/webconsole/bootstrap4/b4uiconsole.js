@@ -18,7 +18,7 @@
 
 'use strict';
 
-import JGConsole from "../console-base-resource/jgconsole.js"
+import { JGConsole, RenderMode } from "../console-base-resource/jgconsole.js"
 
 /**
  * @module b4uiconsole
@@ -230,17 +230,17 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         let _this = this;
         let conletHeader = conlet.find(".conlet-preview-header");
         conletHeader.find(".conlet-preview-icon").remove();
-        if (modes.includes("Edit")) {
+        if (modes.includes(RenderMode.Edit)) {
             conletHeader.append("<a href='#' class='" +
                 "conlet-preview-icon conlet-edit" +
                 " ml-2 fa fa-wrench' role='button'></a>");
             conletHeader.find(".conlet-edit").on("click", function() {
                 let icon = $(this);
                 let conletId = icon.closest(".conlet").attr("data-conlet-id");
-                _this.sendRenderConlet(conletId, ["Edit", "Foreground"]);
+                _this.sendRenderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
             });
         }
-        if (modes.includes("DeleteablePreview")) {
+        if (modes.includes(RenderMode.DeleteablePreview)) {
             conletHeader.append("<a href='#' class='" +
                 "conlet-preview-icon conlet-delete" +
                 " ml-2 fa fa-times' role='button'></a>");

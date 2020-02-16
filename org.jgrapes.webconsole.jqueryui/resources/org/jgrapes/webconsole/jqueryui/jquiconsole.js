@@ -18,7 +18,7 @@
 
 'use strict';
 
-import JGConsole from "../console-base-resource/jgconsole.js"
+import { JGConsole, RenderMode } from "../console-base-resource/jgconsole.js"
 
 /**
  * @module jquiconsole
@@ -234,15 +234,15 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         let _this = this;
         let conletHeader = conlet.find(".conlet-header");
         conletHeader.find(".ui-icon").remove();
-        if (modes.includes("Edit")) {
+        if (modes.includes(RenderMode.Edit)) {
             conletHeader.prepend("<span class='ui-icon ui-icon-wrench conlet-edit'></span>");
             conletHeader.find(".conlet-edit").on("click", function() {
                 let icon = $(this);
                 let conletId = icon.closest(".conlet").attr("data-conlet-id");
-                _this.sendRenderConlet(conletId, ["Edit", "Foreground"]);
+                _this.sendRenderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
             });
         }
-        if (modes.includes("DeleteablePreview")) {
+        if (modes.includes(RenderMode.DeleteablePreview)) {
             conletHeader.prepend("<span class='ui-icon ui-icon-delete conlet-delete'></span>");
             conletHeader.find(".conlet-delete").on("click", function() {
                 let icon = $(this);

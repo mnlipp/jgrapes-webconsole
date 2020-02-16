@@ -33,6 +33,24 @@ export default JGConsole;
 window.JGConsole = JGConsole;
 
 /**
+ * String constants for render modes.
+ * 
+ * @memberof JGConsole
+ */
+const RenderMode = Object.freeze({
+    Preview: "Preview",
+    DeleteablePreview: "DeleteablePreview",
+    View: "View",
+    Edit: "Edit",
+    Help: "Help",
+    Foreground: "Foreground",
+});
+
+export { RenderMode };
+JGConsole.RenderMode = RenderMode;
+
+
+/**
  * Easy access to logging.
  */
 class Log {
@@ -183,10 +201,10 @@ class ConsoleWebSocket {
                 // Make sure to get any lost updates
                 let renderer = _this._console._renderer;
                 renderer.findPreviewIds().forEach(function(id) {
-                    renderer.sendRenderConlet(id, ["Preview"]);
+                    renderer.sendRenderConlet(id, [RenderMode.Preview]);
                 });
                 renderer.findViewIds().forEach(function(id) {
-                    renderer.sendRenderConlet(id, ["View"]);
+                    renderer.sendRenderConlet(id, [RenderMode.View]);
                 });
             }
             _this._refreshTimer = setInterval(function() {
@@ -938,11 +956,12 @@ class Console {
             });
         this._webSocket.addMessageHandler('updateConlet',
             function(conletId, mode, modes, content, foreground) {
-                if (mode === "Preview" || mode === "DeleteablePreview") {
+                if (mode === RenderMode.Preview 
+                    || mode === RenderMode.DeleteablePreview) {
                     _this._updatePreview(conletId, modes, mode, content, foreground);
-                } else if (mode === "View") {
+                } else if (mode === RenderMode.View) {
                     _this._updateView(conletId, modes, content, foreground);
-                } else if (mode === "Edit") {
+                } else if (mode === RenderMode.Edit) {
                     let container = _this._editTemplate.clone();
                     container.attr("data-conlet-id", conletId);
                     _this._renderer.showEditDialog(container[0], modes, content);
@@ -954,10 +973,11 @@ class Console {
             });
         this._webSocket.addMessageHandler('deleteConlet',
             function deleteConlet(conletId, renderModes) {
-                if (renderModes.length === 0 || renderModes.includes("Preview")) {
+                if (renderModes.length === 0 
+                    || renderModes.includes(RenderMode.Preview)) {
                     _this.removePreview(conletId);
                 }
-                if (renderModes.includes("View")) {
+                if (renderModes.includes(RenderMode.View)) {
                     _this.removeView(conletId);
                 }
             });
@@ -1087,7 +1107,7 @@ class Console {
             container = this._previewTemplate.clone();
             container.attr("data-conlet-id", conletId);
         }
-        if (mode === "DeleteablePreview") {
+        if (mode === RenderMode.DeleteablePreview) {
             container = $(container);
             container.addClass('conlet-deleteable')
         } else {
@@ -1263,7 +1283,7 @@ class Console {
         this._renderer.removeConletDisplays($(view).get());
         this._execOnUnload($(view));
         if (this._renderer.findConletPreview(conletId)) {
-            this.send("conletDeleted", conletId, ["View"]);
+            this.send("conletDeleted", conletId, [RenderMode.View]);
         } else {
             this.send("conletDeleted", conletId, []);
         }

@@ -18,7 +18,7 @@
 
 'use strict';
 
-import JGConsole from "../console-base-resource/jgconsole.js"
+import { JGConsole, RenderMode } from "../console-base-resource/jgconsole.js"
 import Vue from "../page-resource/vue/vue.esm.browser.js";
 import Vuex from "../page-resource/vuex/vuex.esm.browser.js";
 
@@ -327,16 +327,16 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         let _this = this;
         let conletHeader = conlet.children("header");
         conletHeader.find("button").remove();
-        if (modes.includes("Edit")) {
+        if (modes.includes(RenderMode.Edit)) {
             let button = $("<button type='button' class='fa fa-wrench'></button>");
             button.on("click", function() {
                 let button = $(this);
                 let conletId = button.closest(".conlet").attr("data-conlet-id");
-                _this.console().renderConlet(conletId, ["Edit", "Foreground"]);
+                _this.console().renderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
             });
             conletHeader.append(button);
         }
-        if (modes.includes("DeleteablePreview")) {
+        if (modes.includes(RenderMode.DeleteablePreview)) {
             let button = $("<button type='button' class='fa fa-times'></button>");
             button.on("click", function() {
                 let button = $(this);
