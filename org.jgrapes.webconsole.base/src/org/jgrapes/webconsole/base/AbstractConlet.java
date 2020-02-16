@@ -108,32 +108,40 @@ import org.jgrapes.webconsole.base.events.SetLocale;
  * it matches, invokes {@link #doAddConlet doAddConlet}. The
  * derived class generates a new unique web console component id (optionally 
  * using {@link #generateConletId generateConletId}) 
- * and a state (model) for the instance. The derived class 
+ * and a model (state) for the instance. It 
  * calls {@link #putInSession putInSession} to make the
- * state known to the {@link AbstractConlet}. Eventually,
- * it fires the {@link RenderConlet} event and returns the
- * new web console component id. The {@link RenderConlet} event delivers
- * the HTML that represents the web console component on the page to the 
- * console session. The web console component state may be used to generate 
- * HTML that represents the state. Alternatively, state independent HTML 
- * may be delivered followed by a {@link NotifyConletView} event that updates
- * the HTML using JavaScript in the console page.
+ * model known to the {@link AbstractConlet}. Eventually,
+ * it fires the {@link RenderConlet} event and returns a new
+ * {@link ConletTrackingInfo} with the conlet id and the rendered
+ * modes. 
  * 
- * ## RenderConlet
+ * The {@link RenderConlet} event provides to the console session
+ * the HTML that represents the web console component on the page.
+ * The HTML may be generated using and thus depending on the web console
+ * component model.
+ * Alternatively, state independent HTML may be provided followed 
+ * by a {@link NotifyConletView} event that updates
+ * the HTML (using JavaScript) on the console page. The latter approach
+ * is preferred if the model changes frequently and updating the
+ * rendered representation is more efficient than providing a new one.
+ * 
+ * ## RenderConletRequest
  * 
  * ![Render web console component handling](RenderConletHandling.svg)
  * 
- * A {@link RenderConlet} event indicates that the web console page
- * needs the HTML for displaying a web console component. This may be cause
+ * A {@link RenderConletRequest} event indicates that the web console page
+ * needs the HTML for displaying a web console component. This may be caused
  * by e.g. a refresh or by requesting a full page view from
  * the preview.
  * 
  * Upon receiving such an event, the {@link AbstractConlet}
  * checks if it has state information for the web console component id
- * requested. If so, it invokes 
- * {@link #doRenderConlet doRenderConlet}
+ * requested. If so, it invokes {@link #doRenderConlet doRenderConlet}
  * with the state information. This method has to fire
- * the {@link RenderConlet} event that delivers the HTML.
+ * the {@link RenderConlet} event that provides the HTML to the console.
+ * 
+ * Method {@link #doRenderConlet doRenderConlet} returns the rendered
+ * view mode(s) which are used to updated the conlet tracking information.
  * 
  * ## ConletDeleted
  * 
@@ -194,35 +202,51 @@ import org.jgrapes.webconsole.base.events.SetLocale;
  * activate Conlet
  * opt
  * 	   Conlet -> Conlet: generateConletId
+ * activate Conlet
+ * deactivate Conlet
  * end opt
  * Conlet -> Conlet: putInSession
+ * activate Conlet
+ * deactivate Conlet
  * Conlet -> WebConsole: RenderConlet
- * opt 
- *     Conlet -> WebConsole: NotifyConletView
- * end opt 
- * deactivate Conlet
- * deactivate Conlet
  * activate WebConsole
  * deactivate WebConsole
+ * opt 
+ *     Conlet -> WebConsole: NotifyConletView
+ * activate WebConsole
+ * deactivate WebConsole
+ * end opt 
+ * deactivate Conlet
+ * Conlet -> Conlet: trackConlet
+ * activate Conlet
+ * deactivate Conlet
+ * deactivate Conlet
  * @enduml 
+ * 
  * @startuml RenderConletHandling.svg
  * hide footbox
  * 
  * activate WebConsole
- * WebConsole -> Conlet: RenderConlet
+ * WebConsole -> Conlet: RenderConletRequest
  * deactivate WebConsole
  * activate Conlet
  * Conlet -> Conlet: doRenderConlet
  * activate Conlet
  * Conlet -> WebConsole: RenderConlet 
- * opt 
- *     Conlet -> WebConsole: NotifyConletView
- * end opt 
- * deactivate Conlet
- * deactivate Conlet
  * activate WebConsole
  * deactivate WebConsole
+ * opt 
+ *     Conlet -> WebConsole: NotifyConletView
+ * activate WebConsole
+ * deactivate WebConsole
+ * end opt 
+ * deactivate Conlet
+ * Conlet -> Conlet: trackConlet.addModes
+ * activate Conlet
+ * deactivate Conlet
+ * deactivate Conlet
  * @enduml 
+ * 
  * @startuml NotifyConletModelHandling.svg
  * hide footbox
  * 
@@ -251,6 +275,9 @@ import org.jgrapes.webconsole.base.events.SetLocale;
  * WebConsole -> Conlet: ConletDeleted
  * deactivate WebConsole
  * activate Conlet
+ * Conlet -> Conlet: trackConlet.removeModes
+ * activate Conlet
+ * deactivate Conlet
  * Conlet -> Conlet: doConletDeleted
  * activate Conlet
  * deactivate Conlet
