@@ -117,20 +117,21 @@ public class SysInfoConlet
     }
 
     @Override
-    public String doAddConlet(AddConletRequest event,
+    public ConletTrackingInfo doAddConlet(AddConletRequest event,
             ConsoleSession consoleSession) throws Exception {
         String conletId = generateConletId();
         SysInfoModel conletModel = putInSession(
             consoleSession.browserSession(), new SysInfoModel(conletId));
         renderConlet(event, consoleSession, conletModel);
-        return conletId;
+        return new ConletTrackingInfo(conletId).addModes(event.renderModes());
     }
 
     @Override
-    protected void doRenderConlet(RenderConletRequest event,
+    protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
             ConsoleSession consoleSession, String conletId,
             SysInfoModel conletModel) throws Exception {
         renderConlet(event, consoleSession, conletModel);
+        return event.renderModes();
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")

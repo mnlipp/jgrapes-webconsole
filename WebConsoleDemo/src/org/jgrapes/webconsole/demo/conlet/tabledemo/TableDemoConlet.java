@@ -90,20 +90,21 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
     }
 
     @Override
-    public String doAddConlet(AddConletRequest event,
+    public ConletTrackingInfo doAddConlet(AddConletRequest event,
             ConsoleSession channel) throws Exception {
         String conletId = generateConletId();
         ConletBaseModel conletModel = putInSession(
             channel.browserSession(), new ConletBaseModel(conletId));
         renderConlet(event, channel, conletModel);
-        return conletId;
+        return new ConletTrackingInfo(conletId).addModes(event.renderModes());
     }
 
     @Override
-    protected void doRenderConlet(RenderConletRequest event,
+    protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
             ConsoleSession channel, String conletId,
             ConletBaseModel conletModel) throws Exception {
         renderConlet(event, channel, conletModel);
+        return event.renderModes();
     }
 
     private void renderConlet(RenderConletRequestBase<?> event,

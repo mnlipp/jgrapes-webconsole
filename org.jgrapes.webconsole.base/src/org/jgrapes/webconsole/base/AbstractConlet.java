@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -43,6 +44,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
@@ -260,7 +262,8 @@ import org.jgrapes.webconsole.base.events.SetLocale;
 public abstract class AbstractConlet<S extends Serializable>
         extends Component {
 
-    private Map<ConsoleSession, Set<String>> conletIdsByConsoleSession;
+    private Map<ConsoleSession,
+            Map<String, ConletTrackingInfo>> conletInfosByConsoleSession;
     private Duration refreshInterval;
     private Supplier<Event<?>> refreshEventSupplier;
     private Timer refreshTimer;
@@ -287,7 +290,7 @@ public abstract class AbstractConlet<S extends Serializable>
     public AbstractConlet(Channel channel,
             ChannelReplacements channelReplacements) {
         super(channel, channelReplacements);
-        conletIdsByConsoleSession
+        conletInfosByConsoleSession
             = Collections.synchronizedMap(new WeakHashMap<>());
     }
 
@@ -440,10 +443,7 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
-     * Returns the tracked models and channels as unmodifiable map.
-     * If sessions are not tracked, the method returns an empty map.
-     * It is therefore always safe to invoke the method and use its
-     * result.
+     * Returns the tracked sessions and conlet ids as map.
      * 
      * If you need a particular session's web console component ids, you 
      * should prefer {@link #conletIds(ConsoleSession)} over calling
@@ -452,14 +452,14 @@ public abstract class AbstractConlet<S extends Serializable>
      * @return the result
      */
     protected Map<ConsoleSession, Set<String>> conletIdsByConsoleSession() {
-        // Create copy to get a non-weak map.
-        return Collections
-            .unmodifiableMap(new HashMap<>(conletIdsByConsoleSession));
+        return conletInfosByConsoleSession.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey,
+                e -> new HashSet<>(e.getValue().keySet())));
     }
 
     /**
      * Returns the tracked sessions. This is effectively
-     * `conletIdsByConsoleSession().keySet()` converted to
+     * `conletInfosByConsoleSession().keySet()` converted to
      * an array. This representation is especially useful 
      * when the web console sessions are used as argument for 
      * {@link #fire(Event, Channel...)}.
@@ -468,24 +468,21 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     protected ConsoleSession[] trackedSessions() {
         Set<ConsoleSession> sessions = new HashSet<>(
-            conletIdsByConsoleSession.keySet());
+            conletInfosByConsoleSession.keySet());
         return sessions.toArray(new ConsoleSession[0]);
     }
 
     /**
      * Returns the set of web console component ids associated with the 
-     * console session as an unmodifiable {@link Set}. If sessions aren't 
-     * tracked, or no web console components have registered yet, an empty 
-     * set is returned. The method can therefore always be called and 
-     * always returns a usable result.
+     * console session as a {@link Set}. If no web console components 
+     * have registered yet, an empty set is returned.
      * 
      * @param consoleSession the console session
      * @return the set
      */
     protected Set<String> conletIds(ConsoleSession consoleSession) {
-        return Collections.unmodifiableSet(
-            conletIdsByConsoleSession.getOrDefault(
-                consoleSession, Collections.emptySet()));
+        return new HashSet<>(conletInfosByConsoleSession.getOrDefault(
+            consoleSession, Collections.emptyMap()).keySet());
     }
 
     /**
@@ -498,13 +495,20 @@ public abstract class AbstractConlet<S extends Serializable>
      * is overridden.
      *
      * @param consoleSession the web console session
-     * @param conletId the web console component id
+     * @param conletId the conlet id
+     * @param info the info to be added if untracked. If `null`
+     * a new {@link ConletTrackingInfo} is added.
+     * @return the conlet tracking info
      */
-    protected void trackConlet(ConsoleSession consoleSession,
-            String conletId) {
-        conletIdsByConsoleSession.computeIfAbsent(consoleSession,
-            newKey -> ConcurrentHashMap.newKeySet()).add(conletId);
+    protected ConletTrackingInfo trackConlet(ConsoleSession consoleSession,
+            String conletId, ConletTrackingInfo info) {
+        Map<String, ConletTrackingInfo> infos
+            = conletInfosByConsoleSession.computeIfAbsent(consoleSession,
+                newKey -> new ConcurrentHashMap<>());
+        ConletTrackingInfo result = infos.computeIfAbsent(conletId,
+            key -> info != null ? info : new ConletTrackingInfo(conletId));
         updateRefresh();
+        return result;
     }
 
     /**
@@ -625,9 +629,9 @@ public abstract class AbstractConlet<S extends Serializable>
             return;
         }
         event.stop();
-        String conletId = doAddConlet(event, consoleSession);
-        event.setResult(conletId);
-        trackConlet(consoleSession, conletId);
+        ConletTrackingInfo info = doAddConlet(event, consoleSession);
+        event.setResult(info.conletId());
+        trackConlet(consoleSession, info.conletId(), info);
     }
 
     /**
@@ -639,10 +643,10 @@ public abstract class AbstractConlet<S extends Serializable>
      * 
      * @param event the event
      * @param consoleSession the channel
-     * @return the id of the created web console component
+     * @return the tracking info of the new web console component
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected abstract String doAddConlet(AddConletRequest event,
+    protected abstract ConletTrackingInfo doAddConlet(AddConletRequest event,
             ConsoleSession consoleSession) throws Exception;
 
     /**
@@ -668,15 +672,20 @@ public abstract class AbstractConlet<S extends Serializable>
         String conletId = event.conletId();
         if (event.renderModes().isEmpty()) {
             removeState(consoleSession.browserSession(), conletId);
-            for (Iterator<ConsoleSession> psi = conletIdsByConsoleSession
-                .keySet().iterator(); psi.hasNext();) {
-                Set<String> idSet = conletIdsByConsoleSession.get(psi.next());
-                idSet.remove(conletId);
-                if (idSet.isEmpty()) {
-                    psi.remove();
+            for (Iterator<Entry<ConsoleSession, Map<String,
+                    ConletTrackingInfo>>> csi = conletInfosByConsoleSession
+                        .entrySet().iterator();
+                    csi.hasNext();) {
+                Map<String, ConletTrackingInfo> infos = csi.next().getValue();
+                infos.remove(conletId);
+                if (infos.isEmpty()) {
+                    csi.remove();
                 }
             }
             updateRefresh();
+        } else {
+            trackConlet(consoleSession, conletId, null)
+                .removeModes(event.renderModes());
         }
         event.stop();
         doConletDeleted(event, consoleSession, event.conletId(),
@@ -726,23 +735,25 @@ public abstract class AbstractConlet<S extends Serializable>
         }
         event.setResult(true);
         event.stop();
-        doRenderConlet(
+        Set<RenderMode> rendered = doRenderConlet(
             event, consoleSession, event.conletId(), optConletState.get());
-        trackConlet(consoleSession, event.conletId());
+        trackConlet(consoleSession, event.conletId(), null).addModes(rendered);
     }
 
     /**
      * Called by 
      * {@link #onRenderConletRequest(RenderConletRequest, ConsoleSession)} 
      * to complete rendering the web console component.
-     * 
+     *
      * @param event the event
      * @param channel the channel
      * @param conletId the web console component id
      * @param conletState the web console component state
+     * @return the rendered modes
+     * @throws Exception the exception
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected abstract void doRenderConlet(RenderConletRequest event,
+    protected abstract Set<RenderMode> doRenderConlet(RenderConletRequest event,
             ConsoleSession channel, String conletId, S conletState)
             throws Exception;
 
@@ -783,10 +794,11 @@ public abstract class AbstractConlet<S extends Serializable>
      * cannot be updated without reloading the web console page.
      * 
      * The default implementation fires a {@link RenderConletRequest}
-     * with modes {@link RenderMode#Preview} and {@link RenderMode#View},
-     * thus updating all possible representations. (Assuming that "Edit"
-     * and "Help" modes are represented with modal dialogs and therefore
-     * locale changes aren't possible while these are open.) 
+     * with tracked render modes (one of or both {@link RenderMode#Preview}
+     * and {@link RenderMode#View}), thus updating the known representations.
+     * (Assuming that "Edit" and "Help" modes are represented with modal 
+     * dialogs and therefore locale changes aren't possible while these are 
+     * open.) 
      *
      * @param event the event
      * @param channel the channel
@@ -797,7 +809,7 @@ public abstract class AbstractConlet<S extends Serializable>
     protected boolean doSetLocale(SetLocale event, ConsoleSession channel,
             String conletId) throws Exception {
         fire(new RenderConletRequest(event.renderSupport(), conletId,
-            RenderMode.asSet(RenderMode.Preview, RenderMode.View)),
+            trackConlet(channel, conletId, null).renderedAs()),
             channel);
         return true;
     }
@@ -849,7 +861,7 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     @Handler
     public final void onClosed(Closed event, ConsoleSession consoleSession) {
-        conletIdsByConsoleSession.remove(consoleSession);
+        conletInfosByConsoleSession.remove(consoleSession);
         updateRefresh();
         afterOnClosed(event, consoleSession);
     }
@@ -865,6 +877,100 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     protected void afterOnClosed(Closed event, ConsoleSession consoleSession) {
         // Default is to do nothing.
+    }
+
+    /**
+     * The information tracked about web console components that are
+     * used by the console. It includes the component's id and the
+     * currently rendered views (only preview and view are tracked,
+     * with "deletable preview" mapped to "preview").
+     */
+    protected static class ConletTrackingInfo {
+        private String conletId;
+        private Set<RenderMode> renderedAs;
+
+        /**
+         * Instantiates a new conlet tracking info.
+         *
+         * @param conletId the conlet id
+         */
+        public ConletTrackingInfo(String conletId) {
+            this.conletId = conletId;
+            renderedAs = new HashSet<>();
+        }
+
+        /**
+         * Returns the conlet id.
+         *
+         * @return the id
+         */
+        public String conletId() {
+            return conletId;
+        }
+
+        /**
+         * The render modes current used.
+         *
+         * @return the render modes
+         */
+        public Set<RenderMode> renderedAs() {
+            return renderedAs;
+        }
+
+        /**
+         * Adds the given modes.
+         *
+         * @param modes the modes
+         * @return the conlet tracking info
+         */
+        public ConletTrackingInfo addModes(Set<RenderMode> modes) {
+            if (modes.contains(RenderMode.Preview)
+                || modes.contains(RenderMode.DeleteablePreview)) {
+                renderedAs.add(RenderMode.Preview);
+            }
+            if (modes.contains(RenderMode.View)) {
+                renderedAs.add(RenderMode.View);
+            }
+            return this;
+        }
+
+        /**
+         * Removes the given modes.
+         *
+         * @param modes the modes
+         * @return the conlet tracking info
+         */
+        public ConletTrackingInfo removeModes(Set<RenderMode> modes) {
+            renderedAs.removeAll(modes);
+            return this;
+        }
+
+        @Override
+        public int hashCode() {
+            return conletId.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            ConletTrackingInfo other = (ConletTrackingInfo) obj;
+            if (conletId == null) {
+                if (other.conletId != null) {
+                    return false;
+                }
+            } else if (!conletId.equals(other.conletId)) {
+                return false;
+            }
+            return true;
+        }
     }
 
     /**

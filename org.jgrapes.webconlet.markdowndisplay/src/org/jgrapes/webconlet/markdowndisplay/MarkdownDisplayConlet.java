@@ -185,7 +185,7 @@ public class MarkdownDisplayConlet
      *   the web console component instance.
      */
     @Override
-    public String doAddConlet(AddConletRequest event,
+    public ConletTrackingInfo doAddConlet(AddConletRequest event,
             ConsoleSession consoleSession) throws Exception {
         ResourceBundle resourceBundle = resourceBundle(consoleSession.locale());
 
@@ -219,14 +219,15 @@ public class MarkdownDisplayConlet
 
         // Send HTML
         renderConlet(event, consoleSession, model);
-        return conletId;
+        return new ConletTrackingInfo(conletId).addModes(event.renderModes());
     }
 
     @Override
-    protected void doRenderConlet(RenderConletRequest event,
+    protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
             ConsoleSession consoleSession, String conletId,
             MarkdownDisplayModel model) throws Exception {
         renderConlet(event, consoleSession, model);
+        return event.renderModes();
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -235,10 +236,6 @@ public class MarkdownDisplayConlet
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         Set<RenderMode> modes = renderModes(model);
-        if (model.getViewContent() != null
-            && !model.getViewContent().isEmpty()) {
-            modes.add(RenderMode.View);
-        }
         if (event.renderPreview()) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
