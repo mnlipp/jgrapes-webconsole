@@ -242,7 +242,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
                 _this.sendRenderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
             });
         }
-        if (modes.includes(RenderMode.DeleteablePreview)) {
+        if (!modes.includes(RenderMode.StickyPreview)) {
             conletHeader.prepend("<span class='ui-icon ui-icon-delete conlet-delete'></span>");
             conletHeader.find(".conlet-delete").on("click", function() {
                 let icon = $(this);

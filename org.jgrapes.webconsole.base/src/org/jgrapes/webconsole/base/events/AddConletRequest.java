@@ -62,7 +62,6 @@ import org.jgrapes.webconsole.base.RenderSupport;
 public class AddConletRequest extends RenderConletRequestBase<String> {
 
     private final String conletType;
-    private boolean foreground = true;
     private Map<? extends Object, ? extends Object> properties;
 
     /**
@@ -94,19 +93,6 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
         @SuppressWarnings("unchecked")
         Map<Object, Object> props = (Map<Object, Object>) properties;
         this.properties = props;
-    }
-
-    /**
-     * Determines if the web console component will be put in the foreground.
-     * Defaults to `true` for added web console components as they are 
-     * most likely supposed to be seen. 
-     *
-     * @param foreground the foreground
-     * @return the event for easy chaining
-     */
-    public AddConletRequest setForeground(boolean foreground) {
-        this.foreground = foreground;
-        return this;
     }
 
     /**
@@ -158,10 +144,4 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
         }
         return this;
     }
-
-    @Override
-    public boolean isForeground() {
-        return foreground;
-    }
-
 }

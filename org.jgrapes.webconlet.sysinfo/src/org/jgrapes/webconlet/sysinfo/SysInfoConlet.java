@@ -54,7 +54,7 @@ public class SysInfoConlet
         extends FreeMarkerConlet<SysInfoConlet.SysInfoModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
-        RenderMode.DeleteablePreview, RenderMode.View);
+        RenderMode.Preview, RenderMode.View);
 
     /**
      * The periodically generated update event.
@@ -123,7 +123,7 @@ public class SysInfoConlet
         SysInfoModel conletModel = putInSession(
             consoleSession.browserSession(), new SysInfoModel(conletId));
         renderConlet(event, consoleSession, conletModel);
-        return new ConletTrackingInfo(conletId).addModes(event.renderModes());
+        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
     }
 
     @Override
@@ -131,7 +131,7 @@ public class SysInfoConlet
             ConsoleSession consoleSession, String conletId,
             SysInfoModel conletModel) throws Exception {
         renderConlet(event, consoleSession, conletModel);
-        return event.renderModes();
+        return event.renderAs();
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -139,26 +139,25 @@ public class SysInfoConlet
             ConsoleSession consoleSession, SysInfoModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        if (event.renderPreview()) {
+        if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
                 SysInfoConlet.class, conletModel.getConletId(),
                 tpl, fmModel(event, consoleSession, conletModel))
-                    .setRenderMode(RenderMode.DeleteablePreview)
-                    .setSupportedModes(MODES)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(
+                        RenderMode.Preview.addModifiers(event.renderAs()))
+                    .setSupportedModes(MODES));
             updateView(consoleSession, conletModel.getConletId());
         }
-        if (event.renderModes().contains(RenderMode.View)) {
+        if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
                 SysInfoConlet.class, conletModel.getConletId(),
                 tpl, fmModel(event, consoleSession, conletModel))
-                    .setRenderMode(RenderMode.View)
-                    .setSupportedModes(MODES)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
+                    .setSupportedModes(MODES));
         }
     }
 

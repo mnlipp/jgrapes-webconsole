@@ -29,18 +29,18 @@ import org.jgrapes.webconsole.base.RenderSupport;
  */
 public abstract class RenderConletRequestBase<T> extends Event<T> {
     private final RenderSupport renderSupport;
-    private final Set<RenderMode> renderModes;
+    private final Set<RenderMode> renderAs;
 
     /**
      * Creates a new event.
      *
      * @param renderSupport the render support
-     * @param renderModes the render modes
+     * @param renderAs the render modes
      */
     public RenderConletRequestBase(
-            RenderSupport renderSupport, Set<RenderMode> renderModes) {
+            RenderSupport renderSupport, Set<RenderMode> renderAs) {
         this.renderSupport = renderSupport;
-        this.renderModes = renderModes;
+        this.renderAs = renderAs;
     }
 
     /**
@@ -57,26 +57,8 @@ public abstract class RenderConletRequestBase<T> extends Event<T> {
      * 
      * @return the render modes
      */
-    public Set<RenderMode> renderModes() {
-        return renderModes;
+    public Set<RenderMode> renderAs() {
+        return renderAs;
     }
-
-    /**
-     * Shortcut for checking if {@link #renderModes()} contains
-     * {@link RenderMode#Preview} or {@link RenderMode#DeleteablePreview}.
-     *
-     * @return true, if condition matched
-     */
-    public boolean renderPreview() {
-        return renderModes.contains(RenderMode.Preview)
-            || renderModes.contains(RenderMode.DeleteablePreview);
-    }
-
-    /**
-     * Indicates if the web console component is to be put in the foreground.
-     * 
-     * @return the result
-     */
-    public abstract boolean isForeground();
 
 }

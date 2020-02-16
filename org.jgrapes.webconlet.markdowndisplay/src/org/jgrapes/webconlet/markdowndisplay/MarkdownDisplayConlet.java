@@ -219,7 +219,7 @@ public class MarkdownDisplayConlet
 
         // Send HTML
         renderConlet(event, consoleSession, model);
-        return new ConletTrackingInfo(conletId).addModes(event.renderModes());
+        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
     }
 
     @Override
@@ -227,7 +227,7 @@ public class MarkdownDisplayConlet
             ConsoleSession consoleSession, String conletId,
             MarkdownDisplayModel model) throws Exception {
         renderConlet(event, consoleSession, model);
-        return event.renderModes();
+        return event.renderAs();
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -236,41 +236,44 @@ public class MarkdownDisplayConlet
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         Set<RenderMode> modes = renderModes(model);
-        if (event.renderPreview()) {
+        if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, consoleSession, model))
-                    .setRenderMode(RenderMode.Preview)
-                    .setSupportedModes(modes)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(
+                        RenderMode.Preview.addModifiers(event.renderAs()))
+                    .setSupportedModes(modes));
             updateView(consoleSession, model);
         }
-        if (event.renderModes().contains(RenderMode.View)) {
+        if (event.renderAs().contains(RenderMode.View)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-view.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, consoleSession, model))
-                    .setRenderMode(RenderMode.View).setSupportedModes(modes)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
+                    .setSupportedModes(modes));
             updateView(consoleSession, model);
         }
-        if (event.renderModes().contains(RenderMode.Edit)) {
+        if (event.renderAs().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
                 MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, consoleSession, model))
-                    .setRenderMode(RenderMode.Edit).setSupportedModes(modes));
+                    .setRenderAs(RenderMode.Edit.addModifiers(event.renderAs()))
+                    .setSupportedModes(modes));
         }
     }
 
     private Set<RenderMode> renderModes(MarkdownDisplayModel model) {
         Set<RenderMode> modes = new HashSet<>();
-        modes.add(model.isDeletable() ? RenderMode.DeleteablePreview
-            : RenderMode.Preview);
+        modes.add(RenderMode.Preview);
+        if (!model.isDeletable()) {
+            modes.add(RenderMode.StickyPreview);
+        }
         if (model.getViewContent() != null
             && !model.getViewContent().isEmpty()) {
             modes.add(RenderMode.View);

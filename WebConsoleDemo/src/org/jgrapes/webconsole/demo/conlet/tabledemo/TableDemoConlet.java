@@ -46,7 +46,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
-        RenderMode.DeleteablePreview, RenderMode.View);
+        RenderMode.Preview, RenderMode.View);
 
     /**
      * Creates a new component with its channel set to the given 
@@ -96,7 +96,7 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
         ConletBaseModel conletModel = putInSession(
             channel.browserSession(), new ConletBaseModel(conletId));
         renderConlet(event, channel, conletModel);
-        return new ConletTrackingInfo(conletId).addModes(event.renderModes());
+        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
     }
 
     @Override
@@ -104,32 +104,30 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
             ConsoleSession channel, String conletId,
             ConletBaseModel conletModel) throws Exception {
         renderConlet(event, channel, conletModel);
-        return event.renderModes();
+        return event.renderAs();
     }
 
     private void renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, ConletBaseModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        if (event.renderPreview()) {
+        if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-preview.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
                 TableDemoConlet.class, conletModel.getConletId(),
                 tpl, fmModel(event, channel, conletModel))
-                    .setRenderMode(RenderMode.Preview)
-                    .setSupportedModes(MODES)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(event.renderAs())
+                    .setSupportedModes(MODES));
         }
-        if (event.renderModes().contains(RenderMode.View)) {
+        if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
                 TableDemoConlet.class, conletModel.getConletId(),
                 tpl, fmModel(event, channel, conletModel))
-                    .setRenderMode(RenderMode.View)
-                    .setSupportedModes(MODES)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
+                    .setSupportedModes(MODES));
         }
     }
 

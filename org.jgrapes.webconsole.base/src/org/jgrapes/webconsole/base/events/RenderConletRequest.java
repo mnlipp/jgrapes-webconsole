@@ -76,11 +76,6 @@ public class RenderConletRequest
         return conletId;
     }
 
-    @Override
-    public boolean isForeground() {
-        return renderModes().contains(RenderMode.Foreground);
-    }
-
     /**
      * Checks if the web console component has been rendered (i.e. the 
      * event has been handled).

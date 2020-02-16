@@ -336,7 +336,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             });
             conletHeader.append(button);
         }
-        if (modes.includes(RenderMode.DeleteablePreview)) {
+        if (!modes.includes(RenderMode.StickyPreview)) {
             let button = $("<button type='button' class='fa fa-times'></button>");
             button.on("click", function() {
                 let button = $(this);

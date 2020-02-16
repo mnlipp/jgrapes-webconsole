@@ -240,7 +240,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
                 _this.sendRenderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
             });
         }
-        if (modes.includes(RenderMode.DeleteablePreview)) {
+        if (!modes.includes(RenderMode.StickyPreview)) {
             conletHeader.append("<a href='#' class='" +
                 "conlet-preview-icon conlet-delete" +
                 " ml-2 fa fa-times' role='button'></a>");

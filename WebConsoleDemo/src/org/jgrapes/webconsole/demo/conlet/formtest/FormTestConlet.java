@@ -104,7 +104,7 @@ public class FormTestConlet
         ConletBaseModel conletModel = putInSession(
             channel.browserSession(), new ConletBaseModel(conletId));
         renderConlet(event, channel, conletModel);
-        return new ConletTrackingInfo(conletId).addModes(event.renderModes());
+        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
     }
 
     @Override
@@ -112,22 +112,21 @@ public class FormTestConlet
             ConsoleSession channel, String conletId,
             ConletBaseModel conletModel) throws Exception {
         renderConlet(event, channel, conletModel);
-        return event.renderModes();
+        return event.renderAs();
     }
 
     private void renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, ConletBaseModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        if (event.renderModes().contains(RenderMode.View)) {
+        if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("FormTest-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
                 FormTestConlet.class, conletModel.getConletId(),
                 tpl, fmModel(event, channel, conletModel))
-                    .setRenderMode(RenderMode.View)
-                    .setSupportedModes(MODES)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
+                    .setSupportedModes(MODES));
         }
     }
 }

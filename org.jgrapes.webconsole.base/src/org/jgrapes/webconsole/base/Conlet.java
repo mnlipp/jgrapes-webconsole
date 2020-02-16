@@ -36,7 +36,11 @@ public interface Conlet {
      * The render modes.
      */
     enum RenderMode {
-        Preview, DeleteablePreview, View, Edit, Help, Foreground;
+        Preview, View, Edit, Help,
+        /** Modifier, indicates that a {@link #Preview} may not be removed. */
+        StickyPreview,
+        /** Modifier, forces rendered view to be put in foreground. */
+        Foreground;
 
         /**
          * Utility method that creates a {@link Set} of render modes
@@ -47,6 +51,22 @@ public interface Conlet {
          */
         public static Set<RenderMode> asSet(RenderMode... modes) {
             return new HashSet<>(Arrays.asList(modes));
+        }
+
+        static Set<RenderMode> basicModes = asSet(RenderMode.Preview,
+            RenderMode.View, RenderMode.Edit, RenderMode.Help);
+
+        /**
+         * Adds the modifiers from the given set to this basic mode.
+         *
+         * @param modifiers the set with modifiers
+         * @return the augmented basic mode
+         */
+        public Set<RenderMode> addModifiers(Set<RenderMode> modifiers) {
+            Set<RenderMode> result = new HashSet<>(modifiers);
+            result.removeAll(basicModes);
+            result.add(this);
+            return result;
         }
     }
 

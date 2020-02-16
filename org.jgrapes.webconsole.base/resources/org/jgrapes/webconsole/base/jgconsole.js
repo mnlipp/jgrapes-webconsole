@@ -39,10 +39,10 @@ window.JGConsole = JGConsole;
  */
 const RenderMode = Object.freeze({
     Preview: "Preview",
-    DeleteablePreview: "DeleteablePreview",
     View: "View",
     Edit: "Edit",
     Help: "Help",
+    StickyPreview: "StickyPreview",
     Foreground: "Foreground",
 });
 
@@ -955,16 +955,18 @@ class Console {
                 _this._renderer.consoleConfigured();
             });
         this._webSocket.addMessageHandler('updateConlet',
-            function(conletId, mode, modes, content, foreground) {
-                if (mode === RenderMode.Preview 
-                    || mode === RenderMode.DeleteablePreview) {
-                    _this._updatePreview(conletId, modes, mode, content, foreground);
-                } else if (mode === RenderMode.View) {
-                    _this._updateView(conletId, modes, content, foreground);
-                } else if (mode === RenderMode.Edit) {
+            function(conletId, renderAs, supported, content) {
+                if (renderAs.includes(RenderMode.Preview)) {
+                    _this._updatePreview(conletId, supported, content, 
+                    renderAs.includes(RenderMode.StickyPreview),
+                    renderAs.includes(RenderMode.Foreground));
+                } else if (renderAs.includes(RenderMode.View)) {
+                    _this._updateView(conletId, supported, content,
+                    renderAs.includes(RenderMode.Foreground));
+                } else if (renderAs.includes(RenderMode.Edit)) {
                     let container = _this._editTemplate.clone();
                     container.attr("data-conlet-id", conletId);
-                    _this._renderer.showEditDialog(container[0], modes, content);
+                    _this._renderer.showEditDialog(container[0], supported, content);
                     if (!container[0].parentNode) {
                         $("body").append(container);
                     }
@@ -1100,19 +1102,19 @@ class Console {
 
     // Conlet management
 
-    _updatePreview(conletId, modes, mode, content, foreground) {
+    _updatePreview(conletId, modes, content, sticky, foreground) {
         let container = this._renderer.findConletPreview(conletId);
         let isNew = !container;
         if (isNew) {
             container = this._previewTemplate.clone();
             container.attr("data-conlet-id", conletId);
         }
-        if (mode === RenderMode.DeleteablePreview) {
-            container = $(container);
-            container.addClass('conlet-deleteable')
-        } else {
+        if (sticky) {
             container = $(container);
             container.removeClass('conlet-deleteable')
+        } else {
+            container = $(container);
+            container.addClass('conlet-deleteable')
         }
         this._renderer.updateConletPreview(isNew, container[0], modes,
             content, foreground);

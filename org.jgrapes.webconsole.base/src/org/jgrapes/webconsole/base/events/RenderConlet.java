@@ -20,7 +20,6 @@ package org.jgrapes.webconsole.base.events;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,14 +47,12 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 public abstract class RenderConlet extends ConsoleCommand {
 
     private static final Set<RenderMode> DEFAULT_SUPPORTED
-        = Collections.unmodifiableSet(new HashSet<>(
-            Arrays.asList(new RenderMode[] { RenderMode.Preview })));
+        = Collections.unmodifiableSet(RenderMode.asSet(RenderMode.Preview));
 
     private final Class<?> conletClass;
     private final String conletId;
-    private RenderMode renderMode = RenderMode.Preview;
+    private Set<RenderMode> renderAs = RenderMode.asSet(RenderMode.Preview);
     private Set<RenderMode> supportedModes = DEFAULT_SUPPORTED;
-    private boolean foreground;
 
     /**
      * Creates a new event.
@@ -92,8 +89,19 @@ public abstract class RenderConlet extends ConsoleCommand {
      * @param renderMode the render mode to set
      * @return the event for easy chaining
      */
-    public RenderConlet setRenderMode(RenderMode renderMode) {
-        this.renderMode = renderMode;
+    public RenderConlet setRenderAs(RenderMode renderMode) {
+        this.renderAs = RenderMode.asSet(renderMode);
+        return this;
+    }
+
+    /**
+     * Set the render mode (including modifier).
+     * 
+     * @param renderMode the render mode to set
+     * @return the event for easy chaining
+     */
+    public RenderConlet setRenderAs(Set<RenderMode> renderAs) {
+        this.renderAs = new HashSet<>(renderAs);
         return this;
     }
 
@@ -102,8 +110,8 @@ public abstract class RenderConlet extends ConsoleCommand {
      * 
      * @return the render mode
      */
-    public RenderMode renderMode() {
-        return renderMode;
+    public Set<RenderMode> renderAs() {
+        return Collections.unmodifiableSet(renderAs);
     }
 
     /**
@@ -142,27 +150,6 @@ public abstract class RenderConlet extends ConsoleCommand {
     }
 
     /**
-     * Id set, the tab with the web console component is put in the foreground
-     * when the web console component is rendered. The default value is `false`.
-     * 
-     * @param foreground if set, the web console component is put in foreground
-     * @return the event for easy chaining
-     */
-    public RenderConlet setForeground(boolean foreground) {
-        this.foreground = foreground;
-        return this;
-    }
-
-    /**
-     * Indicates if portelt is to be put in foreground.
-     * 
-     * @return the result
-     */
-    public boolean isForeground() {
-        return foreground;
-    }
-
-    /**
      * Provides the HTML that displays the web console component 
      * on the page.
      * 
@@ -181,10 +168,12 @@ public abstract class RenderConlet extends ConsoleCommand {
     public void toJson(Writer writer)
             throws InterruptedException, IOException {
         try {
-            toJson(writer, "updateConlet", conletId(), renderMode().name(),
+            toJson(writer, "updateConlet", conletId(),
+                renderAs().stream().map(RenderMode::name)
+                    .toArray(size -> new String[size]),
                 supportedRenderModes().stream().map(RenderMode::name)
                     .toArray(size -> new String[size]),
-                content().get(), isForeground());
+                content().get());
         } catch (ExecutionException e) {
             throw new IOException(e);
         }

@@ -61,7 +61,7 @@ public class HelloWorldConlet
         extends FreeMarkerConlet<HelloWorldConlet.HelloWorldModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
-        RenderMode.DeleteablePreview, RenderMode.View);
+        RenderMode.Preview, RenderMode.View);
 
     /**
      * Creates a new component with its channel set to the given 
@@ -130,7 +130,7 @@ public class HelloWorldConlet
             storagePath(channel.browserSession()) + conletModel.getConletId(),
             jsonState));
         renderConlet(event, channel, conletModel);
-        return new ConletTrackingInfo(conletId).addModes(event.renderModes());
+        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
     }
 
     @Override
@@ -138,32 +138,31 @@ public class HelloWorldConlet
             ConsoleSession channel, String conletId,
             HelloWorldModel conletModel) throws Exception {
         renderConlet(event, channel, conletModel);
-        return event.renderModes();
+        return event.renderAs();
     }
 
     private void renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, HelloWorldModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        if (event.renderPreview()) {
+        if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
             channel.respond(new RenderConletFromTemplate(event,
                 HelloWorldConlet.class, conletModel.getConletId(),
                 tpl, fmModel(event, channel, conletModel))
-                    .setRenderMode(RenderMode.Preview)
-                    .setSupportedModes(MODES)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(
+                        RenderMode.Preview.addModifiers(event.renderAs()))
+                    .setSupportedModes(MODES));
         }
-        if (event.renderModes().contains(RenderMode.View)) {
+        if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
             channel.respond(new RenderConletFromTemplate(event,
                 HelloWorldConlet.class, conletModel.getConletId(),
                 tpl, fmModel(event, channel, conletModel))
-                    .setRenderMode(RenderMode.View)
-                    .setSupportedModes(MODES)
-                    .setForeground(event.isForeground()));
+                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
+                    .setSupportedModes(MODES));
             channel.respond(new NotifyConletView(type(),
                 conletModel.getConletId(), "setWorldVisible",
                 conletModel.isWorldVisible()));

@@ -951,8 +951,7 @@ public abstract class AbstractConlet<S extends Serializable>
          * @return the conlet tracking info
          */
         public ConletTrackingInfo addModes(Set<RenderMode> modes) {
-            if (modes.contains(RenderMode.Preview)
-                || modes.contains(RenderMode.DeleteablePreview)) {
+            if (modes.contains(RenderMode.Preview)) {
                 renderedAs.add(RenderMode.Preview);
             }
             if (modes.contains(RenderMode.View)) {
