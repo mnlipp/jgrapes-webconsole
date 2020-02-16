@@ -232,8 +232,8 @@
  * waits for input from the user. Changes of the layout of the
  * web console page result in events such as 
  * {@link org.jgrapes.webconsole.base.events.AddConletRequest},
- * {@link org.jgrapes.webconsole.base.events.DeleteConletRequest} and
- * {@link org.jgrapes.webconsole.base.events.RenderConletRequest}.
+ * {@link org.jgrapes.webconsole.base.events.RenderConletRequest} and
+ * {@link org.jgrapes.webconsole.base.events.ConletDeleted}.
  * 
  * Actions on web console components trigger JSON messages that result in
  * {@link org.jgrapes.webconsole.base.events.NotifyConletModel} events
