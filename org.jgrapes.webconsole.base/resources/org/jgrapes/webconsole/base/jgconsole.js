@@ -954,10 +954,10 @@ class Console {
             });
         this._webSocket.addMessageHandler('deleteConlet',
             function deleteConlet(conletId, renderModes) {
-                if (renderModes.length === 0 || renderModes.includes("preview")) {
+                if (renderModes.length === 0 || renderModes.includes("Preview")) {
                     _this.removePreview(conletId);
                 }
-                if (renderModes.includes("view")) {
+                if (renderModes.includes("View")) {
                     _this.removeView(conletId);
                 }
             });
@@ -1263,7 +1263,7 @@ class Console {
         this._renderer.removeConletDisplays($(view).get());
         this._execOnUnload($(view));
         if (this._renderer.findConletPreview(conletId)) {
-            this.send("conletDeleted", conletId, ["view"]);
+            this.send("conletDeleted", conletId, ["View"]);
         } else {
             this.send("conletDeleted", conletId, []);
         }
