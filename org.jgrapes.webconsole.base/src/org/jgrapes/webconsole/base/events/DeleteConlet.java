@@ -20,22 +20,27 @@ package org.jgrapes.webconsole.base.events;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Set;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 
 /**
- * A notification (as defined by the JSON RPC specification) to be sent to
- * the web console component view (the browser).
+ * Request the browser to remove a conlet view from the display.
  */
 public class DeleteConlet extends ConsoleCommand {
 
     private final String conletId;
+    private final Set<RenderMode> renderModes;
 
     /**
      * Creates a new event.
-     *  
+     *
      * @param conletId the web console component (view) that should be deleted
+     * @param renderModes the views to delete. If empty, all views should
+     * be deleted, i.e. the conlet may no longer be used in the browser. 
      */
-    public DeleteConlet(String conletId) {
+    public DeleteConlet(String conletId, Set<RenderMode> renderModes) {
         this.conletId = conletId;
+        this.renderModes = renderModes;
     }
 
     /**
@@ -47,9 +52,22 @@ public class DeleteConlet extends ConsoleCommand {
         return conletId;
     }
 
+    /**
+     * Returns the render modes that should be deleted. An empty
+     * set indicates that all views should be deleted, i.e.
+     * the conlet is no longer used in the browser.
+     *
+     * @return the render modes
+     */
+    public Set<RenderMode> renderModes() {
+        return renderModes;
+    }
+
     @Override
     public void toJson(Writer writer) throws IOException {
-        toJson(writer, "deleteConlet", conletId());
+        toJson(writer, "deleteConlet", conletId(),
+            renderModes.stream().map(RenderMode::name)
+                .toArray(size -> new String[size]));
     }
 
 }

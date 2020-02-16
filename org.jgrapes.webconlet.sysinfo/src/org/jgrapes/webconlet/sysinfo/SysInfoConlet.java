@@ -41,8 +41,6 @@ import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteConlet;
-import org.jgrapes.webconsole.base.events.DeleteConletRequest;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
@@ -173,13 +171,6 @@ public class SysInfoConlet
             System.currentTimeMillis(), runtime.maxMemory(),
             runtime.totalMemory(),
             runtime.totalMemory() - runtime.freeMemory()));
-    }
-
-    @Override
-    protected void doDeleteConlet(DeleteConletRequest event,
-            ConsoleSession consoleSession, String conletId,
-            SysInfoModel retrievedState) throws Exception {
-        consoleSession.respond(new DeleteConlet(conletId));
     }
 
     /**

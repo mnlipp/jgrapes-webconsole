@@ -18,29 +18,36 @@
 
 package org.jgrapes.webconsole.base.events;
 
+import java.util.Set;
 import org.jgrapes.core.Event;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * A request to delete a web console component instance.
+ * A notification that a conlet view was deleted in the browser.
  */
-public class DeleteConletRequest extends Event<Void> {
+public class ConletDeleted extends Event<Void> {
 
     private final RenderSupport renderSupport;
     private final String conletId;
+    private final Set<RenderMode> renderModes;
 
     /**
      * Creates a new event.
-     * 
+     *
      * @param renderSupport the render support from the web console in case
      * the response requires it
-     * @param conletId the web console component model that the notification is 
-     * directed at 
+     * @param conletId the web console component model that the notification is
+     * directed at
+     * @param renderModes the kind of views that have been deleted. If
+     * empty, the last view has been deleted, i.e. the conlet is no longer
+     * used in the broweser.
      */
-    public DeleteConletRequest(RenderSupport renderSupport,
-            String conletId) {
+    public ConletDeleted(RenderSupport renderSupport,
+            String conletId, Set<RenderMode> renderModes) {
         this.renderSupport = renderSupport;
         this.conletId = conletId;
+        this.renderModes = renderModes;
     }
 
     /**
@@ -61,4 +68,14 @@ public class DeleteConletRequest extends Event<Void> {
         return conletId;
     }
 
+    /**
+     * Returns the render modes that have been deleted. An empty
+     * set indicates that all views have been deleted, i.e.
+     * the conlet is no longer used in the browser.
+     *
+     * @return the render modes
+     */
+    public Set<RenderMode> renderModes() {
+        return renderModes;
+    }
 }

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.ref.WeakReference;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -47,11 +48,11 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.events.Stop;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
+import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConsoleConfigured;
 import org.jgrapes.webconsole.base.events.ConsoleLayoutChanged;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.DeleteConlet;
-import org.jgrapes.webconsole.base.events.DeleteConletRequest;
 import org.jgrapes.webconsole.base.events.JsonInput;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
@@ -107,9 +108,12 @@ public class WebConsole extends Component {
                 channel);
             break;
         }
-        case "deleteConlet": {
-            fire(new DeleteConletRequest(
-                view.renderSupport(), params.asString(0)), channel);
+        case "conletDeleted": {
+            fire(new ConletDeleted(view.renderSupport(), params.asString(0),
+                params.asArray(1).stream().map(
+                    value -> RenderMode.valueOf((String) value))
+                    .collect(Collectors.toSet())),
+                channel);
             break;
         }
         case "consoleLayout": {
@@ -179,7 +183,8 @@ public class WebConsole extends Component {
     public void onRenderConlet(
             RenderConletRequest event, ConsoleSession channel) {
         if (!event.hasBeenRendered()) {
-            channel.respond(new DeleteConlet(event.conletId()));
+            channel.respond(
+                new DeleteConlet(event.conletId(), Collections.emptySet()));
         }
     }
 

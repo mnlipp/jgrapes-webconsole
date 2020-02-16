@@ -755,7 +755,7 @@ class Renderer {
      * @deprecated Use console().removePreview() and console().removeView() instead.
      */
     sendDeleteConlet(conletId) {
-        this.send("deleteConlet", conletId);
+        this.console().removePreview(conletId);
     };
 
     /**
@@ -953,13 +953,12 @@ class Console {
                 }
             });
         this._webSocket.addMessageHandler('deleteConlet',
-            function deleteConlet(conletId) {
-                let conletDisplays = _this._renderer.findConletContainers(conletId);
-                if (conletDisplays.length > 0) {
-                    _this._renderer.removeConletDisplays(conletDisplays);
-                    conletDisplays.forEach(function(container) {
-                            _this._execOnUnload($(container));
-                    });
+            function deleteConlet(conletId, renderModes) {
+                if (renderModes.length === 0 || renderModes.includes("preview")) {
+                    _this.removePreview(conletId);
+                }
+                if (renderModes.includes("view")) {
+                    _this.removeView(conletId);
                 }
             });
         this._webSocket.addMessageHandler('displayNotification',
@@ -1238,7 +1237,17 @@ class Console {
      * @param {string} the conlet id
      */
     removePreview(conletId) {
-        this.send("deleteConlet", conletId);
+        let view = this._renderer.findConletView(conletId);
+        if (view) {
+            this._renderer.removeConletDisplays($(view).get());
+            this._execOnUnload($(view));
+        }
+        let preview = this._renderer.findConletPreview(conletId);
+        if (preview) {
+            this._renderer.removeConletDisplays($(preview).get());
+            this._execOnUnload($(preview));
+        }
+        this.send("conletDeleted", conletId, []);
     }
 
     /**
@@ -1247,25 +1256,18 @@ class Console {
      * @param {string} the conlet id
      */
     removeView(conletId) {
+        let view = this._renderer.findConletView(conletId);
+        if (!view) {
+            return;
+        }
+        this._renderer.removeConletDisplays($(view).get());
+        this._execOnUnload($(view));
         if (this._renderer.findConletPreview(conletId)) {
-            let view = this._renderer.findConletView(conletId);
-            if (view) {
-                this._renderer.removeConletDisplays($(view).get());
-                this._execOnUnload($(view));
-            }
+            this.send("conletDeleted", conletId, ["view"]);
         } else {
-            this.send("deleteConlet", conletId);
+            this.send("conletDeleted", conletId, []);
         }
     }
-
-    /**
-     * Send a notification that request the removal of a conlet.
-     * 
-     * @param {string} conletId the id of the conlet to be deleted
-     */
-    deleteConlet(conletId) {
-        this.send("deleteConlet", conletId);
-    };
 
     /**
      * Send the current console layout to the server.

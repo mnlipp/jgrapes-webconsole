@@ -44,9 +44,8 @@ import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteConlet;
-import org.jgrapes.webconsole.base.events.DeleteConletRequest;
 import org.jgrapes.webconsole.base.events.DisplayNotification;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
@@ -171,12 +170,13 @@ public class HelloWorldConlet
     }
 
     @Override
-    protected void doDeleteConlet(DeleteConletRequest event,
+    protected void doConletDeleted(ConletDeleted event,
             ConsoleSession channel, String conletId,
             HelloWorldModel conletState) throws Exception {
-        channel.respond(new KeyValueStoreUpdate().delete(
-            storagePath(channel.browserSession()) + conletId));
-        channel.respond(new DeleteConlet(conletId));
+        if (event.renderModes().isEmpty()) {
+            channel.respond(new KeyValueStoreUpdate().delete(
+                storagePath(channel.browserSession()) + conletId));
+        }
     }
 
     @Override

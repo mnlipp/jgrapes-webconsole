@@ -23,29 +23,21 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
-import org.jdrupes.json.JsonBeanDecoder;
-import org.jdrupes.json.JsonBeanEncoder;
-import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
-import org.jgrapes.util.events.KeyValueStoreData;
-import org.jgrapes.util.events.KeyValueStoreQuery;
-import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.AbstractConlet.ConletBaseModel;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
-import org.jgrapes.webconsole.base.UserPrincipal;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteConlet;
-import org.jgrapes.webconsole.base.events.DeleteConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
@@ -71,12 +63,6 @@ public class FormTestConlet
         super(componentChannel);
     }
 
-    private String storagePath(Session session) {
-        return "/" + WebConsoleUtils.userFromSession(session)
-            .map(UserPrincipal::toString).orElse("")
-            + "/conlets/" + FormTestConlet.class.getName() + "/";
-    }
-
     @Handler
     public void onConsoleReady(ConsoleReady event,
             ConsoleSession consoleSession)
@@ -92,24 +78,23 @@ public class FormTestConlet
                     "FormTest-functions.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "FormTest-style.css")));
-        KeyValueStoreQuery query = new KeyValueStoreQuery(
-            storagePath(consoleSession.browserSession()), consoleSession);
-        fire(query, consoleSession);
     }
 
-    @Handler
-    public void onKeyValueStoreData(
-            KeyValueStoreData event, ConsoleSession channel)
-            throws JsonDecodeException {
-        if (!event.event().query()
-            .equals(storagePath(channel.browserSession()))) {
-            return;
+    @Override
+    protected String generateConletId() {
+        return type() + "-" + super.generateConletId();
+    }
+
+    @Override
+    protected Optional<ConletBaseModel> stateFromSession(
+            Session session, String conletId) {
+        if (conletId.startsWith(type() + "-")) {
+            return super.stateFromSession(session, conletId)
+                .map(m -> Optional.of(m))
+                .orElse(Optional.of(putInSession(
+                    session, new ConletBaseModel(conletId))));
         }
-        for (String json : event.data().values()) {
-            ConletBaseModel model = JsonBeanDecoder.create(json)
-                .readObject(ConletBaseModel.class);
-            putInSession(channel.browserSession(), model);
-        }
+        return Optional.empty();
     }
 
     @Override
@@ -118,11 +103,6 @@ public class FormTestConlet
         String conletId = generateConletId();
         ConletBaseModel conletModel = putInSession(
             channel.browserSession(), new ConletBaseModel(conletId));
-        String jsonState = JsonBeanEncoder.create()
-            .writeObject(conletModel).toJson();
-        channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + conletModel.getConletId(),
-            jsonState));
         renderConlet(event, channel, conletModel);
         return conletId;
     }
@@ -149,14 +129,4 @@ public class FormTestConlet
                     .setForeground(event.isForeground()));
         }
     }
-
-    @Override
-    protected void doDeleteConlet(DeleteConletRequest event,
-            ConsoleSession channel, String conletId,
-            ConletBaseModel conletState) throws Exception {
-        channel.respond(new KeyValueStoreUpdate().delete(
-            storagePath(channel.browserSession()) + conletId));
-        channel.respond(new DeleteConlet(conletId));
-    }
-
 }

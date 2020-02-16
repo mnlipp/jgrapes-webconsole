@@ -56,10 +56,9 @@ import org.jgrapes.io.events.Closed;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
+import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteConlet;
-import org.jgrapes.webconsole.base.events.DeleteConletRequest;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.RenderConlet;
@@ -134,17 +133,17 @@ import org.jgrapes.webconsole.base.events.SetLocale;
  * with the state information. This method has to fire
  * the {@link RenderConlet} event that delivers the HTML.
  * 
- * ## DeleteConletRequest
+ * ## ConletDeleted
  * 
- * ![Delete web console component handling](DeleteConletHandling.svg)
+ * ![Web console component deleted handling](ConletDeletedHandling.svg)
  * 
- * When the {@link AbstractConlet} receives a {@link DeleteConletRequest},
- * it checks if state information for the web console component id exists. If so,
- * it deletes the state information from the session and
+ * When the {@link AbstractConlet} receives a {@link ConletDeleted},
+ * it updates the information about the shown conlet views. If the
+ * conlet is no longer used in the browser (no views remain),
+ * it deletes the state information from the session. In any case, it
  * invokes 
- * {@link #doDeleteConlet(DeleteConletRequest, ConsoleSession, String, Serializable)}
- * with the state information. This method fires the {@link DeleteConlet}
- * event that confirms the deletion of the web console component.
+ * {@link #doConletDeleted(ConletDeleted, ConsoleSession, String, Serializable)}
+ * with the state information.
  * 
  * ## NotifyConletModel
  * 
@@ -242,20 +241,18 @@ import org.jgrapes.webconsole.base.events.SetLocale;
  * activate WebConsole
  * deactivate WebConsole
  * @enduml 
- * @startuml DeleteConletHandling.svg
+ * 
+ * @startuml ConletDeletedHandling.svg
  * hide footbox
  * 
  * activate WebConsole
- * WebConsole -> Conlet: DeleteConletRequest
+ * WebConsole -> Conlet: ConletDeleted
  * deactivate WebConsole
  * activate Conlet
- * Conlet -> Conlet: doDeleteConlet
+ * Conlet -> Conlet: doConletDeleted
  * activate Conlet
- * Conlet -> WebConsole: DeleteConlet 
  * deactivate Conlet
  * deactivate Conlet
- * activate WebConsole
- * deactivate WebConsole
  * @enduml 
  */
 @SuppressWarnings({ "PMD.TooManyMethods",
@@ -650,20 +647,18 @@ public abstract class AbstractConlet<S extends Serializable>
 
     /**
      * Checks if the request applies to this component. If so, stops 
-     * the event, removes the web console component state from the 
-     * browser session and calls {@link #doDeleteConlet} with the state.
+     * the event. If the conlet is completely removed from the browser,
+     * removes the web console component state from the 
+     * browser session. In all cases, it calls {@link #doConletDeleted} 
+     * with the state.
      * 
-     * If the association of {@link ConsoleSession}s and web console 
-     * component ids is tracked for this web console component, any 
-     * existing association is also removed.
-     *
      * @param event the event
      * @param consoleSession the web console session
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public final void onDeleteConletRequest(DeleteConletRequest event,
+    public final void onConletDeleted(ConletDeleted event,
             ConsoleSession consoleSession) throws Exception {
         Optional<S> optConletState = stateFromSession(
             consoleSession.browserSession(), event.conletId());
@@ -671,28 +666,26 @@ public abstract class AbstractConlet<S extends Serializable>
             return;
         }
         String conletId = event.conletId();
-        removeState(consoleSession.browserSession(), conletId);
-        for (Iterator<ConsoleSession> psi = conletIdsByConsoleSession
-            .keySet().iterator(); psi.hasNext();) {
-            Set<String> idSet = conletIdsByConsoleSession.get(psi.next());
-            idSet.remove(conletId);
-            if (idSet.isEmpty()) {
-                psi.remove();
+        if (event.renderModes().isEmpty()) {
+            removeState(consoleSession.browserSession(), conletId);
+            for (Iterator<ConsoleSession> psi = conletIdsByConsoleSession
+                .keySet().iterator(); psi.hasNext();) {
+                Set<String> idSet = conletIdsByConsoleSession.get(psi.next());
+                idSet.remove(conletId);
+                if (idSet.isEmpty()) {
+                    psi.remove();
+                }
             }
+            updateRefresh();
         }
-        updateRefresh();
         event.stop();
-        doDeleteConlet(event, consoleSession, event.conletId(),
+        doConletDeleted(event, consoleSession, event.conletId(),
             optConletState.get());
     }
 
     /**
-     * Called by {@link #onDeleteConletRequest} to complete deleting
-     * the web console component. If the web console component component 
-     * wants to veto the deletion of the web console component, it puts 
-     * the state information back in the session with 
-     * {@link #putInSession(Session, String, Serializable)} and does
-     * not fire the {@link DeleteConlet} event.
+     * Called by {@link #onConletDeleted} to propagate the event to derived
+     * classes.
      * 
      * @param event the event
      * @param channel the channel
@@ -700,9 +693,10 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param conletState the web console component state
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected abstract void doDeleteConlet(DeleteConletRequest event,
+    protected void doConletDeleted(ConletDeleted event,
             ConsoleSession channel, String conletId, S conletState)
-            throws Exception;
+            throws Exception {
+    }
 
     /**
      * Checks if the request applies to this component by calling

@@ -36,8 +36,6 @@ import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteConlet;
-import org.jgrapes.webconsole.base.events.DeleteConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
@@ -83,7 +81,10 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
     protected Optional<ConletBaseModel> stateFromSession(
             Session session, String conletId) {
         if (conletId.startsWith(type() + "-")) {
-            return Optional.of(new ConletBaseModel(conletId));
+            return super.stateFromSession(session, conletId)
+                .map(m -> Optional.of(m))
+                .orElse(Optional.of(putInSession(
+                    session, new ConletBaseModel(conletId))));
         }
         return Optional.empty();
     }
@@ -129,13 +130,6 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
                     .setSupportedModes(MODES)
                     .setForeground(event.isForeground()));
         }
-    }
-
-    @Override
-    protected void doDeleteConlet(DeleteConletRequest event,
-            ConsoleSession channel, String conletId,
-            ConletBaseModel conletState) throws Exception {
-        channel.respond(new DeleteConlet(conletId));
     }
 
 }
