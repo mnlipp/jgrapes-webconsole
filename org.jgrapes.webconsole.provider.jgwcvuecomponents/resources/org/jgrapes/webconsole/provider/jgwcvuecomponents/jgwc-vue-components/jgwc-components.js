@@ -46,6 +46,26 @@ const keys = {
 Vue.jgwc = {};
 Vue.prototype.jgwc = {};
 
+var htmlRoot = document.querySelector("html");
+var jgwcObserved = Vue.observable({
+    lang: htmlRoot.getAttribute('lang')
+});
+Vue.prototype.jgwc.observed = jgwcObserved;
+
+new MutationObserver(function(mutations) {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes'
+            && mutation.attributeName === 'lang') {
+            jgwcObserved.lang = htmlRoot.getAttribute('lang');
+        }
+    });    
+}).observe(htmlRoot, {
+  childList: false,
+  attributes: true,
+  subtree: false
+});
+
+
 var scopeCounter = 1;
 
 var jgwcIdScopeMixin = {
