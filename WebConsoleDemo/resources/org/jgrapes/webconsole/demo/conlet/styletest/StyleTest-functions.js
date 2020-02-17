@@ -49,7 +49,7 @@ window.orgJGrapesOsgiConletStyleTest.initView = function(content) {
                 return this.controller.filter(infos);
             }
         },
-    });
+    }).JGConsole = window.JGConsole;
 }
 
 window.orgJGrapesOsgiConletStyleTest.onUnload = function(content) {

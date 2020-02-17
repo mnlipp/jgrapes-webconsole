@@ -24,9 +24,9 @@
           <td>
             <jgwc-disclosure-button v-if="rowIndex === 0" 
               v-bind:id-ref="scopedId(rowIndex)"
-              :on-toggle="function() { $window.JGConsole.notification('Changed.') }"
-              :on-show="function() { $window.JGConsole.notification('Now showing.') }"
-              :on-hide="function() { $window.JGConsole.notification('Now hidden.') }"
+              :on-toggle="function() { JGConsole.notification('Changed.') }"
+              :on-show="function() { JGConsole.notification('Now showing.') }"
+              :on-hide="function() { JGConsole.notification('Now hidden.') }"
               >
               <span v-html="entry[controller.keys[0]]"></span>
             </jgwc-disclosure-button>
