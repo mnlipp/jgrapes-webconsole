@@ -51,13 +51,3 @@ window.orgJGrapesOsgiConletStyleTest.initView = function(content) {
         },
     }).JGConsole = window.JGConsole;
 }
-
-window.orgJGrapesOsgiConletStyleTest.onUnload = function(content) {
-    if ("__vue__" in content) {
-        content.__vue__.$destroy();
-        return;
-    }
-    for (let child of content.children) {
-        window.orgJGrapesOsgiConletStyleTest.onUnload(child);
-    }
-}
