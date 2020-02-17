@@ -34,9 +34,12 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
  * (the HTML) which must be provided by the derived classes.
  * 
  * The HTML provided is searched for attributes `data-jgwc-on-load`
- * which must have as value the name of a function. When the
- * HTML has been loaded, this function is invoked with the element
- * containing the attribute as parameter.
+ * and `data-jgwc-on-unload` which must have as value the name of a 
+ * function. When the HTML has been loaded or unloaded (i.e. added to
+ * the DOM or removed from the DOM), the respective functions are 
+ * invoked with the element containing the attribute as their first 
+ * parameter. A second boolean parameter is `true` if the on-load 
+ * function is called due to an update of an already existing container.
  * 
  * The HTML elements of edit dialogs ({@link RenderMode#Edit})
  * can have an additional attribute `data-jgwc-on-apply`

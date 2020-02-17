@@ -976,7 +976,7 @@ class Console {
                     if (!container[0].parentNode) {
                         $("body").append(container);
                     }
-                    _this._execOnLoad(container);
+                    _this._execOnLoad(container, false);
                 }
             });
         this._webSocket.addMessageHandler('deleteConlet',
@@ -1114,17 +1114,18 @@ class Console {
         if (isNew) {
             container = this._previewTemplate.clone();
             container.attr("data-conlet-id", conletId);
-        }
-        if (sticky) {
-            container = $(container);
-            container.removeClass('conlet-deleteable')
         } else {
             container = $(container);
+            this._execOnUnload(container, true);
+        }
+        if (sticky) {
+            container.removeClass('conlet-deleteable')
+        } else {
             container.addClass('conlet-deleteable')
         }
         this._renderer.updateConletPreview(isNew, container[0], modes,
             content, foreground);
-        this._execOnLoad(container);
+        this._execOnLoad(container, !isNew);
     };
 
     _updateView(conletId, modes, content, foreground) {
@@ -1135,13 +1136,14 @@ class Console {
             container.attr("data-conlet-id", conletId);
         } else {
             container = $(container);
+            this._execOnUnload(container, true);
         }
         this._renderer.updateConletView(isNew, container[0], modes,
             content, foreground);
-        this._execOnLoad(container);
+        this._execOnLoad(container, !isNew);
     };
 
-    _execOnLoad(container) {
+    _execOnLoad(container, isUpdate) {
         container.find("[data-jgwc-on-load]").each(function() {
             let onLoad = $(this).data("jgwc-on-load");
             let segs = onLoad.split(".");
@@ -1150,12 +1152,12 @@ class Console {
                 obj = obj[segs.shift()];
             }
             if (obj && typeof obj === "function") {
-                obj(this);
+                obj(this, isUpdate);
             }
         });
     }
 
-    _execOnUnload(container) {
+    _execOnUnload(container, isUpdate) {
         container.find("[data-jgwc-on-unload]").each(function() {
             let onUnload = $(this).data("jgwc-on-unload");
             let segs = onUnload.split(".");
@@ -1164,7 +1166,7 @@ class Console {
                 obj = obj[segs.shift()];
             }
             if (obj && typeof obj === "function") {
-                obj(this);
+                obj(this, isUpdate);
             }
         });
     }
@@ -1189,6 +1191,7 @@ class Console {
                 obj($(this)[0]);
             }
         });
+        this._execOnUnload(container, false);
     }
 
     /**
@@ -1269,12 +1272,12 @@ class Console {
         let view = this._renderer.findConletView(conletId);
         if (view) {
             this._renderer.removeConletDisplays($(view).get());
-            this._execOnUnload($(view));
+            this._execOnUnload($(view), false);
         }
         let preview = this._renderer.findConletPreview(conletId);
         if (preview) {
             this._renderer.removeConletDisplays($(preview).get());
-            this._execOnUnload($(preview));
+            this._execOnUnload($(preview), false);
         }
         this.send("conletDeleted", conletId, []);
     }
@@ -1290,7 +1293,7 @@ class Console {
             return;
         }
         this._renderer.removeConletDisplays($(view).get());
-        this._execOnUnload($(view));
+        this._execOnUnload($(view), false);
         if (this._renderer.findConletPreview(conletId)) {
             this.send("conletDeleted", conletId, [RenderMode.View]);
         } else {

@@ -40,9 +40,11 @@ var orgJGrapesConletsWorldDemoConlet = {};
                 }
             });
 
-    orgJGrapesConletsWorldDemoConlet.onUnload = function(preview) {
-        JGConsole.notification("World Removed!", { type: "warning",
-            autoClose: 5000 });
+    orgJGrapesConletsWorldDemoConlet.onUnload = function(preview, isUpdate) {
+        if (!isUpdate) {
+            JGConsole.notification("World Removed!", { type: "warning",
+                autoClose: 5000 });
+        }
     }
     
 })();
