@@ -17,6 +17,19 @@
  */
 
 import Vue from "../vue/vue.esm.browser.js"
+import JGConsole from "../../console-base-resource/jgconsole.js"
+
+JGConsole.jgwc = {};
+
+JGConsole.jgwc.destroyVMs = function(content) {
+    if ("__vue__" in content) {
+        content.__vue__.$destroy();
+        return;
+    }
+    for (let child of content.children) {
+        JGConsole.jgwc.destroyVMs(child);
+    }
+}
 
 const keys = {
     end: 35,
@@ -29,7 +42,8 @@ const keys = {
     enter: 13,
     space: 32
 };
-  
+
+Vue.jgwc = {};
 Vue.prototype.jgwc = {};
 
 var scopeCounter = 1;
