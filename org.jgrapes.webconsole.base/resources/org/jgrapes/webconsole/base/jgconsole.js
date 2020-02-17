@@ -29,7 +29,7 @@
 export class JGConsole {};
 export default JGConsole;
 
-// For backward compatibility
+// For global access
 window.JGConsole = JGConsole;
 
 /**
@@ -57,7 +57,7 @@ JGConsole.RenderMode = RenderMode;
 /**
  * Easy access to logging.
  */
-class Log {
+export class Log {
 
     /**
      * Output a debug message.
@@ -99,8 +99,6 @@ class Log {
         }
     }
 };
-
-export { Log };
 
 /**
  * Make class Log available as property of JGConsole.
@@ -1483,7 +1481,7 @@ JGConsole.createIfMissing = function(node, key, supplier) {
  * sort order and direction. In addition, it supports simple
  * filtering based on cell content.
  */
-class TableController {
+export class TableController {
 
     /**
      * Creates a new controller for a table with the given numer
@@ -1665,7 +1663,7 @@ JGConsole.TableController = TableController;
  * a Set are the toggle functions and the support for temporarily
  * disabling an option.
  */
-class OptionsSet {
+export class OptionsSet {
 
     /**
      * Creates a new option set.
