@@ -47,6 +47,10 @@ const RenderMode = Object.freeze({
 });
 
 export { RenderMode };
+
+/**
+ * Make RenderMode available as property of JGConsole.
+ */
 JGConsole.RenderMode = RenderMode;
 
 
@@ -95,6 +99,8 @@ class Log {
         }
     }
 };
+
+export { Log };
 
 /**
  * Make class Log available as property of JGConsole.
