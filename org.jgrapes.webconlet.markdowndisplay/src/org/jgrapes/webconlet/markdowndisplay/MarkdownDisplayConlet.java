@@ -218,24 +218,24 @@ public class MarkdownDisplayConlet
             jsonState));
 
         // Send HTML
-        renderConlet(event, consoleSession, model);
-        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
+        return new ConletTrackingInfo(conletId)
+            .addModes(renderConlet(event, consoleSession, model));
     }
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
             ConsoleSession consoleSession, String conletId,
             MarkdownDisplayModel model) throws Exception {
-        renderConlet(event, consoleSession, model);
-        return event.renderAs();
+        return renderConlet(event, consoleSession, model);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private void renderConlet(RenderConletRequestBase<?> event,
+    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession consoleSession, MarkdownDisplayModel model)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        Set<RenderMode> modes = renderModes(model);
+        Set<RenderMode> supported = renderModes(model);
+        Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
@@ -244,8 +244,9 @@ public class MarkdownDisplayConlet
                 tpl, fmModel(event, consoleSession, model))
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
-                    .setSupportedModes(modes));
+                    .setSupportedModes(supported));
             updateView(consoleSession, model);
+            renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl = freemarkerConfig()
@@ -254,8 +255,9 @@ public class MarkdownDisplayConlet
                 MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, consoleSession, model))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
-                    .setSupportedModes(modes));
+                    .setSupportedModes(supported));
             updateView(consoleSession, model);
+            renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
@@ -264,8 +266,9 @@ public class MarkdownDisplayConlet
                 MarkdownDisplayConlet.class, model.getConletId(),
                 tpl, fmModel(event, consoleSession, model))
                     .setRenderAs(RenderMode.Edit.addModifiers(event.renderAs()))
-                    .setSupportedModes(modes));
+                    .setSupportedModes(supported));
         }
+        return renderedAs;
     }
 
     private Set<RenderMode> renderModes(MarkdownDisplayModel model) {

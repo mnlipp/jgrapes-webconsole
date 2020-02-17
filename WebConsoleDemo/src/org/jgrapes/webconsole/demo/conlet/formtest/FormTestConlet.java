@@ -23,6 +23,7 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.jgrapes.core.Channel;
@@ -103,22 +104,22 @@ public class FormTestConlet
         String conletId = generateConletId();
         ConletBaseModel conletModel = putInSession(
             channel.browserSession(), new ConletBaseModel(conletId));
-        renderConlet(event, channel, conletModel);
-        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
+        return new ConletTrackingInfo(conletId)
+            .addModes(renderConlet(event, channel, conletModel));
     }
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
             ConsoleSession channel, String conletId,
             ConletBaseModel conletModel) throws Exception {
-        renderConlet(event, channel, conletModel);
-        return event.renderAs();
+        return renderConlet(event, channel, conletModel);
     }
 
-    private void renderConlet(RenderConletRequestBase<?> event,
+    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, ConletBaseModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
+        Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("FormTest-view.ftl.html");
@@ -127,6 +128,8 @@ public class FormTestConlet
                 tpl, fmModel(event, channel, conletModel))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
+            renderedAs.add(RenderMode.View);
         }
+        return renderedAs;
     }
 }

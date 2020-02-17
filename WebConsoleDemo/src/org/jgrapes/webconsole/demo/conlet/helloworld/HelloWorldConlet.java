@@ -24,6 +24,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
@@ -129,22 +130,22 @@ public class HelloWorldConlet
         channel.respond(new KeyValueStoreUpdate().update(
             storagePath(channel.browserSession()) + conletModel.getConletId(),
             jsonState));
-        renderConlet(event, channel, conletModel);
-        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
+        return new ConletTrackingInfo(conletId)
+            .addModes(renderConlet(event, channel, conletModel));
     }
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
             ConsoleSession channel, String conletId,
             HelloWorldModel conletModel) throws Exception {
-        renderConlet(event, channel, conletModel);
-        return event.renderAs();
+        return renderConlet(event, channel, conletModel);
     }
 
-    private void renderConlet(RenderConletRequestBase<?> event,
+    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, HelloWorldModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
+        Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
@@ -154,6 +155,7 @@ public class HelloWorldConlet
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
+            renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
@@ -166,7 +168,9 @@ public class HelloWorldConlet
             channel.respond(new NotifyConletView(type(),
                 conletModel.getConletId(), "setWorldVisible",
                 conletModel.isWorldVisible()));
+            renderedAs.add(RenderMode.View);
         }
+        return renderedAs;
     }
 
     @Override

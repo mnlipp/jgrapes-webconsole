@@ -19,6 +19,7 @@
 package org.jgrapes.webconsole.base;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,8 +54,21 @@ public interface Conlet {
             return new HashSet<>(Arrays.asList(modes));
         }
 
-        static Set<RenderMode> basicModes = asSet(RenderMode.Preview,
-            RenderMode.View, RenderMode.Edit, RenderMode.Help);
+        /**
+         * The basic modes (the modes without modifiers).
+         */
+        public static Set<RenderMode> basicModes = Collections.unmodifiableSet(
+            asSet(RenderMode.Preview, RenderMode.View, RenderMode.Edit,
+                RenderMode.Help));
+
+        /**
+         * Retrieves the modifiers.
+         */
+        public static Set<RenderMode> modifiers(Set<RenderMode> modes) {
+            Set<RenderMode> result = new HashSet<>(modes);
+            result.removeAll(basicModes);
+            return result;
+        }
 
         /**
          * Adds the modifiers from the given set to this basic mode.
@@ -63,8 +77,7 @@ public interface Conlet {
          * @return the augmented basic mode
          */
         public Set<RenderMode> addModifiers(Set<RenderMode> modifiers) {
-            Set<RenderMode> result = new HashSet<>(modifiers);
-            result.removeAll(basicModes);
+            Set<RenderMode> result = modifiers(modifiers);
             result.add(this);
             return result;
         }

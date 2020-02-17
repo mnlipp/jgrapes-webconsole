@@ -25,6 +25,7 @@ import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -122,23 +123,23 @@ public class SysInfoConlet
         String conletId = generateConletId();
         SysInfoModel conletModel = putInSession(
             consoleSession.browserSession(), new SysInfoModel(conletId));
-        renderConlet(event, consoleSession, conletModel);
-        return new ConletTrackingInfo(conletId).addModes(event.renderAs());
+        return new ConletTrackingInfo(conletId)
+            .addModes(renderConlet(event, consoleSession, conletModel));
     }
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
             ConsoleSession consoleSession, String conletId,
             SysInfoModel conletModel) throws Exception {
-        renderConlet(event, consoleSession, conletModel);
-        return event.renderAs();
+        return renderConlet(event, consoleSession, conletModel);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private void renderConlet(RenderConletRequestBase<?> event,
+    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
             ConsoleSession consoleSession, SysInfoModel conletModel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
+        Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
@@ -149,6 +150,7 @@ public class SysInfoConlet
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             updateView(consoleSession, conletModel.getConletId());
+            renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
@@ -158,7 +160,9 @@ public class SysInfoConlet
                 tpl, fmModel(event, consoleSession, conletModel))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
+            renderedAs.add(RenderMode.Preview);
         }
+        return renderedAs;
     }
 
     private void updateView(ConsoleSession consoleSession, String conletId) {
