@@ -132,9 +132,6 @@ Log.format = function(date) {
         + logDateTimeMillis.format(date.getMilliseconds()/1000).substring(1);
 }
 
-// Local access
-var log = JGConsole.Log;
-
 // ///////////////////
 // WebSocket "wrapper"
 // ///////////////////
@@ -188,12 +185,12 @@ class ConsoleWebSocket {
             location += "?was=" + this._oldConsoleSessionId;
             this._oldConsoleSessionId = null;
         }
-        log.debug("Creating WebSocket for " + location);
+        Log.debug("Creating WebSocket for " + location);
         this._ws = new WebSocket(location);
-        log.debug("Created WebSocket with readyState " + this._ws.readyState);
+        Log.debug("Created WebSocket with readyState " + this._ws.readyState);
         let _this = this;
         this._ws.onopen = function() {
-            log.debug("OnOpen called for WebSocket.");
+            Log.debug("OnOpen called for WebSocket.");
             if (_this._connectionLost) {
                 _this._connectionLost = false;
                 _this._console.connectionRestored();
@@ -230,7 +227,7 @@ class ConsoleWebSocket {
             }, _this._console.sessionRefreshInterval);
         }
         this._ws.onclose = function(event) {
-            log.debug("OnClose called for WebSocket (reconnect: " +
+            Log.debug("OnClose called for WebSocket (reconnect: " +
                 _this._connectRequested + ").");
             if (_this._refreshTimer !== null) {
                 clearInterval(_this._refreshTimer);
@@ -254,9 +251,9 @@ class ConsoleWebSocket {
             try {
                 msg = JSON.parse(event.data);
             } catch (e) {
-                log.error(e.name + ":" + e.lineNumber + ":" + e.columnNumber
+                Log.error(e.name + ":" + e.lineNumber + ":" + e.columnNumber
                     + ": " + e.message + ". Data: ");
-                log.error(event.data);
+                Log.error(event.data);
                 return;
             }
             _this._recvQueue.push(msg);
@@ -273,7 +270,7 @@ class ConsoleWebSocket {
         this._connectRequested = true;
         let _this = this;
         $(window).on('beforeunload', function() {
-            log.debug("Closing WebSocket due to page unload");
+            Log.debug("Closing WebSocket due to page unload");
             // Internal connect, don't send disconnect
             _this._connectRequested = false;
             _this._ws.close();
@@ -312,7 +309,7 @@ class ConsoleWebSocket {
                 this._ws.send(msg);
                 this._sendQueue.shift();
             } catch (e) {
-                log.warn(e);
+                Log.warn(e);
             }
         }
     }
@@ -349,7 +346,7 @@ class ConsoleWebSocket {
 
     _handlerLog(msgSup) {
         if (this._debugHandler) {
-            log.debug(msgSup());
+            Log.debug(msgSup());
         }
     }
 
@@ -366,7 +363,7 @@ class ConsoleWebSocket {
             var message = this._recvQueue.shift();
             var handler = this._messageHandlers[message.method];
             if (!handler) {
-                log.error("No handler for invoked method " + message.method);
+                Log.error("No handler for invoked method " + message.method);
                 continue;
             }
             if (message.hasOwnProperty("params")) {
@@ -386,7 +383,7 @@ class ConsoleWebSocket {
             try {
                 throw new Error("Lock");
             } catch (exc) {
-                log.debug("Locking receiver:\n" + exc.stack);
+                Log.debug("Locking receiver:\n" + exc.stack);
             }
         }
     }
@@ -397,7 +394,7 @@ class ConsoleWebSocket {
             try {
                 throw new Error("Unlock");
             } catch (exc) {
-                log.debug("Unlocking receiver:\n" + exc.stack);
+                Log.debug("Unlocking receiver:\n" + exc.stack);
             }
         }
         if (this._recvQueueLocks == 0) {
@@ -417,7 +414,7 @@ class ResourceManager {
                 n => this._providedScriptResources.add(n.trim()));
         });
         if (this._debugLoading) {
-            log.debug("Initially provided: "
+            Log.debug("Initially provided: "
              + [...this._providedScriptResources].join(", "));
         }
         this._unresolvedScriptRequests = []; // ScriptResource objects
@@ -429,7 +426,7 @@ class ResourceManager {
 
     _loadingMsg(msg) {
         if (this._debugLoading) {
-            log.debug(msg());
+            Log.debug(msg());
         }
     }
 
@@ -495,7 +492,7 @@ class ResourceManager {
         if (this._loadingTimeoutHandler === null) {
             this._loadingTimeoutHandler = setInterval(
                 function() {
-                    log.warn("Still waiting for: "
+                    Log.warn("Still waiting for: "
                         + Array.from(_this._loadingScripts).join(", "));
                 }, 5000)
         }
@@ -600,7 +597,7 @@ class Renderer {
      * Should be overridden by a funtion that displays a notification.
      */
     connectionLost() {
-        log.warn("Connection lost notification not implemented!");
+        Log.warn("Connection lost notification not implemented!");
     }
 
     /**
@@ -609,7 +606,7 @@ class Renderer {
      * Should be overridden by a funtion that displays a notification.
      */
     connectionRestored() {
-        log.warn("Connection restored notification not implemented!");
+        Log.warn("Connection restored notification not implemented!");
     }
 
     /**
@@ -618,7 +615,7 @@ class Renderer {
      * Should be overridden by a funtion that displays a modal dialog.
      */
     connectionSuspended(resume) {
-        log.warn("Connection suspended dialog not implemented!");
+        Log.warn("Connection suspended dialog not implemented!");
     }
 
     /**
@@ -627,7 +624,7 @@ class Renderer {
      * Should be overridden by a funtion that displays a modal dialog.
      */
     consoleConfigured() {
-        log.warn("Console configured handling not implemented!");
+        Log.warn("Console configured handling not implemented!");
     }
 
     /**
@@ -637,7 +634,7 @@ class Renderer {
      * @param {Array.string} renderModes the render modes
      */
     addConletType(conletType, displayNames, renderModes) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     /**
@@ -650,7 +647,7 @@ class Renderer {
      * console implementation
      */
     lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     /**
@@ -669,7 +666,7 @@ class Renderer {
      * plane) is to be made the active tab
      */
     updateConletPreview(isNew, container, modes, content, foreground) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     /**
@@ -688,7 +685,7 @@ class Renderer {
      * is to be made the active tab
      */
     updateConletView(isNew, container, modes, content, foreground) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     /**
@@ -699,7 +696,7 @@ class Renderer {
      * the preview or views 
      */
     removeConletDisplays(containers) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     /**
@@ -709,7 +706,7 @@ class Renderer {
      * @param {string} title the new title
      */
     updateConletTitle(conletId, title) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     /**
@@ -719,7 +716,7 @@ class Renderer {
      * @param {string[]} modes the modes
      */
     updateConletModes(conletId, modes) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     /**
@@ -730,7 +727,7 @@ class Renderer {
      * @param {string} content the content as HTML
      */
     showEditDialog(container, modes, content) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     /**
@@ -747,7 +744,7 @@ class Renderer {
      *                          after the given number of milliseconds
      */
     notification(content, options) {
-        log.warn("Not implemented!");
+        Log.warn("Not implemented!");
     }
 
     // Send methods
@@ -1010,7 +1007,7 @@ class Console {
                         result.push([key, value])
                     }
                 } catch (e) {
-                    log.error(e);
+                    Log.error(e);
                 }
                 _this._webSocket.send({
                     "jsonrpc": "2.0", "method": "retrievedLocalData",
@@ -1029,7 +1026,7 @@ class Console {
                         }
                     }
                 } catch (e) {
-                    log.error(e);
+                    Log.error(e);
                 }
             });
         this._webSocket.addMessageHandler('reload',
@@ -1039,7 +1036,7 @@ class Console {
     }
 
     init(consoleSessionId, refreshInterval, inactivityTimeout, renderer) {
-        log.debug("JGConsole: Initializing console...");
+        Log.debug("JGConsole: Initializing console...");
         sessionStorage.setItem("org.jgrapes.webconsole.base.sessionId", consoleSessionId);
         this._resourceManager = new ResourceManager(this);
         this._sessionRefreshInterval = refreshInterval;
@@ -1051,12 +1048,12 @@ class Console {
         this._webSocket.connect();
 
         // More initialization.
-        log.debug("JGConsole: Initializing renderer...");
+        Log.debug("JGConsole: Initializing renderer...");
         this._renderer.init();
 
         // With everything prepared, send console ready
         this.send("consoleReady");
-        log.debug("JGConsole: ConsoleReady sent.");
+        Log.debug("JGConsole: ConsoleReady sent.");
     }
 
     get isConfigured() {
@@ -1151,6 +1148,9 @@ class Console {
             }
             if (obj && typeof obj === "function") {
                 obj(this, isUpdate);
+            } else {
+                Log.warn('Specified jgwc-on-load function "' 
+                    + onLoad + '" not found.');
             }
         });
     }
@@ -1165,6 +1165,9 @@ class Console {
             }
             if (obj && typeof obj === "function") {
                 obj(this, isUpdate);
+            } else {
+                Log.warn('Specified jgwc-on-unload function "' 
+                    + onUnload + '" not found.');
             }
         });
     }
@@ -1187,6 +1190,9 @@ class Console {
             }
             if (obj && typeof obj === "function") {
                 obj($(this)[0]);
+            } else {
+                Log.warn('Specified jgwc-on-apply function "' 
+                    + onApply + '" not found.');
             }
         });
         this._execOnUnload(container, false);
