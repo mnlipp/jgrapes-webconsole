@@ -69,7 +69,7 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
         // Add HelloWorldConlet resources to page
         consoleSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(consoleSession.supportedLocales(), "conletName"))
+                localizations(consoleSession.supportedLocales(), "conletName"))
             .addRenderMode(RenderMode.View));
     }
 

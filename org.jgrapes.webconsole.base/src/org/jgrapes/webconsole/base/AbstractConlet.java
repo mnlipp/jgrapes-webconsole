@@ -289,12 +289,17 @@ import org.jgrapes.webconsole.base.events.SetLocale;
 public abstract class AbstractConlet<S extends Serializable>
         extends Component {
 
+    private static final Map<Class<?>,
+            Map<Locale, ResourceBundle>> supportedLocales
+                = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Class<?>,
+            Map<Locale, ResourceBundle>> l10nBundles
+                = Collections.synchronizedMap(new WeakHashMap<>());
     private Map<ConsoleSession,
             Map<String, ConletTrackingInfo>> conletInfosByConsoleSession;
     private Duration refreshInterval;
     private Supplier<Event<?>> refreshEventSupplier;
     private Timer refreshTimer;
-    private Map<Locale, ResourceBundle> l10nBundles = new HashMap<>();
 
     /**
      * Creates a new component that listens for new events
@@ -410,10 +415,28 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
-     * Returns the bundles for the given locales. The default implementation 
-     * looks up the available bundles for the locales using the
-     * package name plus "l10n" as base name. Note that the bundle returned
-     * for a given locale may be the fallback bundle.
+     * Provides a resource bundle for localization.
+     * The default implementation looks up a bundle using the
+     * package name plus "l10n" as base name. Note that the bundle 
+     * returned for a given locale may be the fallback bundle.
+     * 
+     * @return the resource bundle
+     */
+    protected ResourceBundle resourceBundle(Locale locale) {
+        return ResourceBundle.getBundle(
+            getClass().getPackage().getName() + ".l10n", locale,
+            getClass().getClassLoader(),
+            ResourceBundle.Control.getNoFallbackControl(
+                ResourceBundle.Control.FORMAT_DEFAULT));
+    }
+
+    /**
+     * Returns bundles for the given locales. 
+     * 
+     * The default implementation uses {@link #resourceBundle(Locale)} 
+     * to lookup the bundles. The method is guaranteed to return a 
+     * bundle for each requested locale even if it is only the fallback 
+     * bundle. The evaluated results are cached for the conlet class.
      *
      * @param toGet the locales to get bundles for
      * @return the map with locales and bundles
@@ -421,21 +444,25 @@ public abstract class AbstractConlet<S extends Serializable>
     protected Map<Locale, ResourceBundle> l10nBundles(Set<Locale> toGet) {
         Map<Locale, ResourceBundle> result = new HashMap<>();
         for (Locale locale : toGet) {
-            ResourceBundle bundle = l10nBundles.get(locale);
-            if (bundle == null) {
-                bundle = ResourceBundle.getBundle(
-                    getClass().getPackage().getName() + ".l10n", locale,
-                    getClass().getClassLoader(),
-                    ResourceBundle.Control.getNoFallbackControl(
-                        ResourceBundle.Control.FORMAT_DEFAULT));
-                l10nBundles.put(locale, bundle);
-            }
+            ResourceBundle bundle = l10nBundles
+                .computeIfAbsent(getClass(), cls -> new HashMap<>())
+                .computeIfAbsent(locale, l -> resourceBundle(locale));
             result.put(locale, bundle);
         }
         return Collections.unmodifiableMap(result);
     }
 
-    protected Map<Locale, String> displayNames(Set<Locale> locales,
+    /**
+     * Provides localizations for the given key for all requested locales.
+     * 
+     * The default implementation uses {@link #l10nBundles(Set)} to obtain
+     * the localizations.
+     *
+     * @param locales the requested locales
+     * @param key the key
+     * @return the result
+     */
+    protected Map<Locale, String> localizations(Set<Locale> locales,
             String key) {
         Map<Locale, String> result = new HashMap<>();
         Map<Locale, ResourceBundle> bundles = l10nBundles(locales);
@@ -446,18 +473,29 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
-     * Provides a resource bundle for localization.
-     * The default implementation looks up a bundle using the
-     * package name plus "l10n" as base name.
+     * Returns the supported locales and the associated bundles.
      * 
-     * @return the resource bundle
+     * The default implementation invokes {@link #resourceBundle(Locale)}
+     * with all available locales and drops results with fallback bundles.
+     * The evaluated results are cached for the conlet class.
+     *
+     * @return the result
      */
-    protected ResourceBundle resourceBundle(Locale locale) {
-        return ResourceBundle.getBundle(
-            getClass().getPackage().getName() + ".l10n", locale,
-            getClass().getClassLoader(),
-            ResourceBundle.Control.getNoFallbackControl(
-                ResourceBundle.Control.FORMAT_DEFAULT));
+    protected Map<Locale, ResourceBundle> supportedLocales() {
+        return supportedLocales.computeIfAbsent(getClass(), cls -> {
+            ResourceBundle.clearCache(cls.getClassLoader());
+            Map<Locale, ResourceBundle> bundles = new HashMap<>();
+            for (Locale locale : Locale.getAvailableLocales()) {
+                if (locale.getLanguage().equals("")) {
+                    continue;
+                }
+                ResourceBundle bundle = resourceBundle(locale);
+                if (bundle.getLocale().equals(locale)) {
+                    bundles.put(locale, bundle);
+                }
+            }
+            return bundles;
+        });
     }
 
     /**

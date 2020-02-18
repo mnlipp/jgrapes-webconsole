@@ -171,19 +171,30 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
             sel -> sel.get()[0]).orElse(Locale.getDefault());
         model.put("locale", locale);
 
-        // Add supported locales
-        final Collator coll = Collator.getInstance(locale);
-        final Comparator<LanguageInfo> comp
-            = new Comparator<LanguageInfo>() {
-                @Override
-                public int compare(LanguageInfo o1, LanguageInfo o2) { // NOPMD
-                    return coll.compare(o1.getLabel(), o2.getLabel());
+        // Add supported languages
+        model.put("supportedLanguages", new TemplateMethodModelEx() {
+            Object cachedResult;
+
+            @Override
+            public Object exec(@SuppressWarnings("rawtypes") List arguments)
+                    throws TemplateModelException {
+                if (cachedResult != null) {
+                    return cachedResult;
                 }
-            };
-        LanguageInfo[] languages = supportedLocales().entrySet().stream()
-            .map(entry -> new LanguageInfo(entry.getKey(), entry.getValue()))
-            .sorted(comp).toArray(size -> new LanguageInfo[size]);
-        model.put("supportedLanguages", languages);
+                final Collator coll = Collator.getInstance(locale);
+                final Comparator<LanguageInfo> comp
+                    = new Comparator<LanguageInfo>() {
+                        @Override
+                        public int compare(LanguageInfo o1, LanguageInfo o2) { // NOPMD
+                            return coll.compare(o1.getLabel(), o2.getLabel());
+                        }
+                    };
+                return cachedResult = supportedLocales().entrySet().stream()
+                    .map(entry -> new LanguageInfo(entry.getKey(),
+                        entry.getValue()))
+                    .sorted(comp).toArray(size -> new LanguageInfo[size]);
+            }
+        });
 
         final ResourceBundle baseResources = consoleResourceBundle(locale);
         model.put("_", new TemplateMethodModelEx() {

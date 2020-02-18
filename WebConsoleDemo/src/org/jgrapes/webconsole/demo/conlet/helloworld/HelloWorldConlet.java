@@ -90,7 +90,7 @@ public class HelloWorldConlet
         // Add HelloWorldConlet resources to page
         consoleSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(consoleSession.supportedLocales(), "conletName"))
+                localizations(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().conletResource(type(),
                     "HelloWorld-functions.js")))

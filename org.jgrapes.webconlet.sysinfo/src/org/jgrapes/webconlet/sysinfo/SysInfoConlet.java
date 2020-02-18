@@ -94,7 +94,7 @@ public class SysInfoConlet
         // Add SysInfoConlet resources to page
         consoleSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(consoleSession.supportedLocales(), "conletName"))
+                localizations(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires("chart.js")
                 .setScriptUri(event.renderSupport().conletResource(

@@ -41,6 +41,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
+import org.jgrapes.webconsole.base.events.SetLocale;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
 /**
@@ -72,12 +73,12 @@ public class StyleTestConlet
         // Add HelloWorldConlet resources to page
         consoleSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(consoleSession.supportedLocales(), "conletName"))
+                localizations(consoleSession.supportedLocales(), "conletName"))
             .addRenderMode(RenderMode.View)
             .addScript(new ScriptResource()
                 .setScriptType("module").setScriptUri(
                     event.renderSupport().conletResource(type(),
-                        "StyleTest-functions.js")))
+                        "StyleTest-functions.ftl.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "StyleTest-style.css")));
     }
@@ -132,6 +133,12 @@ public class StyleTestConlet
             renderedAs.add(RenderMode.View);
         }
         return renderedAs;
+    }
+
+    @Override
+    protected boolean doSetLocale(SetLocale event, ConsoleSession channel,
+            String conletId) throws Exception {
+        return true;
     }
 
 }

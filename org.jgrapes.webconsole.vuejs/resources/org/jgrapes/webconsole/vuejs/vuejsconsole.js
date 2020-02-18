@@ -47,7 +47,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         
         // Prepare console i18n
         this._l10nMessages = l10nMessages;
-        window.consoleL10n = function(key) { return _this.translate(key) };
+        window.consoleL10n = function(key) { return _this.localize(key) };
         
         // Prepare Vuex Store
         let initialLang = document.querySelector("html")
@@ -107,21 +107,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         return document.querySelector("#consoleTabs").__vue__;
     }
 
-    translate(key) {
-        let lang = this._vuexStore.state.lang;
-        while (true) {
-            let langMsgs = this._l10nMessages[lang];
-            if (langMsgs) {
-                let result = langMsgs[key];
-                if (result) {
-                    return result;
-                }
-            }
-            if (lang === 'en') {
-                return key
-            }
-            lang = 'en';
-        }
+    localize(key) {
+        return JGConsole.localize(this._l10nMessages, 
+            this._vuexStore.state.lang, key);
     }
     
     _layoutChanged() {
@@ -177,11 +165,11 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         let _this = this;
         let dialog = new (Vue.component('jgwc-modal-dialog'))({
             propsData: {
-                title: _this.translate("Console Session Suspended"),
+                title: _this.localize("Console Session Suspended"),
                 showCancel: false,
-                content: _this.translate("consoleSessionSuspendedMessage"),
+                content: _this.localize("consoleSessionSuspendedMessage"),
                 contentClasses: [],
-                closeLabel: _this.translate("Resume"),
+                closeLabel: _this.localize("Resume"),
                 onClose: function(applyChanges) {
                     this.$destroy();
                     this.$el.remove();
@@ -198,7 +186,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         if (this._connectionLostNotification != null) {
             this._connectionLostNotification.close();
         }
-        this.notification(this.translate("serverConnectionRestoredMessage"), {
+        this.notification(this.localize("serverConnectionRestoredMessage"), {
             type: "success",
             autoClose: 2000,
         });
@@ -209,7 +197,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         if (this._connectionLostNotification == null) {
             this._connectionLostNotification =
                 this.notification(
-                    _this.translate("serverConnectionLostMessage"), {
+                    _this.localize("serverConnectionLostMessage"), {
                     error: true,
                     closeable: false,
                 });

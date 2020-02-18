@@ -120,7 +120,7 @@ public class MarkdownDisplayConlet
         // Add MarkdownDisplayConlet resources to page
         consoleSession.respond(new AddConletType(type())
             .setDisplayNames(
-                displayNames(consoleSession.supportedLocales(), "conletName"))
+                localizations(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires(new String[] { "markdown-it.github.io",
                     "github.com/markdown-it/markdown-it-abbr",

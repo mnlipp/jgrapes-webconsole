@@ -20,13 +20,22 @@
 import Vue from "../../page-resource/vue/vue.esm.browser.js"
 import { jgwcIdScopeMixin } from "../../page-resource/jgwc-vue-components/jgwc-components.js";
 
+const l10nBundles = {
+    // <#list supportedLanguages() as l>
+    '${l.locale.toLanguageTag()}': {
+        // <#list l.l10nBundle.keys as key>
+        '${key}': '${l.l10nBundle.getString(key)}',
+        // </#list>
+    },
+    // </#list>    
+};
+
 window.orgJGrapesOsgiConletStyleTest = {};
 
 window.orgJGrapesOsgiConletStyleTest.initView = function(content) {
-    let cont = $(content).find(".jgrapes-osgi-style-test-table-with-disclosures");
     new Vue({
         mixins: [jgwcIdScopeMixin],
-        el: $(cont)[0],
+        el: $(content)[0],
         data: {
             conletId: $(content).closest("[data-conlet-id]").data("conlet-id"),
             controller: new JGConsole.TableController([
@@ -49,5 +58,11 @@ window.orgJGrapesOsgiConletStyleTest.initView = function(content) {
                 return this.controller.filter(infos);
             }
         },
+        methods: {
+            localize: function(key) {
+                return JGConsole.localize(
+                    l10nBundles, this.jgwc.observed.lang, key);
+            }
+        }
     }).JGConsole = window.JGConsole;
 }

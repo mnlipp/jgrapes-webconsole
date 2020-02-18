@@ -87,13 +87,13 @@ Vue.use(Vuex);
 Vue.prototype.$window = window;
 
 const localeMenuitems = [
-  // <#list supportedLanguages as l>
+  // <#list supportedLanguages() as l>
   ['${l.label}', '${l.locale.toLanguageTag()}'],
   // </#list>
 ];
 
 const consoleMessages = {
-    // <#list supportedLanguages as l>
+    // <#list supportedLanguages() as l>
     '${l.locale.toLanguageTag()}': {
         // <#list l.l10nBundle.keys as key>
         '${key}': '${l.l10nBundle.getString(key)}',

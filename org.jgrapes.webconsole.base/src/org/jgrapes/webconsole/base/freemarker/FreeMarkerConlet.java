@@ -57,6 +57,7 @@ import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
+import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet.LanguageInfo;
 
 /**
  * 
@@ -161,6 +162,10 @@ public abstract class FreeMarkerConlet<S extends Serializable>
      *  * The `resourceBundle` (of type {@link ResourceBundle}).
      *  * A function `_` that looks up the given key in the web console 
      *    component's resource bundle.
+     *  * A function `supportedLanguages` that returns a {@link Map}
+     *    with language identifiers as keys and {@link LanguageInfo}
+     *    instances as values (derived from 
+     *    {@link AbstractConlet#supportedLocales()}).
      *    
      * @param session the session
      * @return the model
@@ -188,6 +193,22 @@ public abstract class FreeMarkerConlet<S extends Serializable>
                     // no luck
                 }
                 return key;
+            }
+        });
+        // Add supported languages
+        model.put("supportedLanguages", new TemplateMethodModelEx() {
+            Object cachedResult;
+
+            @Override
+            public Object exec(@SuppressWarnings("rawtypes") List arguments)
+                    throws TemplateModelException {
+                if (cachedResult == null) {
+                    cachedResult = supportedLocales().entrySet().stream().map(
+                        entry -> new LanguageInfo(entry.getKey(),
+                            entry.getValue()))
+                        .toArray(size -> new LanguageInfo[size]);
+                }
+                return cachedResult;
             }
         });
         return model;
