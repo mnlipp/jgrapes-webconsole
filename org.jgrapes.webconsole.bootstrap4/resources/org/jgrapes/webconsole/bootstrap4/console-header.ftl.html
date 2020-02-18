@@ -30,7 +30,7 @@
           <div class="dropdown-menu dropdown-menu-right"
             id="consoleNavbarLanguageList"
             aria-labelledby="navbarLanguageDropdown">
-              <#list supportedLanguages as l>
+              <#list supportedLanguages() as l>
                 <button class="dropdown-item" type="button" 
                   data-locale="${l.locale.toLanguageTag()}">${l.label}</button>
               </#list>
