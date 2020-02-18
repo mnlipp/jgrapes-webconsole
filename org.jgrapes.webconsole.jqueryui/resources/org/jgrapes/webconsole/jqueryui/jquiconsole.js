@@ -318,7 +318,13 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
     }
 
     notification(content, options) {
-        $(content).notification(options);
+        // Handle "pure" text.
+        let html = $("<div></div>");
+        html.html(content);
+        if (html.children().length > 0) {
+            html = html.children();
+        }
+        $(html).notification(options);
     }
 
     _layoutChanged() {
