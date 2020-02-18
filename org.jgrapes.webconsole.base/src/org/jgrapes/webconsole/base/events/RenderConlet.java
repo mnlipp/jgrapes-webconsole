@@ -100,7 +100,7 @@ public abstract class RenderConlet extends ConsoleCommand {
     /**
      * Set the render mode (including modifier).
      * 
-     * @param renderMode the render mode to set
+     * @param renderAs the render mode to use
      * @return the event for easy chaining
      */
     public RenderConlet setRenderAs(Set<RenderMode> renderAs) {
