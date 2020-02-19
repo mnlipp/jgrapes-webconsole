@@ -144,8 +144,8 @@ public class SysInfoConlet
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
-                SysInfoConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, consoleSession, conletModel))
+                type(), conletModel.getConletId(), tpl,
+                fmModel(event, consoleSession, conletModel))
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
@@ -156,8 +156,8 @@ public class SysInfoConlet
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
-                SysInfoConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, consoleSession, conletModel))
+                type(), conletModel.getConletId(), tpl,
+                fmModel(event, consoleSession, conletModel))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);

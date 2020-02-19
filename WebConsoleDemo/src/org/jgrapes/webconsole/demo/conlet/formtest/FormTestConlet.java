@@ -124,8 +124,8 @@ public class FormTestConlet
             Template tpl
                 = freemarkerConfig().getTemplate("FormTest-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                FormTestConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, channel, conletModel))
+                type(), conletModel.getConletId(), tpl,
+                fmModel(event, channel, conletModel))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.View);

@@ -1,4 +1,4 @@
-<div class="HelloWorld-view" data-conlet-title="${_("conletName")}">
+<div class="HelloWorld-view">
     <div style="font-size: 400%">${_("HelloWorld")} 
         <img class="helloWorldIcon" style='vertical-align: bottom;' height='100'
             src="${conletResource('Icojam-Blue-Bits-Globe.ico')}">

@@ -38,6 +38,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         this._lastTabsLayout = [];
         this._lastXtraInfo = {};
         this._tabCounter = 1;
+        this._conletDisplayNames = {};
     }
 
     init() {
@@ -129,10 +130,11 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
     }
 
     addConletType(conletType, displayNames, renderModes) {
+        this._conletDisplayNames[conletType] = displayNames;
         // Add to menu
         let _this = this;
         let lang = document.querySelector("html").getAttribute('lang');
-        let displayName = displayNames[lang];
+        let displayName = JGConsole.forLang(displayNames, lang);
         let item = $('<a class="dropdown-item" href="#" data-conlet-type="'
             + conletType + '">' + displayName + '</a>');
         item.data("render-modes", renderModes)
@@ -292,7 +294,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
                 + ' id="' + id + '-tab" data-toggle="tab"'
                 + ' href="#' + id + '-pane"'
                 + ' alt="' + B4UIConsole.l10n.close + '"'
-                + '>' + newContent.attr("data-conlet-title")
+                + '>' + this._evaluateTitle(container)
                 + '<span class="fa fa-times ml-2 text-primary conlet-tab-close"></span>'
                 + '</a>'
                 + '</li>');
@@ -312,6 +314,16 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         if (foreground) {
             this._activateConletView(container);
         }
+    }
+
+    _evaluateTitle(container) {
+        let title = container.find(":first-child").attr("data-conlet-title");
+        if (!title) {
+            let conletType = container.attr("data-conlet-type");
+            let lang = document.querySelector("html").getAttribute('lang');
+            title = JGConsole.forLang(this._conletDisplayNames[conletType], lang);
+        }
+        return title;
     }
 
     _styleSemantics(content) {

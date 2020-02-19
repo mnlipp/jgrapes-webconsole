@@ -221,8 +221,8 @@ Vue.component('jgwc-tablist', {
         }
     },
     _label: function(panel) {
-        if (panel.l10n) {
-            return panel.l10n(panel.label);
+        if (typeof panel.label === 'function') {
+            return panel.label();
         }
         if (this.l10n) {
             return this.l10n(panel.label);

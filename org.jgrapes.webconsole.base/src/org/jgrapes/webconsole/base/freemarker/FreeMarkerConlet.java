@@ -334,9 +334,9 @@ public abstract class FreeMarkerConlet<S extends Serializable>
          * @param dataModel the data model
          */
         public RenderConletFromTemplate(RenderConletRequestBase<?> request,
-                Class<?> conletClass, String conletId, Template template,
+                String conletType, String conletId, Template template,
                 Object dataModel) {
-            super(conletClass, conletId);
+            super(conletType, conletId);
             // Start to prepare the content immediately and concurrently.
             content
                 = request.processedBy().map(procBy -> procBy.executorService())

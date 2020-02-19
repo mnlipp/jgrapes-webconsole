@@ -240,7 +240,7 @@ public class MarkdownDisplayConlet
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
-                MarkdownDisplayConlet.class, model.getConletId(),
+                type(), model.getConletId(),
                 tpl, fmModel(event, consoleSession, model))
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
@@ -252,7 +252,7 @@ public class MarkdownDisplayConlet
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-view.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
-                MarkdownDisplayConlet.class, model.getConletId(),
+                type(), model.getConletId(),
                 tpl, fmModel(event, consoleSession, model))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(supported));
@@ -263,7 +263,7 @@ public class MarkdownDisplayConlet
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
-                MarkdownDisplayConlet.class, model.getConletId(),
+                type(), model.getConletId(),
                 tpl, fmModel(event, consoleSession, model))
                     .setRenderAs(RenderMode.Edit.addModifiers(event.renderAs()))
                     .setSupportedModes(supported));

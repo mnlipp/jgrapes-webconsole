@@ -150,8 +150,8 @@ public class HelloWorldConlet
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
             channel.respond(new RenderConletFromTemplate(event,
-                HelloWorldConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, channel, conletModel))
+                type(), conletModel.getConletId(), tpl,
+                fmModel(event, channel, conletModel))
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
@@ -161,8 +161,8 @@ public class HelloWorldConlet
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
             channel.respond(new RenderConletFromTemplate(event,
-                HelloWorldConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, channel, conletModel))
+                type(), conletModel.getConletId(), tpl,
+                fmModel(event, channel, conletModel))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             channel.respond(new NotifyConletView(type(),

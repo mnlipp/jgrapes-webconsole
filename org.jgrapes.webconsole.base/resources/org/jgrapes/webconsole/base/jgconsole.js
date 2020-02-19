@@ -657,7 +657,8 @@ class Renderer {
      * @param {HTMLElement} container the container for the preview,
      * provided as:
      * ```
-     * <section class='conlet conlet-preview' data-conlet-id='...' 
+     * <section class='conlet conlet-preview' 
+     *      data-conlet-type='...' data-conlet-id='...' 
      *      data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>
      * ```
      * @param {string[]} modes the supported conlet modes
@@ -677,7 +678,7 @@ class Renderer {
      * provided as:
      * ```
      * <article class="conlet conlet-view conlet-content 
-     *          data-conlet-id='...'"></article>"
+     *      data-conlet-type='...' data-conlet-id='...'"></article>"
      * ```
      * @param {string[]} modes the supported conlet modes
      * @param {string} content the view content
@@ -956,16 +957,17 @@ class Console {
                 _this._renderer.consoleConfigured();
             });
         this._webSocket.addMessageHandler('updateConlet',
-            function(conletId, renderAs, supported, content) {
+            function(conletType, conletId, renderAs, supported, content) {
                 if (renderAs.includes(RenderMode.Preview)) {
-                    _this._updatePreview(conletId, supported, content, 
+                    _this._updatePreview(conletType, conletId, supported, content, 
                     renderAs.includes(RenderMode.StickyPreview),
                     renderAs.includes(RenderMode.Foreground));
                 } else if (renderAs.includes(RenderMode.View)) {
-                    _this._updateView(conletId, supported, content,
+                    _this._updateView(conletType, conletId, supported, content,
                     renderAs.includes(RenderMode.Foreground));
                 } else if (renderAs.includes(RenderMode.Edit)) {
                     let container = _this._editTemplate.clone();
+                    container.attr("data-conlet-type", conletType);
                     container.attr("data-conlet-id", conletId);
                     _this._renderer.showEditDialog(container[0], supported, content);
                     if (!container[0].parentNode) {
@@ -1103,11 +1105,12 @@ class Console {
 
     // Conlet management
 
-    _updatePreview(conletId, modes, content, sticky, foreground) {
+    _updatePreview(conletType, conletId, modes, content, sticky, foreground) {
         let container = this._renderer.findConletPreview(conletId);
         let isNew = !container;
         if (isNew) {
             container = this._previewTemplate.clone();
+            container.attr("data-conlet-type", conletType);
             container.attr("data-conlet-id", conletId);
         } else {
             container = $(container);
@@ -1123,11 +1126,12 @@ class Console {
         this._execOnLoad(container, !isNew);
     };
 
-    _updateView(conletId, modes, content, foreground) {
+    _updateView(conletType, conletId, modes, content, foreground) {
         let container = this._renderer.findConletView(conletId);
         let isNew = !container;
         if (isNew) {
             container = this._viewTemplate.clone();
+            container.attr("data-conlet-type", conletType);
             container.attr("data-conlet-id", conletId);
         } else {
             container = $(container);

@@ -30,10 +30,15 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 /**
  * A base class for web console rendering. Sent to the web console page for 
  * adding or updating a complete web console component representation. 
- * This class maintains all required information except the actual content
+ * This class contains all required information except the actual content
  * (the HTML) which must be provided by the derived classes.
  * 
- * The HTML provided is searched for attributes `data-jgwc-on-load`
+ * The content must be valid HTML, usable as inner HTML of a block level
+ * element (typically a `div`). If the root element has an attribute
+ * `data-conlet-title`, its value overrides the default title (the display
+ * name of the conlet type, see {@link AddConletType#displayNames()}).
+ * 
+ * The content provided is searched for attributes `data-jgwc-on-load`
  * and `data-jgwc-on-unload` which must have as value the name of a 
  * function. When the HTML has been loaded or unloaded (i.e. added to
  * the DOM or removed from the DOM), the respective functions are 
@@ -52,29 +57,29 @@ public abstract class RenderConlet extends ConsoleCommand {
     private static final Set<RenderMode> DEFAULT_SUPPORTED
         = Collections.unmodifiableSet(RenderMode.asSet(RenderMode.Preview));
 
-    private final Class<?> conletClass;
+    private final String conletType;
     private final String conletId;
     private Set<RenderMode> renderAs = RenderMode.asSet(RenderMode.Preview);
     private Set<RenderMode> supportedModes = DEFAULT_SUPPORTED;
 
     /**
      * Creates a new event.
-     * 
-     * @param conletClass the web console component class
+     *
+     * @param conletType the conlet type
      * @param conletId the id of the web console component
      */
-    public RenderConlet(Class<?> conletClass, String conletId) {
-        this.conletClass = conletClass;
+    public RenderConlet(String conletType, String conletId) {
+        this.conletType = conletType;
         this.conletId = conletId;
     }
 
     /**
-     * Returns the web console component class as specified on creation.
+     * Returns the web console component type as specified on creation.
      *
-     * @return the class
+     * @return the type
      */
-    public Class<?> conletClass() {
-        return conletClass;
+    public String conletType() {
+        return conletType;
     }
 
     /**
@@ -171,7 +176,7 @@ public abstract class RenderConlet extends ConsoleCommand {
     public void toJson(Writer writer)
             throws InterruptedException, IOException {
         try {
-            toJson(writer, "updateConlet", conletId(),
+            toJson(writer, "updateConlet", conletType(), conletId(),
                 renderAs().stream().map(RenderMode::name)
                     .toArray(size -> new String[size]),
                 supportedRenderModes().stream().map(RenderMode::name)

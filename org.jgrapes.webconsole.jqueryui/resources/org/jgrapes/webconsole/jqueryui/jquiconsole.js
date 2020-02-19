@@ -39,6 +39,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         this._tabTemplate = "<li><a href='@{href}'>@{label}</a> " +
             "<span class='ui-icon ui-icon-close' role='presentation'>Remove Tab</span></li>";
         this._tabCounter = 1;
+        this._conletDisplayNames = {};
     }
 
     init() {
@@ -139,6 +140,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
     }
 
     addConletType(conletType, displayNames, renderModes) {
+        this._conletDisplayNames[conletType] = displayNames;
         // Add to menu
         let lang = document.querySelector("html").getAttribute('lang');
         let displayName = JGConsole.forLang(displayNames, lang);
@@ -287,7 +289,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
             this._tabCounter += 1;
             let id = "conlet-tabs-" + this._tabCounter;
             let li = $(this._tabTemplate.replace(/@\{href\}/g, "#" + id)
-                .replace(/@\{label\}/g, newContent.attr("data-conlet-title")));
+                .replace(/@\{label\}/g, this._evaluateTitle(container)));
             let tabItems = tabs.find(".ui-tabs-nav");
             tabItems.append(li);
             container.attr("id", id);
@@ -299,6 +301,16 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         if (foreground) {
             this._activateConletView(container);
         }
+    }
+
+    _evaluateTitle(container) {
+        let title = container.find(":first-child").attr("data-conlet-title");
+        if (!title) {
+            let conletType = container.attr("data-conlet-type");
+            let lang = document.querySelector("html").getAttribute('lang');
+            title = JGConsole.forLang(this._conletDisplayNames[conletType], lang);
+        }
+        return title;
     }
 
     removeConletDisplays(containers) {

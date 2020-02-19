@@ -126,8 +126,8 @@ public class StyleTestConlet
             Template tpl
                 = freemarkerConfig().getTemplate("StyleTest-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                StyleTestConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, channel, conletModel))
+                type(), conletModel.getConletId(), tpl,
+                fmModel(event, channel, conletModel))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.View);

@@ -116,8 +116,8 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-preview.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                TableDemoConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, channel, conletModel))
+                type(), conletModel.getConletId(), tpl,
+                fmModel(event, channel, conletModel))
                     .setRenderAs(event.renderAs())
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);
@@ -126,8 +126,8 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                TableDemoConlet.class, conletModel.getConletId(),
-                tpl, fmModel(event, channel, conletModel))
+                type(), conletModel.getConletId(), tpl,
+                fmModel(event, channel, conletModel))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.View);

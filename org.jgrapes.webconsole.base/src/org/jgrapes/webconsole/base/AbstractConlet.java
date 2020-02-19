@@ -1123,7 +1123,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * Send to the web console page for adding or updating a complete web 
      * console component representation.
      */
-    public class RenderConletFromReader extends RenderConlet {
+    public static class RenderConletFromReader extends RenderConlet {
 
         private final Future<String> content;
 
@@ -1131,13 +1131,13 @@ public abstract class AbstractConlet<S extends Serializable>
          * Creates a new event.
          *
          * @param request the request
-         * @param conletClass the web console component class
+         * @param conletType the conlet type
          * @param conletId the id of the web console component
          * @param contentReader the content reader
          */
         public RenderConletFromReader(RenderConletRequestBase<?> request,
-                Class<?> conletClass, String conletId, Reader contentReader) {
-            super(conletClass, conletId);
+                String conletType, String conletId, Reader contentReader) {
+            super(conletType, conletId);
             // Start to prepare the content immediately and concurrently.
             content = request.processedBy().map(pby -> pby.executorService())
                 .orElse(Components.defaultExecutorService()).submit(() -> {

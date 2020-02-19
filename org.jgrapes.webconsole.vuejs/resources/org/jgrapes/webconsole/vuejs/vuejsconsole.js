@@ -282,15 +282,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         let newContent = $(content);
         let conletId = container.attr("data-conlet-id");
         let panelId = "conlet-panel-" + conletId;
-        if (!isNew) {
-            container.children().detach();
-            container.append(newContent);
-            for (let panel of this._consoleTabs().panels) {
-                if (panel.id === panelId) {
-                    panel.label = newContent.attr("data-conlet-title");
-                }
-            }
-        } else {
+        if (isNew) {
             container.attr("id", panelId);
             container.attr("hidden", "");
             container.append(newContent);
@@ -300,17 +292,39 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             // Add to tab list
             this._consoleTabs().addPanel({
                 id: panelId, 
-                label: newContent.attr("data-conlet-title"), 
+                label: _this._evaluateTitle(container), 
                 l10n: window.consoleL10n,
                 removeCallback: function() { _this.console().removeView(conletId); }
             });
             this._layoutChanged();
+        } else {
+            container.children().detach();
+            container.append(newContent);
+            for (let panel of this._consoleTabs().panels) {
+                if (panel.id === panelId) {
+                    panel.label = _this._evaluateTitle(container);
+                }
+            }
         }
         if (foreground) {
             this._consoleTabs().selectPanel(panelId);
         }
     }
 
+    _evaluateTitle(container) {
+        let title = container.find(":first-child").attr("data-conlet-title");
+        if (!title) {
+            let conletType = container.attr("data-conlet-type");
+            for (let item of this._vuexStore.state.conletTypes) {
+                if (item[1] === conletType) {
+                    title = item[0];
+                    break;
+                }
+            }
+        }
+        return title;
+    }
+    
     _setModeIcons(conlet, modes) {
         let _this = this;
         let conletHeader = conlet.children("header");
