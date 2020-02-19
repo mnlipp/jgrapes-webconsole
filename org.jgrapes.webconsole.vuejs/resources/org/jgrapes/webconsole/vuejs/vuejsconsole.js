@@ -83,7 +83,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         // Init tabs
         this._consoleTabs().addPanel({  
             id: "consoleOverviewPanel",
-            label: "Overview", 
+            label: function() { return _this.localize("Overview") }, 
             l10n: window.consoleL10n });
 
         // Grid
@@ -220,7 +220,6 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         if (isNew) {
             container.append('<header class="ui-draggable-handle"></header>'
                 + '<section class="conlet-content"></section>');
-            this._setModeIcons(container, modes);
 
             // Get grid info
             let conletId = container.attr("data-conlet-id");
@@ -258,13 +257,61 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
 
             // Finally add to grid
             this._previewGrid.addWidget(gridItem, options);
-
             this._layoutChanged();
+            
+            new Vue({
+                el: $(container).children("header")[0],
+                data: {
+                    conletId: conletId,
+                    title: "",
+                    modes: [],
+                },
+                computed: {
+                    evalTitle: function() {
+                        if (typeof this.title === 'function') {
+                            return this.title();
+                        }
+                        return this.title;
+                    },
+                    isEditable: function() {
+                        return modes.includes(RenderMode.Edit);
+                    },
+                    isRemovable: function() {
+                        return !this.modes.includes(RenderMode.StickyPreview);
+                    },
+                    hasView: function() {
+                        return this.modes.includes(RenderMode.View);
+                    },
+                },
+                methods: {
+                    edit: function() {
+                        _this.console().renderConlet(
+                            conletId, [RenderMode.Edit, RenderMode.Foreground]);
+                    },
+                    removePreview: function() {
+                        _this.console().removePreview(conletId)
+                    },
+                    showView: function() {
+                        _this.console().renderConlet(
+                            conletId, ["View", "Foreground"]);
+                    },
+                },
+                template: `
+                  <header class="ui-draggable-handle">
+                    <p>{{ evalTitle }}</p>
+                    <button v-if="isEditable"
+                      type='button' class='fa fa-wrench' @click="edit()"
+                    ></button><button v-if="isRemovable" 
+                      type="button" class="fa fa-times" @click="removePreview()"
+                    ></button><button v-if="hasView"
+                      type="button" class="fa fa-expand" @click="showView()"
+                    ></button>
+                  </header>`
+            });
         }
-        let conletHeader = container.children("header");
-        conletHeader.find("p").remove();
-        conletHeader.prepend("<p>"
-            + newContent.attr("data-conlet-title") + "</p>");
+        let vm = container.children("header")[0].__vue__;
+        vm.title = _this._evaluateTitle(container, newContent);
+        vm.modes = modes;
         let previewContent = container.children("section");
         previewContent.empty();
         previewContent.append(newContent);
@@ -292,7 +339,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             // Add to tab list
             this._consoleTabs().addPanel({
                 id: panelId, 
-                label: _this._evaluateTitle(container), 
+                label: _this._evaluateTitle(container, newContent), 
                 l10n: window.consoleL10n,
                 removeCallback: function() { _this.console().removeView(conletId); }
             });
@@ -302,7 +349,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             container.append(newContent);
             for (let panel of this._consoleTabs().panels) {
                 if (panel.id === panelId) {
-                    panel.label = _this._evaluateTitle(container);
+                    panel.label = _this._evaluateTitle(container, newContent);
                 }
             }
         }
@@ -311,8 +358,8 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         }
     }
 
-    _evaluateTitle(container) {
-        let title = container.find(":first-child").attr("data-conlet-title");
+    _evaluateTitle(container, content) {
+        let title = content.attr("data-conlet-title");
         if (!title) {
             let conletType = container.attr("data-conlet-type");
             for (let item of this._vuexStore.state.conletTypes) {
@@ -325,44 +372,13 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         return title;
     }
     
-    _setModeIcons(conlet, modes) {
-        let _this = this;
-        let conletHeader = conlet.children("header");
-        conletHeader.find("button").remove();
-        if (modes.includes(RenderMode.Edit)) {
-            let button = $("<button type='button' class='fa fa-wrench'></button>");
-            button.on("click", function() {
-                let button = $(this);
-                let conletId = button.closest(".conlet").attr("data-conlet-id");
-                _this.console().renderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
-            });
-            conletHeader.append(button);
-        }
-        if (!modes.includes(RenderMode.StickyPreview)) {
-            let button = $("<button type='button' class='fa fa-times'></button>");
-            button.on("click", function() {
-                let button = $(this);
-                let conletId = button.closest(".conlet").attr("data-conlet-id");
-                _this.console().removePreview(conletId);
-            });
-            conletHeader.append(button);
-        }
-        if (modes.includes("View")) {
-            let button = $("<button type='button' class='fa fa-expand'></button>");
-            button.on("click", function() {
-                let button = $(this);
-                let conletId = button.closest(".conlet").attr("data-conlet-id");
-                _this.console().renderConlet(conletId, ["View", "Foreground"]);
-            });
-            conletHeader.append(button);
-        }
-    }
-
     removeConletDisplays(containers) {
         let _this = this;
         containers.forEach(function(container) {
             container = $(container);
             if (container.hasClass('conlet-preview')) {
+                let vm = container.children("header")[0].__vue__;
+                vm.$destroy();
                 let gridItem = container.closest(".grid-stack-item");
                 _this._previewGrid.removeWidget(gridItem);
             }
@@ -407,7 +423,8 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         if (!conlet) {
             return;
         }
-        this._setModeIcons($(conlet), modes);
+        let vm = $(conlet).children("header")[0].__vue__;
+        vm.modes = modes;
     }
 
     showEditDialog(container, modes, content) {
