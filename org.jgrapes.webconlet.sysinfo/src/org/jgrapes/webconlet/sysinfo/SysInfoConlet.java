@@ -149,7 +149,6 @@ public class SysInfoConlet
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
-            updateView(consoleSession, conletModel.getConletId());
             renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.View)) {
@@ -161,6 +160,9 @@ public class SysInfoConlet
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);
+        }
+        if (renderedAs.size() > 0) {
+            updateView(consoleSession, conletModel.getConletId());
         }
         return renderedAs;
     }
