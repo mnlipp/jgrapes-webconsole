@@ -211,7 +211,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         }
         let newContent = $(content);
         let conletHeaderText = container.find(".conlet-header-text");
-        conletHeaderText.text(newContent.attr("data-conlet-title"));
+        conletHeaderText.text(this._evaluateTitle(container, newContent));
         let conletContent = container.find(".conlet-content");
         conletContent.children().detach();
         conletContent.append(newContent);
@@ -289,7 +289,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
             this._tabCounter += 1;
             let id = "conlet-tabs-" + this._tabCounter;
             let li = $(this._tabTemplate.replace(/@\{href\}/g, "#" + id)
-                .replace(/@\{label\}/g, this._evaluateTitle(container)));
+                .replace(/@\{label\}/g, this._evaluateTitle(container, newContent)));
             let tabItems = tabs.find(".ui-tabs-nav");
             tabItems.append(li);
             container.attr("id", id);
@@ -303,8 +303,8 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         }
     }
 
-    _evaluateTitle(container) {
-        let title = container.find(":first-child").attr("data-conlet-title");
+    _evaluateTitle(container, content) {
+        let title = content.attr("data-conlet-title");
         if (!title) {
             let conletType = container.attr("data-conlet-type");
             let lang = document.querySelector("html").getAttribute('lang');

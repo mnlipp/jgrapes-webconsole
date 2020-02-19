@@ -218,7 +218,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         let conletHeader = container.find(".conlet-preview-header");
         conletHeader.find(".conlet-preview-title").remove();
         conletHeader.prepend("<span class='conlet-preview-title flex-fill'>"
-            + newContent.attr("data-conlet-title") + "</span>");
+            + this._evaluateTitle(container, newContent) + "</span>");
         let previewContent = container.find(".conlet-preview-content");
         this._styleSemantics(newContent);
         previewContent.empty();
@@ -294,7 +294,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
                 + ' id="' + id + '-tab" data-toggle="tab"'
                 + ' href="#' + id + '-pane"'
                 + ' alt="' + B4UIConsole.l10n.close + '"'
-                + '>' + this._evaluateTitle(container)
+                + '>' + this._evaluateTitle(container, newContent)
                 + '<span class="fa fa-times ml-2 text-primary conlet-tab-close"></span>'
                 + '</a>'
                 + '</li>');
@@ -316,8 +316,8 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         }
     }
 
-    _evaluateTitle(container) {
-        let title = container.find(":first-child").attr("data-conlet-title");
+    _evaluateTitle(container, content) {
+        let title = content.attr("data-conlet-title");
         if (!title) {
             let conletType = container.attr("data-conlet-type");
             let lang = document.querySelector("html").getAttribute('lang');
