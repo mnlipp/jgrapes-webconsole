@@ -148,7 +148,7 @@ public class HelloWorldConlet
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
-                = freemarkerConfig().getTemplate("HelloWorld-preview.ftlh");
+                = freemarkerConfig().getTemplate("HelloWorld-preview.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
                 type(), conletModel.getConletId(), tpl,
                 fmModel(event, channel, conletModel))
@@ -159,7 +159,7 @@ public class HelloWorldConlet
         }
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
-                = freemarkerConfig().getTemplate("HelloWorld-view.ftlh");
+                = freemarkerConfig().getTemplate("HelloWorld-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
                 type(), conletModel.getConletId(), tpl,
                 fmModel(event, channel, conletModel))
