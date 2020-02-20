@@ -43,14 +43,29 @@ public class GridstackProvider extends PageResourceProvider {
         = Logger.getLogger(GridstackProvider.class.getName());
 
     public enum Configuration {
-        CoreOnly, CoreWithJQueryUI, All
+        CoreOnly, CoreWithJQUiPlugin, All
     }
 
     private Configuration configuration = Configuration.All;
+    private boolean requireTouchPunch;
 
     /**
      * Creates a new component with its channel set to the given 
      * channel.
+     *
+     * Supported properties are:
+     * 
+     *  * *configuration*: the string representation of one of the
+     *    {@link Configuration} values. Determines the gridstack 
+     *    configuration to provide. defaults to "All".
+     *    
+     *  * *requireTouchPunch*: a boolean indicating whether
+     *    "jquery-ui.touch-punch" should be required to ensure that
+     *    it is loaded before gridstack (see {@link AddPageResources}).
+     *    Defaults to `false`. If set to `true`, forces configuration
+     *    `All` to be replaced by `CoreWithJQUiPlugin` because the 
+     *    touch punch provider requires "jquery" and thus the full 
+     *    JQuery library is available anyway.
      *
      * @param componentChannel the channel that the component's
      * handlers listen on by default and that 
@@ -60,13 +75,19 @@ public class GridstackProvider extends PageResourceProvider {
     public GridstackProvider(Channel componentChannel,
             Map<Object, Object> properties) {
         super(componentChannel);
+        requireTouchPunch
+            = (boolean) properties.getOrDefault("requireTouchPunch", false);
         if (properties.containsKey("configuration")) {
             String config = (String) properties.get("configuration");
             try {
                 configuration = Configuration.valueOf(config);
             } catch (IllegalArgumentException e) {
-                LOG.severe("Illegal value for \"configuration\": " + config);
+                LOG.severe(
+                    "Illegal value for \"configuration\": " + config);
             }
+        }
+        if (requireTouchPunch && configuration == Configuration.All) {
+            configuration = Configuration.CoreWithJQUiPlugin;
         }
     }
 
@@ -94,18 +115,23 @@ public class GridstackProvider extends PageResourceProvider {
         case CoreOnly:
             addRequest
                 .addScriptResource(new ScriptResource()
-                    .setRequires("jquery")
+                    .setRequires(requireTouchPunch
+                        ? "jquery-ui.touch-punch"
+                        : "jquery")
                     .setProvides("gridstack")
                     .setScriptUri(event.renderSupport().pageResource(
                         "gridstack/gridstack" + minExt + ".js")));
             break;
-        case CoreWithJQueryUI:
+        case CoreWithJQUiPlugin:
             addRequest.addScriptResource(new ScriptResource()
-                .setRequires("jquery", "jquery-ui")
+                .setRequires(requireTouchPunch
+                    ? "jquery-ui.touch-punch"
+                    : "jquery")
                 .setProvides("gridstack")
                 .setScriptUri(event.renderSupport().pageResource(
                     "gridstack/gridstack" + minExt + ".js")));
             addRequest.addScriptResource(new ScriptResource()
+                .setRequires("gridstack")
                 .setProvides("gridstack.jQueryUI")
                 .setScriptUri(event.renderSupport().pageResource(
                     "gridstack/gridstack.jQueryUI" + minExt + ".js")));
