@@ -18,7 +18,6 @@
 
 package org.jgrapes.webconsole.base;
 
-import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.time.Duration;
@@ -130,13 +129,24 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     private Session browserSession;
     private IOSubchannel upstreamChannel;
 
+    private static class SessionReference
+            extends WeakReference<ConsoleSession> {
+
+        private String id;
+
+        public SessionReference(ConsoleSession referent) {
+            super(referent, unusedSessions);
+            id = referent.consoleSessionId();
+        }
+    }
+
     private static void cleanUnused() {
         while (true) {
-            Reference<? extends ConsoleSession> unused = unusedSessions.poll();
+            SessionReference unused = (SessionReference) unusedSessions.poll();
             if (unused == null) {
                 break;
             }
-            consoleSessions.remove(unused.get().consoleSessionId());
+            consoleSessions.remove(unused.id);
         }
     }
 
@@ -190,9 +200,8 @@ public final class ConsoleSession extends DefaultIOSubchannel {
             Set<Locale> supportedLocales, long timeout) {
         cleanUnused();
         return consoleSessions.computeIfAbsent(consoleSessionId,
-            psi -> new WeakReference<>(new ConsoleSession(
-                console, supportedLocales, consoleSessionId, timeout),
-                unusedSessions))
+            psi -> new SessionReference(new ConsoleSession(
+                console, supportedLocales, consoleSessionId, timeout)))
             .get();
     }
 
@@ -205,8 +214,8 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     /* default */ ConsoleSession replaceId(String newConsoleSessionId) {
         consoleSessions.remove(consoleSessionId);
         consoleSessionId = newConsoleSessionId;
-        consoleSessions.put(consoleSessionId, new WeakReference<>(
-            this, unusedSessions));
+        consoleSessions.put(consoleSessionId, new SessionReference(
+            this));
         connected = true;
         return this;
     }
