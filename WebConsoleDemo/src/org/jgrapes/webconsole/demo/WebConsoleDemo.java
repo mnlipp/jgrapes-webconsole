@@ -178,9 +178,10 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             PageResourceProviderFactory.class, console,
             type -> {
                 switch (type) {
-                case "org.jgrapes.webconsole.providers.gridstack.GridstackProvider":
+                case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
                     return Arrays.asList(
-                        Components.mapOf("configuration", "CoreWithJQueryUI"));
+                        Components.mapOf("configuration", "CoreWithJQueryUI",
+                            "requireTouchPunch", true));
                 default:
                     return Arrays.asList(Collections.emptyMap());
                 }
@@ -208,9 +209,10 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             PageResourceProviderFactory.class, console,
             type -> {
                 switch (type) {
-                case "org.jgrapes.webconsole.providers.gridstack.GridstackProvider":
+                case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
                     return Arrays.asList(
-                        Components.mapOf("configuration", "CoreWithJQueryUI"));
+                        Components.mapOf("requireTouchPunch", true,
+                            "configuration", "CoreWithJQueryUI"));
                 default:
                     return Arrays.asList(Collections.emptyMap());
                 }
