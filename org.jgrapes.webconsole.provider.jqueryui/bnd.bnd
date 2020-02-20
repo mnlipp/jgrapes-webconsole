@@ -9,7 +9,8 @@ Export-Package: org.jgrapes.webconsole.provider.jqueryui
 -includeresource: resources
 
 Require-Capability: \
-    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)", \
+    org.jgrapes.webconsole.page.resource;filter:="(name=jquery)",\
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \

@@ -68,6 +68,7 @@ public class JQueryUi extends PageResourceProvider {
             .useMinifiedResources() ? ".min" : "";
         consoleSession.respond(new AddPageResources()
             .addScriptResource(new ScriptResource()
+                .setRequires("jquery")
                 .setProvides(new String[] { "jquery-ui" })
                 .setScriptUri(event.renderSupport().pageResource(
                     "jquery-ui/jquery-ui" + minExt + ".js"))));
