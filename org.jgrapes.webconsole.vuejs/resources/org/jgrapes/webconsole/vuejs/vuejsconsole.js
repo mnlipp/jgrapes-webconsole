@@ -258,56 +258,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             // Finally add to grid
             this._previewGrid.addWidget(gridItem, options);
             this._layoutChanged();
-            
-            new Vue({
-                el: $(container).children("header")[0],
-                data: {
-                    conletId: conletId,
-                    title: "",
-                    modes: [],
-                },
-                computed: {
-                    evalTitle: function() {
-                        if (typeof this.title === 'function') {
-                            return this.title();
-                        }
-                        return this.title;
-                    },
-                    isEditable: function() {
-                        return modes.includes(RenderMode.Edit);
-                    },
-                    isRemovable: function() {
-                        return !this.modes.includes(RenderMode.StickyPreview);
-                    },
-                    hasView: function() {
-                        return this.modes.includes(RenderMode.View);
-                    },
-                },
-                methods: {
-                    edit: function() {
-                        _this.console().renderConlet(
-                            conletId, [RenderMode.Edit, RenderMode.Foreground]);
-                    },
-                    removePreview: function() {
-                        _this.console().removePreview(conletId)
-                    },
-                    showView: function() {
-                        _this.console().renderConlet(
-                            conletId, ["View", "Foreground"]);
-                    },
-                },
-                template: `
-                  <header class="ui-draggable-handle">
-                    <p>{{ evalTitle }}</p>
-                    <button v-if="isEditable"
-                      type='button' class='fa fa-wrench' @click="edit()"
-                    ></button><button v-if="isRemovable" 
-                      type="button" class="fa fa-times" @click="removePreview()"
-                    ></button><button v-if="hasView"
-                      type="button" class="fa fa-expand" @click="showView()"
-                    ></button>
-                  </header>`
-            });
+
+            // Generate header            
+            this._mountHeader($(container).children("header")[0], conletId);
         }
         let vm = container.children("header")[0].__vue__;
         vm.title = _this._evaluateTitle(container, newContent);
@@ -318,6 +271,59 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         if (foreground) {
             this._consoleTabs().selectPanel("consoleOverviewPanel");
         }
+    }
+
+    _mountHeader(header, conletId) {
+        let _this = this;
+        new Vue({
+            el: header,
+            data: {
+                conletId: conletId,
+                title: "",
+                modes: [],
+            },
+            computed: {
+                evalTitle: function() {
+                    if (typeof this.title === 'function') {
+                        return this.title();
+                    }
+                    return this.title;
+                },
+                isEditable: function() {
+                    return this.modes.includes(RenderMode.Edit);
+                },
+                isRemovable: function() {
+                    return !this.modes.includes(RenderMode.StickyPreview);
+                },
+                hasView: function() {
+                    return this.modes.includes(RenderMode.View);
+                },
+            },
+            methods: {
+                edit: function() {
+                    _this.console().renderConlet(
+                        conletId, [RenderMode.Edit, RenderMode.Foreground]);
+                },
+                removePreview: function() {
+                    _this.console().removePreview(conletId)
+                },
+                showView: function() {
+                    _this.console().renderConlet(
+                        conletId, ["View", "Foreground"]);
+                },
+            },
+            template: `
+              <header class="ui-draggable-handle">
+                <p>{{ evalTitle }}</p>
+                <button v-if="isEditable"
+                  type='button' class='fa fa-wrench' @click="edit()"
+                ></button><button v-if="isRemovable" 
+                  type="button" class="fa fa-times" @click="removePreview()"
+                ></button><button v-if="hasView"
+                  type="button" class="fa fa-expand" @click="showView()"
+                ></button>
+              </header>`
+        });
     }
 
     updateConletView(isNew, container, modes, content, foreground) {
