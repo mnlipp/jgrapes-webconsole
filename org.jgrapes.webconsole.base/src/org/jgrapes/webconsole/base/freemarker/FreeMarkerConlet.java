@@ -328,7 +328,7 @@ public abstract class FreeMarkerConlet<S extends Serializable>
          * Instantiates a new event.
          *
          * @param request the request
-         * @param conletClass the web console component class
+         * @param conletType the conlet type
          * @param conletId the web console component id
          * @param template the template
          * @param dataModel the data model
