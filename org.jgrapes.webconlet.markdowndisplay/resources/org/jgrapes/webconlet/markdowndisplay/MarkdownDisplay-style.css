@@ -36,7 +36,7 @@
 	margin-bottom: 0;
 }
 	
-.jgrapes-conlet-mdp-preview p:nth-child(1) {
+.jgrapes-conlet-mdp-preview > p:nth-child(1) {
     padding-right: 0.5em;
     flex-basis: 50%;
     flex-grow: 1;
@@ -45,28 +45,33 @@
     flex-direction: column;
 }
 
-.jgrapes-conlet-mdp-preview p:nth-child(1) label {
+.jgrapes-conlet-mdp-preview > p:nth-child(1) label {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 }
 
-.jgrapes-conlet-mdp-preview p:nth-child(1) label textarea {
+.jgrapes-conlet-mdp-preview > p:nth-child(1) label textarea {
     height: 100%;
     flex-grow: 1;
 }
 
-.jgrapes-conlet-mdp-preview p:nth-child(2) {
+.jgrapes-conlet-mdp-preview > p:nth-child(2) {
     padding-left: 0.5em;
     flex-basis: 50%;
     flex-grow: 1;
 }
 
-.jgrapes-conlet-mdp-preview .form-group:nth-child(1) 
-    .form-item:last-child {
+.jgrapes-conlet-mdp-preview > .form-group:nth-child(1) 
+    > .form-item:last-child {
 	flex-grow: 1;
 }
 
-.jgrapes-conlet-mdp-view label {
+.jgrapes-conlet-mdp-view > label {
 	width: 100%;
+}
+
+.jgrapes-conlets-markdowndisplay-preview 
+    > .jgrapes-markdownconlet-content > :first-child {
+    margin-top: 0;
 }

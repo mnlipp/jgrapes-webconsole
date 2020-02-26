@@ -259,27 +259,26 @@ body > footer {
     display: inline-block; /* Puts border at "outline". */
     overflow: hidden; /* Properly clips corners. */
     vertical-align: bottom; /* Undoes bottom edge aligning on the text baseline of the parent. */
+    /*
     border-top-left-radius: .25rem;
     border-top-right-radius: .25rem;
     border-left: 1px solid rgb(var(--panel-border));
     border-top: 1px solid rgb(var(--panel-border));
     border-right: 1px solid rgb(var(--panel-border));
     border-bottom: 1px solid rgba(0,0,0,0);
+    */
     padding: 0;
     margin-left: 0.5rem;
     margin-bottom: -1px;
 }
 
-[role=tablist] [role=tab]:hover {
-    background-color: var(--hover-darkening);
-}
-
 [role=tablist] [aria-selected="true"] {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    border-left: 1px solid rgb(var(--panel-border));
+    border-top: 1px solid rgb(var(--panel-border));
+    border-right: 1px solid rgb(var(--panel-border));
     border-bottom: 1px solid rgb(var(--body-background));
-}
-
-[role=tablist] [aria-selected="false"] button {
-    color: rgba(0, 0, 0, 0.6);
 }
 
 [role=tablist] button {
@@ -292,8 +291,21 @@ body > footer {
     background-color: transparent;
 }
 
-[role=tablist] button:hover {
+[role=tablist] [aria-selected="false"] button {
     color: rgb(var(--primary));
+}
+
+[role=tablist] [aria-selected="false"]:hover {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    border-left: 1px solid rgb(var(--panel-border));
+    border-top: 1px solid rgb(var(--panel-border));
+    border-right: 1px solid rgb(var(--panel-border));
+}
+
+[role=tablist] [aria-selected="false"]:hover button {
+    font-size: 110%;
+    padding: calc(.675rem / 1.1) calc(1rem / 1.4);
 }
 
 .jgwc-tablist > span button:first-child:-moz-focusring {
@@ -464,8 +476,7 @@ body > footer {
 
 .conlet-preview > header {
     padding: .75rem 1.25rem;
-    background-color: rgb(var(--panel-background));
-    border-bottom: 1px solid rgb(var(--panel-border));
+    font-size: 137.5%;
     line-height: 1.2;
 }
 
@@ -489,6 +500,7 @@ body > footer {
 
 .conlet-preview > section {
     padding: 1.25rem;
+    padding-top: 0.3125rem;
 }
 
 /* ## Conlet Content UI Styles (markup based) */
