@@ -16,20 +16,20 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-.jgwc-pulldown-menu {
+.jgwc-dropdown-menu {
     display: inline-block;
     position: relative;
 }
 
-.jgwc-pulldown-menu button[aria-expanded=false] + ul {
+.jgwc-dropdown-menu button[aria-expanded=false] + ul {
     display: none;
 }
 
-.jgwc-pulldown-menu button[aria-expanded=true] + ul {
+.jgwc-dropdown-menu button[aria-expanded=true] + ul {
     display: block;
 }
 
-.jgwc-pulldown-menu > ul {
+.jgwc-dropdown-menu > ul {
     list-style: none;
     position: absolute;
     z-index: 1000;

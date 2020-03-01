@@ -97,7 +97,7 @@ Vue.component('jgwc-id-scope', {
 });
 */
 
-Vue.component('jgwc-pulldown-menu', {
+Vue.component('jgwc-dropdown-menu', {
   props: {
     id: String,
     label: String,
@@ -138,7 +138,7 @@ Vue.component('jgwc-pulldown-menu', {
     }    
   },
   template: `
-    <div v-bind:id="id" class="jgwc-pulldown-menu pulldown-menu">
+    <div v-bind:id="id" class="jgwc-dropdown-menu dropdown-menu">
       <button type="button" aria-haspopup="true"
         v-bind:aria-controls="id + '-menu'" 
         v-bind:aria-expanded="expanded ? 'true' : 'false'" 
