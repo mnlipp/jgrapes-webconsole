@@ -1,0 +1,102 @@
+//
+// JGrapes Event Driven Framework
+// Copyright (C) 2019, 2020 Michael N. Lipp
+//
+// This program is free software; you can redistribute it and/or modify it 
+// under the terms of the GNU Affero General Public License as published by 
+// the Free Software Foundation; either version 3 of the License, or 
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but 
+// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License 
+// for more details.
+//
+// You should have received a copy of the GNU Affero General Public License along 
+// with this program; if not, see <http://www.gnu.org/licenses/>.
+//
+
+/* Flush footer to bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+body > footer {
+    display: block;
+}
+
+/* Layout header */
+
+body > header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+body > header > :first-child {
+    flex-grow: 1;
+}
+
+#language-selector > ul {
+    right: 0;
+    left: auto;
+}
+
+#conlet-menu > ul {
+    right: 0;
+    left: auto;
+}
+
+/* 
+ * Conlet preview layout
+ */
+
+.conlet-preview {
+    display: flex;
+    flex-direction: column;
+}
+
+.conlet-preview > header {
+    display: flex;
+}
+
+.conlet-preview > header > p {
+    flex-grow: 1;
+}
+
+.conlet-preview > section {
+    flex: 1 1 auto;
+    /* Scroll conlet content (card body) not conlet */
+    overflow: auto;
+ }
+
+/* Activate close only on selected. */
+#consoleTabs .nav-link:not(.active) span {
+    display: none;
+}
+
+/* Pop-up notifications. */
+#notification-area {
+	width: 90%;
+	position: fixed;
+	top: 0;
+	left: 50%;
+    margin-top: 1rem;
+	margin-left: -45%;
+	margin-right: -45%;
+	z-index: 9999;
+}
+
+[role="alert"] {
+    display: flex;
+}
+
+[role="alert"] p {
+    flex-grow: 1;
+}

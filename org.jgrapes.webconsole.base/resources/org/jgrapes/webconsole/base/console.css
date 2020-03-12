@@ -26,22 +26,6 @@
     white-space: nowrap;
 } 
 
-:not(.table--no-basic-styling) thead th {
-    white-space: nowrap;
-} 
-
-:not(.table--no-basic-styling) thead th.sortable {
-    cursor: pointer;
-}
-
-:not(.table--no-basic-styling) thead th:not(:last-child) {
-    padding-right: 1em;
-} 
-
-:not(.table--no-basic-styling) tbody td:not(:last-child) {
-    padding-right: 1em;
-} 
-
 .table--basic--striped tbody tr.even {
     background-color: rgba(0,0,0,.05);
 }

@@ -138,8 +138,8 @@ Vue.component('jgwc-dropdown-menu', {
     }    
   },
   template: `
-    <div v-bind:id="id" class="jgwc-dropdown-menu dropdown-menu">
-      <button type="button" aria-haspopup="true"
+    <div v-bind:id="id" class="dropdown-menu jgwc-dropdown-menu">
+      <button type="button" aria-haspopup="menu"
         v-bind:aria-controls="id + '-menu'" 
         v-bind:aria-expanded="expanded ? 'true' : 'false'" 
         v-on:click="toggle"><span v-html="label"></span></button>
@@ -403,6 +403,10 @@ Vue.component('jgwc-disclosure-button', {
         type: String,
         required: true,
     },
+    type: {
+        type: String,
+        default: "button",
+    },
     onShow: {
         type: Function,
         default: null,
@@ -439,10 +443,13 @@ Vue.component('jgwc-disclosure-button', {
     }
   },
   template: `
-    <button type="button" data-jgwc-role="disclosure-button"
+    <component :is="type"
+      v-bind="type === 'button' ? { type: 'button'}
+        : { 'aria-role': 'button', tabindex: '0' }" 
+      data-jgwc-role="disclosure-button"
       :aria-expanded="disclosed ? 'true' : 'false'"
       :aria-controls="idRef"
-      @click="toggleDisclosed()"><slot></slot></button>
+      @click="toggleDisclosed()"><slot></slot></component>
   `,
   created: function() {
       Vue.set(disclosures, this.idRef, this);

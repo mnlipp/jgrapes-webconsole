@@ -1,0 +1,104 @@
+//
+// JGrapes Event Driven Framework
+// Copyright (C) 2019, 2020 Michael N. Lipp
+//
+// This program is free software; you can redistribute it and/or modify it 
+// under the terms of the GNU Affero General Public License as published by 
+// the Free Software Foundation; either version 3 of the License, or 
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but 
+// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License 
+// for more details.
+//
+// You should have received a copy of the GNU Affero General Public License along 
+// with this program; if not, see <http://www.gnu.org/licenses/>.
+//
+
+/*
+ * The jgwc-tablist is considered an implementation of a general tablist
+ * as presented in
+ * https://www.w3.org/TR/wai-aria-practices/examples/tabs/tabs-2/tabs.html.
+ *
+ * Hoever, the element with [role=tab] isn't the activating button, because
+ * there is also an additional remove button. Therefore, we have role based
+ * styling that should work for any tablist followed by the basic structure
+ * and styling for the special case of a jgwc-tablist.
+ */
+
+[role=tablist] {
+    box-shadow: var(--shadow-bottom);
+
+    [role=tab] {
+        display: inline-block; /* Puts border at "outline". */
+        overflow: hidden; /* Properly clips corners. */
+        vertical-align: bottom; /* Undoes bottom edge aligning on the text baseline of the parent. */
+        padding: 0;
+        margin-left: 0.5rem;
+        position: relative;
+        bottom: calc(-1 * var(--shadow-width));
+        margin-top: calc(-1 * var(--shadow-width));
+        border-bottom: var(--shadow-width) solid transparent;
+    }
+
+    button {
+        display: inline-block;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        border: none;
+        font-size: 1rem;
+        padding: .5rem 1rem;
+        background-color: transparent;
+    }
+
+    span button:first-child:-moz-focusring {
+        outline-offset: -1px;
+    }
+    
+    [aria-selected="true"] {
+        border-top: 0.2em solid var(--active-color);
+        // Workaround https://bugzilla.mozilla.org/show_bug.cgi?id=477157
+        border-bottom: calc(var(--shadow-width) + 1px) solid var(--background);
+    }
+
+    [aria-selected="false"] {
+        border-bottom: 2px solid inherit;
+
+        button {
+            color: var(--foreground);
+            &:hover {
+                color: var(--primary);
+            }
+        }
+        
+        @include button-shape-hover;
+    }
+}
+
+.jgwc-tablist {
+    > span {
+        button {
+            &:not(:first-child) {
+                padding-left: 0.25rem;
+                padding-right: 0.25rem;
+                position: relative;
+                left: -0.25rem;
+                bottom: 0.5rem;
+                margin-left: -0.5rem;
+                margin-right: -0.25rem;
+                color: var(--primary);
+            
+                @include button-shape-hover;
+            }
+        }
+        
+        &[aria-selected="true"] button:first-child {
+            color: inherit;
+        }
+
+        &[aria-selected="false"] button:not(:first-child) {
+            display: none;
+        }
+    }
+}

@@ -1,11 +1,17 @@
 buildscript {
 	repositories {
 		jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
 	}
 	dependencies {
 		classpath 'com.github.ksoichiro:gradle-web-resource-plugin:1.7.3'
+        classpath "gradle.plugin.org.kravemir.gradle.sass:GradleSassPlugin:1.2.2"
 	}
 }
+
+import org.kravemir.gradle.sass.SassCompileTask;
 
 apply plugin: 'com.moowork.node'
 
@@ -26,8 +32,8 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
-ext.releaseVersion = "0.3.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.4.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 jar {
@@ -69,10 +75,39 @@ processResources.dependsOn 'prepareNpmLibs'
 //  
 // processResources.dependsOn 'webpack'
 
+apply plugin: 'io.miret.etienne.sass'
+
+sass {
+    // Base URL where to download dart-sass from:
+    baseUrl = 'https://github.com/sass/dart-sass/releases/download'
+    // dart-sass version to use:
+    version = '1.26.2'
+}
+
+compileSass {
+  // Source directory containing sass to compile:
+  sourceDir = project.file("$projectDir/resources/org/jgrapes/webconsole/vuejs/scss")
+  
+  // Directory where to output generated CSS:
+  outputDir = project.file("$buildDir/generated/resources/org/jgrapes/webconsole/vuejs")
+  
+  // Set the output style:
+  // Possible values are “expanded” and “compressed”, default is “expanded”.
+  style = expanded
+
+  // Source map style:
+  //  - file: output source map in a separate file (default)
+  //  - embed: embed source map in CSS
+  //  - none: do not emit source map.
+  sourceMap = file
+}
+
+processResources.dependsOn 'compileSass'
+
 sourceSets.main.resources.srcDir 'build/generated/resources'
 
 eclipse {
-    autoBuildTasks prepareNpmLibs
+    autoBuildTasks prepareNpmLibs, compileSass
 }
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/vuejs/jsdoc"

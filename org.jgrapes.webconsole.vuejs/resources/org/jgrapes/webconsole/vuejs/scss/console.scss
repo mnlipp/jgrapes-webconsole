@@ -1,0 +1,32 @@
+/*
+ * JGrapes Event Driven Framework
+ * Copyright (C) 2019, 2020 Michael N. Lipp
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU Affero General Public License as published by 
+ * the Free Software Foundation; either version 3 of the License, or 
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License 
+ * for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along 
+ * with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import 'styling/globals'; 
+
+@import 'layout/console';
+@import 'layout/forms';
+
+@import 'styling/console-frame';
+@import 'styling/console-loader';
+@import 'styling/console-preview';
+@import 'styling/console-notification';
+@import 'styling/ui-misc';
+@import 'styling/ui-dropdown';
+@import 'styling/ui-tabs';
+@import 'styling/ui-dialog';
+@import 'styling/ui-form';

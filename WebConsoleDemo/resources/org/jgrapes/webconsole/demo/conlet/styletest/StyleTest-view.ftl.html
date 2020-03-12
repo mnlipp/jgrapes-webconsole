@@ -9,12 +9,10 @@
   <table class="table--basic--striped jgrapes-osgi-style-test-table-with-disclosures">
     <thead>
       <tr>
-        <th v-for="key in controller.keys"
+        <th v-for="key in controller.keys" aria-role="button" tabindex="0"
           class="sortable" v-on:click="controller.sortBy(key)">
-          {{ localize(controller.label(key)) }}<span v-if="controller.sortedByAsc(key)"
-            role="button" tabindex="0">&#x25B2;</span><span
-            v-if="controller.sortedByDesc(key)" role="button" 
-            tabindex="0">&#x25BC;</span>
+          {{ localize(controller.label(key)) }}<span v-if="controller.sortedByAsc(key)">&#x25B2;</span><span
+            v-if="controller.sortedByDesc(key)">&#x25BC;</span>
         </th>
       </tr>
     </thead>
@@ -23,7 +21,7 @@
         <tr role="row" :class="[(rowIndex % 2) ? 'odd' : 'even']">
           <td>
             <jgwc-disclosure-button v-if="rowIndex === 0" 
-              v-bind:id-ref="scopedId(rowIndex)"
+              :id-ref="scopedId(rowIndex)"
               :on-toggle="function() { JGConsole.notification('Changed.') }"
               :on-show="function() { JGConsole.notification('Now showing.') }"
               :on-hide="function() { JGConsole.notification('Now hidden.') }"
@@ -31,7 +29,7 @@
               <span v-html="entry[controller.keys[0]]"></span>
             </jgwc-disclosure-button>
             <jgwc-disclosure-button v-else 
-              v-bind:id-ref="scopedId(rowIndex)">
+              v-bind:id-ref="scopedId(rowIndex)" :type="'div'">
               <span v-html="entry[controller.keys[0]]"></span>
             </jgwc-disclosure-button>
           </td>
