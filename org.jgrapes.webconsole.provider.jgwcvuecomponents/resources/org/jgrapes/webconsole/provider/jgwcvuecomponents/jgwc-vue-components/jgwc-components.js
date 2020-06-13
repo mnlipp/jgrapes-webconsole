@@ -16,36 +16,57 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Importing this module 
+ *  * adds class {@link JGWC} to the global
+ *    `JGConsole` and thus makes its static members easily accessible
+ *    from non module contexts,
+ *  * adds an object to `Vue.prototype` as attribute `jgwc`,
+ *  * provides a Vue observable `Vue.prototype.jgwc.observed` with
+ *    attribute `lang` that changes whenever the attribute `lang`
+ *    of the root `html` node in the DOM changes,
+ *  * provides some Vue mixins,
+ *  * registers some Vue components 
+ *
+ * @module jgwc-vue-components/jgwc-components
+ */
+
 import Vue from "../vue/vue.esm.browser.js"
 import JGConsole from "../../console-base-resource/jgconsole.js"
 
-JGConsole.jgwc = {};
-
-JGConsole.jgwc.destroyVMs = function(content) {
-    if ("__vue__" in content) {
-        content.__vue__.$destroy();
-        return;
-    }
-    for (let child of content.children) {
-        JGConsole.jgwc.destroyVMs(child);
+/**
+ * Used as scope, static members only.
+ *
+ * The class is also published as `JGConsole.jgwc`.
+ */
+export class JGWC {
+    /**
+     * Destroy all view models in the given subtree.
+     *
+     * @param {HTMLElement} content the root of the subtree to be search for
+     *      vue vms
+     */
+    static destroyVMs(content) {
+        if ("__vue__" in content) {
+            content.__vue__.$destroy();
+            return;
+        }
+        for (let child of content.children) {
+            JGConsole.jgwc.destroyVMs(child);
+        }
     }
 }
 
-const keys = {
-    end: 35,
-    home: 36,
-    left: 37,
-    up: 38,
-    right: 39,
-    down: 40,
-    delete: 46,
-    enter: 13,
-    space: 32
-};
+JGConsole.jgwc = JGWC;
 
 Vue.jgwc = {};
 Vue.prototype.jgwc = {};
 
+/*
+ * Install a MutationObserver for root html node's attribute lang
+ * that feeds back the value to a the lang attribute of the
+ * Vue observable Vue.prototype.jgwc.observed.
+ */
 var htmlRoot = document.querySelector("html");
 var jgwcObserved = Vue.observable({
     lang: htmlRoot.getAttribute('lang')
@@ -68,11 +89,25 @@ new MutationObserver(function(mutations) {
 
 var scopeCounter = 1;
 
-var jgwcIdScopeMixin = {
+/**
+ * A Vue mixin that provides the component with a unique scope for ids.
+ *
+ * @mixin
+ */
+export var jgwcIdScopeMixin = {
     created: function() {
         this._idScope = scopeCounter++;
     },
     methods: {
+        /**
+         * The mixed in function that returns the prefixed id.
+         *
+         * @function scopedId
+         * @memberof jgwcIdScopeMixin
+         * @instance
+         * @param {string} id the id to prefix
+         * @return {string}
+         */
         scopedId: function(id) {
             return "jgwc-id-" + this._idScope + "-" + id;
         }
@@ -97,7 +132,37 @@ Vue.component('jgwc-id-scope', {
 });
 */
 
-Vue.component('jgwc-dropdown-menu', {
+const keys = {
+    end: 35,
+    home: 36,
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+    delete: 46,
+    enter: 13,
+    space: 32
+};
+
+/**
+ * The registered Vue component `jgwc-dropdown-menu` that generates a dropdown 
+ * menu with all required ARIA attributes.
+ * 
+ * @function jgwcDropdownMenu
+ * @param {Object} props the properties
+ * @param {string} props.id the id for the enclosing `div`
+ * @param {string} props.label the text of the `button` that opens the menu
+ * @param {Array[]} props.items the menu items as an array
+ *      of arrays with two objects, the first being the label of the menu
+ *      item (a string) or a function that returns the label 
+ *      and the second being an argument to the `action` function that
+ *      is invoked when the item has been chosen
+ * @param {function} props.l10n a function invoked with a label 
+ *      (of type string)as argument before the label is rendered
+ * @param {function} props.action a function that is invoked when an item has
+ *      been chosen
+ */
+export var jgwcDropdownMenu = Vue.component('jgwc-dropdown-menu', {
   props: {
     id: String,
     label: String,
@@ -168,7 +233,25 @@ Vue.component('jgwc-dropdown-menu', {
   }
 });
 
-Vue.component('jgwc-tablist', {
+/**
+ * The registered Vue component `jgwc-tablist` that generates a tab list 
+ * with all required ARIA attributes.
+ * 
+ * Panels are described by objects with these properties:
+ * * *id* (`string`): the id of the HTML element that is enabled or disabled
+ *   depending on the selected tab.
+ * * *label* (`string`|`function`): a string used as label for the tab
+ *   or a function that returns the label
+ * * *removeCallback* (`function`): Called when the tab is removed.
+ *
+ * @function
+ * @param {Object} props the properties
+ * @param {string} props.id the id for the enclosing `div`
+ * @param {Array} props.initialPanels the list of initial panels
+ * @param {function} props.l10n a function invoked with a label 
+ *      (of type string) as argument before the label is rendered
+ */
+export var jgwcTablist = Vue.component('jgwc-tablist', {
   props: {
     id: {
       type: String,
@@ -486,8 +569,6 @@ Vue.component('jgwc-disclosure-section', {
     return null;
   },
 });
-
-export { jgwcIdScopeMixin };
 
 /*
 function vnodeAttr(vnode, attr) {

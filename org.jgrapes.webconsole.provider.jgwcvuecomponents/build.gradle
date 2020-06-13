@@ -15,3 +15,27 @@ jar {
     }
 }
 
+apply plugin: 'com.moowork.node'
+
+ext.jsDocumentJsDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/provider/jgwcvuecomponents/jsdoc"
+
+task documentjs(type: NodeTask) {
+    dependsOn(':npmInstall')
+    new File(jsDocumentJsDir).mkdirs()
+    script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
+    def input = "resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components.js"
+    inputs.file(file(input))
+    args = [
+        "build",
+        "-f", "html",
+        "-o", jsDocumentJsDir, "--shallow",
+        input
+    ]
+}
+
+javadoc {
+    if (!isJitPackBuild) {
+        // Does not work on jitpack
+        finalizedBy documentjs
+    }
+}

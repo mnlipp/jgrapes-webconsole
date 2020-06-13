@@ -20,5 +20,8 @@
  * Provides some vue components used in but independent of the Vue.js 
  * web console which may also be of interest when implementing 
  * web console components. 
+ * 
+ * All information can be found in the 
+ * <a href="jsdoc/index.html">JavaScript documentation</a>.
  */
 package org.jgrapes.webconsole.provider.jgwcvuecomponents;
