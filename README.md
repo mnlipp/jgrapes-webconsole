@@ -51,6 +51,11 @@ the overview panel(s) and the large views of the different conlets.
 
 <img src="README-pic1.png" width="75%" alt="Web Console Demo">
 
+The JGrapes WebConsole could roughly be classified as a micro frontend
+with run-time integration via JavaScript, though it favors a common 
+approach to styling for all components, which is unusual for most
+micro frontend architectures.
+
 See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 Demo
