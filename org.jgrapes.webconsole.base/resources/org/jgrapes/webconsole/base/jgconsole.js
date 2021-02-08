@@ -107,13 +107,7 @@ JGConsole.Log = Log;
 
 var logDateTimeFormat = new Intl.DateTimeFormat(undefined, {
     dateStyle: "short",
-    year: undefined,
-    month: undefined,
-    day: undefined,            
     timeStyle: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
 });
 
 var logDateTimeMillis = new Intl.NumberFormat(undefined, {
