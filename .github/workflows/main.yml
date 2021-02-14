@@ -16,3 +16,5 @@ jobs:
           java-version: 1.8
       - name: Build with Gradle
         run: ./gradlew stage
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
