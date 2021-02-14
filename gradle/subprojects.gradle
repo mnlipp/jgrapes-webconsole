@@ -66,7 +66,7 @@ if (project.name.startsWith("org.jgrapes.")) {
 }
 
 test {
-//    if (!rootProject.isTravisBuild) {
+//    if (!rootProject.isCiBuild) {
 //        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=18888'
 //    }
 
@@ -85,7 +85,7 @@ test {
         showCauses = true
     }
         
-    if (isTravisBuild) {
+    if (isCiBuild) {
         maxParallelForks = 2
         maxHeapSize = '768m'
     }
