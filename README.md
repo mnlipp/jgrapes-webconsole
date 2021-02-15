@@ -3,7 +3,7 @@ JGrapes-WebConsole
 
 See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
-[![Build Status](https://travis-ci.org/mnlipp/jgrapes-webconsole.svg?branch=master)](https://travis-ci.org/mnlipp/jgrapes-webconsole)
+[![Build Status](https://github.com/mnlipp/JGrapes-Webconsole/workflows/Java%20CI/badge.svg)](https://github.com/mnlipp/jgrapes-webconsole/actions)
 
  * Web Console Base <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.base%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.base.svg"></a>
 
