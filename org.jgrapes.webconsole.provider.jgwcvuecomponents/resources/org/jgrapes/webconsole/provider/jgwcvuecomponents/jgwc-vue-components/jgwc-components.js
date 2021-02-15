@@ -244,6 +244,11 @@ export var jgwcDropdownMenu = Vue.component('jgwc-dropdown-menu', {
  *   or a function that returns the label
  * * *removeCallback* (`function`): Called when the tab is removed.
  *
+ * Once created, a component provides some externally invocable methods:
+ * * *addPanel(panel)*: adds another panel.
+ * * *removePanel(panelId)*: removes the panel with the given id.
+ * * *selectPanel(panelId)*: activates the panel with the given id.
+ *
  * @function
  * @param {Object} props the properties
  * @param {string} props.id the id for the enclosing `div`
