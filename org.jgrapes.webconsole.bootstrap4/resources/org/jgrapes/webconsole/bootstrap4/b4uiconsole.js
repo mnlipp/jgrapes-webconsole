@@ -57,8 +57,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
             disableOneColumnMode: true,
         };
-        $('#consolePreviews').gridstack(options);
-        _this._previewGrid = $('#consolePreviews').data('gridstack');
+        _this._previewGrid = GridStack.init(options, '#consolePreviews');
         if (!_this._previewGrid) {
             log.error("VueJsConsole: Creating preview grid failed.")
         }

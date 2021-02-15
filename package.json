@@ -1,19 +1,19 @@
 {
 	"devDependencies": {
-		"@fortawesome/fontawesome-free": "^5.13.0",
-		"chart.js": "^2.9.3",
-		"documentation": "^13.0.1",
-		"gridstack": "^0.6.4",
+		"@fortawesome/fontawesome-free": "^5.15.2",
+		"chart.js": "^2.9.4",
+		"documentation": "^13.1.1",
+		"gridstack": "^1.2.1",
 		"install": "^0.13.0",
 		"jquery": "^3.5.1",
 		"jquery-ui": "^1.12.1",
-		"jsdoc": "^3.6.4",
-		"moment": "^2.26.0",
+		"jsdoc": "^3.6.6",
+		"moment": "^2.29.1",
 		"normalize.css": "^8.0.1",
-		"npm": "^6.14.5",
-		"vue": "^2.6.11",
-		"vuex": "^3.4.0",
-		"webpack": "^4.43.0",
-		"webpack-cli": "^3.3.11"
+		"npm": "^7.5.4",
+		"vue": "^2.6.12",
+		"vuex": "^3.6.2",
+		"webpack": "^5.22.0",
+		"webpack-cli": "^4.5.0"
 	}
 }
