@@ -154,7 +154,17 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, console));
+            PageResourceProviderFactory.class, console,
+            type -> {
+                switch (type) {
+                case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
+                    return Arrays.asList(
+                        Components.mapOf("configuration", "CoreWithJQueryUI",
+                            "requireTouchPunch", true));
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console));
