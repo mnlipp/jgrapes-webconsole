@@ -138,8 +138,8 @@ public class GridstackProvider extends PageResourceProvider {
             break;
         case All:
             addRequest.addScriptResource(new ScriptResource()
-                .setRequires("jquery")
-                .setProvides("gridstack", "gridstack.all")
+                .setProvides("jquery", "jquery-ui",
+                    "gridstack", "gridstack.all")
                 .setScriptUri(event.renderSupport().pageResource(
                     "gridstack/gridstack.all.js")));
         }
