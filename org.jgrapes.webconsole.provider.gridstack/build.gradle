@@ -4,7 +4,7 @@ dependencies {
 	
 }
 
-ext.releaseVersion = "0.2.0"
+ext.releaseVersion = "0.3.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
@@ -28,6 +28,7 @@ task prepareNpmLibs(type: Copy) {
     into('build/generated/resources/org/jgrapes/webconsole/provider/gridstack/gridstack')
     from ("${rootProject.projectDir}/node_modules/gridstack/dist/") {
         include '**/*'
+        exclude 'jquery.*'
         exclude 'jquery-ui.*'
     }
 }
