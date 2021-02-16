@@ -1,0 +1,5 @@
+//createMapFile//resources/org/jgrapes/webconsole/provider/browserrequire/browser-require/require.js=true
+//includeSource//resources/org/jgrapes/webconsole/provider/browserrequire/browser-require/require.js=false
+//minifier//resources/org/jgrapes/webconsole/provider/browserrequire/browser-require/require.js=GoogleClosureComiler
+//optWhitespaceOnly//resources/org/jgrapes/webconsole/provider/browserrequire/browser-require/require.js=optSimple
+eclipse.preferences.version=1
