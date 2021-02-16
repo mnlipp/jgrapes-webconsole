@@ -52,15 +52,6 @@
   <script src="${renderSupport.consoleResource('lib/jquery-dropdown-2.0.3/jquery.dropdown.js')}"></script>
   <script src="${renderSupport.consoleResource('lib/jquery-fa-loading-0.3/jquery.faloading' + minifiedExtension + '.js')}"></script>
 
-  <!-- Console -->
-  <script type="module">
-  import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
-  import JQUIConsole from "${renderSupport.consoleResource('jquiconsole.js')}"
-  JGConsole.init(
-    "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
-    parseInt('${consoleSessionInactivityTimeout?c}'), new JQUIConsole.Renderer());    
-  </script>
-  
 </head>
 
 <body class="console-jqueryui">
@@ -139,6 +130,15 @@
 <div id="server-connection-restored-notification" style="display:none;">
     ${_("serverConnectionRestoredMessage")}
 </div>
+
+<!-- Start console application -->
+<script type="module">
+import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
+import JQUIConsole from "${renderSupport.consoleResource('jquiconsole.js')}"
+JGConsole.init(
+  "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
+  parseInt('${consoleSessionInactivityTimeout?c}'), new JQUIConsole.Renderer());    
+</script>  
 
 </body>
 </html>
