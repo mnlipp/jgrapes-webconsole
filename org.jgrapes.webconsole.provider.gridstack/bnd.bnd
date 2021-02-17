@@ -8,8 +8,6 @@ Export-Package: org.jgrapes.webconsole.provider.gridstack
 
 -includeresource: resources
 
-# The only "fixed" dependency is on JQuery, because the required JQueryUi
-# JavaScript parts can be provided in different ways.
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
 
