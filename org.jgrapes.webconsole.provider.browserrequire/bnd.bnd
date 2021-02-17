@@ -8,6 +8,9 @@ Export-Package: org.jgrapes.webconsole.provider.browserrequire
 
 -includeresource: resources
 
+Require-Capability: \
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \
         uses:="org.jgrapes.webconsole.base,org.jgrapes.core", \
