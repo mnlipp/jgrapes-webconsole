@@ -11,6 +11,7 @@
     <stringAttribute key="org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE" value="${workspace_loc:/WebConsoleDemo/console.log}"/>
     <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.jgrapes.webconsole.demo.WebConsoleDemo"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="WebConsoleDemo"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="WebConsoleDemo"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.util.logging.config.file=jul-debug.properties -Xmx512m"/>
 </launchConfiguration>

@@ -26,13 +26,12 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.vuex')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jgwcvuecomponents')
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.lodash')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')
     runtimeOnly project(':org.jgrapes.webconsole.provider.gridstack')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
-ext.releaseVersion = "0.6.0"
+ext.releaseVersion = "0.7.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 

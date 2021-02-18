@@ -16,7 +16,6 @@ Export-Package: org.jgrapes.webconsole.bootstrap4
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=lodash)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui.touch-punch)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=gridstack)"

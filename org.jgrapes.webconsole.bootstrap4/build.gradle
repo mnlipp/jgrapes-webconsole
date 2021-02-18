@@ -15,13 +15,12 @@ artifacts {
 dependencies {
     compile project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.lodash')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')
     runtimeOnly project(':org.jgrapes.webconsole.provider.gridstack')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
-ext.releaseVersion = "0.31.0"
+ext.releaseVersion = "0.32.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
