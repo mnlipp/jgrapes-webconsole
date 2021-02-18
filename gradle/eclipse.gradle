@@ -32,7 +32,6 @@ eclipse {
         natures 'org.eclipse.jdt.core.javanature', \
             'bndtools.core.bndnature', \
             'net.sf.eclipsecs.core.CheckstyleNature', \
-            'org.eclipse.jdt.groovy.core.groovyNature', \
             'org.jdrupes.eclipse.minify.plugin.minifyNature'
     }
     jdt {

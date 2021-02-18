@@ -13,9 +13,6 @@ sourceSets {
         java {
             srcDir 'test'
         }
-        groovy {
-            srcDir 'test'
-        }
         resources {
             srcDir 'test-resources'
         }

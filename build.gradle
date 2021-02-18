@@ -24,6 +24,9 @@ plugins {
     id 'io.miret.etienne.sass' version '1.1.1'
 }
 
+// Makes Eclipse-groovy handle *.gradle file in buildSrc properly
+apply plugin:'groovy'
+
 ext {
 	isCiBuild = System.getenv().get("CI") == 'true'
     isJitPackBuild = System.getenv().get("JITPACK") == 'true'
@@ -47,9 +50,6 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 	
-	// Makes Eclipse-groovy handle *.gradle file properly
-	apply plugin:'groovy'
-
 	group = 'org.jgrapes'
 	
     compileJava {

@@ -3,6 +3,8 @@ dependencies {
 	compile localGroovy()
 }
 
+apply plugin:'groovy'
+
 // Configure sensible layout
 sourceSets {
 	main {
