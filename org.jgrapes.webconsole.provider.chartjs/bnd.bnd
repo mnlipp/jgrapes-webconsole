@@ -9,7 +9,8 @@ Export-Package: org.jgrapes.webconsole.provider.chartjs
 -includeresource: resources
 
 Require-Capability: \
-    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=moment-with-locales)"
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \
