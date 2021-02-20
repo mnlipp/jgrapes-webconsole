@@ -46,6 +46,27 @@
   src="${renderSupport.pageResource('gridstack/gridstack' + minifiedExtension + '.js')}"></script>
 <script data-jgwc-provides="gridstack.jQueryUI"
   src="${renderSupport.pageResource('gridstack/gridstack.jQueryUI.js')}"></script>
+  
+<!-- Console -->
+<script type="module">
+  import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
+  import B4UIConsole from "${renderSupport.consoleResource('b4uiconsole.js')}"
+  window.onload = function() {
+    JGConsole.init("${consoleSessionId}", 
+      parseInt("${consoleSessionRefreshInterval?c}"),
+      parseInt("${consoleSessionInactivityTimeout?c}"), new B4UIConsole.Renderer({
+        ok: '${_("OK")}',
+        close: '${_("Close")}',
+        resume: '${_("Resume")}',
+        sessionSuspendedTitle: '${_("Console Session Suspended")}',
+        sessionSuspendedMessage: '${_("consoleSessionSuspendedMessage")}',
+        serverConnectionLost: '${_("serverConnectionLostMessage")}',
+        serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
+      }));
+    }
+</script>
+
+
 <!-- More... -->
 
 </head>
@@ -60,12 +81,12 @@
     <li class="nav-item">
       <a class="nav-link active" id="consoleOverviewTab"
         data-toggle="tab" href="#consoleOverviewPane" role="tab"
-        aria-controls="home" aria-selected="true">${_("Overview")}</a>
+        aria-controls="consoleOverviewPane" aria-selected="true">${_("Overview")}</a>
     </li>
   </ul>
 
   <div class="tab-content mt-3" id="consoleTabPanes">
-    <section class="tab-pane fade show active" id="consoleOverviewPane"
+    <section id="consoleOverviewPane" class="tab-pane fade show active"
       role="tabpanel" aria-labelledby="consoleOverviewTab">
       <div class="grid-stack" id="consolePreviews" role="grid"></div>
     </section>
@@ -84,23 +105,6 @@
   <div id="loader-overlay">
     <div></div>
   </div> 
-
-  <!-- Console -->
-  <script type="module">
-  import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
-  import B4UIConsole from "${renderSupport.consoleResource('b4uiconsole.js')}"
-  JGConsole.init("${consoleSessionId}", 
-    parseInt("${consoleSessionRefreshInterval?c}"),
-    parseInt("${consoleSessionInactivityTimeout?c}"), new B4UIConsole.Renderer({
-      ok: '${_("OK")}',
-      close: '${_("Close")}',
-      resume: '${_("Resume")}',
-      sessionSuspendedTitle: '${_("Console Session Suspended")}',
-      sessionSuspendedMessage: '${_("consoleSessionSuspendedMessage")}',
-      serverConnectionLost: '${_("serverConnectionLostMessage")}',
-      serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
-    }));
-  </script>
 
 </body>
 </html>
