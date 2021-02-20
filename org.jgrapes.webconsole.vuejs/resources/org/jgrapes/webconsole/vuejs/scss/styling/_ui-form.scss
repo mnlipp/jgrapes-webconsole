@@ -122,6 +122,14 @@
                 border-radius: var(--corner-radius);
                 transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
             }
+            
+            select {
+                background: rgba(0, 0, 0, 0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='4'%3E%3Cpath d='m 0,1 1,2 1,-2 z'/%3E%3C/svg%3E") no-repeat right .75rem center/.75rem 1rem;
+                padding: .375rem 1.5rem .375rem .75rem;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
         }
         
         * {
@@ -184,11 +192,12 @@
 :not(.form--no-markup-styling) form label.form__label--panel {
     select {
         height: 100%;
-        background: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%205'%3e%3cpath%20fill='%23343a40'%20d='M2%200L0%202h4zm0%205L0%203h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+        background: rgba(0, 0, 0, 0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='4'%3E%3Cpath d='m 0,1 1,2 1,-2 z'/%3E%3C/svg%3E") no-repeat right .75rem center/.75rem 1rem;
         background-color: rgba(0, 0, 0, 0);
-        padding: .375rem .75rem;
+        padding: .375rem 1.5rem .375rem .75rem;
         -webkit-appearance: none;
         -moz-appearance: none;
+        appearance: none;
     }
     
     &.form__label--top-aligned {
