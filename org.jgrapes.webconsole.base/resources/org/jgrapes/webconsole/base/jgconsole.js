@@ -148,6 +148,7 @@ class ConsoleWebSocket {
         this._recvQueue = [];
         this._recvQueueLocks = 0;
         this._messageHandlers = {};
+        this._isHandling = false;
         this._refreshTimer = null;
         this._inactivity = 0;
         this._reconnectTimer = null;
@@ -345,6 +346,10 @@ class ConsoleWebSocket {
     }
 
     _handleMessages() {
+        if (this._isHandling) {
+            return;
+        }
+        this._isHandling = true;
         while (true) {
             if (this._recvQueueLocks > 0) {
                 this._handlerLog(() => "Handler receive queue locked.");
@@ -369,6 +374,7 @@ class ConsoleWebSocket {
                 handler();
             }
         }
+        this._isHandling = false;
     }
 
     lockMessageReceiver() {
@@ -475,6 +481,7 @@ class ResourceManager {
         }
         // Asynchronous loading.
         script.src = scriptResource.uri;
+        script.async = true;
         script.addEventListener('load', function(event) {
             // Remove this from loading
             _this._loadingScripts.delete(script.src);
