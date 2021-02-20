@@ -1267,6 +1267,9 @@ class Console {
      * @param {string[]} renderModes the requested render mode(s)
      */
     addConlet(conletType, renderModes) {
+        if (!renderModes) {
+            renderModes = [];
+        }
         renderModes.push(RenderMode.Foreground);
         this.send("addConlet", conletType, renderModes);
     };
