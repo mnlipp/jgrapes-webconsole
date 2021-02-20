@@ -1,6 +1,7 @@
 {
 	"devDependencies": {
 		"@fortawesome/fontawesome-free": "^5.15.2",
+		"bootstrap": "^4.6.0",
 		"chart.js": "^2.9.4",
 		"documentation": "^13.1.1",
 		"gridstack": "^1.2.1",

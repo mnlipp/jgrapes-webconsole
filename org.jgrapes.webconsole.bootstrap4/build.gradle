@@ -20,14 +20,36 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
-ext.releaseVersion = "0.32.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.33.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 jar {
     into('META-INF') {
         from 'resources/META-INF'
     }
+}
+
+task prepareNpmLibs(type: Copy) {
+    description '''
+    Helper task that copies the the libraries from the npm_modules 
+    directory into a package scoped subdirectory. The root is added 
+    to eclipse as resource directory thus making the files available 
+    as package scoped resources when running a process in eclipse.
+    '''
+    dependsOn(':npmInstall')
+    into('build/generated/resources/org/jgrapes/webconsole/bootstrap4/lib/bootstrap')
+    from ("${rootProject.projectDir}/node_modules/bootstrap/dist") {
+        include "**/*"
+    }
+}
+
+processResources.dependsOn 'prepareNpmLibs'
+
+sourceSets.main.resources.srcDir 'build/generated/resources'
+
+eclipse {
+    autoBuildTasks prepareNpmLibs
 }
 
 apply plugin: 'com.moowork.node'
