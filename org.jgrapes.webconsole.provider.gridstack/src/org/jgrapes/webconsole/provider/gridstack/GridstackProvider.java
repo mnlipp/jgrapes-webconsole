@@ -46,7 +46,7 @@ public class GridstackProvider extends PageResourceProvider {
         CoreOnly, CoreWithJQUiPlugin, All
     }
 
-    private Configuration configuration = Configuration.All;
+    private Configuration configuration = Configuration.CoreOnly;
     private boolean requireTouchPunch;
 
     /**
