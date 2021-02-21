@@ -61,7 +61,7 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 Demo
 ----
 
-A [demo configuration](https://jgrapes-portal-demo.herokuapp.com/)
+A [demo configuration](https://jgrapes-console-demo.herokuapp.com/)
 of the portal is available at [heroku](https://www.heroku.com/).
 
 Building
