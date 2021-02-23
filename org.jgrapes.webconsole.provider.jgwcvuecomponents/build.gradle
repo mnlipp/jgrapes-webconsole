@@ -17,6 +17,31 @@ jar {
 
 apply plugin: 'com.moowork.node'
 
+task prepareNpmLibs(type: Copy) {
+    description '''
+    Helper task that copies the the libraries from the npm_modules 
+    directory into a package scoped subdirectory. The root is added 
+    to eclipse as resource directory thus making the files available 
+    as package scoped resources when running a process in eclipse.
+    '''
+    dependsOn(":jgwc-vue-components:assemble")
+    into('build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components')
+    from ("${rootProject.projectDir}/jgwc-vue-components/dist/") {
+        include '**/*'
+        exclude 'src/**'
+        exclude 'jquery.*'
+        exclude 'jquery-ui.*'
+    }
+}
+
+processResources.dependsOn 'prepareNpmLibs'
+
+eclipse {
+    autoBuildTasks prepareNpmLibs
+}
+
+sourceSets.main.resources.srcDir 'build/generated/resources'
+
 ext.jsDocumentJsDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/provider/jgwcvuecomponents/jsdoc"
 
 task documentjs(type: NodeTask) {
