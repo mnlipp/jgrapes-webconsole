@@ -49,17 +49,13 @@ allprojects {
         // Experimental, not sure if this is the way tpo go...
         maven { url 'https://jitpack.io' }
     }
-	
-	group = 'org.jgrapes'
-	
-    compileJava {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
 }
 
 subprojects {
-    apply from: "${project.rootDir}/gradle/subprojects.gradle"
+    if (project.name.startsWith('org.jgrapes.') 
+            || project.name == 'WebConsoleDemo') {
+        apply from: "${project.rootDir}/gradle/subprojects.gradle"
+    }
 }
 
 // Don't know why this task exists in the first place...
@@ -95,7 +91,7 @@ task stage {
     group = 'build'
 
     // Build everything first
-    subprojects.tasks.each { tc -> dependsOn tc.findByName("build") }
+    subprojects.tasks.each { tc -> tc.findByName("build") }
 
     if (!isCiBuild || JavaVersion.current().isJava8()) {
         // Publish JavaDoc
