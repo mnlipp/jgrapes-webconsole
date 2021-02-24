@@ -1,28 +1,37 @@
 {
-  "name": "jgwc_vue_components",
-  "version": "0.1.0",
-  "private": true,
-  "module": "dist/jgwc_vue_components.esm.js",
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "build-lib": "vue-cli-service build --target lib src/index.ts"
+  "name": "jgwc-vue-components",
+  "version": "1.0.0",
+  "main": "dist/jgwc-vue-components2.js",
+  "module": "dist/jgwc-vue-components2.esm.js",
+  "browser": {
+    "vue-class-component": "vue-class-component.esm.browser"
   },
-  "dependencies": {
-    "core-js": "^3.6.5",
-    "vue": "^2.6.11",
-    "vue-class-component": "^7.2.3",
-    "vue-property-decorator": "^9.1.2",
-    "vuex": "^3.4.0"
+  "scripts": {
+    "build": "rollup -c"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-typescript": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "node-sass": "^4.12.0",
-    "sass-loader": "^8.0.2",
-    "typescript": "~3.9.3",
+    "@rollup/plugin-commonjs": "^14.0.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
+    "@rollup/plugin-replace": "^2.4.1",
+    "@vue/compiler-sfc": "^3.0.5",
+    "rollup": "^2.23.1",
+    "rollup-plugin-peer-deps-external": "^2.2.3",
+    "rollup-plugin-typescript2": "^0.27.2",
+    "rollup-plugin-vue": "^5.1.6",
+    "tslib": "^2.0.0",
+    "typescript": "^3.9.7",
+    "vue": "^2.6.11",
+    "vue-class-component": "^7.2.3",
+    "vue-property-decorator": "^8.4.2",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "keywords": [
+    "vue",
+    "rollup",
+    "typescript",
+    "component",
+    "library"
+  ],
+  "author": "Michael N. Lipp",
+  "license": "AGPL-3.0-only"
 }

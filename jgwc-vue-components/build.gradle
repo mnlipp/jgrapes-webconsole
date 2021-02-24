@@ -5,11 +5,18 @@ apply plugin: 'com.moowork.node'
 task buildLib(type: NpmTask) {
     dependsOn('npmInstall')
     inputs.dir project.file('src')
+    inputs.file project.file('package.json')
+    inputs.file project.file('tsconfig.json')
+    inputs.file project.file('rollup.config.js')
     outputs.dir project.file('dist')
-    args = ["run", "build-lib"]
+    args = ["run", "build"]
 }
 
 assemble.dependsOn 'buildLib'
+
+eclipse {
+    autoBuildTasks buildLib
+}
 
 apply plugin: 'eclipse'
 

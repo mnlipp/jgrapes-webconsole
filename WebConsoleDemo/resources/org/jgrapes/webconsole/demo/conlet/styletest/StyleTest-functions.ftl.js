@@ -19,7 +19,7 @@
 
 import Vue from "../../page-resource/vue/vue.esm.browser.js"
 import { jgwcIdScopeMixin } from "../../page-resource/jgwc-vue-components/jgwc-components.js";
-import "../../page-resource/jgwc-vue-components/jgwc_vue_components.umd.js";
+import "../../page-resource/jgwc-vue-components/jgwc-vue-components2.esm.js";
 
 const l10nBundles = {
     // <#list supportedLanguages() as l>
