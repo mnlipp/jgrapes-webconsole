@@ -1,5 +1,5 @@
 import Vue from "vue";
-import TestButton from "./TestButton.vue";
+import JgwcDropdownMenu from "./JgwcDropdownMenu.vue";
 
-export { TestButton };
-Vue.component('test-button', TestButton);
+export { JgwcDropdownMenu };
+Vue.component('jgwc-dropdown-menu', JgwcDropdownMenu);
