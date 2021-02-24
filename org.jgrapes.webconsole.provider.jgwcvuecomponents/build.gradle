@@ -26,8 +26,9 @@ task prepareNpmLibs(type: Copy) {
     '''
     dependsOn(":jgwc-vue-components:assemble")
     into('build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components')
-    from ("${rootProject.projectDir}/jgwc-vue-components/dist/") {
-        include '**/*'
+    from ("${rootProject.projectDir}/jgwc-vue-components/") {
+        include 'lib/**/*'
+        include 'src/**/*'
     }
 }
 

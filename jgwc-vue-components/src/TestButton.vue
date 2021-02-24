@@ -6,16 +6,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-
-const TestButtonProps = Vue.extend({
-  props: {
-    text: String
-  }
-})
+import { Component, Prop } from "vue-property-decorator";
 
 @Component
-export default class TestButton extends TestButtonProps {
+export default class TestButton extends Vue {
+  @Prop({ type: String, required: true }) readonly text!: string;
 
   click() {
     this.$emit("click");

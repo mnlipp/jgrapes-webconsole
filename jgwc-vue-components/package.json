@@ -1,11 +1,9 @@
 {
   "name": "jgwc-vue-components",
   "version": "1.0.0",
-  "main": "dist/jgwc-vue-components2.js",
-  "module": "dist/jgwc-vue-components2.esm.js",
-  "browser": {
-    "vue-class-component": "vue-class-component.esm.browser"
-  },
+  "main": "lib/jgwc-vue-components.js",
+  "module": "lib/jgwc-vue-components.esm.js",
+  "browser": {},
   "scripts": {
     "build": "rollup -c"
   },
