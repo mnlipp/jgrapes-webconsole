@@ -5,11 +5,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import Vue from "vue";
+import Component from "vue-class-component";
 
-// @Component
-export default class TestButton extends Vue {
-  @Prop({ type: String, required: true }) readonly text!: string;
+const TestButtonProps = Vue.extend({
+  props: {
+    text: String
+  }
+})
+
+@Component
+export default class TestButton extends TestButtonProps {
 
   click() {
     this.$emit("click");
