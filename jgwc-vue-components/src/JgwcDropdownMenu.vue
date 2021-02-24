@@ -1,0 +1,117 @@
+<template>
+  <div v-bind:id="id" class="dropdown-menu jgwc-dropdown-menu">
+    <button type="button" aria-haspopup="menu"
+      v-bind:aria-controls="id + '-menu'" 
+      v-bind:aria-expanded="expanded ? 'true' : 'false'" 
+      v-on:click="toggle"><span v-html="label"></span></button>
+    <ul v-bind:id="id + '-menu'" role="menu">
+    <template v-for="item in sortedItems">
+      <li role="none"><button type="button" 
+        role="menuitem" v-on:click="action(item[1])"
+        >{{ item[0] }}</button></li>
+    </template>
+    </ul>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
+
+/**
+ * The registered Vue component `jgwc-dropdown-menu` that generates a dropdown 
+ * menu with all required ARIA attributes.
+ * 
+ * @function jgwcDropdownMenu
+ * @param {Object} props the properties
+ * @param {string} props.id the id for the enclosing `div`
+ * @param {string} props.label the text of the `button` that opens the menu
+ * @param {Array[]} props.items the menu items as an array
+ *      of arrays with two objects, the first being the label of the menu
+ *      item (a string) or a function that returns the label 
+ *      and the second being an argument to the `action` function that
+ *      is invoked when the item has been chosen
+ * @param {function} props.l10n a function invoked with a label 
+ *      (of type string)as argument before the label is rendered
+ * @param {function} props.action a function that is invoked when an item has
+ *      been chosen
+ */
+@Component
+export default class JgwcDropdownMenu extends Vue {
+    @Prop({ type: String, required: true }) readonly id!: string;
+    @Prop({ type: String, required: true }) readonly label!: string;
+    @Prop({ type: Array, required: true }) items!: Array<Array<any>>;
+    @Prop({ type: Function }) l10n: any;
+    @Prop({ type: Function }) action: any;
+
+    private _globalClickHandler = (e: MouseEvent) => {};
+    $lastEvent: any = null;
+    expanded: boolean = false;
+
+    toggle(event: any) {
+        this.$lastEvent = event;
+        this.expanded = !this.expanded;
+    }
+  
+    translate(raw: any) {
+        if (typeof(raw) === "function") {
+            return raw();
+        }
+        if (this.l10n) {
+            return this.l10n(raw);
+        }
+        return raw;
+    }
+
+    get sortedItems() {
+        let result = [];
+        for (let item of this.items) {
+            result.push([this.translate(item[0]), item]);
+        }
+        result.sort(function(a, b) {
+            return a[0].localeCompare(b[0]);
+        });
+        return result;
+    }    
+    
+    mounted() {
+        // Any click event that is not the one handled by this component
+        // causes the menu to be closed.
+        let self = this;
+        this._globalClickHandler = function(event: MouseEvent) {
+            if (self.$lastEvent && event.target !== self.$lastEvent.target) {
+                self.expanded = false;
+            }
+        };
+        document.addEventListener("click", this._globalClickHandler);
+    }
+    
+    beforeDestroy() {
+        document.removeEventListener("click", this._globalClickHandler);
+    }
+}
+</script>
+
+<style scoped>
+.jgwc-dropdown-menu {
+    display: inline-block;
+    position: relative;
+}
+
+.jgwc-dropdown-menu button[aria-expanded=false] + ul {
+    display: none;
+}
+
+.jgwc-dropdown-menu button[aria-expanded=true] + ul {
+    display: block;
+}
+
+.jgwc-dropdown-menu > ul {
+    list-style: none;
+    position: absolute;
+    z-index: 1000;
+    top: 100%;
+    left: 0;
+    right: auto;    
+}
+</style>
