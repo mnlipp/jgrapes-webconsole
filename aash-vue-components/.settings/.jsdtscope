@@ -12,5 +12,7 @@
 			<attribute name="hide" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="node_modules"/>
+	<classpathentry kind="lib" path="lib"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

@@ -1,4 +1,3 @@
-import Vue from "vue";
-import AashDropdownMenu from "./AashDropdownMenu.vue";
+import AashDropdownMenu from "./components/dropdown-menu/AashDropdownMenu.vue";
 
 export { AashDropdownMenu };
