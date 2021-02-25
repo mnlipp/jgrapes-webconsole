@@ -8,7 +8,9 @@
   "module": "lib/aash-vue-components.js",
   "browser": {},
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "styleguide": "vue-styleguidist server",
+    "styleguide:build": "vue-styleguidist build"
   },
   "files": [
     "/src",
@@ -22,13 +24,12 @@
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@rollup/plugin-replace": "^2.4.1",
-    "@vue/compiler-sfc": "^3.0.5",
     "rollup": "^2.23.1",
     "rollup-plugin-peer-deps-external": "^2.2.3",
     "rollup-plugin-typescript2": "^0.27.2",
-    "rollup-plugin-vue": "^5.1.6",
+    "rollup-plugin-vue": "^5.1.9",
     "tslib": "^2.0.0",
-    "typescript": "^3.9.7",
+    "typescript": "^3.9.9",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.2",
