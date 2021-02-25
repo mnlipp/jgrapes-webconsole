@@ -9,8 +9,7 @@
   "browser": {},
   "scripts": {
     "build": "rollup -c",
-    "styleguide": "vue-styleguidist server",
-    "styleguide:build": "vue-styleguidist build"
+    "vuese": "vuese gen"
   },
   "files": [
     "/src",
@@ -19,6 +18,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/mnlipp/jgrapes-webconsole"
+  },
+  "vuese": {
+    "title": "Vue Components for AaSH (ARIA augmented Semantic HTML)"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^14.0.0",
@@ -33,7 +35,8 @@
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "@vuese/cli": "^2.14.3"
   },
   "keywords": [
     "vue",

@@ -21,27 +21,23 @@ import { Component, Prop } from "vue-property-decorator";
 /**
  * The registered Vue component `aash-dropdown-menu` that generates a dropdown 
  * menu with all required ARIA attributes.
- * 
- * @function aashDropdownMenu
- * @param {Object} props the properties
- * @param {string} props.id the id for the enclosing `div`
- * @param {string} props.label the text of the `button` that opens the menu
- * @param {Array[]} props.items the menu items as an array
- *      of arrays with two objects, the first being the label of the menu
- *      item (a string) or a function that returns the label 
- *      and the second being an argument to the `action` function that
- *      is invoked when the item has been chosen
- * @param {function} props.l10n a function invoked with a label 
- *      (of type string)as argument before the label is rendered
- * @param {function} props.action a function that is invoked when an item has
- *      been chosen
  */
 @Component
 export default class AashDropdownMenu extends Vue {
+    // The id attribute of the generated top level HTML element 
     @Prop({ type: String, required: true }) readonly id!: string;
+    // The text of the generated `button` element that opens the menu
     @Prop({ type: String, required: true }) readonly label!: string;
+    // The menu items as an array
+    // of arrays with two objects, the first being the label of the menu
+    // item (a string) or a function that returns the label 
+    // and the second being an argument to the `action` function that
+    // is invoked when the item has been chosen.
     @Prop({ type: Array, required: true }) items!: Array<Array<any>>;
+    // A function invoked with a label 
+    // (of type string)as argument before the label is rendered
     @Prop({ type: Function }) l10n: any;
+    // A function that is invoked when an item has been chosen
     @Prop({ type: Function }) action: any;
 
     private _globalClickHandler = (e: MouseEvent) => {};

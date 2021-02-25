@@ -14,6 +14,16 @@ task buildLib(type: NpmTask) {
 
 assemble.dependsOn 'buildLib'
 
+task buildDoc(type: NpmTask) {
+    dependsOn('npmInstall')
+    inputs.dir project.file('src')
+    inputs.file project.file('package.json')
+    outputs.dir project.file('website')
+    args = ["run", "vuese"]
+}
+
+build.dependsOn 'buildDoc'
+
 eclipse {
     autoBuildTasks buildLib
 }
