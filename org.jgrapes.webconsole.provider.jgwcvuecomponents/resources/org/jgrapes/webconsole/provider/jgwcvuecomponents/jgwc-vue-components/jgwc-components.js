@@ -32,6 +32,7 @@
  */
 
 import Vue from "../vue/vue.esm.browser.js"
+import { AashDropdownMenu } from "../aash-vue-components/lib/aash-vue-components.js"
 import JGConsole from "../../console-base-resource/jgconsole.js"
 
 /**
@@ -143,6 +144,9 @@ const keys = {
     enter: 13,
     space: 32
 };
+
+Vue.component('jgwc-dropdown-menu', AashDropdownMenu);
+
 
 /**
  * The registered Vue component `jgwc-tablist` that generates a tab list 

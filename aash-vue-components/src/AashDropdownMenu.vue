@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:id="id" class="dropdown-menu jgwc-dropdown-menu">
+  <div v-bind:id="id" class="dropdown-menu aash-dropdown-menu">
     <button type="button" aria-haspopup="menu"
       v-bind:aria-controls="id + '-menu'" 
       v-bind:aria-expanded="expanded ? 'true' : 'false'" 
@@ -19,10 +19,10 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 /**
- * The registered Vue component `jgwc-dropdown-menu` that generates a dropdown 
+ * The registered Vue component `aash-dropdown-menu` that generates a dropdown 
  * menu with all required ARIA attributes.
  * 
- * @function jgwcDropdownMenu
+ * @function aashDropdownMenu
  * @param {Object} props the properties
  * @param {string} props.id the id for the enclosing `div`
  * @param {string} props.label the text of the `button` that opens the menu
@@ -37,7 +37,7 @@ import { Component, Prop } from "vue-property-decorator";
  *      been chosen
  */
 @Component
-export default class JgwcDropdownMenu extends Vue {
+export default class AashDropdownMenu extends Vue {
     @Prop({ type: String, required: true }) readonly id!: string;
     @Prop({ type: String, required: true }) readonly label!: string;
     @Prop({ type: Array, required: true }) items!: Array<Array<any>>;
@@ -92,21 +92,21 @@ export default class JgwcDropdownMenu extends Vue {
 }
 </script>
 
-<style scoped>
-.jgwc-dropdown-menu {
+<style>
+.aash-dropdown-menu {
     display: inline-block;
     position: relative;
 }
 
-.jgwc-dropdown-menu button[aria-expanded=false] + ul {
+.aash-dropdown-menu button[aria-expanded=false] + ul {
     display: none;
 }
 
-.jgwc-dropdown-menu button[aria-expanded=true] + ul {
+.aash-dropdown-menu button[aria-expanded=true] + ul {
     display: block;
 }
 
-.jgwc-dropdown-menu > ul {
+.aash-dropdown-menu > ul {
     list-style: none;
     position: absolute;
     z-index: 1000;

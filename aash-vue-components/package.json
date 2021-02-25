@@ -1,8 +1,8 @@
 {
-  "name": "jgwc-vue-components",
-  "version": "1.0.0",
-  "main": "lib/jgwc-vue-components.js",
-  "module": "lib/jgwc-vue-components.esm.js",
+  "name": "aah-vue-components",
+  "version": "0.1.0",
+  "main": "lib/aash-vue-components.cjs.js",
+  "module": "lib/aash-vue-components.js",
   "browser": {},
   "scripts": {
     "build": "rollup -c"

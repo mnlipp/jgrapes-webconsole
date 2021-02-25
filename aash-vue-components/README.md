@@ -1,0 +1,1 @@
+Vue component library for generating "ARIA augmented Semantic HTML" (AaSH).

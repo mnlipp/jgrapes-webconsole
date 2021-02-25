@@ -24,21 +24,21 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn(":jgwc-vue-components:assemble")
-    into('build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components')
-    from ("${rootProject.projectDir}/jgwc-vue-components/") {
+    dependsOn(":aash-vue-components:assemble")
+    into('build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components')
+    from ("${rootProject.projectDir}/aash-vue-components/") {
         include 'lib/**/*'
         include 'src/**/*'
     }
 }
+
+sourceSets.main.resources.srcDir 'build/generated/resources'
 
 processResources.dependsOn 'prepareNpmLibs'
 
 eclipse {
     autoBuildTasks prepareNpmLibs
 }
-
-sourceSets.main.resources.srcDir 'build/generated/resources'
 
 ext.jsDocumentJsDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/provider/jgwcvuecomponents/jsdoc"
 
