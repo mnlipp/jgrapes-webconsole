@@ -1,11 +1,10 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
-/**
- * The registered Vue component `aash-dropdown-menu` that generates a dropdown 
- * menu with all required ARIA attributes.
- */
 @Component
+/**
+ * Generates a dropdown menu with all required ARIA attributes.
+ */
 export default class AashDropdownMenu extends Vue {
     // The id attribute of the generated top level HTML element 
     @Prop({ type: String, required: true }) readonly id!: string;
