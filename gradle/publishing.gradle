@@ -10,7 +10,12 @@ artifacts {
 }
 
 // MavenPublishing (new)
-    
+
+// Prepare gitlab authentication
+if (project.properties['gitLabRepoAccess'] == null) {
+    ext.gitLabRepoAccess = System.getenv("GL_REPO_ACCESS") ?: "NO_ACCESS"
+}
+
 publishing {
         
     repositories {
@@ -30,6 +35,7 @@ publishing {
                 password project.properties['sonatypePassword'] ?: "nopass"
             }
         }
+        
         maven {
             name "GitLab"
             url "https://gitlab.com/api/v4/projects/24557189/packages/maven"
