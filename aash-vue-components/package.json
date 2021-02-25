@@ -1,11 +1,22 @@
 {
   "name": "aah-vue-components",
   "version": "0.1.0",
+  "author": "Michael N. Lipp",
+  "license": "AGPL-3.0-only",
+  "description": "Vue component library for generating 'ARIA augmented Semantic HTML' (AaSH)",
   "main": "lib/aash-vue-components.cjs.js",
   "module": "lib/aash-vue-components.js",
   "browser": {},
   "scripts": {
     "build": "rollup -c"
+  },
+  "files": [
+    "/src",
+    "/lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mnlipp/jgrapes-webconsole"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^14.0.0",
@@ -28,8 +39,8 @@
     "rollup",
     "typescript",
     "component",
-    "library"
-  ],
-  "author": "Michael N. Lipp",
-  "license": "AGPL-3.0-only"
+    "library",
+    "semantic",
+    "accessibility"
+  ]
 }
