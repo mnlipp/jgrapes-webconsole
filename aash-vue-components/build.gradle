@@ -19,7 +19,7 @@ task buildDoc(type: NpmTask) {
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
     outputs.dir project.file('website')
-    args = ["run", "vuese"]
+    args = ["run", "build:doc"]
 }
 
 build.dependsOn 'buildDoc'

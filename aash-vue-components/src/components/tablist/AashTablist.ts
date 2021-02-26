@@ -1,37 +1,40 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 
+/**
+ * Represents a panel managed by the tablist control. 
+ */
 type Panel = {
+  /** The id */
   id: string;
   label: string | Function;
   removeCallback: () => {}
 };
 
-@Component
 /**
  * Generates a tab list with all required ARIA attributes.
  * 
- * Panels are described by objects with the following properties.
- 
- * id (`string`): the id of the HTML element that is enabled or disabled
- * depending on the selected tab.
- *
- * label (`string`|`Function`): a string used as label for the tab
- * or a function that returns the label.
- 
- * removeCallback (`function`): Called when the tab is removed.
+ * Panels are described by objects with the following properties:
+ * - *id* (`string`): the id of the HTML element that is enabled or disabled
+ *   depending on the selected tab.
+ * - *label* (`string`|`Function`): a string used as label for the tab
+ *   or a function that returns the label.
+ * - removeCallback (`function`): Called when the tab is removed.
  *
  * Once created, a component provides the externally invocable methods
  * described below.
  */
+@Component
 export default class AashTablist extends Vue {
-    // The id attribute of the generated top level HTML element 
+    /** The id attribute of the generated top level HTML element
+     * @category Vue Component */ 
     @Prop({ type: String, required: true }) readonly id!: string;
-    // Initial panels 
+    /** The initial panels
+     * @category Vue Component */  
     @Prop({ type: Array }) initialPanels!: Array<Panel>;
-    // A function invoked with a label 
-    // (of type string)as argument before the label is rendered
-    @Prop({ type: Function }) l10n: any;
+    /** A function invoked with a label as argument before the label is rendered
+     * @category Vue Component */  
+    @Prop({ type: Function }) l10n: ((label: string) => string) | undefined;
 
     panels: Array<Panel> = this.initialPanels || [];
     selected: any = null;
@@ -42,9 +45,8 @@ export default class AashTablist extends Vue {
     }
 
     /**
-     * @vuese
      * Adds another panel.
-     * @arg the panel to add
+     * @param panel the panel to add
      */
     addPanel(panel: Panel) {
         this.panels.push(panel);
@@ -52,9 +54,8 @@ export default class AashTablist extends Vue {
     }
 
     /**
-     * @vuese
      * Removes the panel with the given id.
-     * @arg the panelId
+     * @param panelId the panelId
      */
     removePanel(panelId: string) {
         let prevPanel = 0;
@@ -71,9 +72,8 @@ export default class AashTablist extends Vue {
     }
 
     /**
-     * @vuese
      * Activates the panel with the given id.
-     * @arg the panelId
+     * @param panelId the panelId
      */
     selectPanel(panelId: string) {
         if (this.selected) {
@@ -89,7 +89,7 @@ export default class AashTablist extends Vue {
         }
     }
 
-    private _label(panel: any) {
+    private _label(panel: Panel) {
         if (typeof panel.label === 'function') {
             return panel.label();
         }
@@ -99,7 +99,7 @@ export default class AashTablist extends Vue {
         return panel.label;
     }
 
-    private _setupTabpanel(panel: any) {
+    private _setupTabpanel(panel: Panel) {
         let tabpanel = document.querySelector("[id='" + panel.id + "']");
         if (tabpanel == null) {
             return;
