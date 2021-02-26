@@ -3,7 +3,7 @@ apply plugin: 'base'
 apply plugin: 'com.moowork.node'
 
 task buildLib(type: NpmTask) {
-    dependsOn(npm_install)
+    dependsOn('npmInstall')
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')
@@ -15,7 +15,7 @@ task buildLib(type: NpmTask) {
 assemble.dependsOn 'buildLib'
 
 task buildDoc(type: NpmTask) {
-    dependsOn(npm_install)
+    dependsOn('npmInstall')
     inputs.file project.file('README.md')
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
