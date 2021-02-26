@@ -1,7 +1,7 @@
 {
   "name": "Vue Components for AaSH (ARIA augmented Semantic HTML)",
   "entryPoints": ["./src/tsdoc-index.ts"],
-  "out": "docs",
+  "out": "../build/aashdoc",
   "includes": "./",
   "categorizeByGroup": true,
   "categoryOrder": ["Vue Component", "*"],
