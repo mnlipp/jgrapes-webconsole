@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:id="id" class="jgwc-tablist" role="tablist"
+  <div v-bind:id="id" class="aash-tablist" role="tablist"
     @keydown="_onKey($event)" @keyup="_onKey($event)">
     <span v-for="panel of panels" :id="panel.id + '-tab'" role="tab"
         :aria-selected="panel.id == selected ? 'true' : 'false'"
