@@ -37,8 +37,8 @@ export default {
       'mainFields': ['module', 'browser'], 
       'browser': true
     }),
+    vue(), typescript(),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production')
-    }),
-    typescript(), vue()]
+    })]
 };

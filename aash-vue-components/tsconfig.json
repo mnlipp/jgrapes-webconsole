@@ -10,5 +10,6 @@
     "moduleResolution": "node",
     "experimentalDecorators": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "src/tsdoc-index.ts"]
 }
