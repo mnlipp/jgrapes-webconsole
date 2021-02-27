@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AaSH Demo</title>
+</head>
+<body>
+  <main id="app">
+    <section>
+      <h2>Dropdown Menu</h2>
+      <div>
+        <aash-dropdown-menu v-bind:id="'language-selector'" 
+          v-bind:label="'Language'"
+          v-bind:items="[['English', 'English chosen'],['German', 'German chosen']]"
+          v-bind:action="function(msg) { window.alert(msg) }"></aash-dropdown-menu>
+      </div>
+    </section>
+    <section>
+      <h2>Tabs</h2>
+      <div>
+        <aash-tablist v-bind:id="consoleTabs"></jgwc-tablist>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./App.js"></script>
+</body>
+</html>

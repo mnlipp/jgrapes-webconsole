@@ -8,7 +8,7 @@ import { Component, Prop } from "vue-property-decorator";
 export default class AashDropdownMenu extends Vue {
     // The id attribute of the generated top level HTML element 
     @Prop({ type: String, required: true }) readonly id!: string;
-    // The text of the generated `button` element that opens the menu
+    // The inner HTML of the generated `button` element that opens the menu
     @Prop({ type: String, required: true }) readonly label!: string;
     // The menu items as an array
     // of arrays with two objects, the first being the label of the menu

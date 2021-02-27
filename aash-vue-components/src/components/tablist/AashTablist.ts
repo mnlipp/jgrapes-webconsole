@@ -2,24 +2,28 @@ import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 
 /**
- * Represents a panel managed by the tablist control. 
+ * The information about a panel managed by the tablist. 
  */
-type Panel = {
-  /** The id */
+export type Panel = {
+  /** The id of the panel's root node */
   id: string;
+  /** The label to use for the panel */
   label: string | Function;
+  /** A function to call when the panel is removed (optional) */
   removeCallback: () => {}
 };
 
 /**
- * Generates a tab list with all required ARIA attributes.
+ * Generates a 
+ * [tab list element](https://www.w3.org/TR/wai-aria-practices-1.1/#tabpanel) 
+ * and its child tab elements with all required ARIA attributes. 
+ * All tab elements have an `aria-controls` attribute that references the 
+ * associated tab panel. 
  * 
- * Panels are described by objects with the following properties:
- * - *id* (`string`): the id of the HTML element that is enabled or disabled
- *   depending on the selected tab.
- * - *label* (`string`|`Function`): a string used as label for the tab
- *   or a function that returns the label.
- * - removeCallback (`function`): Called when the tab is removed.
+ * The tab panels controlled by the tab list are made known by objects of 
+ * type {@link Panel}. Because the tab panels are referenced from the 
+ * tab elements, the tab panel elements need only
+ * an `id` attribute and `role=tabpanel` `tabindex=0`.
  *
  * Once created, a component provides the externally invocable methods
  * described below.
