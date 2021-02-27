@@ -20,7 +20,7 @@ export default {
       file: packageJson.module,
       sourcemap: true,
       paths: {
-        'vue': './vue.js'
+        'vue': './vue.esm.re-export.js'
       }
     },
     {
