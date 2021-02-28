@@ -23,7 +23,7 @@ task buildDoc(type: NpmTask) {
     args = ["run", "build:doc"]
 }
 
-build.dependsOn 'buildDoc'
+// build.dependsOn 'buildDoc'
 
 eclipse {
     autoBuildTasks buildLib
