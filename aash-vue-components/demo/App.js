@@ -1,11 +1,12 @@
-import Vue from "/node_modules/vue/dist/vue.esm.browser.js";
+import { createApp } from "/node_modules/vue/dist/vue.esm-browser.js";
 import { AashDropdownMenu, AashTablist } from "/lib/aash-vue-components.js";
 
-Vue.component('aash-dropdown-menu', AashDropdownMenu);
-Vue.component('aash-tablist', AashTablist);
+let RootComponent = {
+}
 
-Vue.prototype.window = window;
+const app = createApp(RootComponent);
 
-var app = new Vue({
-    el: '#app'
-})
+app.component('aash-dropdown-menu', AashDropdownMenu);
+app.component('aash-tablist', AashTablist);
+
+app.mount('#app');
