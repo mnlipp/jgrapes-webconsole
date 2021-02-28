@@ -14,16 +14,20 @@ task buildLib(type: NpmTask) {
 
 assemble.dependsOn 'buildLib'
 
-task buildDoc(type: NpmTask) {
-    dependsOn('npmInstall')
-    inputs.file project.file('README.md')
-    inputs.dir project.file('src')
-    inputs.file project.file('package.json')
-    outputs.dir project.file("${rootProject.buildDir}/aashdoc")
-    args = ["run", "build:doc"]
+//task buildDoc(type: NpmTask) {
+//    dependsOn('npmInstall')
+//    inputs.file project.file('README.md')
+//    inputs.dir project.file('src')
+//    inputs.file project.file('package.json')
+//    outputs.dir project.file("${rootProject.buildDir}/aashdoc")
+//    args = ["run", "build:doc"]
+//}
+
+task buildDoc(type: Task) {
+    
 }
 
-// build.dependsOn 'buildDoc'
+build.dependsOn 'buildDoc'
 
 eclipse {
     autoBuildTasks buildLib
