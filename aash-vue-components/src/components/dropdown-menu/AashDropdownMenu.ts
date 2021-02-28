@@ -1,4 +1,5 @@
-import { defineComponent, PropType, ref, computed } from 'vue'
+import { defineComponent, PropType, ref, computed,
+    onMounted, onBeforeUnmount } from 'vue'
 
 /**
  * Generates a dropdown menu with all required ARIA attributes.
@@ -13,12 +14,12 @@ export default defineComponent({
     },
     
     setup(props) {
-        let $lastEvent: MouseEvent | null = null;
-        let _globalClickHandler = (e: MouseEvent) => {};
+        let lastEvent: MouseEvent | null = null;
+        let globalClickHandler = (e: MouseEvent) => {};
         const expanded = ref(false);
         
         const toggle = (event: MouseEvent) => {
-            $lastEvent = event;
+            lastEvent = event;
             expanded.value = !expanded.value;
         }
 
@@ -42,27 +43,25 @@ export default defineComponent({
             });
             return result;
         });
-    
-        return { $lastEvent, _globalClickHandler, expanded, 
-            toggle, translate, sortedItems };        
-    },
-  
-    mounted() {
-        // Any click event that is not the one handled by this component
-        // causes the menu to be closed.
-        let self = this;
-        this._globalClickHandler = (event: MouseEvent) => {
-            if (self.$lastEvent) {
-                let lastEvent = self.$lastEvent; 
-                if (event.target !== lastEvent) {
-                    self.expanded = false;
+
+        onMounted(() => {
+            // Any click event that is not the one handled by this component
+            // causes the menu to be closed.
+            globalClickHandler = (event: MouseEvent) => {
+                if (lastEvent) {
+                    if (event.target !== lastEvent.target) {
+                        expanded.value = false;
+                    }
                 }
-            }
-        };
-        document.addEventListener("click", this._globalClickHandler);
-    },
+            };
+            document.addEventListener("click", globalClickHandler);
+        });
+
+        onBeforeUnmount(() => {
+            document.removeEventListener("click", globalClickHandler);
+        });
     
-    beforeDestroy() {
-        document.removeEventListener("click", this._globalClickHandler);
+        return { lastEvent, globalClickHandler, expanded,
+            toggle, translate, sortedItems };        
     }
 });

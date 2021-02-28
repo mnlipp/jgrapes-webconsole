@@ -107,8 +107,10 @@ export default defineComponent({
             return [null, -1];
         }
 
-        return { panels, selected, addPanel, removePanel, selectPanel,
-            _selectedPanel, _setupTabpanel }; 
+        let id = props.id;
+
+        return { id, panels, selected, addPanel, removePanel, 
+            selectPanel, _selectedPanel, _setupTabpanel }; 
     },
 
     methods: {

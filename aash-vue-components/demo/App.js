@@ -5,6 +5,7 @@ let RootComponent = {
 }
 
 const app = createApp(RootComponent);
+app.config.globalProperties.window = window;
 
 app.component('aash-dropdown-menu', AashDropdownMenu);
 app.component('aash-tablist', AashTablist);
