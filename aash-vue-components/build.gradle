@@ -14,33 +14,15 @@ task buildLib(type: NpmTask) {
 
 assemble.dependsOn 'buildLib'
 
-//task buildDoc(type: NpmTask) {
-//    dependsOn('npmInstall')
-//    inputs.file project.file('README.md')
-//    inputs.dir project.file('src')
-//    inputs.file project.file('package.json')
-//    outputs.dir project.file("${rootProject.buildDir}/aashdoc")
-//    args = ["run", "build:doc"]
-//}
-
 ext.jsDocDestDir = "${rootProject.buildDir}/aashdoc"
 
-task jsdoc(type: NodeTask) {
+task buildDoc(type: NpmTask) {
     dependsOn(':npmInstall')
-    new File(jsDocDestDir).mkdirs()
-    script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
-    args = [
-        "-c",
-        "${rootProject.projectDir}/jsdoc.json",
-        "--destination",
-        jsDocDestDir,
-        "resources/org/jgrapes/webconsole/base/jgconsole.js"
-    ]
-}
-
-
-task buildDoc(type: Task) {
-    
+    inputs.dir project.file('src')
+    inputs.file project.file('package.json')
+    inputs.file project.file('jsdoc.json')
+    outputs.dir project.file(jsDocDestDir)
+    args = ["run", "build:doc"]
 }
 
 build.dependsOn 'buildDoc'
