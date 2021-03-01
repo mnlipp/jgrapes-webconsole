@@ -23,6 +23,22 @@ assemble.dependsOn 'buildLib'
 //    args = ["run", "build:doc"]
 //}
 
+ext.jsDocDestDir = "${rootProject.buildDir}/aashdoc"
+
+task jsdoc(type: NodeTask) {
+    dependsOn(':npmInstall')
+    new File(jsDocDestDir).mkdirs()
+    script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
+    args = [
+        "-c",
+        "${rootProject.projectDir}/jsdoc.json",
+        "--destination",
+        jsDocDestDir,
+        "resources/org/jgrapes/webconsole/base/jgconsole.js"
+    ]
+}
+
+
 task buildDoc(type: Task) {
     
 }

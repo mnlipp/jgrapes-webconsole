@@ -1,3 +1,6 @@
+/**
+ * @module AashTablist
+ */
 import { defineComponent, PropType, ref, computed } from 'vue'
 
 /**
@@ -13,6 +16,7 @@ export type Panel = {
 };
 
 /**
+ * @classdesc
  * Generates a 
  * [tab list element](https://www.w3.org/TR/wai-aria-practices-1.1/#tabpanel) 
  * and its child tab elements with all required ARIA attributes. 
@@ -24,8 +28,17 @@ export type Panel = {
  * tab elements, the tab panel elements need only
  * an `id` attribute and `role=tabpanel` `tabindex=0`.
  *
- * Once created, a component provides the externally invocable methods
- * described below.
+ * Once created, a component provides some externally invocable methods:
+ * * *addPanel(panel: Panel)*: adds another panel.
+ * * *removePanel(panelId: string)*: removes the panel with the given id.
+ * * *selectPanel(panelId: string)*: activates the panel with the given id.
+ *
+ * @class AashTablist
+ * @param {Object} props the properties
+ * @param {string} props.id the id for the enclosing `div`
+ * @param {Panel[]} props.initialPanels the list of initial panels
+ * @param {function} props.l10n a function invoked with a label 
+ *      (of type string) as argument before the label is rendered
  */
 export default defineComponent({
     props: {

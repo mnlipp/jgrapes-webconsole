@@ -1,8 +1,27 @@
+/**
+ * @module AashDropdownMenu
+ */
 import { defineComponent, PropType, ref, computed,
     onMounted, onBeforeUnmount } from 'vue'
 
 /**
- * Generates a dropdown menu with all required ARIA attributes.
+ * @classdesc
+ * A component that generates a dropdown 
+ * menu with all required ARIA attributes.
+ * 
+ * @class
+ * @param {Object} props The properties
+ * @param {string} props.id The id for the enclosing `div`
+ * @param {string} props.label The text of the `button` that opens the menu
+ * @param {Array[]} props.items The menu items as an array
+ *      of arrays with two objects, the first being the label of the menu
+ *      item (a string) or a function that returns the label 
+ *      and the second being an argument to the `action` function that
+ *      is invoked when the item has been chosen
+ * @param {function} props.l10n A function invoked with a label 
+ *      (of type string)as argument before the label is rendered
+ * @param {function} props.action A function that is invoked when an item has
+ *      been chosen
  */
 export default defineComponent({
     props: {
