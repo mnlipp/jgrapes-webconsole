@@ -16,13 +16,18 @@ assemble.dependsOn 'buildLib'
 
 ext.jsDocDestDir = "${rootProject.buildDir}/aashdoc"
 
-task buildDoc(type: NpmTask) {
+task buildDoc(type: NodeTask) {
     dependsOn(':npmInstall')
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
     inputs.file project.file('jsdoc.json')
     outputs.dir project.file(jsDocDestDir)
-    args = ["run", "build:doc"]
+    new File(jsDocDestDir).mkdirs()
+    script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
+    args = [
+        "-c", "jsdoc.json",
+        "--destination", jsDocDestDir
+    ]
 }
 
 build.dependsOn 'buildDoc'
