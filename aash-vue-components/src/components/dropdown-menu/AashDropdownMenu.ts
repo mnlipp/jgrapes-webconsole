@@ -9,7 +9,24 @@ type MenuItem = [ string | (() => string), any ];
 /**
  * @classdesc
  * A component that generates a dropdown 
- * menu with all required ARIA attributes.
+ * menu with all required ARIA attributes. Example:
+ * 
+ * ```html 
+ * <div id="language-selector" class="dropdown-menu aash-dropdown-menu">
+ *  <button type="button" aria-haspopup="menu"
+ *   aria-controls="language-selector-menu" aria-expanded="true">
+ *   <span>Language</span>
+ *  </button>
+ *  <ul id="language-selector-menu" role="menu">
+ *   <li role="none">
+ *    <button type="button" role="menuitem">English</button>
+ *   </li>
+ *   <li role="none">
+ *    <button type="button" role="menuitem">German</button>
+ *   </li>
+ *  </ul>
+ * </div>
+ * ```
  * 
  * @class
  * @param {Object} props The properties
