@@ -12,7 +12,7 @@ a micro service driven micro frontend (with run-time integration via
 JavaScript). Contrary to the ususal approaches of micro frontends,
 it favors a common, exchangeable styling for all components.
 
-This prevents the usage of the wide spread "invasive" CSS frameworks that
+This prohibits the usage of the wide spread "invasive" CSS frameworks that
 spread their presentation classes all over the HTML. The alternative is
 to use the information provided by the (semantic) HTML for selecting
 the styles to be applied. The problem is that even semantic HTML 5 doesn’t 
