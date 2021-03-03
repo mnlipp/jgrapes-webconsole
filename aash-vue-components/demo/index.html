@@ -32,8 +32,28 @@
       </div>
     </section>
 
+    <section>
+      <h2>Dialog</h2>
+      
+      <button onclick="openAashDialog('sampleDialog')">Open</button>
+      <div>
+        <aash-modal-dialog v-bind:id="'sampleDialog'"
+            :title="'Sample Dialog'"
+            :showCancel="true"
+            :on-close="function(confirmed) { window.alert(confirmed) }"
+            ><i>Sample dialog content</i></aash-modal-dialog>
+      </div>
+    </section>
+
   </main>
 
+  <script>
+      function openAashDialog(id) {
+          let dialog = document.querySelector("[id='" + id + "']");
+          dialog.__aashApi.open();
+      }
+  </script>
+      
   <script type="module" src="./App.js"></script>
 </body>
 </html>

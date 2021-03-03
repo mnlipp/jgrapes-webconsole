@@ -32,7 +32,7 @@
  */
 
 import Vue from "../vue/vue.esm.browser.js"
-import { AashDropdownMenu, AashTablist } 
+import { AashDropdownMenu, AashTablist, AashModalDialog } 
     from "../aash-vue-components/lib/aash-vue-components.js"
 import JGConsole from "../../console-base-resource/jgconsole.js"
 
@@ -148,71 +148,7 @@ const keys = {
 
 Vue.component('jgwc-dropdown-menu', AashDropdownMenu);
 Vue.component('jgwc-tablist', AashTablist);
-
-Vue.component('jgwc-modal-dialog', {
-  props: {
-    id: String,
-    title: String,
-    showCancel: {
-        type: Boolean,
-        default: true
-    },
-    content: String,
-    contentClasses: Array,
-    closeLabel: String,
-    onClose: Function
-  },
-  data: function () {
-    return {
-      effectiveId: null,
-      isOpen: false
-    }
-  },
-  template: `
-    <div class="jgwc-modal-dialog dialog__backdrop" :hidden="!isOpen">
-      <div :id="effectiveId" role="dialog" :aria-labelledby="effectiveId + '-label'" 
-        aria-modal="true">
-        <header :id="effectiveId + '-label'">
-          <p>{{ title }}</p>
-          <button v-if="showCancel" type="button" class="fa fa-times" 
-            v-on:click="cancel()"></button>
-        </header>
-        <section v-if="content" v-html="content" :class="contentClasses"></section>
-        <section v-else :class="contentClasses"><slot></slot></section>
-        <footer>
-          <button type="button" v-on:click="close()">{{ closeLabel || "Okay" }}</button>
-        </footer>
-      </div>
-    </div>
-  `,
-  methods: {
-    open: function() {
-        this.isOpen = true;
-    },
-    cancel: function() {
-        if (this.onClose) {
-            (this.onClose)(false);
-        }
-        this.isOpen = false;
-    },
-    close: function() {
-        if (this.onClose) {
-            (this.onClose)(true);
-        }
-        this.isOpen = false;
-    }
-  },
-  created: function() {
-    if (this.id) {
-        this.effectiveId = id;
-        return;
-    }
-    if (!this.constructor.prototype.$instanceCounter) {
-        this.constructor.prototype.$instanceCounter = 0;
-    }
-    this.effectiveId = "jgwc-modal-dialog-" + ++this.constructor.prototype.$instanceCounter;
-  }
-});
+Vue.component('jgwc-modal-dialog', AashModalDialog);
 
 var disclosures = Vue.observable({});
 
