@@ -14,14 +14,24 @@
           v-bind:action="function(msg) { window.alert(msg) }"></aash-dropdown-menu>
       </div>
     </section>
-    <!-- 
+ 
     <section>
       <h2>Tabs</h2>
       <div>
-        <aash-tablist v-bind:id="consoleTabs"></jgwc-tablist>
+        <aash-tablist v-bind:id="'sampleTabs'"
+            v-bind:initial-panels="[
+                {id: 'tab-1', label: 'Tab 1'},
+                {id: 'tab-2', label: 'Tab 2'}
+            ]"></aash-tablist>
+      </div>
+      <div id="tab-1" hidden>
+        This is panel One.
+      </div>
+      <div id="tab-2" hidden>
+        This is panel Two.
       </div>
     </section>
-    -->
+
   </main>
 
   <script type="module" src="./App.js"></script>
