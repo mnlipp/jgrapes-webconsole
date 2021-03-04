@@ -4,7 +4,7 @@ dependencies {
 	
 }
 
-ext.releaseVersion = "0.2.0"
+ext.releaseVersion = "0.3.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
@@ -17,6 +17,8 @@ jar {
     }
 }
 
+apply plugin: 'com.moowork.node'
+
 task prepareNpmLibs(type: Copy) {
     description '''
     Helper task that copies the the libraries from the npm_modules 
@@ -24,10 +26,11 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn(':npmInstall')
+    dependsOn('npmInstall')
     into('build/generated/resources/org/jgrapes/webconsole/provider/vuex/vuex')
-    from file("${rootProject.projectDir}/node_modules/vuex/dist/vuex.esm.browser.js")
-    from file("${rootProject.projectDir}/node_modules/vuex/dist/vuex.esm.browser.min.js")
+    from ('node_modules/vuex/dist') {
+        include '*-browser.*'
+    }
 }
 
 processResources.dependsOn 'prepareNpmLibs'
