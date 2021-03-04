@@ -3,7 +3,7 @@
  *
  * @module AashDisclosureButton
  */
-import { defineComponent, onBeforeUnmount, getCurrentInstance } from 'vue'
+import { defineComponent, getCurrentInstance, onUnmounted } from 'vue'
 
 /**
  * @classdesc
@@ -50,8 +50,8 @@ export default defineComponent({
             }
         }
   
-        onBeforeUnmount(() => {
-//            disclosureRegistry.delete(props.idRef);
+        onUnmounted(() => {
+            globalProps.$aash.removeDisclose(props.idRef);
         });
         
         return { toggleDisclosed, disclosed };

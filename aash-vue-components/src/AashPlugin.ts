@@ -30,6 +30,13 @@ interface Aash {
     disclosureData(id: string): Ref<boolean>;
     
     /**
+     * Remove the discloure data for the given `id`.
+     * @function
+     * @param id the id
+     */
+    removeDisclosure(id: string): void;
+    
+    /**
      * Returns the state of the disclosure
      * with the given `id`.
      * @function
@@ -50,6 +57,10 @@ let aash: Aash = {
     
     isDisclosed: (id) => {
         return aash.disclosureData(id).value;
+    },
+    
+    removeDisclosure: (id) => {
+        return disclosureRegistry.delete(id);
     }
 }
 
