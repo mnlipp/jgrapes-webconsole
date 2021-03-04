@@ -11,7 +11,7 @@ import { defineComponent, PropType, ref, computed, onMounted, watch } from 'vue'
  * * `cancel(): void`: cancels the dialog
  * * `isOpen(): boolean`: returns the state of the dialog
  *
- * @memberOf module:AashTablist
+ * @memberOf module:AashModalDialog
  */
 export interface AashApi {
   open(): void;

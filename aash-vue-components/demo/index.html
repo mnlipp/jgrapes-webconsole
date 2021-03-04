@@ -45,6 +45,15 @@
       </div>
     </section>
 
+    <section>
+      <h2>Disclosure</h2>
+        <aash-disclosure-button :id-ref="'onlyShownWhenDisclosed'"
+        >Disclose</aash-disclosure-button>
+        <div id="onlyShownWhenDisclosed" v-if="$aash.isDisclosed('onlyShownWhenDisclosed')">
+            This is only shown when disclosed.
+        </div>
+    </section>
+
   </main>
 
   <script>

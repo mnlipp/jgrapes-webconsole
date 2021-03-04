@@ -9,7 +9,7 @@ import packageJson from "./package.json";
 
 export default {
   external: ['vue'],
-  input: "src/index.ts",
+  input: "src/AashPlugin.ts",
   output: [
     {
       format: "cjs",
