@@ -1,4 +1,5 @@
 /**
+ * Provides a modal dialog. 
  * @module AashModalDialog
  */
 import { defineComponent, PropType, ref, computed, onMounted, watch } from 'vue'
@@ -11,7 +12,7 @@ import { defineComponent, PropType, ref, computed, onMounted, watch } from 'vue'
  * * `cancel(): void`: cancels the dialog
  * * `isOpen(): boolean`: returns the state of the dialog
  *
- * @memberOf module:AashModalDialog
+ * @memberof module:AashModalDialog
  */
 export interface AashApi {
   open(): void;
