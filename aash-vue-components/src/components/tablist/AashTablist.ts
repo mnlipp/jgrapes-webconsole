@@ -1,7 +1,9 @@
 /**
+ * Provides tablist element.
  * @module AashTablist
  */
-import { defineComponent, PropType, ref, computed, onMounted, watch } from 'vue'
+import { defineComponent, PropType, ref, reactive, computed, 
+    onMounted, watch } from 'vue'
 
 /**
  * The information about a panel managed by the tablist. 
@@ -22,13 +24,15 @@ export type Panel = {
  * * `addPanel(panel: Panel): void`: adds another panel.
  * * `removePanel(panelId: string): void`: removes the panel with the given id.
  * * `selectPanel(panelId: string): void`: activates the panel with the given id.
+ * * `panels(): Panel[]`: returns the panels.
  *
- * @memberOf module:AashTablist
+ * @memberof module:AashTablist
  */
 export interface AashApi {
   addPanel(panel: Panel): void;
   removePanel(panelId: string): void;
   selectPanel(panelId: string): void;
+  panels(): Panel[];
 }
 
 /**
@@ -87,7 +91,7 @@ export default defineComponent({
     },
 
     setup(props, context) {
-        const panels = ref(props.initialPanels || []); 
+        const panels = reactive(props.initialPanels || []); 
         const selected: any = ref(null);
         
         const isVertical = computed(() => {
@@ -96,21 +100,21 @@ export default defineComponent({
         });
         
         const addPanel = (panel: Panel) => {
-            panels.value.push(panel);
+            panels.push(panel);
             setupTabpanel(panel)
         };
 
         const removePanel = (panelId: string) => {
             let prevPanel = 0;
-            for (let i = 0; i < panels.value.length; i++) {
-                if (panels.value[i].id === panelId) {
-                    panels.value.splice(i, 1);
+            for (let i = 0; i < panels.length; i++) {
+                if (panels[i].id === panelId) {
+                    panels.splice(i, 1);
                     break;
                 }
                 prevPanel = i;
             }
-            if (panels.value.length > 0) {
-                selectPanel(panels.value[prevPanel].id);
+            if (panels.length > 0) {
+                selectPanel(panels[prevPanel].id);
             }
         };
 
@@ -155,8 +159,8 @@ export default defineComponent({
         };
 
         const selectedPanel = function(): [Panel | null, number] {
-            for (let i = 0; i < panels.value.length; i++) {
-                let panel = panels.value[i];
+            for (let i = 0; i < panels.length; i++) {
+                let panel = panels[i];
                 if (panel.id === selected.value) {
                     return [panel, i];
                 }
@@ -182,12 +186,12 @@ export default defineComponent({
             let handled = false;
             if (isVertical.value ? event.key === "ArrowUp"
                 : event.key === "ArrowLeft") {
-                selectPanel(panels.value[
-                        (panelIndex-1+panels.value.length)%panels.value.length].id);
+                selectPanel(panels[
+                        (panelIndex-1+panels.length)%panels.length].id);
                 handled = true;
             } else if (isVertical.value ? event.key === "ArrowDown"
                 : event.key === "ArrowRight") {
-                selectPanel(panels.value[(panelIndex+1)%panels.value.length].id);
+                selectPanel(panels[(panelIndex+1)%panels.length].id);
                 handled = true;
             } else if (event.key === "Delete") {
                 if (panel.removeCallback) {
@@ -195,10 +199,10 @@ export default defineComponent({
                     handled = true;
                 }
             } else if (event.key === "Home") {
-                selectPanel(panels.value[0].id);
+                selectPanel(panels[0].id);
                 handled = true;
             } else if (event.key === "End") {
-                selectPanel(panels.value[panels.value.length-1].id);
+                selectPanel(panels[panels.length-1].id);
                 handled = true;
             }
             if (handled) {
@@ -212,21 +216,22 @@ export default defineComponent({
         const tablist = ref(null);
 
         onMounted(() => {
-            let api: AashApi = { addPanel, removePanel, selectPanel };
+            let api: AashApi = { addPanel, removePanel, selectPanel,
+                panels: () => { return panels.slice() } };
             if (tablist.value) {
                 (<any>(tablist.value!)).__aashApi = api;
             }
-            if (panels.value.length > 0) {
-                selected.value = panels.value[0].id;
+            if (panels.length > 0) {
+                selected.value = panels[0].id;
             }
-            for (let panel of panels.value) {
+            for (let panel of panels) {
                 setupTabpanel(panel);
             }
         });
 
         watch(panels, (oldValue, newValue) => {
             if (selected.value === null && newValue.length > 0) {
-                selectPanel(panels.value[0].id);
+                selectPanel(panels[0].id);
             }
         });
     
