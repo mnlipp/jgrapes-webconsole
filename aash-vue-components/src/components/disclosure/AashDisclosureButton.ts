@@ -51,7 +51,7 @@ export default defineComponent({
         }
   
         onUnmounted(() => {
-            globalProps.$aash.removeDisclose(props.idRef);
+            globalProps.$aash.removeDisclosure(props.idRef);
         });
         
         return { toggleDisclosed, disclosed };
