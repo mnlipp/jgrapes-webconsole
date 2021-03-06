@@ -528,7 +528,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
                 return { content, notificationClass, closeable, close, alert };
             }
         });
-        return getApi(notification.mount(notificationNode));
+        return getApi(notification.mount(notificationNode).$el);
     }
 
 }
