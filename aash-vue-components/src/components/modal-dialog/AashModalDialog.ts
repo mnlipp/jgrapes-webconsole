@@ -3,6 +3,7 @@
  * @module AashModalDialog
  */
 import { defineComponent, PropType, ref, computed, onMounted, watch } from 'vue'
+import { provideApi } from "../../AashUtil";
 
 /**
  * The interface provided by the component.
@@ -14,7 +15,7 @@ import { defineComponent, PropType, ref, computed, onMounted, watch } from 'vue'
  *
  * @memberof module:AashModalDialog
  */
-export interface AashApi {
+export interface Api {
   open(): void;
   close(): void;
   cancel(): void;
@@ -26,6 +27,10 @@ let instanceCounter = 0;
 /**
  * @classdesc
  * Generates a ... 
+ * 
+ * Once created, the component provides the externally invocable methods
+ * defined by {@link module:AashTablist.Api} through an object in 
+ * a property of the mounted DOM element {@link module:AashUtil.getApi}.
  * 
  * @class AashModalDialog
  * @param {Object} props the properties
@@ -80,13 +85,8 @@ export default defineComponent({
 
         const dialog = ref(null);
 
-        onMounted(() => {
-            let api: AashApi = { open, close, cancel, 
-                isOpen: () => { return isOpen.value } };
-            if (dialog.value) {
-                (<any>(dialog.value!)).__aashApi = api;
-            }
-        });
+        provideApi(dialog, { open, close, cancel, 
+                isOpen: () => { return isOpen.value } });
 
         return { effectiveId, isOpen, cancel, close, dialog };
     }

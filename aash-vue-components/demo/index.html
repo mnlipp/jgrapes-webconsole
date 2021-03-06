@@ -56,11 +56,13 @@
 
   </main>
 
-  <script>
-      function openAashDialog(id) {
-          let dialog = document.querySelector("[id='" + id + "']");
-          dialog.__aashApi.open();
-      }
+  <script type="module">
+    import { getApi } from "./lib/aash-vue-components.js";
+  
+    window.openAashDialog = (id) => {
+        let dialog = document.querySelector("[id='" + id + "']");
+        getApi(dialog).open();
+    }
   </script>
       
   <script type="module" src="./App.js"></script>

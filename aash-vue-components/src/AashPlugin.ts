@@ -6,13 +6,14 @@
  */
 
 import { App, Ref, ref } from 'vue'
+import { provideApi, getApi } from "./AashUtil";
 import AashDropdownMenu from "./components/dropdown-menu/AashDropdownMenu.vue";
 import AashTablist from "./components/tablist/AashTablist.vue";
 import AashModalDialog from "./components/modal-dialog/AashModalDialog.vue";
 import AashDisclosureButton from "./components/disclosure/AashDisclosureButton.vue";
 
-export { AashDropdownMenu, AashTablist, AashModalDialog, 
-    AashDisclosureButton };
+export { provideApi, getApi,
+    AashDropdownMenu, AashTablist, AashModalDialog, AashDisclosureButton };
 
 let disclosureRegistry = new Map();
 

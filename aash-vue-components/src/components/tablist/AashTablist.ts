@@ -4,6 +4,7 @@
  */
 import { defineComponent, PropType, ref, reactive, computed, 
     onMounted, watch } from 'vue'
+import { provideApi } from "../../AashUtil";
 
 /**
  * The information about a panel managed by the tablist. 
@@ -28,7 +29,7 @@ export type Panel = {
  *
  * @memberof module:AashTablist
  */
-export interface AashApi {
+export interface Api {
   addPanel(panel: Panel): void;
   removePanel(panelId: string): void;
   selectPanel(panelId: string): void;
@@ -49,9 +50,9 @@ export interface AashApi {
  * tab elements, the tab panel elements need only
  * an `id` attribute and `role=tabpanel` `tabindex=0`.
  *
- * Once created, a component provides the externally invocable methods
- * defined by {@link module:AashTablist.API} through an object in 
- * the property `__aashApi` of the mounted DOM element.
+ * Once created, the component provides the externally invocable methods
+ * defined by {@link module:AashTablist.Api} through an object in 
+ * a property of the mounted DOM element {@link module:AashUtil.getApi}.
  *
  * The DOM is generated as shown in the 
  * [WAI-ARIA Authoring Practices 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/examples/tabs/tabs-2/tabs.html)
@@ -215,12 +216,10 @@ export default defineComponent({
 
         const tablist = ref(null);
 
+        provideApi(tablist, { addPanel, removePanel, selectPanel,
+                panels: () => { return panels.slice() } });
+
         onMounted(() => {
-            let api: AashApi = { addPanel, removePanel, selectPanel,
-                panels: () => { return panels.slice() } };
-            if (tablist.value) {
-                (<any>(tablist.value!)).__aashApi = api;
-            }
             if (panels.length > 0) {
                 selected.value = panels[0].id;
             }
