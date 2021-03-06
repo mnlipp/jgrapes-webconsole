@@ -209,7 +209,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(300000);
+        consoleWeblet.setConsoleSessionInactivityTimeout(45000);
         console.attach(new BrowserLocalBackedKVStore(
             console, consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console));

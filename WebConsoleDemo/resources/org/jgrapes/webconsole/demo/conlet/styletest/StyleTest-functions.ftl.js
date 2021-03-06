@@ -17,7 +17,7 @@
  */
 'use strict';
 
-import Vue from "../../page-resource/vue/vue.esm.browser.js"
+import Vue from "../../page-resource/vue/vue.esm-browser.js"
 import { jgwcIdScopeMixin } from "../../page-resource/jgwc-vue-components/jgwc-components.js";
 
 const l10nBundles = {

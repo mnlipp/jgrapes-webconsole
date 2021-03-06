@@ -23,15 +23,15 @@ artifacts {
 dependencies {
     compile project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.vuex')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jgwcvuecomponents')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.moment')
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')
     runtimeOnly project(':org.jgrapes.webconsole.provider.gridstack')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
-ext.releaseVersion = "0.7.1"
+ext.releaseVersion = "0.8"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 

@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2016, 2019  Michael N. Lipp
+ * Copyright (C) 2016, 2021  Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -19,8 +19,11 @@
 'use strict';
 
 import { JGConsole, RenderMode } from "../console-base-resource/jgconsole.js"
-import Vue from "../page-resource/vue/vue.esm.browser.js";
-import Vuex from "../page-resource/vuex/vuex.esm.browser.js";
+import { reactive, ref, createApp, onMounted, computed }
+    from "../page-resource/vue/vue.esm-browser.js";
+// import { AashPlugin } from "../page-resource/jgwc-vue-components/jgwc-components.js";
+import AashPlugin, { provideApi, getApi, AashModalDialog } 
+    from "../page-resource/aash-vue-components/lib/aash-vue-components.js";
 
 /**
  * JGConsole establishes a namespace for the JavaScript functions
@@ -42,33 +45,16 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         this._lastXtraInfo = {};
         this._connectionLostNotification = null;
         let _this = this;
-        // Make renderer available
-        Vue.prototype.$consoleRenderer = this;
         
         // Prepare console i18n
         this._l10nMessages = l10nMessages;
         window.consoleL10n = function(key) { return _this.localize(key) };
         
-        // Prepare Vuex Store
-        let initialLang = document.querySelector("html")
-            .getAttribute('lang') || 'en';
-        this._vuexStore = new Vuex.Store({
-            state: {
-                localeMenuitems,
-                lang: initialLang,
-                conletTypes: [],
-            },
-            mutations: {
-                lang(state, lang) {
-                    state.lang = lang;
-                    document.querySelector("html").setAttribute('lang', lang);
-                    _this.console().setLocale(lang, false);
-                },
-                addConletType(state, item) {
-                    state.conletTypes.push(item);
-                },
-            },
-        });
+        // Shared state
+        this._localeMenuItems = reactive(localeMenuitems);
+        this._lang = ref(document.querySelector("html")
+            .getAttribute('lang') || 'en');
+        this._conletTypes = reactive([]);
     }
     
     init() {
@@ -76,9 +62,17 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         log.debug("Locking screen");
         
         // Start Vue
-        let store = this._vuexStore;
-        new Vue({ el: 'header', store });
-        new Vue({ el: '.consoleVue', store });
+        let headerApp = createApp({});
+        headerApp.use(AashPlugin);
+        headerApp.config.globalProperties.window = window;
+        headerApp.config.globalProperties.$consoleRenderer = this;
+        headerApp.mount('header');
+
+        let consoleVueApp = createApp({});
+        consoleVueApp.use(AashPlugin);
+        consoleVueApp.config.globalProperties.window = window;
+        consoleVueApp.config.globalProperties.$consoleRenderer = this;
+        consoleVueApp.mount('.consoleVue');
 
         // Init tabs
         this._consoleTabs().addPanel({  
@@ -102,13 +96,32 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         });
     }
 
+    locale() {
+        return this._lang.value;
+    }
+
+    setLocale(lang) {
+        this._lang.value = lang;
+        document.querySelector("html").setAttribute('lang', lang);
+        this.console().setLocale(lang, false);
+        
+    }
+
+    localeMenuItems() {
+        return this._localeMenuItems;
+    }
+
+    conletTypes() {
+        return this._conletTypes;
+    }
+
     _consoleTabs() {
-        return document.querySelector("#consoleTabs").__vue__;
+        return getApi(document.querySelector("#consoleTabs"));
     }
 
     localize(key) {
         return JGConsole.localize(this._l10nMessages, 
-            this._vuexStore.state.lang, key);
+            this.locale(), key);
     }
     
     _layoutChanged() {
@@ -135,7 +148,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         });
 
         let tabsLayout = [];
-        for (let panel of this._consoleTabs().panels) {
+        for (let panel of this._consoleTabs().panels()) {
             let tabpanel = $("[id='" + panel.id + "']");
             let conletId = tabpanel.attr("data-conlet-id");
             if (conletId) {
@@ -149,9 +162,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         // Add to menu
         let _this = this;
         let label = function() {
-            return JGConsole.forLang(displayNames, _this._vuexStore.state.lang) || "Conlet";
+            return JGConsole.forLang(displayNames, _this.locale()) || "Conlet";
         };
-        _this._vuexStore.commit('addConletType', [label, conletType, renderModes]);
+        _this._conletTypes.push([label, conletType, renderModes]);
     }
     
     consoleConfigured() {
@@ -162,33 +175,20 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
 
     connectionSuspended(resume) {
         let _this = this;
-        let dialog = new (Vue.component('jgwc-modal-dialog'))({
-            propsData: {
-                title: _this.localize("Console Session Suspended"),
-                showCancel: false,
-                content: _this.localize("consoleSessionSuspendedMessage"),
-                contentClasses: [],
-                closeLabel: _this.localize("Resume"),
-                onClose: function(applyChanges) {
-                    this.$destroy();
-                    this.$el.remove();
-                    resume();
-                }
+        let dialog = createApp(AashModalDialog, {
+            title: _this.localize("Console Session Suspended"),
+            showCancel: false,
+            content: _this.localize("consoleSessionSuspendedMessage"),
+            contentClasses: [],
+            closeLabel: _this.localize("Resume"),
+            onClose: function(applyChanges) {
+                dialog.unmount();
+                resume();
             }
         });
-        dialog.$mount();
-        $("body").append(dialog.$el);
-        dialog.open();
-    }
-
-    connectionRestored() {
-        if (this._connectionLostNotification != null) {
-            this._connectionLostNotification.close();
-        }
-        this.notification(this.localize("serverConnectionRestoredMessage"), {
-            type: "success",
-            autoClose: 2000,
-        });
+        let node = dialog.mount(document.querySelector("#modal-dialog-slot"))
+            .$el.firstChild;
+        getApi(node).open();
     }
 
     connectionLost() {
@@ -201,6 +201,16 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
                     closeable: false,
                 });
         }
+    }
+
+    connectionRestored() {
+        if (this._connectionLostNotification != null) {
+            this._connectionLostNotification.close();
+        }
+        this.notification(this.localize("serverConnectionRestoredMessage"), {
+            type: "success",
+            autoClose: 2000,
+        });
     }
 
     lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
@@ -261,9 +271,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             // Generate header            
             this._mountHeader($(container).children("header")[0], conletId);
         }
-        let vm = container.children("header")[0].__vue__;
-        vm.title = _this._evaluateTitle(container, newContent);
-        vm.modes = modes;
+        let headerComponent = getApi(container.children("header")[0]);
+        headerComponent.setTitle(_this._evaluateTitle(container, newContent));
+        headerComponent.setModes(modes);
         let previewContent = container.children("section");
         previewContent.empty();
         previewContent.append(newContent);
@@ -274,55 +284,70 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
 
     _mountHeader(header, conletId) {
         let _this = this;
-        new Vue({
-            el: header,
-            data: {
-                conletId: conletId,
-                title: "",
-                modes: [],
-            },
-            computed: {
-                evalTitle: function() {
-                    if (typeof this.title === 'function') {
-                        return this.title();
+        createApp({
+            template: `
+              <p>{{ evalTitle }}</p>
+              <button v-if="isEditable"
+                type='button' class='fa fa-wrench' @click="edit()"
+              ></button><button v-if="isRemovable" 
+                type="button" class="fa fa-times" @click="removePreview()"
+              ></button><button v-if="hasView"
+                type="button" class="fa fa-expand" @click="showView()"
+              ></button>`,
+            setup() {
+                const title = ref("");
+                const modes = reactive([]);
+
+                const setTitle = (value) => {
+                    title.value = value;
+                }
+                
+                const evalTitle = computed(() => {
+                    if (typeof title.value === 'function') {
+                        return title.value();
                     }
-                    return this.title;
-                },
-                isEditable: function() {
-                    return this.modes.includes(RenderMode.Edit);
-                },
-                isRemovable: function() {
-                    return !this.modes.includes(RenderMode.StickyPreview);
-                },
-                hasView: function() {
-                    return this.modes.includes(RenderMode.View);
-                },
-            },
-            methods: {
-                edit: function() {
+                    return title.value;
+                });
+
+                const isEditable = computed(() => {
+                    return modes.includes(RenderMode.Edit);
+                });
+
+                const isRemovable = computed(() => {
+                    return !modes.includes(RenderMode.StickyPreview);
+                });
+
+                const hasView = computed(() => {
+                    return modes.includes(RenderMode.View);
+                });
+                
+                const edit = () => {
                     _this.console().renderConlet(
                         conletId, [RenderMode.Edit, RenderMode.Foreground]);
-                },
-                removePreview: function() {
+                };
+                
+                const removePreview = () => {
                     _this.console().removePreview(conletId)
-                },
-                showView: function() {
+                };
+                
+                const showView = () => {
                     _this.console().renderConlet(
                         conletId, ["View", "Foreground"]);
-                },
-            },
-            template: `
-              <header class="ui-draggable-handle">
-                <p>{{ evalTitle }}</p>
-                <button v-if="isEditable"
-                  type='button' class='fa fa-wrench' @click="edit()"
-                ></button><button v-if="isRemovable" 
-                  type="button" class="fa fa-times" @click="removePreview()"
-                ></button><button v-if="hasView"
-                  type="button" class="fa fa-expand" @click="showView()"
-                ></button>
-              </header>`
-        });
+                };
+
+                provideApi (header, {
+                    setTitle, isEditable, isRemovable,
+                    hasView, edit, removePreview, showView,
+                    setModes: (newModes) => { 
+                        modes.length = 0;
+                        modes.push(...newModes);
+                    }
+                });
+
+                return { conletId, evalTitle, isEditable, isRemovable,
+                    hasView, edit, removePreview, showView, header }
+            }
+        }).mount(header);
     }
 
     updateConletView(isNew, container, modes, content, foreground) {
@@ -352,7 +377,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         } else {
             container.children().detach();
             container.append(newContent);
-            for (let panel of this._consoleTabs().panels) {
+            for (let panel of this._consoleTabs().panels()) {
                 if (panel.id === panelId) {
                     panel.label = _this._evaluateTitle(container, newContent);
                 }
@@ -367,7 +392,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         let title = content.attr("data-conlet-title");
         if (!title) {
             let conletType = container.attr("data-conlet-type");
-            for (let item of this._vuexStore.state.conletTypes) {
+            for (let item of this.conletTypes()) {
                 if (item[1] === conletType) {
                     title = item[0];
                     break;
@@ -382,8 +407,6 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         containers.forEach(function(container) {
             container = $(container);
             if (container.hasClass('conlet-preview')) {
-                let vm = container.children("header")[0].__vue__;
-                vm.$destroy();
                 let gridItem = container.closest(".grid-stack-item");
                 _this._previewGrid.removeWidget(gridItem);
             }
@@ -434,82 +457,77 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
 
     showEditDialog(container, modes, content) {
         let _this = this;
-        let dialog = new (Vue.component('jgwc-modal-dialog'))({
-            propsData: {
-                content: content,
-                contentClasses: ["conlet-content"],
-                onClose: function(applyChanges) {
-                    if (applyChanges) {
-                        _this.console().execOnApply(container);
-                    }
-                    this.$destroy();
-                    container.remove();
+        let dialog = createApp (AashModalDialog, {
+            content: content,
+            contentClasses: ["conlet-content"],
+            onClose: function(applyChanges) {
+                if (applyChanges) {
+                    _this.console().execOnApply(container);
                 }
+                dialog.unmount();
             }
         });
-        dialog.$mount();
+        
+        let dialogApi = getApi(dialog.mount("#modal-dialog-slot").$el.firstChild);
         let contentRoot = dialog.$el.querySelector(".conlet-content")
             .querySelector("* > [title]");
         if (contentRoot) {
-            dialog.title = contentRoot.getAttribute("title");
+            dialogApi.updateTitle(contentRoot.getAttribute("title"));
         }
-        $(container).append(dialog.$el);
-        dialog.open();
+        dialogApi.open();
     }
     
     notification(content, options) {
-        let notification = new Vue({
-            data: {
-                message: content,
-                error: ('error' in options) ? options.error : false,
-                type: ('type' in options) ? options.type : "info",
-                closeable: ('closeable' in options) ? options.closeable : true,
-                autoClose: ('autoClose' in options) ? options.autoClose : false,
-            },
-            computed: {
-                notificationClass: function() {
-                    if (this.error || this.type == "error") {
-                        return "notification--error"
-                    }
-                    if (this.type == "success") {
-                        return "notification--success";
-                    }
-                    if (this.type == "warning") {
-                        return "notification--warning";
-                    }
-                    if (this.type == "danger") {
-                        return "notification--danger";
-                    }
-                    return "notification--info";
-                }
-            },
-            methods: {
-                close: function() {
-                    this.$destroy();
-                    if (this.$el && this.$el.parentNode) {
-                        this.$el.remove();
-                    }
-                }
-            },
-            mounted: function() {
-                let _this = this;
-                if (this.autoClose) {
-                    setTimeout(function() {
-                            _this.close();
-                        }, this.autoClose);
-                }
-            },
+        let notificationArea = document.querySelector("#notification-area");
+        let notificationNode = document.createElement("div");
+        notificationArea.appendChild(notificationNode);
+        let notification = createApp({
             template: `
-                <div role="alert" :class="notificationClass">
-                  <p v-html="message"></p>
+                <div role="alert" :class="notificationClass" ref="alert">
+                  <p v-html="content"></p>
                   <button v-if="closeable" type="button" class="fa fa-times"
                     v-on:click="close()"></button>
                 </div>
             `,
+            setup() {
+                const error = ('error' in options) ? options.error : false;
+                const type = ('type' in options) ? options.type : "info";
+                const closeable = ('closeable' in options) ? options.closeable : true;
+                const autoClose = ('autoClose' in options) ? options.autoClose : false;
+                const notificationClass = (() => {
+                    if (error || type == "error") {
+                        return "notification--error"
+                    }
+                    if (type == "success") {
+                        return "notification--success";
+                    }
+                    if (type == "warning") {
+                        return "notification--warning";
+                    }
+                    if (type == "danger") {
+                        return "notification--danger";
+                    }
+                    return "notification--info";
+                })();
+                
+                const close = () => {
+                    notification.unmount();
+                    notificationNode.remove();
+                }
+                
+                onMounted(() => {
+                    if (autoClose) {
+                        setTimeout(close, autoClose);
+                    }
+                });
+
+                const alert = ref(null);
+                provideApi(alert, { close });
+                
+                return { content, notificationClass, closeable, close, alert };
+            }
         });
-        notification.$mount();
-        $("#notification-area").append(notification.$el);
-        return notification;
+        return getApi(notification.mount(notificationNode));
     }
 
 }
