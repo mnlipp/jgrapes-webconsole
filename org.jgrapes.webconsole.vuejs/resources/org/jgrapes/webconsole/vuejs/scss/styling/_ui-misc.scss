@@ -93,7 +93,7 @@ a {
 
 /* ## Disclosure */
 
-[data-jgwc-role="disclosure-button"] {
+[data-aash-role="disclosure-button"] {
     pointer-events: none;
     border: none;
     padding: 0;
@@ -128,11 +128,11 @@ a {
 
 }
 
-:not(button)[data-jgwc-role="disclosure-button"] {
+:not(button)[data-aash-role="disclosure-button"] {
     @include button-shape-hover;
 }
 
-button[data-jgwc-role="disclosure-button"] {
+button[data-aash-role="disclosure-button"] {
     pointer-events: inherit;
     
     &[aria-expanded="false"] {
