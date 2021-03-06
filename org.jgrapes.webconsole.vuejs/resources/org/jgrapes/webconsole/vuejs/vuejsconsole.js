@@ -430,10 +430,11 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
     updateConletTitle(conletId, title) {
         let preview = this.findConletPreview(conletId);
         if (preview) {
-            let conletHeader = $(preview).children("section:first-child > header");
-            conletHeader.children("p:first-child").text(title);
+            let conletHeader = $(preview).children("section:first-child > header")[0];
+            let headerComponent = getApi(conletHeader);
+            headerComponent.setTitle(title);
         }
-        for (let panel of this._consoleTabs().panels) {
+        for (let panel of this._consoleTabs().panels()) {
             if (panel.id === "conlet-panel-" + conletId) {
                 panel.label = title;
             }
@@ -451,8 +452,8 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
         if (!conlet) {
             return;
         }
-        let vm = $(conlet).children("header")[0].__vue__;
-        vm.modes = modes;
+        let headerComponent = getApi($(conlet).children("header")[0]);
+        headerComponent.setModes(modes);
     }
 
     showEditDialog(container, modes, content) {
