@@ -47,7 +47,7 @@ interface Aash {
 }
 
 let aash: Aash = {
-    disclosureData: (id) => {
+    disclosureData(id) {
         if (disclosureRegistry.has(id)) {
             return disclosureRegistry.get(id);
         }
@@ -56,11 +56,11 @@ let aash: Aash = {
         return disclosed;
     },
     
-    isDisclosed: (id) => {
+    isDisclosed(id) {
         return aash.disclosureData(id).value;
     },
     
-    removeDisclosure: (id) => {
+    removeDisclosure(id) {
         return disclosureRegistry.delete(id);
     }
 }
