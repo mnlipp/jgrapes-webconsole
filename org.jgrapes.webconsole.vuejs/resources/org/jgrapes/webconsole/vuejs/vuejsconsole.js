@@ -469,7 +469,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             }
         });
         
-        let dialogEl = dialog.mount("#modal-dialog-slot").$el;
+        let dialogEl = dialog.mount(container).$el;
         let dialogApi = getApi(dialogEl.firstChild);
         let contentRoot = dialogEl.querySelector(".conlet-content")
             .querySelector("* > [title]");
