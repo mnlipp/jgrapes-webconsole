@@ -52,7 +52,7 @@ export interface Api {
  *
  * Once created, the component provides the externally invocable methods
  * defined by {@link module:AashTablist.Api} through an object in 
- * a property of the mounted DOM element {@link module:AashUtil.getApi}.
+ * a property of the mounted DOM element (see {@link module:AashUtil.getApi}).
  *
  * The DOM is generated as shown in the 
  * [WAI-ARIA Authoring Practices 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/examples/tabs/tabs-2/tabs.html)
