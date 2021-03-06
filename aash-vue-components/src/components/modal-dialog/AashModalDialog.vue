@@ -3,7 +3,7 @@
     <div :id="effectiveId" role="dialog" :aria-labelledby="effectiveId + '-label'" 
       aria-modal="true" ref="dialog">
       <header :id="effectiveId + '-label'">
-        <p>{{ title }}</p>
+        <p>{{ effectiveTitle }}</p>
         <button v-if="showCancel" type="button" class="fa fa-times" 
           v-on:click="cancel()"></button>
       </header>

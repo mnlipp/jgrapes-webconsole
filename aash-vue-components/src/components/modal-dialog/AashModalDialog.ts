@@ -12,6 +12,7 @@ import { provideApi } from "../../AashUtil";
  * * `close(): void`: closes the dialog
  * * `cancel(): void`: cancels the dialog
  * * `isOpen(): boolean`: returns the state of the dialog
+ * * `updateTitle(title: string): void`: update the title
  *
  * @memberof module:AashModalDialog
  */
@@ -20,6 +21,7 @@ export interface Api {
   close(): void;
   cancel(): void;
   isOpen(): boolean;
+  updateTitle(title: string): void;
 }
 
 let instanceCounter = 0;
@@ -80,12 +82,16 @@ export default defineComponent({
   
     setup(props, context) {
         const effectiveId = ref("");
+        const effectiveTitle = ref("");
         const isOpen = ref(false);
 
         if (props.id) {
             effectiveId.value = props.id!;
         } else {
             effectiveId.value = "aash-modal-dialog-" + ++instanceCounter;
+        }
+        if (props.title) {
+            effectiveTitle.value = props.title!;
         }
         
         const open = () => {
@@ -106,11 +112,15 @@ export default defineComponent({
             isOpen.value = false;
         }
 
+        const updateTitle = (title: string) => {
+            effectiveTitle.value = title;
+        }
+
         const dialog = ref(null);
 
-        provideApi(dialog, { open, close, cancel, 
+        provideApi(dialog, { open, close, cancel, updateTitle,
                 isOpen: () => { return isOpen.value } });
 
-        return { effectiveId, isOpen, cancel, close, dialog };
+        return { effectiveId, effectiveTitle, isOpen, cancel, close, dialog };
     }
 });
