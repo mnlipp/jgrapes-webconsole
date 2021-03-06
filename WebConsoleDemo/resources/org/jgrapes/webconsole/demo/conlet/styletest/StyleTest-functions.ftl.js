@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2019  Michael N. Lipp
+ * Copyright (C) 2019, 2021 Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -17,8 +17,11 @@
  */
 'use strict';
 
-import Vue from "../../page-resource/vue/vue.esm-browser.js"
-import { jgwcIdScopeMixin } from "../../page-resource/jgwc-vue-components/jgwc-components.js";
+import { reactive, createApp, computed }
+    from "../../page-resource/vue/vue.esm-browser.js";
+import JGConsole from "../../console-base-resource/jgconsole.js"
+import JgwcPlugin, { JGWC } 
+    from "../../page-resource/jgwc-vue-components/jgwc-components.js";
 
 const l10nBundles = {
     // <#list supportedLanguages() as l>
@@ -33,36 +36,38 @@ const l10nBundles = {
 window.orgJGrapesOsgiConletStyleTest = {};
 
 window.orgJGrapesOsgiConletStyleTest.initView = function(content) {
-    new Vue({
-        mixins: [jgwcIdScopeMixin],
-        el: $(content)[0],
-        data: {
-            conletId: $(content).closest("[data-conlet-id]").data("conlet-id"),
-            controller: new JGConsole.TableController([
+    let app = createApp({
+        setup() {
+            const conletId = $(content).closest("[data-conlet-id]").data("conlet-id");
+            const controller = reactive(new JGConsole.TableController([
                 ["year", 'Year'],
                 ["month", 'Month'],
                 ["title", 'Title'],
                 ], {
                 sortKey: "year"
-            }),
-            detailsByKey: {},
-            issues: [
+            }));
+            const detailsByKey = reactive({});
+            const issues = [
                 { year: 2019, month: 6, title: "Middle of year" },
                 { year: 2019, month: 12, title: "End of year" },
                 { year: 2020, month: 1, title: "A new year begins" },
-            ],
-        },
-        computed: {
-            filteredData: function() {
-                let infos = Object.values(this.issues);
-                return this.controller.filter(infos);
-            }
-        },
-        methods: {
-            localize: function(key) {
+            ];
+            const filteredData = computed(() => {
+                let infos = Object.values(issues);
+                return controller.filter(infos);
+            });
+            const localize = (key) => {
                 return JGConsole.localize(
-                    l10nBundles, this.jgwc.observed.lang, key);
+                    l10nBundles, JGWC.lang(), key);
             }
+            
+            const idScope = JGWC.createIdScope();
+            
+            return { conletId, controller, detailsByKey, issues, filteredData,
+                localize, scopedId: (id) => { return idScope.scopedId(id); } };
         }
-    }).JGConsole = window.JGConsole;
+    });
+    app.use(JgwcPlugin);
+    app.config.globalProperties.window = window;
+    app.mount($(content)[0]);
 }

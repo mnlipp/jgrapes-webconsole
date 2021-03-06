@@ -1,6 +1,6 @@
 <div class="FormTest-view"
   data-jgwc-on-load="orgJGrapesOsgiConletStyleTest.initView"
-  data-jgwc-on-unload="JGConsole.jgwc.destroyVMs">
+  data-jgwc-on-unload="JGConsole.jgwc.unmountVueApps">
 
 <h1>Style Tests</h1>
 
@@ -20,26 +20,26 @@
       <template v-for="(entry, rowIndex) in filteredData">
         <tr role="row" :class="[(rowIndex % 2) ? 'odd' : 'even']">
           <td>
-            <jgwc-disclosure-button v-if="rowIndex === 0" 
+            <aash-disclosure-button v-if="rowIndex === 0" 
               :id-ref="scopedId(rowIndex)"
               :on-toggle="function() { JGConsole.notification('Changed.') }"
               :on-show="function() { JGConsole.notification('Now showing.') }"
               :on-hide="function() { JGConsole.notification('Now hidden.') }"
               >
               <span v-html="entry[controller.keys[0]]"></span>
-            </jgwc-disclosure-button>
-            <jgwc-disclosure-button v-else 
+            </aash-disclosure-button>
+            <aash-disclosure-button v-else 
               v-bind:id-ref="scopedId(rowIndex)" :type="'div'">
               <span v-html="entry[controller.keys[0]]"></span>
-            </jgwc-disclosure-button>
+            </aash-disclosure-button>
           </td>
           <td v-for="(key, colIndex) in controller.keys.slice(1)">
             <span v-html="entry[key]"></span>
             <span v-if="key === 'title' 
-              && jgwc.isDisclosed(scopedId(rowIndex))">(see below)</span>
+              && $aash.isDisclosed(scopedId(rowIndex))">(see below)</span>
           </td>
         </tr>
-        <tr :id="scopedId(rowIndex)" is="jgwc-disclosure-section"
+        <tr :id="scopedId(rowIndex)" v-if="$aash.isDisclosed(scopedId(rowIndex))"
           class="details" :class="[(rowIndex % 2) ? 'odd' : 'even']">
           <td colspan="3">
             Those are the details...
