@@ -22,30 +22,23 @@ import AashPlugin, {
     from "../aash-vue-components/lib/aash-vue-components.js"
 import JGConsole from "../../console-base-resource/jgconsole.js"
 
-/**
- * Used as scope, static members only.
- *
- * The class is also published as `JGConsole.jgwc`.
- */
-export class JGWC {
-    /**
-     * Destroy all view models in the given subtree.
-     *
-     * @param {HTMLElement} content the root of the subtree to be search for
-     *      vue vms
-     */
-    static destroyVMs(content) {
-        if ("__vue__" in content) {
-            content.__vue__.$destroy();
-            return;
-        }
-        for (let child of content.children) {
-            JGConsole.jgwc.destroyVMs(child);
-        }
-    }
-}
+var scopeCounter = 1;
 
-JGConsole.jgwc = JGWC;
+class IdScope {
+    
+    constructor() {
+        this._idScope = scopeCounter++;
+    }
+
+    /**
+     * The function that returns the prefixed id.
+     *
+     * @param {string} id the id to prefix
+     */
+    scopedId(id) {
+        return "jgwc-id-" + this._idScope + "-" + id;
+    }    
+}
 
 /*
  * Install a MutationObserver for root html node's attribute lang
@@ -68,38 +61,50 @@ new MutationObserver(function(mutations) {
   subtree: false
 });
 
-var scopeCounter = 1;
-
 /**
- * A Vue mixin that provides the component with a unique scope for ids.
+ * Used as scope, static members only.
  *
- * @mixin
+ * The class is also published as `JGConsole.jgwc`.
  */
-export var jgwcIdScopeMixin = {
-    created: function() {
-        this._idScope = scopeCounter++;
-    },
-    methods: {
-        /**
-         * The mixed in function that returns the prefixed id.
-         *
-         * @function scopedId
-         * @memberof jgwcIdScopeMixin
-         * @instance
-         * @param {string} id the id to prefix
-         * @return {string}
-         */
-        scopedId: function(id) {
-            return "jgwc-id-" + this._idScope + "-" + id;
+export class JGWC {
+    /**
+     * Destroy all view models in the given subtree.
+     *
+     * @param {HTMLElement} content the root of the subtree to be search for
+     *      vue vms
+     */
+    static unmountVueApps(content) {
+        if ("__vue_app__" in content) {
+            content.__vue_app__.unmount();
+            return;
+        }
+        for (let child of content.children) {
+            JGConsole.jgwc.unmountVueApps(child);
         }
     }
-};
+    
+    /**
+     * Selected language as reactive property.
+     */
+    static lang() {
+        return langRef.value;
+    }
+
+    /**
+     * Return a new id scope
+     * @return {IdScope}
+     */    
+    static createIdScope() {
+        return new IdScope();
+    }
+}
+
+JGConsole.jgwc = JGWC;
 
 export default {
     install: (app, options) => {
-        app.config.globalProperties.$jgwc = {
-            lang: () => { return langRef.value }
-        };
+        app.config.globalProperties.$jgwc = JGWC;
+        app.config.globalProperties.JGConsole = JGConsole;
         app.use(AashPlugin);
         app.component('jgwc-dropdown-menu', AashDropdownMenu);
         app.component('jgwc-tablist', AashTablist);
@@ -107,6 +112,7 @@ export default {
         app.component('jgwc-disclosure-button', AashDisclosureButton);
   }
 }
+
 
 /*
 Vue.component('jgwc-id-scope', {
