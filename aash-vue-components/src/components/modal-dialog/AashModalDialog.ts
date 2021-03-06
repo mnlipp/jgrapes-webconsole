@@ -26,14 +26,37 @@ let instanceCounter = 0;
 
 /**
  * @classdesc
- * Generates a ... 
+ * Generates a modal dialog.
+ *
+ * Example:
+ * ```html
+ * <div class="aash-modal-dialog dialog__backdrop" showcancel="true">
+ *   <div id="sampleDialog" role="dialog"
+ *       aria-labelledby="sampleDialog-label" aria-modal="true">
+ *     <header id="sampleDialog-label">
+ *       <p>Sample Dialog</p>
+ *       <button type="button" class="fa fa-times"></button>
+ *     </header>
+ *     <section class="">
+ *       <i>Sample dialog content</i>
+ *     </section>
+ *     <footer>
+ *       <button type="button">Okay</button>
+ *     </footer>
+ *   </div>
+ * </div>
+ * ```
  * 
  * Once created, the component provides the externally invocable methods
- * defined by {@link module:AashTablist.Api} through an object in 
- * a property of the mounted DOM element {@link module:AashUtil.getApi}.
+ * defined by {@link module:AashModalDialog.Api} through an object in 
+ * a property of the DOM element with `role="dialog"` (see
+ * {@link module:AashUtil.getApi}). Note that this is not the mounted element
+ * but the mounted element's child. It is, however, the element with the
+ * provided `id`. Thus it makes more sense to use this element.
  * 
  * @class AashModalDialog
  * @param {Object} props the properties
+ * @param {string} props.is the dialog's id
  * @param {string} props.title the dialog's title
  * @param {boolean} props.showCancel wether to show a cancel button
  * @param {string} props.content the dialog's content
