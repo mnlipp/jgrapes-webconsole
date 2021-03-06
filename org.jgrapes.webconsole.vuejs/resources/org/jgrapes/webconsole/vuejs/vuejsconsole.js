@@ -468,8 +468,9 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             }
         });
         
-        let dialogApi = getApi(dialog.mount("#modal-dialog-slot").$el.firstChild);
-        let contentRoot = dialog.$el.querySelector(".conlet-content")
+        let dialogEl = dialog.mount("#modal-dialog-slot").$el;
+        let dialogApi = getApi(dialogEl.firstChild);
+        let contentRoot = dialogEl.querySelector(".conlet-content")
             .querySelector("* > [title]");
         if (contentRoot) {
             dialogApi.updateTitle(contentRoot.getAttribute("title"));
