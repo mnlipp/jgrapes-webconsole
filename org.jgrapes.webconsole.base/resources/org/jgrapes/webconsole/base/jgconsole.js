@@ -252,7 +252,7 @@ class ConsoleWebSocket {
                 return;
             }
             _this._recvQueue.push(msg);
-            if (_this._recvQueue.length === 1) {
+            if (!_this._isHandling) {
                 _this._handleMessages();
             }
         }
