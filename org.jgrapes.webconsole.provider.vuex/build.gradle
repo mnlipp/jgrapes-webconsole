@@ -26,7 +26,7 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn('npmInstall')
+    dependsOn('npm_install')
     into('build/generated/resources/org/jgrapes/webconsole/provider/vuex/vuex')
     from ('node_modules/vuex/dist') {
         include '*-browser.*'

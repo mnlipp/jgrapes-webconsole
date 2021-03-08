@@ -37,7 +37,7 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn(':npmInstall')
+    dependsOn(':npm_install')
     into('build/generated/resources/org/jgrapes/webconsole/bootstrap4/lib/bootstrap')
     from ("${rootProject.projectDir}/node_modules/bootstrap/dist") {
         include "**/*"
@@ -57,7 +57,7 @@ apply plugin: 'com.moowork.node'
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
 
 task jsdoc(type: NodeTask) {
-    dependsOn(':npmInstall')
+    dependsOn(':npm_install')
     new File(jsDocDestDir).mkdirs()
     script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
     args = ["-c", "${rootProject.projectDir}/jsdoc.json",

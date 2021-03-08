@@ -36,7 +36,7 @@ apply plugin: 'com.moowork.node'
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
 
 task jsdoc(type: NodeTask) {
-    dependsOn(':npmInstall')
+    dependsOn(':npm_install')
     new File(jsDocDestDir).mkdirs()
     script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
     args = ["-c", "${rootProject.projectDir}/jsdoc.json",

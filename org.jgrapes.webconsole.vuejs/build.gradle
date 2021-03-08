@@ -51,7 +51,7 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn(':npmInstall')
+    dependsOn(':npm_install')
     into('build/generated/resources/org/jgrapes/webconsole/vuejs/lib')
     from file("${rootProject.projectDir}/node_modules/normalize.css/normalize.css")
 }
@@ -59,7 +59,7 @@ task prepareNpmLibs(type: Copy) {
 processResources.dependsOn 'prepareNpmLibs'
 
 //task webpack(type: NodeTask) {
-//    dependsOn(':npmInstall')
+//    dependsOn(':npm_install')
 //    inputs.file project.file('webpack.config.js')
 //    inputs.dir project.file('consoleapp/javascript')
 //    outputs.dir project.file('consoleapp')
@@ -112,7 +112,7 @@ eclipse {
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/vuejs/jsdoc"
 
 task jsdoc(type: NodeTask) {
-    dependsOn(':npmInstall')
+    dependsOn(':npm_install')
     new File(jsDocDestDir).mkdirs()
     script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
     args = ["-c", "${rootProject.projectDir}/jsdoc.json",

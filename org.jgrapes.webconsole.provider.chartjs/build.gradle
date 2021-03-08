@@ -25,7 +25,7 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn(':npmInstall')
+    dependsOn(':npm_install')
     into('build/generated/resources/org/jgrapes/webconsole/provider/chartjs/chart.js')
     from ("${rootProject.projectDir}/node_modules/chart.js/dist") {
         include "**/*"
