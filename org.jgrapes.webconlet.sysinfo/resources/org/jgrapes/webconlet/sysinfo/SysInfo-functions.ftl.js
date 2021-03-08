@@ -34,19 +34,20 @@ var orgJGrapesConletsSysInfo = {
     let totalMemoryData = [];
     let usedMemoryData = [];
     
-    JGConsole.registerConletMethod(
+    JGConsole.registerConletFunction(
             "org.jgrapes.webconlet.sysinfo.SysInfoConlet",
-            "updateMemorySizes", function(conletId, params) {
+            "updateMemorySizes", function(conletId, time, 
+                maxMemory, totalMemory, usedMemory) {
                 if (timeData.length >= 301) {
                     timeData.shift();
                     maxMemoryData.shift();
                     totalMemoryData.shift();
                     usedMemoryData.shift();
                 }
-                timeData.push(params[0]);
-                maxMemoryData.push(params[1]);
-                totalMemoryData.push(params[2]);
-                usedMemoryData.push(params[3]);
+                timeData.push(time);
+                maxMemoryData.push(maxMemory);
+                totalMemoryData.push(totalMemory);
+                usedMemoryData.push(usedMemory);
                 let maxFormatted = "";
                 let totalFormatted = "";
                 let usedFormatted = "";
@@ -55,9 +56,9 @@ var orgJGrapesConletsSysInfo = {
                 if (conlet) {
                     conlet = $(conlet);
                     lang = conlet.closest('[lang]').attr('lang') || 'en'
-                    maxFormatted = JGConsole.renderer.formatMemorySize(params[1], 1, lang);
-                    totalFormatted = JGConsole.renderer.formatMemorySize(params[2], 1, lang);
-                    usedFormatted = JGConsole.renderer.formatMemorySize(params[3], 1, lang);
+                    maxFormatted = JGConsole.renderer.formatMemorySize(maxMemory, 1, lang);
+                    totalFormatted = JGConsole.renderer.formatMemorySize(totalMemory, 1, lang);
+                    usedFormatted = JGConsole.renderer.formatMemorySize(usedMemory, 1, lang);
                     let col = conlet.find(".maxMemory");
                     col.html(maxFormatted);
                     col = conlet.find(".totalMemory");
