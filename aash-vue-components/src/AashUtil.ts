@@ -30,10 +30,16 @@ function provideApi (dom: Ref<HTMLElement | null> | HTMLElement,
 }
 
 /**
- * Retrieves a provided API from the given HTMLElement.
- * @param dom the element from the DOM tree
+ * Retrieves a provided API from the given HTMLElement. The function is
+ * "null-safe", i.e. if the argument is `null`, it returns `null`.
+ *
+ * @param dom the element from the DOM tree with the api property set
+ *  by {@link provideApi}.
  */
-function getApi<T> (dom: HTMLElement): T | null {
+function getApi<T> (dom: HTMLElement | null): T | null {
+    if (!dom) {
+        return null;
+    }
     return <T>((<any>dom).__componentApi__);
 }
 
