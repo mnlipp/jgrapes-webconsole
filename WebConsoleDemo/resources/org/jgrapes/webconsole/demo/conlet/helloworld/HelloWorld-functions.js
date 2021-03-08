@@ -27,13 +27,12 @@ var orgJGrapesConletsWorldDemoConlet = {};
         JGConsole.notifyConletModel(conletId, "toggleWorld");
     })
 
-    JGConsole.registerConletMethod(
+    JGConsole.registerConletFunction(
             "org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldConlet",
-            "setWorldVisible", function(conletId, params) {
+            "setWorldVisible", function(conletId, state) {
                 let conlet = JGConsole.renderer.findConletView(conletId);
                 let image = $(conlet).find(".helloWorldIcon");
-                let state = params[0]; 
-                if (params[0]) {
+                if (state) {
                     image.show();
                 } else {
                     image.hide();

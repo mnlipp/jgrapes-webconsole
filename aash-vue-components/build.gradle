@@ -14,12 +14,14 @@ task buildLib(type: NpmTask) {
 
 assemble.dependsOn 'buildLib'
 
+ext.jsDocDestDir = "${rootProject.buildDir}/aashdoc"
+
 task buildDoc(type: NpmTask) {
     dependsOn('npmInstall')
-    inputs.file project.file('README.md')
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
-    outputs.dir project.file("${rootProject.buildDir}/aashdoc")
+    inputs.file project.file('jsdoc.json')
+    outputs.dir project.file(jsDocDestDir)
     args = ["run", "build:doc"]
 }
 

@@ -252,7 +252,7 @@ class ConsoleWebSocket {
                 return;
             }
             _this._recvQueue.push(msg);
-            if (_this._recvQueue.length === 1) {
+            if (!_this._isHandling) {
                 _this._handleMessages();
             }
         }
@@ -948,7 +948,7 @@ class Console {
                 if (classRegistry) {
                     let f = classRegistry[method];
                     if (f) {
-                        f(conletId, params);
+                        f(conletId, ...params);
                     }
                 }
             });
@@ -1204,22 +1204,22 @@ class Console {
     }
 
     /**
-     * Registers a conlet method that to be invoked if a
+     * Registers a conlet function that to be invoked if a
      * JSON RPC notification with method <code>notifyConletView</code>
      * is received.
      * 
      * @param {string} conletClass the conlet type for which
      * the method is registered
-     * @param {string} methodName the method that is registered
-     * @param {function} method the function to invoke
+     * @param {string} functionName the method that is registered
+     * @param {function} conletFunction the function to invoke
      */
-    registerConletMethod(conletClass, methodName, method) {
+    registerConletFunction(conletClass, functionName, conletFunction) {
         let classRegistry = this._conletFunctionRegistry[conletClass];
         if (!classRegistry) {
             classRegistry = {};
             this._conletFunctionRegistry[conletClass] = classRegistry;
         }
-        classRegistry[methodName] = method;
+        classRegistry[functionName] = conletFunction;
     }
 
     // Send methods
@@ -1360,12 +1360,12 @@ JGConsole.init = function(...params) {
 }
 
 /**
- * Delegates to {@link Console#registerConletMethod}.
+ * Delegates to {@link Console#registerConletFunction}.
  * 
  * @memberof JGConsole
  */
-JGConsole.registerConletMethod = function(...params) {
-    theConsole.registerConletMethod(...params);
+JGConsole.registerConletFunction = function(...params) {
+    theConsole.registerConletFunction(...params);
 }
 
 /**

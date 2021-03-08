@@ -17,7 +17,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquery')
 }
 
-ext.releaseVersion = "0.29.2"
+ext.releaseVersion = "0.30.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 

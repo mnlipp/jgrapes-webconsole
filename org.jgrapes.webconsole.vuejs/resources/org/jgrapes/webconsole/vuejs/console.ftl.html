@@ -15,8 +15,6 @@
   href="${renderSupport.consoleResource('lib/normalize.css')}">
 <link rel="stylesheet"
   href="${renderSupport.pageResource('gridstack/gridstack' + minifiedExtension + '.css')}" />
-<link rel="stylesheet" 
-  href="${renderSupport.pageResource('jgwc-vue-components/jgwc-components' + minifiedExtension + '.css')}">
 <!-- Console -->
 <link rel="stylesheet"
   href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
@@ -49,7 +47,7 @@
   <main role="main">
 
   <div class="consoleVue">
-    <jgwc-tablist id="consoleTabs"></jgwc-tablist>
+    <aash-tablist id="consoleTabs"></aash-tablist>
   </div>
   <div id="consolePanels">
     <section id="consoleOverviewPanel" role="tabpanel" hidden>
@@ -72,15 +70,14 @@
   <div id="notification-area">
   </div>
 
+  <!-- Modal dialog slot -->
+  <div id="modal-dialog-slot">
+  </div>
+
 <script type="module">
-import Vue from "${renderSupport.pageResource('vue/vue.esm.browser.js')}";
-import Vuex from "${renderSupport.pageResource('vuex/vuex.esm.browser.js')}";
 import "${renderSupport.pageResource('jgwc-vue-components/jgwc-components.js')}";
 import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}";
 import VueJsConsole from "${renderSupport.consoleResource('vuejsconsole.js')}";
-
-Vue.use(Vuex);
-Vue.prototype.$window = window;
 
 const localeMenuitems = [
   // <#list supportedLanguages() as l>
@@ -100,9 +97,10 @@ const consoleMessages = {
 
 const renderer = new VueJsConsole.Renderer(localeMenuitems, consoleMessages);
 
-JGConsole.init(
+document.addEventListener('readystatechange', event => { JGConsole.init(
     "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
     parseInt('${consoleSessionInactivityTimeout?c}'), renderer);
+});
 
 </script>
  

@@ -1,14 +1,15 @@
 import resolve from "@rollup/plugin-node-resolve";
-import typescript from "@rollup/plugin-typescript";
+import typescript from 'rollup-plugin-typescript2';
 import vue from "rollup-plugin-vue";
 import replace from '@rollup/plugin-replace';
 import {terser} from 'rollup-plugin-terser';
+import postcss from 'rollup-plugin-postcss'
 
 import packageJson from "./package.json";
 
 export default {
   external: ['vue'],
-  input: "src/index.ts",
+  input: "src/AashPlugin.ts",
   output: [
     {
       format: "cjs",
@@ -37,8 +38,11 @@ export default {
       'mainFields': ['module', 'browser'], 
       'browser': true
     }),
+    vue({ 'preprocessStyles': true }),
+    typescript(),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
-    typescript(), vue()]
+    postcss()
+  ]
 };

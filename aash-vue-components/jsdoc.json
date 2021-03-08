@@ -1,0 +1,20 @@
+{
+    "source": {
+        "include": [ "README.md", "./src" ],
+        "includePattern": "\\.(jsx|js|ts|tsx)$"
+    },
+    "plugins": ["plugins/markdown", "node_modules/better-docs/typescript"],
+    "tags": {
+        "allowUnknownTags": ["optional"]
+    },
+    "opts": {
+        "destination": "../build/aashdoc",
+        "template": "node_modules/better-docs"
+    },
+    "templates": {
+        "better-docs": {
+            "name": "AaSH component library documentation",
+            "title": "AaSH component library"
+        }
+    }
+}
