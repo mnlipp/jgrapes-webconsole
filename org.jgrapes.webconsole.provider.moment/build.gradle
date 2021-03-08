@@ -4,8 +4,8 @@ dependencies {
 
 apply plugin: 'com.moowork.node'
 
-ext.releaseVersion = "0.2.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.3.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 jar {
@@ -27,11 +27,9 @@ task prepareNpmLibs(type: Copy) {
     dependsOn(':npmInstall')
     into('build/generated/resources/org/jgrapes/webconsole/provider/moment/moment')
     from file("${rootProject.projectDir}/node_modules/moment/moment.js")
-    from file("${rootProject.projectDir}/node_modules/moment/min/moment.min.js")
-    from file("${rootProject.projectDir}/node_modules/moment/min/locales.js")
-    from file("${rootProject.projectDir}/node_modules/moment/min/locales.min.js")
-    from file("${rootProject.projectDir}/node_modules/moment/min/moment-with-locales.js")
-    from file("${rootProject.projectDir}/node_modules/moment/min/moment-with-locales.min.js")
+    from ("${rootProject.projectDir}/node_modules/moment/min/") {
+        include '*'
+    }
 }
 
 processResources.dependsOn 'prepareNpmLibs'
