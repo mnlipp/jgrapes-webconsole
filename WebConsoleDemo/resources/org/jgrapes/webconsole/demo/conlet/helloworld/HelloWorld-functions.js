@@ -30,7 +30,7 @@ var orgJGrapesConletsWorldDemoConlet = {};
     JGConsole.registerConletFunction(
             "org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldConlet",
             "setWorldVisible", function(conletId, state) {
-                let conlet = JGConsole.renderer.findConletView(conletId);
+                let conlet = JGConsole.instance.findConletView(conletId);
                 let image = $(conlet).find(".helloWorldIcon");
                 if (state) {
                     image.show();

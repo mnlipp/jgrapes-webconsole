@@ -37,20 +37,20 @@ var orgJGrapesConletsMarkdownDisplay = {
     JGConsole.registerConletFunction(
             "org.jgrapes.webconlet.markdowndisplay.MarkdownDisplayConlet",
             "updateAll", function(conletId, title, previewContent, viewContent, modes) {
-                let conlet = JGConsole.renderer.findConletPreview(conletId);
+                let conlet = JGConsole.instance.findConletPreview(conletId);
                 if (conlet) {
-                    JGConsole.renderer.updateConletModes(conletId, modes);
+                    JGConsole.instance.updateConletModes(conletId, modes);
                     let content = $(conlet).find(".jgrapes-markdownconlet-content");
                     content.empty();
                     content.append(mdProc.render(previewContent));
                 }
-                conlet = JGConsole.renderer.findConletView(conletId);
+                conlet = JGConsole.instance.findConletView(conletId);
                 if (conlet) {
                     let content = $(conlet).find(".jgrapes-markdownconlet-content");
                     content.empty();
                     content.append(mdProc.render(viewContent));
                 }
-                JGConsole.renderer.updateConletTitle(conletId, title);
+                JGConsole.instance.updateConletTitle(conletId, title);
             });
 
     function debounce (f) {

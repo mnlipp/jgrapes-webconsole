@@ -41,19 +41,32 @@ artifacts {
 
 apply plugin: 'com.moowork.node'
 
+task buildLib(type: NpmTask) {
+    dependsOn('npm_install')
+    inputs.dir project.file('resources')
+    inputs.file project.file('package.json')
+    inputs.file project.file('tsconfig.json')
+    inputs.file project.file('rollup.config.js')
+    outputs.dir project.file('build/generated/resources')
+    args = ["run", "build"]
+}
+
+sourceSets.main.resources.srcDir 'build/generated/resources'
+
+eclipse {
+    autoBuildTasks buildLib
+}
+
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/base/jsdoc"
 
-task jsdoc(type: NodeTask) {
-    dependsOn(':npm_install')
-    new File(jsDocDestDir).mkdirs()
-    script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
-    args = [
-        "-c",
-        "${rootProject.projectDir}/jsdoc.json",
-        "--destination",
-        jsDocDestDir,
-        "resources/org/jgrapes/webconsole/base/jgconsole.js"
-    ]
+task tsdoc(type: NpmTask) {
+    dependsOn('npm_install')
+    inputs.dir project.file('src')
+    inputs.file project.file('package.json')
+    inputs.file project.file('tsconfig.json')
+    inputs.file project.file('rollup.config.js')
+    outputs.dir project.file('lib')
+    args = ["run", "build:doc"]
 }
 
 javadoc {
@@ -62,7 +75,7 @@ javadoc {
 
     if (!isJitPackBuild) {
         // Does not work on jitpack
-        finalizedBy jsdoc
+        finalizedBy tsdoc
     }
 
     options.tagletPath = rootProject.configurations.javadocTaglets.files as List

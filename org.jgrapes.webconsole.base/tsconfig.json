@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "declarationDir": "build/generated/resources/org/jgrapes/webconsole/base/",
+    "target": "es2015",
+    "module": "es2015",
+    "sourceMap": true,
+    "declaration": true,
+    "importHelpers": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "lib": ["DOM", "ES2020"]
+  },
+  "include": ["resources/**/*.ts"],
+  "exclude": ["node_modules"]
+}

@@ -76,7 +76,7 @@
 
 <script type="module">
 import "${renderSupport.pageResource('jgwc-vue-components/jgwc-components.js')}";
-import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}";
+import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.esm.js')}";
 import VueJsConsole from "${renderSupport.consoleResource('vuejsconsole.js')}";
 
 const localeMenuitems = [
@@ -85,21 +85,21 @@ const localeMenuitems = [
   // </#list>
 ];
 
-const consoleMessages = {
-    // <#list supportedLanguages() as l>
-    '${l.locale.toLanguageTag()}': {
-        // <#list l.l10nBundle.keys as key>
-        '${key}': '${l.l10nBundle.getString(key)}',
-        // </#list>
-    },
-    // </#list>    
-};
+const consoleMessages = new Map();
+let l10ns = null;
+// <#list supportedLanguages() as l>
+l10ns = new Map();
+consoleMessages.set('${l.locale.toLanguageTag()}', l10ns);
+// <#list l.l10nBundle.keys as key>
+l10ns.set('${key}', '${l.l10nBundle.getString(key)}');
+// </#list>
+// </#list>    
 
-const renderer = new VueJsConsole.Renderer(localeMenuitems, consoleMessages);
+const renderer = new VueJsConsole.Renderer(JGConsole.instance, localeMenuitems, consoleMessages);
 
 document.addEventListener('readystatechange', event => { JGConsole.init(
     "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
-    parseInt('${consoleSessionInactivityTimeout?c}'), renderer);
+    parseInt('${consoleSessionInactivityTimeout?c}'));
 });
 
 </script>

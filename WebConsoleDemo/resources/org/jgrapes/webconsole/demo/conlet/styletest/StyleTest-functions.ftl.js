@@ -19,19 +19,19 @@
 
 import { reactive, createApp, computed }
     from "../../page-resource/vue/vue.esm-browser.js";
-import JGConsole from "../../console-base-resource/jgconsole.js"
+import JGConsole from "../../console-base-resource/jgconsole.esm.js"
 import JgwcPlugin, { JGWC } 
     from "../../page-resource/jgwc-vue-components/jgwc-components.js";
 
-const l10nBundles = {
-    // <#list supportedLanguages() as l>
-    '${l.locale.toLanguageTag()}': {
-        // <#list l.l10nBundle.keys as key>
-        '${key}': '${l.l10nBundle.getString(key)}',
-        // </#list>
-    },
-    // </#list>    
-};
+const l10nBundles = new Map();
+let entries = null;
+// <#list supportedLanguages() as l>
+entries = new Map();
+l10nBundles.set('${l.locale.toLanguageTag()}', entries);
+// <#list l.l10nBundle.keys as key>
+entries.set('${key}', '${l.l10nBundle.getString(key)}')
+// </#list>
+// </#list>    
 
 window.orgJGrapesOsgiConletStyleTest = {};
 

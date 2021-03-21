@@ -18,7 +18,7 @@
 
 'use strict';
 
-import { JGConsole, RenderMode } from "../console-base-resource/jgconsole.js"
+import JGConsole, { RenderMode } from "../console-base-resource/jgconsole.esm.js"
 import { reactive, ref, createApp, onMounted, computed }
     from "../page-resource/vue/vue.esm-browser.js";
 // import { AashPlugin } from "../page-resource/jgwc-vue-components/jgwc-components.js";
@@ -38,8 +38,8 @@ var log = JGConsole.Log;
 
 VueJsConsole.Renderer = class extends JGConsole.Renderer {
 
-    constructor(localeMenuitems, l10nMessages) {
-        super();
+    constructor(console, localeMenuitems, l10nMessages) {
+        super(console);
         this._lastPreviewLayout = [];
         this._lastTabsLayout = [];
         this._lastXtraInfo = {};
@@ -103,7 +103,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
     setLocale(lang) {
         this._lang.value = lang;
         document.querySelector("html").setAttribute('lang', lang);
-        this.console().setLocale(lang, false);
+        this.console.setLocale(lang, false);
         
     }
 
@@ -155,7 +155,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
                 tabsLayout.push(conletId);
             }
         }
-        this.console().updateLayout(previewLayout, tabsLayout, xtraInfo);
+        this.console.updateLayout(previewLayout, tabsLayout, xtraInfo);
     };
 
     addConletType(conletType, displayNames, renderModes) {
@@ -322,16 +322,16 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
                 });
                 
                 const edit = () => {
-                    _this.console().renderConlet(
+                    _this.console.renderConlet(
                         conletId, [RenderMode.Edit, RenderMode.Foreground]);
                 };
                 
                 const removePreview = () => {
-                    _this.console().removePreview(conletId)
+                    _this.console.removePreview(conletId)
                 };
                 
                 const showView = () => {
-                    _this.console().renderConlet(
+                    _this.console.renderConlet(
                         conletId, ["View", "Foreground"]);
                 };
 
@@ -371,7 +371,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
                 id: panelId, 
                 label: _this._evaluateTitle(container, newContent), 
                 l10n: window.consoleL10n,
-                removeCallback: function() { _this.console().removeView(conletId); }
+                removeCallback: function() { _this.console.removeView(conletId); }
             });
             this._layoutChanged();
         } else {
@@ -463,7 +463,7 @@ VueJsConsole.Renderer = class extends JGConsole.Renderer {
             contentClasses: ["conlet-content"],
             onClose: function(applyChanges) {
                 if (applyChanges) {
-                    _this.console().execOnApply(container);
+                    _this.console.execOnApply(container);
                 }
                 dialog.unmount();
             }
