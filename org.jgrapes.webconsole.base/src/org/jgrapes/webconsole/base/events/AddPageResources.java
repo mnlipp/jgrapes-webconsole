@@ -34,7 +34,7 @@ import org.jgrapes.webconsole.base.PageResourceProvider;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
 
 /**
- * Adds `<link .../>`, `<style>...</style>` or `<script ...></script>` nodes
+ * Adds {@code <link .../>}, `<style>...</style>` or `<script ...></script>` nodes
  * to the web console's `<head>` node on behalf of components that provide
  * such resources.
  * 

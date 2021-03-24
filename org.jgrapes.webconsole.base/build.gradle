@@ -60,45 +60,69 @@ eclipse {
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/base/jsdoc"
 
 task tsdoc(type: NpmTask) {
-    dependsOn('npm_install')
+    dependsOn 'npm_install'
+    dependsOn 'java11doc'
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
-    outputs.dir project.file('lib')
+    outputs.dir project.file(jsDocDestDir)
     args = ["run", "build:doc"]
 }
 
-javadoc {
-    // Does not work on JitPack, no /usr/bin/dot
-    enabled = JavaVersion.current().isJava8() && !isJitPackBuild
+configurations {
+    markdownDoclet
+}
+ 
+dependencies {
+    markdownDoclet "org.jdrupes.mdoclet:doclet:2.0.0-SNAPSHOT"
+}
 
-    if (!isJitPackBuild) {
-        // Does not work on jitpack
-        finalizedBy tsdoc
-    }
+configurations {
+    javadocTaglets
+}
+ 
+dependencies {
+    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:2.0.0-SNAPSHOT"
+}
 
-    options.tagletPath = rootProject.configurations.javadocTaglets.files as List
-    options.taglets = [
-        "org.jdrupes.taglets.plantUml.Taglet"
-    ]
-
-    classpath = files(rootProject.subprojects.collect {project ->
-        project.sourceSets.main.compileClasspath})
-    source rootProject.subprojects.findAll({project ->
-        project.name.startsWith("org.jgrapes.") && project.name != "org.jgrapes.webcon"}) \
-		.collect {project -> project.sourceSets.main.allJava }
-    options.addStringOption("doctitle", "JGrapes Web Console ${project.version}")
-    options.addStringOption("overview", "${rootProject.rootDir}/overview.md")
+task java11doc(type: JavaExec) {
+    enabled = JavaVersion.current().isJava11() && !isJitPackBuild
+    
+    dependsOn classes
     inputs.file "${rootProject.rootDir}/overview.md"
-    options.addBooleanOption("use", true)
-    options.addBooleanOption("linksource", true)
-    if (JavaVersion.current().isJava8()) {
-        options.stylesheetFile(file("${rootProject.rootDir}/misc/stylesheet.css"))
-    }
-    options.addStringOption("bottom", file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text)
-    options.links "https://docs.oracle.com/javase/8/docs/api/"
-    options.links "http://mnlipp.github.io/jgrapes/latest-release/javadoc/"
-    destinationDir = file("${rootProject.buildDir}/javadoc")
+    ext.destinationDir = file("${rootProject.buildDir}/javadoc")
+
+    jvmArgs = ['--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED']
+    classpath files(rootProject.subprojects.collect {project ->
+        project.sourceSets.main.compileClasspath})    
+    main = 'jdk.javadoc.internal.tool.Main'
+    args = ['-doctitle', "JGrapes Web Console ${project.version}",
+        '-overview', "${rootProject.rootDir}/overview.md",
+        '-use',
+        '-linksource',
+        '-link', 'https://docs.oracle.com/en/java/javase/11/docs/api/',
+        '-link', 'https://mnlipp.github.io/jgrapes/latest-release/javadoc/',
+        '--add-exports', 'jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED',
+        '-docletpath', configurations.markdownDoclet.files.asType(List).join(":"),
+        '-doclet', 'org.jdrupes.mdoclet.MDoclet',
+        '-tagletpath', configurations.javadocTaglets.files.asType(List).join(":"),
+        '-taglet', 'org.jdrupes.taglets.plantUml.PlantUml',
+        '-taglet', 'org.jdrupes.taglets.plantUml.StartUml',
+        '-taglet', 'org.jdrupes.taglets.plantUml.EndUml',
+        '-d', destinationDir,
+        '-bottom', file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text,
+        '--allow-script-in-comments',
+        '-Xdoclint:-html'
+        ]
+
+    rootProject.subprojects.findAll({project ->
+        project.name.startsWith("org.jgrapes.") && project.name != "org.jgrapes.webcon"}) \
+        .collect {project -> project.sourceSets.main.allJava }.each {
+            args it
+        }
+
+    ignoreExitValue true
+    
 }
 

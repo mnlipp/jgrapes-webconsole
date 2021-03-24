@@ -83,7 +83,7 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * 
  * The class has a counter part in the browser, the `jgconsole`
  * JavaScript module (see 
- * <a href="jsdoc/module-console-base-resource_jgconsole.html">functions</a>)
+ * <a href="jsdoc/classes/console.html">functions</a>)
  * that can be loaded as `console-base-resource/jgconsole.js` 
  * (relative to the configured prefix). 
  * 

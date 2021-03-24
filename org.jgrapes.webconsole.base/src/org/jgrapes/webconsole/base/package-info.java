@@ -79,7 +79,7 @@
  * page. This allows differently styles consoles to be build on a
  * common foundation. The {@link org.jgrapes.webconsole.base.ConsoleWeblet}
  * provides some JavaScript classes
- * <a href="jsdoc/module-console-base-resource_jgconsole.html">functions</a>
+ * <a href="jsdoc/classes/console.html">functions</a>
  * that can be used to build the SPA.
  * 
  * ### Page Resource Providers
@@ -395,6 +395,37 @@
  * activate WebConsole
  * WebConsole -> Browser: "consoleConfigured"
  * deactivate WebConsole
+ * 
+ * @enduml
+ * 
+ * @startuml package-hierarchy.svg
+ * skinparam svgLinkTarget _parent
+ * 
+ * package org.jgrapes {
+ *     package "JGrapes Core Components" {
+ *     }
+ * 
+ *     package org.jgrapes.webconsole.base [[org/jgrapes/webconsole/base/package-summary.html#package.description]] {
+ *     }
+ * 
+ *     package org.jgrapes.webconsole.vuejs [[org/jgrapes/webconsole/vuejs/package-summary.html#package.description]] {
+ *     }
+ * 
+ *     package org.jgrapes.webconsole.bootstrap4 [[org/jgrapes/webconsole/bootstrap4/package-summary.html#package.description]] {
+ *     }
+ * 
+ *     package org.jgrapes.webconsole.jqueryui [[org/jgrapes/webconsole/jqueryui/package-summary.html#package.description]] {
+ *     }
+ * 
+ *     package "org.jgrapes.webconsole.jqueryui.themes.*" {
+ *     }
+ * }
+ * 
+ * "JGrapes Core Components" <.. org.jgrapes.webconsole.base
+ * org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.jqueryui"
+ * org.jgrapes.webconsole.jqueryui <.. "org.jgrapes.webconsole.jqueryui.themes.*"
+ * org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.bootstrap4"
+ * org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.vuejs"
  * 
  * @enduml
  */
