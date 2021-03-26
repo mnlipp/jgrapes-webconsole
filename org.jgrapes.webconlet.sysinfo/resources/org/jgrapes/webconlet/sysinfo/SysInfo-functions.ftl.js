@@ -51,14 +51,14 @@ var orgJGrapesConletsSysInfo = {
                 let maxFormatted = "";
                 let totalFormatted = "";
                 let usedFormatted = "";
-                let conlet = JGConsole.renderer.findConletPreview(conletId);
+                let conlet = JGConsole.findConletPreview(conletId);
                 let lang = 'en';
                 if (conlet) {
                     conlet = $(conlet);
                     lang = conlet.closest('[lang]').attr('lang') || 'en'
-                    maxFormatted = JGConsole.renderer.formatMemorySize(maxMemory, 1, lang);
-                    totalFormatted = JGConsole.renderer.formatMemorySize(totalMemory, 1, lang);
-                    usedFormatted = JGConsole.renderer.formatMemorySize(usedMemory, 1, lang);
+                    maxFormatted = JGConsole.formatMemorySize(maxMemory, 1, lang);
+                    totalFormatted = JGConsole.formatMemorySize(totalMemory, 1, lang);
+                    usedFormatted = JGConsole.formatMemorySize(usedMemory, 1, lang);
                     let col = conlet.find(".maxMemory");
                     col.html(maxFormatted);
                     col = conlet.find(".totalMemory");
@@ -66,7 +66,7 @@ var orgJGrapesConletsSysInfo = {
                     col = conlet.find(".usedMemory");
                     col.html(usedFormatted);
                 }
-                conlet = JGConsole.renderer.findConletView(conletId);
+                conlet = JGConsole.findConletView(conletId);
                 if (conlet) {
                     conlet = $(conlet);
                     let col = conlet.find(".maxMemory");
@@ -141,7 +141,7 @@ var orgJGrapesConletsSysInfo = {
                     yAxes: [{
                         ticks: {
                             callback: function(value, index, values) {
-                                return JGConsole.renderer.formatMemorySize(value, 0, lang);
+                                return JGConsole.formatMemorySize(value, 0, lang);
                             }
                         }
                     }]

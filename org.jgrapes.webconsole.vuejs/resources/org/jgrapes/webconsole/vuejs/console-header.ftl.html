@@ -5,7 +5,7 @@
   <aash-dropdown-menu v-bind:id="'conlet-menu'" 
     v-bind:label="'<span class=\'fas fa-puzzle-piece\'></span>'"
     v-bind:items="this.$consoleRenderer.conletTypes()"
-    v-bind:action="function(row) { this.$consoleRenderer.console().addConlet(row[1], row[2]) }"></aash-dropdown-menu>
+    v-bind:action="function(row) { this.$consoleRenderer.console.addConlet(row[1], row[2]) }"></aash-dropdown-menu>
   <aash-dropdown-menu v-bind:id="'language-selector'" 
     v-bind:label="'<span class=\'fas fa-language\'></span>'"
     v-bind:items="this.$consoleRenderer.localeMenuItems()"
