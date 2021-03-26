@@ -30,15 +30,6 @@ jar {
     }
 }
 
-task javadocJar(type: Jar) {
-    from (javadoc)
-    classifier "javadoc"
-}
-
-artifacts {
-    archives javadocJar
-}
-
 apply plugin: 'com.moowork.node'
 
 task buildLib(type: NpmTask) {
@@ -124,6 +115,15 @@ task java11doc(type: JavaExec) {
 
     ignoreExitValue true
     
+}
+
+task javadocJar(type: Jar) {
+    from java11doc.destinationDir
+    classifier "javadoc"
+}
+
+artifacts {
+    archives javadocJar
 }
 
 task buildDoc(type: Task) {
