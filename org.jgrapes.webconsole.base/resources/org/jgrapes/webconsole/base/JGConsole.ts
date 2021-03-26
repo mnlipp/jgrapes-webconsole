@@ -91,24 +91,24 @@ export default class JGConsole {
     }
 
     /**
-     * Delegates to the console's {@link JGConsole.Renderer#findConletPreview}.
+     * Delegates to theConsole's {@link Console#findConletPreview}.
      */
     static findConletPreview(conletId: string) {
-        return theConsole.renderer.findConletPreview(conletId);
+        return theConsole.findConletPreview(conletId);
     }
 
     /**
-     * Delegates to the console's {@link JGConsole.Renderer#findConletView}.
+     * Delegates to theConsole's {@link Console#findConletView}.
      */
     static findConletView(conletId: string) {
-        return theConsole.renderer.findConletView(conletId);
+        return theConsole.findConletView(conletId);
     }
 
     /**
-     * Delegates to the console's {@link JGConsole.Renderer#notification}.
+     * Delegates to theConsole's {@link Console#notification}.
      */
     static notification(content: string, options: NotificationOptions = {}) {
-        return theConsole.renderer.notification(content, options);
+        return theConsole.notification(content, options);
     }
 
     /**
@@ -195,6 +195,8 @@ export default class JGConsole {
     }
 
 };
+
+export { JGConsole };
 
 // For global access
 declare global {
