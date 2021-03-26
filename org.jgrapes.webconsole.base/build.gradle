@@ -44,6 +44,8 @@ task buildLib(type: NpmTask) {
 
 sourceSets.main.resources.srcDir 'build/generated/resources'
 
+assemble.dependsOn 'buildLib'
+
 eclipse {
     autoBuildTasks buildLib
 }
