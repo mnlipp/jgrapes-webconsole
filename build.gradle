@@ -19,7 +19,7 @@ plugins {
 	id "org.jdrupes.mdoclet" version "1.0.10"
 	id "com.moowork.node" version "1.3.1"
     id 'org.ajoberstar.grgit' version '4.0.1'
-	id 'org.ajoberstar.git-publish' version '2.1.1'
+	id 'org.ajoberstar.git-publish' version '3.0.0'
     id "com.jfrog.bintray" version "1.8.4"
     id 'io.miret.etienne.sass' version '1.1.1'
 }
@@ -86,18 +86,17 @@ gitPublish {
 }
 
 // Until https://github.com/ajoberstar/gradle-git-publish/issues/41 is fixed
-tasks.gitPublishCopy.dependsOn(":org.jgrapes.webconsole.base:javadoc")
-tasks.gitPublishCopy.dependsOn(":org.jgrapes.webconsole.base:jsdoc")
+tasks.gitPublishCopy.dependsOn(":org.jgrapes.webconsole.base:buildDoc")
 tasks.gitPublishCopy.dependsOn(":aash-vue-components:buildDoc")
 
 task stage {
-    description = 'To be executed by travis, build and update JavaDoc.'
+    description = 'To be executed by GitHub, build and update JavaDoc.'
     group = 'build'
 
     // Build everything first
     subprojects.tasks.each { tc -> tc.findByName("build") }
 
-    if (!isCiBuild || JavaVersion.current().isJava8()) {
+    if (!isCiBuild || JavaVersion.current().isJava11()) {
         // Publish JavaDoc
         dependsOn gitPublishPush
     }	

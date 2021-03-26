@@ -61,7 +61,6 @@ ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/base/
 
 task tsdoc(type: NpmTask) {
     dependsOn 'npm_install'
-    dependsOn 'java11doc'
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')
@@ -75,7 +74,7 @@ configurations {
 }
  
 dependencies {
-    markdownDoclet "org.jdrupes.mdoclet:doclet:2.0.0-SNAPSHOT"
+    markdownDoclet "org.jdrupes.mdoclet:doclet:2.0.0"
 }
 
 configurations {
@@ -83,7 +82,7 @@ configurations {
 }
  
 dependencies {
-    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:2.0.0-SNAPSHOT"
+    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:2.0.0"
 }
 
 task java11doc(type: JavaExec) {
@@ -113,7 +112,8 @@ task java11doc(type: JavaExec) {
         '-d', destinationDir,
         '-bottom', file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text,
         '--allow-script-in-comments',
-        '-Xdoclint:-html'
+        '-Xdoclint:-html',
+        '-quiet'
         ]
 
     rootProject.subprojects.findAll({project ->
@@ -126,3 +126,7 @@ task java11doc(type: JavaExec) {
     
 }
 
+task buildDoc(type: Task) {
+    dependsOn 'java11doc'
+    dependsOn 'tsdoc'
+}
