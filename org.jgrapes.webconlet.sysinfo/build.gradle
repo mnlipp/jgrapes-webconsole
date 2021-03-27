@@ -4,6 +4,6 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
 }
 
-ext.releaseVersion = "0.30.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.31.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
