@@ -88,11 +88,10 @@ export default class ConsoleWebSocket {
                 _this._initialConnect = false;
             } else {
                 // Make sure to get any lost updates
-                let renderer = _this._console.renderer;
-                renderer.findPreviewIds().forEach(function(id) {
+                _this._console.findPreviewIds().forEach(function(id) {
                     _this._console.renderConlet(id, [RenderMode.Preview]);
                 });
-                renderer.findViewIds().forEach(function(id) {
+                _this._console.findViewIds().forEach(function(id) {
                     _this._console.renderConlet(id!, [RenderMode.View]);
                 });
             }

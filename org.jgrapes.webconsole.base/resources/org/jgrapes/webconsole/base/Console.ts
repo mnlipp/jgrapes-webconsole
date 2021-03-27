@@ -359,10 +359,24 @@ export default class Console {
     }
 
     /**
+     * Delegates to {@link Renderer.findPreviewIds}.
+     */
+    findPreviewIds() {
+        return this._renderer!.findPreviewIds();
+    }
+
+    /**
      * Delegates to {@link Renderer.findConletPreview}.
      */
     findConletPreview(conletId: string) {
         return this._renderer!.findConletPreview(conletId);
+    }
+
+    /**
+     * Delegates to {@link Renderer.findViewIds}.
+     */
+    findViewIds() {
+        return this._renderer!.findViewIds();
     }
 
     /**
