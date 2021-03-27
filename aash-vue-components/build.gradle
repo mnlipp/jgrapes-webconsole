@@ -3,7 +3,6 @@ apply plugin: 'base'
 apply plugin: 'com.moowork.node'
 
 task buildLib(type: NpmTask) {
-    dependsOn('npm_install')
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')
@@ -12,7 +11,12 @@ task buildLib(type: NpmTask) {
     args = ["run", "build"]
 }
 
+assemble.dependsOn 'npm_install'
 assemble.dependsOn 'buildLib'
+
+eclipse {
+    autoBuildTasks buildLib
+}
 
 ext.jsDocDestDir = "${rootProject.buildDir}/aashdoc"
 
@@ -26,10 +30,6 @@ task buildDoc(type: NpmTask) {
 }
 
 build.dependsOn 'buildDoc'
-
-eclipse {
-    autoBuildTasks buildLib
-}
 
 apply plugin: 'eclipse'
 

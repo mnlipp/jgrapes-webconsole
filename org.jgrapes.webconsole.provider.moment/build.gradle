@@ -24,7 +24,6 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn(':npm_install')
     into('build/generated/resources/org/jgrapes/webconsole/provider/moment/moment')
     from file("${rootProject.projectDir}/node_modules/moment/moment.js")
     from ("${rootProject.projectDir}/node_modules/moment/min/") {
@@ -32,6 +31,7 @@ task prepareNpmLibs(type: Copy) {
     }
 }
 
+processResources.dependsOn ':npm_install'
 processResources.dependsOn 'prepareNpmLibs'
 
 sourceSets.main.resources.srcDir 'build/generated/resources'

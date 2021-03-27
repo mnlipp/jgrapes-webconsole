@@ -51,11 +51,11 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn(':npm_install')
     into('build/generated/resources/org/jgrapes/webconsole/vuejs/lib')
     from file("${rootProject.projectDir}/node_modules/normalize.css/normalize.css")
 }
 
+processResources.dependsOn ':npm_install'
 processResources.dependsOn 'prepareNpmLibs'
 
 //task webpack(type: NodeTask) {

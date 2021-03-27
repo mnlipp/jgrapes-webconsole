@@ -24,13 +24,13 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn(':npm_install')
     into('build/generated/resources/org/jgrapes/webconsole/provider/jquery/jquery')
     from file("${rootProject.projectDir}/node_modules/jquery/dist/jquery.js")
     from file("${rootProject.projectDir}/node_modules/jquery/dist/jquery.min.js")
     from file("${rootProject.projectDir}/node_modules/jquery/dist/jquery.min.map")
 }
 
+processResources.dependsOn ':npm_install'
 processResources.dependsOn 'prepareNpmLibs'
 
 sourceSets.main.resources.srcDir 'build/generated/resources'

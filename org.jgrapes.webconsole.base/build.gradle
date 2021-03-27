@@ -33,7 +33,6 @@ jar {
 apply plugin: 'com.moowork.node'
 
 task buildLib(type: NpmTask) {
-    dependsOn('npm_install')
     inputs.dir project.file('resources')
     inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')
@@ -44,7 +43,8 @@ task buildLib(type: NpmTask) {
 
 sourceSets.main.resources.srcDir 'build/generated/resources'
 
-assemble.dependsOn 'buildLib'
+processResources.dependsOn 'npm_install'
+processResources.dependsOn 'buildLib'
 
 eclipse {
     autoBuildTasks buildLib
