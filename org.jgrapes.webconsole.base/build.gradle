@@ -33,6 +33,7 @@ jar {
 apply plugin: 'com.moowork.node'
 
 task buildLib(type: NpmTask) {
+    mustRunAfter 'npm_install'
     inputs.dir project.file('resources')
     inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')

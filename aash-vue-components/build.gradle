@@ -3,6 +3,7 @@ apply plugin: 'base'
 apply plugin: 'com.moowork.node'
 
 task buildLib(type: NpmTask) {
+    mustRunAfter 'npm_install'
     inputs.dir project.file('src')
     inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')
