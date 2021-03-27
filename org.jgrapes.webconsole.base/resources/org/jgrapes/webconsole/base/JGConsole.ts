@@ -56,7 +56,7 @@ export default class JGConsole {
      */
     static init(consoleSessionId: string, refreshInterval: number,
         inactivityTimeout: number) {
-        theConsole.init(consoleSessionId, refreshInterval,
+        this.instance.init(consoleSessionId, refreshInterval,
             inactivityTimeout);
     }
 
@@ -65,7 +65,7 @@ export default class JGConsole {
      */
     static registerConletFunction(conletClass: string, functionName: string,
         conletFunction: (conletId: string, ...args: any[]) => void) {
-        theConsole.registerConletFunction(conletClass, functionName,
+        this.instance.registerConletFunction(conletClass, functionName,
             conletFunction);
     }
 
@@ -80,35 +80,35 @@ export default class JGConsole {
      * Delegates to {@link Console#lockMessageQueue}.
      */
     static lockMessageQueue() {
-        theConsole.lockMessageQueue();
+        this.instance.lockMessageQueue();
     }
 
     /**
      * Delegates to {@link Console#unlockMessageQueue}.
      */
     static unlockMessageQueue() {
-        theConsole.unlockMessageQueue();
+        this.instance.unlockMessageQueue();
     }
 
     /**
-     * Delegates to theConsole's {@link Console#findConletPreview}.
+     * Delegates to the instance's {@link Console#findConletPreview}.
      */
     static findConletPreview(conletId: string) {
-        return theConsole.findConletPreview(conletId);
+        return this.instance.findConletPreview(conletId);
     }
 
     /**
-     * Delegates to theConsole's {@link Console#findConletView}.
+     * Delegates to the instance's {@link Console#findConletView}.
      */
     static findConletView(conletId: string) {
-        return theConsole.findConletView(conletId);
+        return this.instance.findConletView(conletId);
     }
 
     /**
-     * Delegates to theConsole's {@link Console#notification}.
+     * Delegates to the instance's {@link Console#notification}.
      */
     static notification(content: string, options: NotificationOptions = {}) {
-        return theConsole.notification(content, options);
+        return this.instance.notification(content, options);
     }
 
     /**
