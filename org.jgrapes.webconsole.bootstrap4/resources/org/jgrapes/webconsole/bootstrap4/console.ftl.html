@@ -47,12 +47,10 @@
   
 <!-- Console -->
 <script type="module">
-  import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
+  import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.esm.js')}"
   import B4UIConsole from "${renderSupport.consoleResource('b4uiconsole.js')}"
-  window.onload = function() {
-    JGConsole.init("${consoleSessionId}", 
-      parseInt("${consoleSessionRefreshInterval?c}"),
-      parseInt("${consoleSessionInactivityTimeout?c}"), new B4UIConsole.Renderer({
+
+  const renderer = new B4UIConsole.Renderer(JGConsole.instance, {
         ok: '${_("OK")}',
         close: '${_("Close")}',
         resume: '${_("Resume")}',
@@ -60,8 +58,11 @@
         sessionSuspendedMessage: '${_("consoleSessionSuspendedMessage")}',
         serverConnectionLost: '${_("serverConnectionLostMessage")}',
         serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
-      }));
-    }
+      });
+  document.addEventListener('readystatechange', event => { JGConsole.init(
+    "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
+    parseInt('${consoleSessionInactivityTimeout?c}'));
+  });
 </script>
 
 

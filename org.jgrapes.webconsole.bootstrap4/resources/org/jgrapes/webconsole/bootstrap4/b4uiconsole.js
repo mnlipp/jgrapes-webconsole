@@ -18,7 +18,7 @@
 
 'use strict';
 
-import { JGConsole, RenderMode } from "../console-base-resource/jgconsole.js"
+import JGConsole, { RenderMode } from "../console-base-resource/jgconsole.esm.js"
 
 /**
  * @module b4uiconsole
@@ -30,8 +30,8 @@ var log = JGConsole.Log;
 
 B4UIConsole.Renderer = class extends JGConsole.Renderer {
 
-    constructor(l10n) {
-        super();
+    constructor(console, l10n) {
+        super(console);
         B4UIConsole.l10n = l10n;
         this._connectionLostNotification = null;
         this._lastPreviewLayout = [];
@@ -46,7 +46,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         log.debug("Locking screen");
 
         $("#consoleLanguageMenu").on("click", "[data-locale]", function() {
-            _this.sendSetLocale($(this).data("locale"), true);
+            _this.console.setLocale($(this).data("locale"), true);
         });
 
         // Grid
@@ -138,7 +138,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             + conletType + '">' + displayName + '</a>');
         item.data("render-modes", renderModes)
         item.on('click', function(e) {
-            _this.sendAddConlet($(this).data("conlet-type"),
+            _this.console.addConlet($(this).data("conlet-type"),
                 $(this).data("render-modes"));
         });
         let inserted = false;
@@ -238,7 +238,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             conletHeader.find(".conlet-edit").on("click", function() {
                 let icon = $(this);
                 let conletId = icon.closest(".conlet").attr("data-conlet-id");
-                _this.sendRenderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
+                _this.console.renderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
             });
         }
         if (!modes.includes(RenderMode.StickyPreview)) {
@@ -248,7 +248,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             conletHeader.find(".conlet-delete").on("click", function() {
                 let icon = $(this);
                 let conletId = icon.closest(".conlet").attr("data-conlet-id");
-                _this.sendDeleteConlet(conletId);
+                _this.console.removePreview(conletId);
             });
         }
         if (modes.includes("View")) {
@@ -262,7 +262,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
                 if (conletView) {
                     _this._activateConletView($(conletView));
                 } else {
-                    _this.sendRenderConlet(conletId, ["View", "Foreground"]);
+                    _this.console.renderConlet(conletId, ["View", "Foreground"]);
                 }
             });
         }
@@ -428,7 +428,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             tabsLayout.push(conletId);
         });
 
-        this.sendLayout(previewLayout, tabsLayout, xtraInfo);
+        this.console.updateLayout(previewLayout, tabsLayout, xtraInfo);
     };
 
     /**
@@ -492,7 +492,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             + '</div>');
         dialog.find(".modal-body").append($(content));
         dialog.find(".btn-primary").on('click', function() {
-            _this.console().execOnApply(container[0]);
+            _this.console.execOnApply(container[0]);
         });
         container.append(dialog);
         dialog.modal();
