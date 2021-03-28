@@ -133,11 +133,15 @@
 
 <!-- Start console application -->
 <script type="module">
-import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.js')}"
+import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.esm.js')}"
 import JQUIConsole from "${renderSupport.consoleResource('jquiconsole.js')}"
-JGConsole.init(
+
+const renderer = new JQUIConsole.Renderer(JGConsole.instance);
+
+document.addEventListener('readystatechange', event => { JGConsole.init(
   "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
-  parseInt('${consoleSessionInactivityTimeout?c}'), new JQUIConsole.Renderer());    
+  parseInt('${consoleSessionInactivityTimeout?c}'));
+  });
 </script>  
 
 </body>

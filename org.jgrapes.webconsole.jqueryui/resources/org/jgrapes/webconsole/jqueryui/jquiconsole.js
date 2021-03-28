@@ -18,7 +18,7 @@
 
 'use strict';
 
-import { JGConsole, RenderMode } from "../console-base-resource/jgconsole.js"
+import JGConsole, { RenderMode } from "../console-base-resource/jgconsole.esm.js"
 
 /**
  * @module jquiconsole
@@ -30,8 +30,8 @@ var log = JGConsole.Log;
 
 JQUIConsole.Renderer = class extends JGConsole.Renderer {
 
-    constructor() {
-        super();
+    constructor(console) {
+        super(console);
         this._connectionLostNotification = null;
         this._lastPreviewLayout = [];
         this._lastTabsLayout = [];
@@ -53,17 +53,17 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
 
         // Top bar
         $("#theme-menu").on("click", "[data-theme-id]", function() {
-            _this.send("setTheme", $(this).data("theme-id"));
+            _this.console.send("setTheme", $(this).data("theme-id"));
             $("#theme-menu").jqDropdown("hide");
         });
 
         $("#language-menu").on("click", "[data-locale]", function() {
-            _this.sendSetLocale($(this).data("locale"), true);
+            _this.console.setLocale($(this).data("locale"), true);
             $("#theme-menu").jqDropdown("hide");
         });
 
         $("#addon-menu").on("click", "[data-conlet-type]", function() {
-            _this.sendAddConlet($(this).data("conlet-type"),
+            _this.console.addConlet($(this).data("conlet-type"),
                 $(this).data("render-modes"));
             $("#theme-menu").jqDropdown("hide");
         });
@@ -241,7 +241,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
             conletHeader.find(".conlet-edit").on("click", function() {
                 let icon = $(this);
                 let conletId = icon.closest(".conlet").attr("data-conlet-id");
-                _this.sendRenderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
+                _this.console.renderConlet(conletId, [RenderMode.Edit, RenderMode.Foreground]);
             });
         }
         if (!modes.includes(RenderMode.StickyPreview)) {
@@ -249,7 +249,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
             conletHeader.find(".conlet-delete").on("click", function() {
                 let icon = $(this);
                 let conletId = icon.closest(".conlet").attr("data-conlet-id");
-                _this.sendDeleteConlet(conletId);
+                _this.console.removePreview(conletId);
             });
         }
         if (modes.includes("View")) {
@@ -261,7 +261,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
                 if (conletView) {
                     _this._activateConletView($(conletView));
                 } else {
-                    _this.sendRenderConlet(conletId, ["View", "Foreground"]);
+                    _this.console.renderConlet(conletId, ["View", "Foreground"]);
                 }
             });
         }
@@ -356,7 +356,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         });
         let xtraInfo = {};
 
-        this.sendLayout(previewLayout, tabsLayout, xtraInfo);
+        this.console.updateLayout(previewLayout, tabsLayout, xtraInfo);
     };
 
     /**
@@ -407,7 +407,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
             modal: true,
             width: "auto",
             close: function(event, ui) {
-                _this.console().execOnApply(container[0]);
+                _this.console.execOnApply(container[0]);
             }
         });
     }
