@@ -17,6 +17,8 @@ jar {
     }
 }
 
+apply plugin: 'com.moowork.node'
+
 task prepareNpmLibs(type: Copy) {
     mustRunAfter 'npm_install'
     description '''
@@ -26,13 +28,13 @@ task prepareNpmLibs(type: Copy) {
     as package scoped resources when running a process in eclipse.
     '''
     into('build/generated/resources/org/jgrapes/webconsole/provider/moment/moment')
-    from file("${rootProject.projectDir}/node_modules/moment/moment.js")
-    from ("${rootProject.projectDir}/node_modules/moment/min/") {
+    from file("node_modules/moment/moment.js")
+    from ("node_modules/moment/min/") {
         include '*'
     }
 }
 
-processResources.dependsOn ':npm_install'
+processResources.dependsOn 'npm_install'
 processResources.dependsOn 'prepareNpmLibs'
 
 sourceSets.main.resources.srcDir 'build/generated/resources'
