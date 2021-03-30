@@ -5,6 +5,8 @@ dependencies {
     
 }
 
+apply plugin: 'com.moowork.node'
+
 ext.releaseVersion = "0.27.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
@@ -19,7 +21,7 @@ jar {
 }
 
 task prepareNpmLibs(type: Copy) {
-    mustRunAfter ':npm_install'
+    mustRunAfter 'npm_install'
     description '''
     Helper task that copies the the libraries from the npm_modules 
     directory into a package scoped subdirectory. The root is added 
@@ -27,13 +29,13 @@ task prepareNpmLibs(type: Copy) {
     as package scoped resources when running a process in eclipse.
     '''
     into('build/generated/resources/org/jgrapes/webconsole/provider/chartjs/chart.js')
-    from ("${rootProject.projectDir}/node_modules/chart.js/dist") {
+    from ("node_modules/chart.js/dist") {
         include "**/*"
         exclude "*.bundle.*"
     }
 }
 
-processResources.dependsOn ':npm_install'
+processResources.dependsOn 'npm_install'
 processResources.dependsOn 'prepareNpmLibs'
 
 sourceSets.main.resources.srcDir 'build/generated/resources'
