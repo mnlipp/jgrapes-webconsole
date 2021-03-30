@@ -6,7 +6,6 @@
 		"install": "^0.13.0",
 		"jquery": "^3.5.1",
 		"jsdoc": "^3.6.6",
-		"lodash": "^4.17.20",
 		"moment": "^2.29.1",
 		"normalize.css": "^8.0.1",
 		"npm": "^7.5.4",
