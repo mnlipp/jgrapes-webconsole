@@ -31,6 +31,8 @@ jar {
     }
 }
 
+apply plugin: 'com.moowork.node'
+
 task prepareNpmLibs(type: Copy) {
     mustRunAfter 'npm_install'
     description '''
@@ -40,12 +42,12 @@ task prepareNpmLibs(type: Copy) {
     as package scoped resources when running a process in eclipse.
     '''
     into('build/generated/resources/org/jgrapes/webconsole/bootstrap4/lib/bootstrap')
-    from ("${rootProject.projectDir}/node_modules/bootstrap/dist") {
+    from ("node_modules/bootstrap/dist") {
         include "**/*"
     }
 }
 
-processResources.dependsOn ':npm_install'
+processResources.dependsOn 'npm_install'
 processResources.dependsOn 'prepareNpmLibs'
 
 sourceSets.main.resources.srcDir 'build/generated/resources'
