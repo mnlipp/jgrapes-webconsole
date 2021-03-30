@@ -17,8 +17,10 @@ jar {
     }
 }
 
+apply plugin: 'com.moowork.node'
+
 task prepareNpmLibs(type: Copy) {
-    mustRunAfter ':npm_install'
+    mustRunAfter 'npm_install'
     description '''
     Helper task that copies the the libraries from the npm_modules 
     directory into a package scoped subdirectory. The root is added 
@@ -26,7 +28,7 @@ task prepareNpmLibs(type: Copy) {
     as package scoped resources when running a process in eclipse.
     '''
     into('build/generated/resources/org/jgrapes/webconsole/provider/gridstack/gridstack')
-    from ("${rootProject.projectDir}/node_modules/gridstack/dist/") {
+    from ("node_modules/gridstack/dist/") {
         include '**/*'
         exclude 'src/**'
         exclude 'jquery.*'
@@ -34,7 +36,7 @@ task prepareNpmLibs(type: Copy) {
     }
 }
 
-processResources.dependsOn ':npm_install'
+processResources.dependsOn 'npm_install'
 processResources.dependsOn 'prepareNpmLibs'
 
 sourceSets.main.resources.srcDir 'build/generated/resources'

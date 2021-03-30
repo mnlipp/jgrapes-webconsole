@@ -2,7 +2,6 @@
 	"devDependencies": {
 		"bootstrap": "^4.6.0",
 		"documentation": "^13.1.1",
-		"gridstack": "^1.2.1",
 		"install": "^0.13.0",
 		"jquery": "^3.5.1",
 		"jsdoc": "^3.6.6",
