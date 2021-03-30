@@ -44,6 +44,8 @@ jar {
     }
 }
 
+apply plugin: 'com.moowork.node'
+
 task prepareNpmLibs(type: Copy) {
     mustRunAfter 'npm_install'
     description '''
@@ -53,10 +55,10 @@ task prepareNpmLibs(type: Copy) {
     as package scoped resources when running a process in eclipse.
     '''
     into('build/generated/resources/org/jgrapes/webconsole/vuejs/lib')
-    from file("${rootProject.projectDir}/node_modules/normalize.css/normalize.css")
+    from file("node_modules/normalize.css/normalize.css")
 }
 
-processResources.dependsOn ':npm_install'
+processResources.dependsOn 'npm_install'
 processResources.dependsOn 'prepareNpmLibs'
 
 //task webpack(type: NodeTask) {
