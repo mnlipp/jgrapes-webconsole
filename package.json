@@ -1,13 +1,11 @@
 {
 	"devDependencies": {
-		"@fortawesome/fontawesome-free": "^5.15.2",
 		"bootstrap": "^4.6.0",
 		"chart.js": "^2.9.4",
 		"documentation": "^13.1.1",
 		"gridstack": "^1.2.1",
 		"install": "^0.13.0",
 		"jquery": "^3.5.1",
-		"jquery-ui": "^1.12.1",
 		"jsdoc": "^3.6.6",
 		"lodash": "^4.17.20",
 		"moment": "^2.29.1",
