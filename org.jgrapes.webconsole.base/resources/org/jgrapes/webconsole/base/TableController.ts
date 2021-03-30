@@ -173,11 +173,13 @@ export default class TableController {
      * A convenience method to update the filter from the
      * value of the passed in event.
      * 
-     * @param event - the event which must provide
-     *     a value for `$(event.target).val()`. 
+     * @param event - the event which must have a `currentTarget`
+     *  with a `value` attribute.
      */
     updateFilter(event: Event) {
-        this._filterKey = (<any>(event.currentTarget!)).value;
+        if (event.currentTarget) {
+            this._filterKey = (<any>(event.currentTarget)).value;
+        }
     }
 
     /**

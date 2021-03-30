@@ -14,7 +14,6 @@ dependencies {
     //  compile 'com.github.mnlipp:jgrapes:master-SNAPSHOT'
     compile 'org.jdrupes.json:json:[2.0.0,2.1.0)'
     compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
-    runtimeOnly project(':org.jgrapes.webconsole.provider.jquery')
 }
 
 ext.releaseVersion = "0.31.0"

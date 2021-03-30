@@ -17,10 +17,6 @@ Export-Package: \
 
 -includeresource: resources
 
-Require-Capability: \
-    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=jquery)"
-
 -fixupmessages: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
