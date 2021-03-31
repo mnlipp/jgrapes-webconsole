@@ -1,19 +1,19 @@
 import typescript from 'rollup-plugin-typescript2';
 import {terser} from 'rollup-plugin-terser';
 
-import packageJson from "./package.json";
+let module = "build/generated/resources/org/jgrapes/webconsole/base/jgconsole.esm.js"
 
 export default {
   input: "resources/org/jgrapes/webconsole/base/JGConsole.ts",
   output: [
     {
       format: "esm",
-      file: packageJson.module,
+      file: module,
       sourcemap: true
     },
     {
       format: "esm",
-      file: packageJson.module.replace(".js", ".min.js"),
+      file: module.replace(".js", ".min.js"),
       sourcemap: true,
       plugins: [terser()]
     }

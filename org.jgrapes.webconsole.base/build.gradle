@@ -31,19 +31,19 @@ jar {
 
 apply plugin: 'com.moowork.node'
 
-task buildLib(type: NpmTask) {
-    mustRunAfter 'npm_install'
+task buildLib(type: NodeTask) {
+    mustRunAfter ':npm_install'
     inputs.dir project.file('resources')
-    inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
     outputs.dir project.file('build/generated/resources')
-    args = ["run", "build"]
+    script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
+    args = ["-c"]
 }
 
 sourceSets.main.resources.srcDir 'build/generated/resources'
 
-processResources.dependsOn 'npm_install'
+processResources.dependsOn ':npm_install'
 processResources.dependsOn 'buildLib'
 
 eclipse {
@@ -52,14 +52,13 @@ eclipse {
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/base/jsdoc"
 
-task tsdoc(type: NpmTask) {
-    dependsOn 'npm_install'
+task tsdoc(type: NodeTask) {
+    dependsOn ':npm_install'
     inputs.dir project.file('src')
-    inputs.file project.file('package.json')
     inputs.file project.file('tsconfig.json')
-    inputs.file project.file('rollup.config.js')
     outputs.dir project.file(jsDocDestDir)
-    args = ["run", "build:doc"]
+    script = file("${rootProject.rootDir}/node_modules/typedoc/bin/typedoc")
+    args = []
 }
 
 configurations {
