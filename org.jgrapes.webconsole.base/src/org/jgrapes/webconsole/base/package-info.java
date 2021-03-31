@@ -263,9 +263,10 @@
  * contribute style information and JavaScript 
  * (see {@link org.jgrapes.webconsole.base.events.AddConletType}).
  * It may (and should) make use of the styles and 
- * <a href="jsdoc/index.html">functions</a> 
+ * <a href="jsdoc/index.html">classes</a> 
  * provided by the web console JavaScript object in the browser page.
  * 
+ * @see "[Client side JavaScript classes](jsdoc/index.html)"
  * 
  * @startuml ConsoleStructure.svg
  * skinparam packageStyle rectangle
