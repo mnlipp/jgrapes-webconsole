@@ -1,6 +1,6 @@
 {
   "name": "aah-vue-components",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Michael N. Lipp",
   "license": "AGPL-3.0-only",
   "description": "Vue component library for generating 'ARIA augmented Semantic HTML' (AaSH)",

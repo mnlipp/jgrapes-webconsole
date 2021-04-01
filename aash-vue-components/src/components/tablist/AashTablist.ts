@@ -16,7 +16,7 @@ export type Panel = {
   /** The label to use for the panel */
   label: string | Function;
   /** A function to call when the panel is removed (optional) */
-  removeCallback?: () => {}
+  removeCallback?: () => void
 };
 
 /**
