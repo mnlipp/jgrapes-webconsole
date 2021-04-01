@@ -140,8 +140,8 @@ export default class JGConsole {
      * @param lang the language identifier
      * @param fallback fallback language (defaults to 'en')
      */
-    static forLang(items: Map<string, Map<string,string>>, lang: string, 
-            fallback = 'en'): Map<string,string> | string | null {
+    static forLang(items: Map<string, Map<string,string>> | Map<string,string>,
+            lang: string, fallback = 'en'): Map<string,string> | string | null {
         if (items.has(lang)) {
             return items.get(lang)!;
         }
