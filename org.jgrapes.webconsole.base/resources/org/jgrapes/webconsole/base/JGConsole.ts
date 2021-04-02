@@ -21,12 +21,14 @@ import Console from "./Console";
 import Renderer from "./Renderer";
 import RenderMode from "./RenderMode";
 import NotificationOptions, { NotificationType } from "./NotificationOptions";
+import Notification from "./Notification";
 import TableController from "./TableController";
 import OptionsSet from "./OptionsSet";
 
 // Re-export
 export { Console, nodeFromString, formatMemorySize, Renderer, RenderMode, 
-    NotificationType, NotificationOptions, TableController, OptionsSet };
+    NotificationType, NotificationOptions, Notification, 
+    TableController, OptionsSet };
 
 /** The singleton that provides the console instance. */
 export const theConsole = new Console();

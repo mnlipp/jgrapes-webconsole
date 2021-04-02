@@ -22,6 +22,7 @@ import RenderMode from "./RenderMode";
 import Renderer from "./Renderer";
 import ConsoleWebSocket from "./ConsoleWebSocket";
 import NotificationOptions from "./NotificationOptions";
+import ConsoleNotification from "./Notification";
 import { nodeFromString } from "./Util";
 
 /**
@@ -388,8 +389,11 @@ export default class Console {
 
     /**
      * Delegates to {@link Renderer.notification}.
+     *
+     * @return an object representing the notification
      */
-    notification(content: string, options: NotificationOptions = {}) {
+    notification(content: string, options: NotificationOptions = {})
+            : ConsoleNotification {
         return this._renderer!.notification(content, options);
     }
 

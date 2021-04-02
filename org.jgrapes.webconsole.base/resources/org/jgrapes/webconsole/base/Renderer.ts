@@ -17,6 +17,7 @@
  */
 import Console from "./Console";
 import Log from "./Log";
+import ConsoleNotification from "./Notification";
 import NotificationOptions from "./NotificationOptions";
 
 /**
@@ -209,8 +210,12 @@ export default abstract class Renderer {
      * @param content the content to display
      * @param options the options
      */
-    notification(content: string, options: NotificationOptions = {}) {
+    notification(content: string, options: NotificationOptions = {})
+            : ConsoleNotification {
         Log.warn("Not implemented!");
+        return  {
+            close: () => {}
+        }
     }
 
     // Utility methods.
