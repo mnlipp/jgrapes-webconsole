@@ -7,10 +7,10 @@
 
 import { App, Ref, ref } from 'vue'
 import { provideApi, getApi } from "./AashUtil";
-import AashDropdownMenu from "./components/dropdown-menu/AashDropdownMenu.vue";
-import AashTablist from "./components/tablist/AashTablist.vue";
-import AashModalDialog from "./components/modal-dialog/AashModalDialog.vue";
-import AashDisclosureButton from "./components/disclosure/AashDisclosureButton.vue";
+import * as AashDropdownMenu from "./components/dropdown-menu/AashDropdownMenu.vue";
+import * as AashTablist from "./components/tablist/AashTablist.vue";
+import * as AashModalDialog from "./components/modal-dialog/AashModalDialog.vue";
+import * as AashDisclosureButton from "./components/disclosure/AashDisclosureButton.vue";
 
 export { provideApi, getApi,
     AashDropdownMenu, AashTablist, AashModalDialog, AashDisclosureButton };
