@@ -1,6 +1,6 @@
 import Console from "./Console";
 import Log from "./Log"
-import { nodeFromString } from "./Util";
+import { parseHtml } from "./Util";
 
 export interface ScriptResource {
     id: string;
@@ -160,13 +160,13 @@ export default class ResourceManager {
             if (links.length === 0) {
                 let sheets = document.querySelectorAll(
                     "head link[rel='stylesheet']")!;
-                sheets[0].parentNode!.insertBefore(nodeFromString(
-                    "<link rel='stylesheet' href='" + uri + "'>"),
+                sheets[0].parentNode!.insertBefore(parseHtml(
+                    "<link rel='stylesheet' href='" + uri + "'>")[0],
                     sheets[sheets.length - 1].nextSibling);
             }
         }
         if (cssSource) {
-            let style = nodeFromString("style");
+            let style = document.createElement("style");
             style.textContent = cssSource;
             let last = document.querySelector("head link[rel='stylesheet']:last")!;
             last.parentNode!.insertBefore(style, last.nextSibling);

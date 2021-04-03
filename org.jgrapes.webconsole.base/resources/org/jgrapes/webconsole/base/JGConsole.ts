@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License along 
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-import { nodeFromString, formatMemorySize } from "./Util";
+import { parseHtml, rootQuery, formatMemorySize } from "./Util";
 import Log from "./Log";
 import Console from "./Console";
 import Renderer from "./Renderer";
@@ -26,7 +26,8 @@ import TableController from "./TableController";
 import OptionsSet from "./OptionsSet";
 
 // Re-export
-export { Console, nodeFromString, formatMemorySize, Renderer, RenderMode, 
+export { Console, parseHtml, rootQuery, formatMemorySize, 
+    Renderer, RenderMode, 
     NotificationType, NotificationOptions, Notification, 
     TableController, OptionsSet };
 
@@ -50,7 +51,7 @@ export default class JGConsole {
     static NotificationType = NotificationType;
     static TableController = TableController;
     static OptionsSet = OptionsSet;
-    static nodeFromString = nodeFromString;
+    static parseHtml = parseHtml;
     static formatMemorySize = formatMemorySize;
     
     /**

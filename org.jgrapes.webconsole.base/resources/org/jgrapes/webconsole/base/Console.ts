@@ -23,7 +23,7 @@ import Renderer from "./Renderer";
 import ConsoleWebSocket from "./ConsoleWebSocket";
 import NotificationOptions from "./NotificationOptions";
 import ConsoleNotification from "./Notification";
-import { nodeFromString } from "./Util";
+import { parseHtml } from "./Util";
 
 /**
  * Provides the console related functions.
@@ -36,12 +36,12 @@ export default class Console {
     private _webSocket = new ConsoleWebSocket(this);
     private _conletFunctionRegistry = new Map<string, 
         Map<string, (conletId: string, ...args: any) => void>>();
-    private _previewTemplate = nodeFromString(
-        '<section class="conlet conlet-preview"></section>');
-    private _viewTemplate = nodeFromString(
-        '<article class="conlet conlet-view conlet-content"></article>');
-    private _editTemplate = nodeFromString(
-        '<div class="conlet conlet-edit"></div>');
+    private _previewTemplate = parseHtml(
+        '<section class="conlet conlet-preview"></section>')[0];
+    private _viewTemplate = parseHtml(
+        '<article class="conlet conlet-view conlet-content"></article>')[0];
+    private _editTemplate = parseHtml(
+        '<div class="conlet conlet-edit"></div>')[0];
     private _resourceManager: ResourceManager;
 
     constructor() {

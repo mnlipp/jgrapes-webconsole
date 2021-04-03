@@ -17,12 +17,23 @@
  */
 
 /**
- * Converts a string with HTML source to a DOM tree.
+ * Converts a string with HTML source to a single or multiple DOM trees.
  *
- * @return the root node of the DOM tree
+ * @return the root nodes of the DOM trees
  */
-export function nodeFromString(html: string): Node {
-    return document.createRange().createContextualFragment(html).firstChild!;
+export function parseHtml(html: string): HTMLElement[] {
+    return <HTMLElement[]>Array.from(document.createRange()
+        .createContextualFragment(html).childNodes);
+}
+
+/**
+ * Behaves like `querySelector` but includes the root element as candidate.
+ *
+ * @param root the root element
+ * @param selector the selector expression
+ */
+export function rootQuery(root: Element, selector: string): Node | null {
+    return root.matches(selector) && root || root.querySelector(selector);
 }
 
 /**
