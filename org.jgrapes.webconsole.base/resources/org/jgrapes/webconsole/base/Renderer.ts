@@ -19,6 +19,7 @@ import Console from "./Console";
 import Log from "./Log";
 import ConsoleNotification from "./Notification";
 import NotificationOptions from "./NotificationOptions";
+import RenderMode from "./RenderMode";
 
 /**
  * A base class for implementing a web console renderer. The renderer
@@ -97,7 +98,7 @@ export default abstract class Renderer {
      * @param renderModes the render modes
      */
     addConletType(conletType: string, displayNames: Map<string,string>,
-            renderModes: string[]) {
+            renderModes: RenderMode[]) {
         Log.warn("Not implemented!");
     }
 
@@ -135,7 +136,7 @@ export default abstract class Renderer {
      * plane) is to be made the active tab
      */
     updateConletPreview(isNew: boolean, container: HTMLElement, 
-        modes: string[], content: string, foreground: boolean) {
+        modes: RenderMode[], content: string, foreground: boolean) {
         Log.warn("Not implemented!");
     }
 
@@ -155,7 +156,7 @@ export default abstract class Renderer {
      * is to be made the active tab
      */
     updateConletView(isNew: boolean, container: HTMLElement, 
-        modes: string[], content: string, foreground: boolean) {
+        modes: RenderMode[], content: string, foreground: boolean) {
         Log.warn("Not implemented!");
     }
 
@@ -189,7 +190,7 @@ export default abstract class Renderer {
      * @param conletId the conlet id
      * @param modes the modes
      */
-    updateConletModes(conletId: string, modes: string[]) {
+    updateConletModes(conletId: string, modes: RenderMode[]) {
         Log.warn("Not implemented!");
     }
 
@@ -200,7 +201,7 @@ export default abstract class Renderer {
      * @param modes the modes
      * @param content the content as HTML
      */
-    showEditDialog(container: HTMLElement, modes: string[], content: string) {
+    showEditDialog(container: HTMLElement, modes: RenderMode[], content: string) {
         Log.warn("Not implemented!");
     }
 

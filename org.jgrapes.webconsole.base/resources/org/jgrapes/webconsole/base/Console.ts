@@ -54,7 +54,7 @@ export default class Console {
             });
         this._webSocket.addMessageHandler('addConletType',
             function(conletType, displayNames: any, cssUris, 
-                scriptResources, renderModes: string[]) {
+                scriptResources, renderModes: RenderMode[]) {
                 _this._resourceManager.addPageResources(cssUris, null, scriptResources);
                 let asMap = new Map<string,string>();
                 for (let k of Object.keys(displayNames)) {
@@ -407,7 +407,7 @@ export default class Console {
     /**
      * Delegates to {@link Renderer.updateConletModes}.
      */
-    updateConletModes(conletId: string, modes: string[]) {
+    updateConletModes(conletId: string, modes: RenderMode[]) {
         return this._renderer!.updateConletModes(conletId, modes);
     }
     
