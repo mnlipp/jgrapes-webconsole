@@ -7,13 +7,16 @@
 
 import { App, Ref, ref } from 'vue'
 import { provideApi, getApi } from "./AashUtil";
-import * as AashDropdownMenu from "./components/dropdown-menu/AashDropdownMenu.vue";
-import * as AashTablist from "./components/tablist/AashTablist.vue";
-import * as AashModalDialog from "./components/modal-dialog/AashModalDialog.vue";
-import * as AashDisclosureButton from "./components/disclosure/AashDisclosureButton.vue";
+import AashDropdownMenuComponent, * as AashDropdownMenu from "./components/dropdown-menu/AashDropdownMenu.vue";
+import AashTablistComponent, * as AashTablist from "./components/tablist/AashTablist.vue";
+import AashModalDialogComponent, * as AashModalDialog from "./components/modal-dialog/AashModalDialog.vue";
+import AashDisclosureButtonComponent, * as AashDisclosureButton from "./components/disclosure/AashDisclosureButton.vue";
 
 export { provideApi, getApi,
-    AashDropdownMenu, AashTablist, AashModalDialog, AashDisclosureButton };
+    AashDropdownMenuComponent, AashDropdownMenu, 
+    AashTablistComponent, AashTablist, 
+    AashModalDialogComponent, AashModalDialog, 
+    AashDisclosureButtonComponent, AashDisclosureButton };
 
 let disclosureRegistry = new Map();
 
@@ -68,9 +71,9 @@ let aash: Aash = {
 export default {
     install: (app: App, options?: {}) => {
         app.config.globalProperties.$aash = aash;
-        app.component('aash-dropdown-menu', AashDropdownMenu);
-        app.component('aash-tablist', AashTablist);
-        app.component('aash-modal-dialog', AashModalDialog);
-        app.component('aash-disclosure-button', AashDisclosureButton);
+        app.component('aash-dropdown-menu', AashDropdownMenuComponent);
+        app.component('aash-tablist', AashTablistComponent);
+        app.component('aash-modal-dialog', AashModalDialogComponent);
+        app.component('aash-disclosure-button', AashDisclosureButtonComponent);
   }
 }
