@@ -94,6 +94,8 @@ sourceSets.main.resources.srcDir 'build/generated/resources'
 
 task buildLib(type: NodeTask) {
     mustRunAfter ':npm_install'
+    mustRunAfter ':org.jgrapes.webconsole.base:buildLib'
+    mustRunAfter ':org.jgrapes.webconsole.provider.vue:prepareNpmLibs'
     inputs.dir project.file('resources')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
@@ -102,7 +104,9 @@ task buildLib(type: NodeTask) {
     args = ["-c"]
 }
 
-processResources.dependsOn 'buildLib'
+processResources.dependsOn ':npm_install'
+processResources.dependsOn ':org.jgrapes.webconsole.base:buildLib'
+processResources.dependsOn ':org.jgrapes.webconsole.provider.vue:prepareNpmLibs'
 
 eclipse {
     autoBuildTasks compileSass, buildLib
