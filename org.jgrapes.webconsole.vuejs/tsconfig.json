@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "declarationDir": "lib",
+    "target": "es2015",
+    "module": "es2015",
+    "sourceMap": true,
+    "declaration": true,
+    "importHelpers": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "lib": ["DOM", "ES2020"],
+    "baseUrl": "..",
+    "paths": {
+      "@JGConsole": ["org.jgrapes.webconsole.base/resources/org/jgrapes/webconsole/base/JGConsole"],
+      "@Vue": ["org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
+      "@Aash": ["aash-vue-components/lib/AashPlugin"],
+      "@AashTablist": ["aash-vue-components/lib/components/tablist/AashTablist"],
+      "@AashModalDialog": ["aash-vue-components/lib/components/modal-dialog/AashModalDialog"]
+    }
+  },
+  "include": ["resources/**/*.ts"],
+  "exclude": ["node_modules"]
+}

@@ -77,7 +77,7 @@
 <script type="module">
 import "${renderSupport.pageResource('jgwc-vue-components/jgwc-components.js')}";
 import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.esm.js')}";
-import VueJsConsole from "${renderSupport.consoleResource('vuejsconsole.js')}";
+import VueJsRenderer from "${renderSupport.consoleResource('vuejsrenderer.js')}";
 
 const localeMenuitems = [
   // <#list supportedLanguages() as l>
@@ -95,7 +95,7 @@ l10ns.set('${key}', '${l.l10nBundle.getString(key)}');
 // </#list>
 // </#list>    
 
-const renderer = new VueJsConsole.Renderer(JGConsole.instance, localeMenuitems, consoleMessages);
+const renderer = new VueJsRenderer(JGConsole.instance, localeMenuitems, consoleMessages);
 
 document.addEventListener('readystatechange', event => { JGConsole.init(
     "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
