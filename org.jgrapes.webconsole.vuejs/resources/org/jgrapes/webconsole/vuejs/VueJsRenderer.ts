@@ -171,15 +171,7 @@ export default class Renderer extends JGConsole.Renderer {
         this._layoutChanged();
         log.debug("Unlocking screen");
         let loaderOverlay = <HTMLElement>document.querySelector("#loader-overlay");
-        let opacity = 1;
-        let timer = setInterval(() => {
-            if (opacity <= 0.1){
-               clearInterval(timer);
-               loaderOverlay.style.display = 'none';
-            }
-            loaderOverlay.style.opacity = opacity.toString();
-            opacity -= opacity * 0.1;
-        }, 10);
+        loaderOverlay.classList.add("loader-overlay_hidden")
     }
 
     connectionSuspended(resume: () => void) {
