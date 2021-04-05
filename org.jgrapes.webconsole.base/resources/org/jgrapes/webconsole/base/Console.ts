@@ -166,21 +166,31 @@ export default class Console {
      * Starts the websocket connection to the server, invokes
      * {@link Renderer.init} and sends the `consoleReady` message
      * to the server.
+     *
+     * @param consoleSessionId the session id
+     * @param options additional options
      */
-    init(consoleSessionId: string, refreshInterval: number,
-        inactivityTimeout: number) {
+    init(consoleSessionId: string, 
+        options: { 
+            refreshInterval?: number,
+            inactivityTimeout?: number
+        }) {
         Log.debug("Initializing console...");
         sessionStorage.setItem("org.jgrapes.webconsole.base.sessionId", consoleSessionId);
         this._resourceManager = new ResourceManager(this);
-        this._sessionRefreshInterval = refreshInterval;
-        this._sessionInactivityTimeout = inactivityTimeout;
+        if (options["refreshInterval"]) {
+            this._sessionRefreshInterval = options.refreshInterval;            
+        }
+        if (options["inactivityTimeout"]) {
+            this._sessionInactivityTimeout = options.inactivityTimeout;
+        }
 
         // Everything set up, can connect web socket now.
         this._webSocket.connect();
 
         // More initialization.
         Log.debug("Initializing renderer...");
-        this._renderer?.init();
+        this._renderer?.init(options);
 
         // With everything prepared, send console ready
         this.send("consoleReady");

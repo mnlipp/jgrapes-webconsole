@@ -98,9 +98,10 @@ l10ns.set('${key}', '${l.l10nBundle.getString(key)}');
 const renderer = new VueJsRenderer(JGConsole.instance, localeMenuitems, consoleMessages);
 
 document.addEventListener('readystatechange', event => { JGConsole.init(
-    "${consoleSessionId}", parseInt('${consoleSessionRefreshInterval?c}'), 
-    parseInt('${consoleSessionInactivityTimeout?c}'));
-});
+    "${consoleSessionId}",
+    { refreshInterval: parseInt('${consoleSessionRefreshInterval?c}'),
+      inactivityTimeout: parseInt('${consoleSessionInactivityTimeout?c}') });
+    });
 
 </script>
  

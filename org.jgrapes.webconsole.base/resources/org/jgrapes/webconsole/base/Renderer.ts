@@ -37,7 +37,13 @@ export default abstract class Renderer {
         console.renderer = this;
     }
 
-    init() {
+    /**
+     * Called from {@link Console.init} with the options passed to
+     * {@link Console.init}.
+     *
+     * @param options the options
+     */
+    init(options: any) {
     }
 
     /**

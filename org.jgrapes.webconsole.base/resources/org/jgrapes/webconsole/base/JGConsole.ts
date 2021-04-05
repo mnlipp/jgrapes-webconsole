@@ -55,12 +55,10 @@ export default class JGConsole {
     static formatMemorySize = formatMemorySize;
     
     /**
-     * Delegates to {@link Console#init}.
+     * Delegates to {@link Console.init}.
      */
-    static init(consoleSessionId: string, refreshInterval: number,
-        inactivityTimeout: number) {
-        this.instance.init(consoleSessionId, refreshInterval,
-            inactivityTimeout);
+    static init(consoleSessionId: string, options: any) {
+        this.instance.init(consoleSessionId, options);
     }
 
     /**
