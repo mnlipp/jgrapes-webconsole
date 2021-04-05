@@ -62,7 +62,7 @@ export default class JGConsole {
     }
 
     /**
-     * Delegates to {@link Console#registerConletFunction}.
+     * Delegates to {@link Console.registerConletFunction}.
      */
     static registerConletFunction(conletClass: string, functionName: string,
         conletFunction: (conletId: string, ...args: any[]) => void) {
@@ -71,42 +71,42 @@ export default class JGConsole {
     }
 
     /**
-     * Delegates to {@link Console#notifyConletModel}.
+     * Delegates to {@link Console.notifyConletModel}.
      */
     static notifyConletModel(conletId: string, method: string, ...params: any[]) {
         return theConsole.notifyConletModel(conletId, method, ...params);
     }
 
     /**
-     * Delegates to {@link Console#lockMessageQueue}.
+     * Delegates to {@link Console.lockMessageQueue}.
      */
     static lockMessageQueue() {
         this.instance.lockMessageQueue();
     }
 
     /**
-     * Delegates to {@link Console#unlockMessageQueue}.
+     * Delegates to {@link Console.unlockMessageQueue}.
      */
     static unlockMessageQueue() {
         this.instance.unlockMessageQueue();
     }
 
     /**
-     * Delegates to the instance's {@link Console#findConletPreview}.
+     * Delegates to the instance's {@link Console.findConletPreview}.
      */
     static findConletPreview(conletId: string) {
         return this.instance.findConletPreview(conletId);
     }
 
     /**
-     * Delegates to the instance's {@link Console#findConletView}.
+     * Delegates to the instance's {@link Console.findConletView}.
      */
     static findConletView(conletId: string) {
         return this.instance.findConletView(conletId);
     }
 
     /**
-     * Delegates to the instance's {@link Console#notification}.
+     * Delegates to the instance's {@link Console.notification}.
      */
     static notification(content: string, options: NotificationOptions = {}) {
         return this.instance.notification(content, options);
