@@ -2,6 +2,19 @@
 <html>
 <head>
   <title>AaSH Demo</title>
+  <style>
+  /* Required for firefox, does not show focus on span by default. */
+  span:focus {
+      box-shadow: black 0px 0px 1px 1px;
+      outline: none;
+  }
+  </style>
+  <script>
+  function onToggleFunc(path, newStateOpen, event) {
+      console.log(path.join('/') + ' now ' + newStateOpen);
+      return newStateOpen;
+  }
+  </script>
 </head>
 <body>
   <main id="app">
@@ -52,6 +65,83 @@
         <div id="onlyShownWhenDisclosed" v-if="$aash.isDisclosed('onlyShownWhenDisclosed')">
             This is only shown when disclosed.
         </div>
+    </section>
+
+    <section>
+      <h2>Tree</h2>
+      <aash-tree-view :on_toggle="(path, newStateOpen, event) => {
+          window.console.log(path.join('/') + ' now ' + newStateOpen);
+          return newStateOpen;
+        }"
+        :on_focus="(path) => {
+          window.console.log(path.join('/') + ' has focus');
+        }"
+        :path="[]" :roots="[
+        {
+          segment: 'fruits',
+          label: 'Fruits',
+          children: [
+            {
+              segment: 'oranges',
+              label: 'Oranges',
+            },
+            {
+              segment: 'pineapple',
+              label: 'Pineapple',
+            },
+            {
+              segment: 'apples',
+              label: 'Apples',
+              children: [
+                {
+                  segment: 'macintosh',
+                  label: 'Macintosh',
+                },
+                {
+                  segment: 'granny_smith',
+                  label: 'Granny Smith',
+                },
+                {
+                  segment: 'fuji',
+                  label: 'Fuji',
+                },
+              ]
+            },
+            {
+              segment: 'bananas',
+              label: 'Bananas',
+            },
+            {
+              segment: 'pears',
+              label: 'Pears',
+              children: [
+                {
+                  segment: 'anjou',
+                  label: 'Anjou',
+                },
+                {
+                  segment: 'bartlett',
+                  label: 'Bartlett',
+                },
+                {
+                  segment: 'bosc',
+                  label: 'Bosc',
+                },
+              ]
+            },
+          ]
+        },
+        {
+          segment: 'vegetables',
+          label: 'Vegetables',
+          
+        },
+        {
+          segment: 'grains',
+          label: 'Grains',
+          
+        }
+      ]" v-slot="{ label, tabindex }"></aash-tree-view>
     </section>
 
   </main>

@@ -7,16 +7,19 @@
 
 import { App, Ref, ref } from 'vue'
 import { provideApi, getApi } from "./AashUtil";
-import AashDropdownMenuComponent, * as AashDropdownMenu from "./components/dropdown-menu/AashDropdownMenu.vue";
-import AashTablistComponent, * as AashTablist from "./components/tablist/AashTablist.vue";
-import AashModalDialogComponent, * as AashModalDialog from "./components/modal-dialog/AashModalDialog.vue";
 import AashDisclosureButtonComponent, * as AashDisclosureButton from "./components/disclosure/AashDisclosureButton.vue";
+import AashDropdownMenuComponent, * as AashDropdownMenu from "./components/dropdown-menu/AashDropdownMenu.vue";
+import AashModalDialogComponent, * as AashModalDialog from "./components/modal-dialog/AashModalDialog.vue";
+import AashTablistComponent, * as AashTablist from "./components/tablist/AashTablist.vue";
+import AashTreeViewComponent, * as AashTreeView from "./components/tree-view/AashTreeView.vue";
 
 export { provideApi, getApi,
+    AashDisclosureButtonComponent, AashDisclosureButton,
     AashDropdownMenuComponent, AashDropdownMenu, 
     AashTablistComponent, AashTablist, 
-    AashModalDialogComponent, AashModalDialog, 
-    AashDisclosureButtonComponent, AashDisclosureButton };
+    AashModalDialogComponent, AashModalDialog,
+    AashTreeViewComponent, AashTreeView
+};
 
 let disclosureRegistry = new Map();
 
@@ -71,9 +74,10 @@ let aash: Aash = {
 export default {
     install: (app: App, options?: {}) => {
         app.config.globalProperties.$aash = aash;
-        app.component('aash-dropdown-menu', AashDropdownMenuComponent);
-        app.component('aash-tablist', AashTablistComponent);
-        app.component('aash-modal-dialog', AashModalDialogComponent);
         app.component('aash-disclosure-button', AashDisclosureButtonComponent);
+        app.component('aash-dropdown-menu', AashDropdownMenuComponent);
+        app.component('aash-modal-dialog', AashModalDialogComponent);
+        app.component('aash-tablist', AashTablistComponent);
+        app.component('aash-tree-view', AashTreeViewComponent);
   }
 }
