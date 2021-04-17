@@ -17,7 +17,7 @@ import { defineComponent, getCurrentInstance, onUnmounted } from 'vue'
  *   aria-controls="onlyShownWhenDisclosed">Disclose</button>
  * ```
  * 
- * @class AashDisclosureButton
+ * @class AashDisclosureButtonComponent
  * @param {Object} props the properties
  * @param {string} props.idRef the id of the controlled element
  */

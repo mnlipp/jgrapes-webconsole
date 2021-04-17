@@ -32,7 +32,7 @@ type MenuItem = [ string | (() => string), any ];
  * </div>
  * ```
  * 
- * @class
+ * @class AashDropdownMenuComponent
  * @param {Object} props The properties
  * @param {string} props.id The id for the enclosing `div`
  * @param {string} props.label The text of the `button` that opens the menu

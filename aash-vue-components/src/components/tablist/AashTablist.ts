@@ -77,7 +77,7 @@ export interface Api {
  *  This is panel Two.</div>
  * ```
  * 
- * @class AashTablist
+ * @class AashTablistComponent
  * @param {Object} props the properties
  * @param {string} props.id the id for the enclosing `div`
  * @param {Panel[]} props.initialPanels the list of initial panels
