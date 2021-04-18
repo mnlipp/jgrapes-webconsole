@@ -69,11 +69,11 @@
 
     <section>
       <h2>Tree</h2>
-      <aash-tree-view :on_toggle="(path, newStateOpen, event) => {
+      <aash-tree-view :on-toggle="(path, newStateOpen, event) => {
           window.console.log(path.join('/') + ' now ' + newStateOpen);
           return newStateOpen;
         }"
-        :on_focus="(path) => {
+        :on-focus="(path) => {
           window.console.log(path.join('/') + ' has focus');
         }"
         :path="[]" :roots="[
