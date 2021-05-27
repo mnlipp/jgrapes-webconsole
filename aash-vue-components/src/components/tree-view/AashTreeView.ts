@@ -5,6 +5,7 @@
  */
 import { defineComponent, PropType, reactive, computed, nextTick,
     onMounted, ref } from 'vue'
+import { provideApi } from "../../AashUtil";
 
 /**
  * A label can either be provided literally or by a function. 
@@ -25,6 +26,17 @@ export type TreeNode = {
     label: LabelSupplier,
     /** The node's child nodes */
     children: TreeNode[]
+}
+
+/**
+ * The interface provided by the component.
+ *
+ * * `setRoots(roots: TreeNode[]): void`: replaces the root tree nodes
+ *
+ * @memberof module:AashTreeView
+ */
+export interface Api {
+  setRoots(roots: TreeNode[]): void;
 }
 
 interface Expanded {
@@ -51,7 +63,7 @@ class Controller {
 
     constructor(roots: TreeNode[], onToggle: ToggleVetoer, 
         onFocus: (path: string[]) => void) {
-        this._roots = roots;
+        this._roots = reactive(roots);
         if (roots.length > 0) {
             this._focusHolder.push(roots[0].segment);
         }
@@ -61,6 +73,10 @@ class Controller {
 
     setDomRoot(root: HTMLElement) {
         this._domRoot = root;
+    }
+
+    get roots() {
+        return this._roots;
     }
 
     toNode(path: string[]) {
@@ -270,7 +286,7 @@ export default defineComponent({
             || new Controller(props.roots, props.onToggle, props.onFocus);
 
         const nodes = computed(() => {
-            return (props._path.length == 0 ? props.roots : props._nodes)!
+            return (props._path.length == 0 ? ctrl.roots : props._nodes)!
                 .map((node) => { 
                     return {...node, path: props._path.concat(node.segment)} });
         });
@@ -379,6 +395,13 @@ export default defineComponent({
             ctrl.setDomRoot(domRoot.value!);
         });
 
+        provideApi(domRoot, { 
+            setRoots: (roots: TreeNode[]) => {
+                ctrl.roots.length = 0;
+                ctrl.roots.push(...roots);
+            }
+        });
+        
         return { domRoot, ctrl, nodes, isExpandable, isExpanded, ariaExpanded,
             hasFocus, label, toggleExpanded, onKey };
     }
