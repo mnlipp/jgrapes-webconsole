@@ -72,7 +72,7 @@ let aash: Aash = {
 }
 
 export default {
-    install: (app: App, options?: {}) => {
+    install: (app: App) => {
         app.config.globalProperties.$aash = aash;
         app.component('aash-disclosure-button', AashDisclosureButtonComponent);
         app.component('aash-dropdown-menu', AashDropdownMenuComponent);
