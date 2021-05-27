@@ -16,13 +16,22 @@ function provideApi (dom: Ref<HTMLElement | null> | HTMLElement,
         api: Object): void {
     onMounted (() => {
         if (isRef(dom)) {
-            dom = dom.value!;
+            /* When `onMounted` is evaluated, a ref is usually bound to the
+             * DOM (using a `ref` attribute). However, when using a template
+             * recursively, the ref may only be bound for the top level usage. */
+            if (!dom.value) {
+                return;
+            }
+            dom = dom.value;
         }
         (<any>dom).__componentApi__ = api;
     });
     
     onBeforeUnmount (() => {
         if (isRef(dom)) {
+            if (!dom.value) {
+                return;
+            }
             dom = dom.value!;
         }
         delete (<any>dom).__componentApi__;
