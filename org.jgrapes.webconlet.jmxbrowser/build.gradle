@@ -1,0 +1,44 @@
+dependencies {
+	compile project(':org.jgrapes.webconsole.base')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
+}
+
+ext.releaseVersion = "0.1.0"
+ext.isSnapshot = true
+version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
+
+apply plugin: 'io.miret.etienne.sass'
+
+sass {
+    // Base URL where to download dart-sass from:
+    baseUrl = 'https://github.com/sass/dart-sass/releases/download'
+    // dart-sass version to use:
+    version = '1.26.2'
+}
+
+compileSass {
+  // Source directory containing sass to compile:
+  sourceDir = project.file("$projectDir/resources/org/jgrapes/webconlet/jmxbrowser/scss")
+  
+  // Directory where to output generated CSS:
+  outputDir = project.file("$buildDir/generated/resources/org/jgrapes/webconlet/jmxbrowser")
+  
+  // Set the output style:
+  // Possible values are “expanded” and “compressed”, default is “expanded”.
+  style = expanded
+
+  // Source map style:
+  //  - file: output source map in a separate file (default)
+  //  - embed: embed source map in CSS
+  //  - none: do not emit source map.
+  sourceMap = file
+}
+
+processResources.dependsOn 'compileSass'
+
+sourceSets.main.resources.srcDir 'build/generated/resources'
+
+eclipse {
+    autoBuildTasks compileSass
+}

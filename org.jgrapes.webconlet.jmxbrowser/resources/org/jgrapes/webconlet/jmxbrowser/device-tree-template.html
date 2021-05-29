@@ -1,0 +1,16 @@
+<ul :role="level == 1 ? 'tree' : 'group'">
+  <li v-for="item of items" 
+    :role="ctrl.isExpandable(item) ? 'treeitem' : 'none'"
+    :aria-expanded="ctrl.ariaExpanded(item)">
+    <span v-if="ctrl.isExpandable(item)" @click="ctrl.toggle(item, $event)"
+      ><slot name="label" v-bind:item="item"></slot></span>
+    <span v-else
+      ><slot name="label" v-bind:item="item"></slot></span>
+    <upnpbrowser-device-tree v-if="ctrl.isExpanded(item)" 
+        :level="level + 1" :items="item.childDevices">
+      <template v-slot:label="props">
+        <slot name="label" v-bind:item="props.item"></slot>
+      </template>
+    </upnpbrowser-device-tree>
+  </li>
+</ul>
