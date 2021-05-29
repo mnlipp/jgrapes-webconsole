@@ -91,63 +91,6 @@ a {
     }
 }
 
-/* ## Disclosure */
-
-[data-aash-role="disclosure-button"] {
-    pointer-events: none;
-    border: none;
-    padding: 0;
-    text-align: inherit;
-    background-color: transparent;
-
-    &::before {
-        pointer-events: all;
-        content: "";
-        width: 0;
-        height: 0;
-        display: inline-block;
-        vertical-align: middle;
-        border-style: solid;
-        margin-right: 0.125rem;
-    }
-
-    &[aria-expanded="false"] {
-        &::before {
-            padding-right: 0.375rem;
-            border-width: 0.5rem 0 0.5rem 0.625rem;
-            border-color: transparent transparent transparent var(--primary);
-        }
-    }
-
-    &[aria-expanded="true"] {
-        &::before {
-            border-width: 0.625rem 0.5rem 0 0.5rem;
-            border-color: var(--primary) transparent transparent transparent;
-        }
-    }
-
-}
-
-:not(button)[data-aash-role="disclosure-button"] {
-    @include button-shape-hover;
-}
-
-button[data-aash-role="disclosure-button"] {
-    pointer-events: inherit;
-    
-    &[aria-expanded="false"] {
-        &::before {
-            border-color: transparent transparent transparent var(--background);
-        }
-    }
-
-    &[aria-expanded="true"] {
-        &::before {
-            border-color: var(--background) transparent transparent transparent;
-        }
-    }
-}
-
 /* ## Table */
 
 :not(.table--no-basic-styling) {

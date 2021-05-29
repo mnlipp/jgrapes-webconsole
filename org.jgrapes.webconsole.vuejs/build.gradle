@@ -73,6 +73,7 @@ sass {
 compileSass {
   // Source directory containing sass to compile:
   sourceDir = project.file("$projectDir/resources/org/jgrapes/webconsole/vuejs/scss")
+  inputs.dir project.file("$projectDir/resources/org/jgrapes/webconsole/vuejs/scss")
   
   // Directory where to output generated CSS:
   outputDir = project.file("$buildDir/generated/resources/org/jgrapes/webconsole/vuejs")
