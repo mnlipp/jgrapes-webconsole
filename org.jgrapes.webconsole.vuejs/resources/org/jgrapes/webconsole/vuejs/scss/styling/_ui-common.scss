@@ -16,37 +16,24 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-:not(.tree--no-markup-styling) {
-    
-    ul[role="tree"] {
-        
-        list-style-type: none;
+%disclosure-control-icon-common {
+    pointer-events: all;
+    content: "";
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: middle;
+    border-style: solid;
+    margin-right: 0.125rem;
+}
 
-        ul[role="group"] {
-            
-            list-style-type: none;
-            
-        }
+%disclosure-control-icon-concealed {
+    padding-right: 0.375rem;
+    border-width: 0.5rem 0 0.5rem 0.625rem;
+    border-color: transparent transparent transparent var(--primary);
+}
 
-        li[role="treeitem"] {
-
-            & > span::before {
-                @extend %disclosure-control-icon-common;
-            }
-            
-            &[aria-expanded="false"] {
-                & > span::before {
-                    @extend %disclosure-control-icon-concealed;
-                }
-            }
-        
-            &[aria-expanded="true"] {
-                & > span::before {
-                    @extend %disclosure-control-icon-disclosed;
-                }
-            }
-
-        }
-    }
-    
+%disclosure-control-icon-disclosed {
+    border-width: 0.625rem 0.5rem 0 0.5rem;
+    border-color: var(--primary) transparent transparent transparent;
 }
