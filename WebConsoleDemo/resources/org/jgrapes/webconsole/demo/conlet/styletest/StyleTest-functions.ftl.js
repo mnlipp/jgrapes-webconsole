@@ -17,7 +17,7 @@
  */
 'use strict';
 
-import { reactive, createApp, computed }
+import { reactive, createApp, computed, defineComponent }
     from "../../page-resource/vue/vue.esm-browser.js";
 import JGConsole from "../../console-base-resource/jgconsole.esm.js"
 import JgwcPlugin, { JGWC } 
@@ -63,11 +63,38 @@ window.orgJGrapesOsgiConletStyleTest.initView = function(content) {
             
             const idScope = JGWC.createIdScope();
             
+            const toggleMessages = reactive([]);
+            
+            const logToggleMessage = (msg) => {
+                if (toggleMessages.length >= 10) {
+                    toggleMessages.shift();
+                }
+                toggleMessages.push(msg);
+            }
+            
             return { conletId, controller, detailsByKey, issues, filteredData,
-                localize, scopedId: (id) => { return idScope.scopedId(id); } };
+                localize, scopedId: (id) => { return idScope.scopedId(id); },
+                logToggleMessage, toggleMessages };
         }
     });
     app.use(JgwcPlugin);
     app.config.globalProperties.window = window;
+    
+    app.component('toggle-event-list', defineComponent({
+        props: { messages: { type: Array, required: true } },
+        setup(props) {
+            
+            const messages = computed(() => props.messages);
+            
+            return { messages };
+        },
+        template: `
+            <div>
+              <ul>
+                <li v-for="msg in messages">{{ msg }}</li>
+              </ul>
+            </div>`
+    }));
+    
     app.mount($(content)[0]);
 }
