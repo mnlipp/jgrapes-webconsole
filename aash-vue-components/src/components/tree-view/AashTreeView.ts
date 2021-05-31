@@ -277,7 +277,7 @@ export default defineComponent({
             default: (path: string[]) => {}
         },
         _controller: { type: Controller, required: false },
-        _path: { type: Array as PropType<string[]>, required: true, default: [] },
+        _path: { type: Array as PropType<string[]>, required: false, default: [] },
         _nodes: { type: Array as PropType<TreeNode[]>, required: false },
     },
     
