@@ -59,7 +59,7 @@
           return newStateOpen;
         }"
         :on-focus="(path) => {
-          window.console.log(path.join('/') + ' has focus');
+          logToggleMessage(path.join('/') + ' has focus');
         }"
         :path="[]" :roots="[
         {
