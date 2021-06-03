@@ -8,6 +8,8 @@
       :aria-posinset="index + 1" 
       :aria-expanded="ariaExpanded(node.path)">
       <slot :label="label(node)" :tabindex="hasFocus(node.path) ? 0 : -1"
+        :isLeaf="!node['children'] || node['children'].length == 0"
+        :isExpanded="isExpanded(node.path)"
         ><span :tabindex="hasFocus(node.path) ? 0 : -1"
         >{{ label(node) }}</span></slot>
       <aash-tree-view v-if="node['children']"
@@ -26,6 +28,8 @@
       :aria-posinset="index + 1" 
       :aria-expanded="ariaExpanded(node.path)">
       <slot :label="label(node)" :tabindex="hasFocus(node.path) ? 0 : -1"
+        :isLeaf="!node['children'] || node['children'].length == 0"
+        :isExpanded="isExpanded(node.path)"
         ><span :tabindex="hasFocus(node.path) ? 0 : -1"
         >{{ label(node) }}</span></slot>
       <aash-tree-view v-if="node['children']"
