@@ -1,6 +1,6 @@
 <template>
   <ul v-if="_path.length == 0" ref="domRoot" :id="id" :role="'tree'" 
-    @click="toggleExpanded($event)" @keydown="onKey($event)">
+    @click="onClick($event)" @keydown="onKey($event)">
     <li v-for="(node, index) in nodes"
       :role="isExpandable(node.path) ? 'treeitem' : 'none'"
       :data-segment="node.segment"
