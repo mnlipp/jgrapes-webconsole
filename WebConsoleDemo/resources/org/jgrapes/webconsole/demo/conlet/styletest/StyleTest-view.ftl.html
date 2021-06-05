@@ -61,6 +61,9 @@
         :on-focus="(path) => {
           logToggleMessage(path.join('/') + ' has focus');
         }"
+        :on-selected="(path, event) => {
+          logToggleMessage(path.join('/') + ' selected');
+        }"
         :path="[]" :roots="[
         {
           segment: 'fruits',
