@@ -16,3 +16,47 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+.jgrapes-osgi-jmxbrowser {
+    
+    .browser-view {
+        display: flex;
+    }
+    
+    .browser-tree {
+        min-width: 20%;
+    }
+    
+    .browser-details {
+        padding-left: 1em;
+    }
+    
+    ul[role="tree"] {
+        
+        li[role="treeitem"] {
+
+            & > span::before {
+                display: inherit;
+                border-style:none;
+                vertical-align: baseline;
+                color: var(--primary);
+                
+                font-family: 'Font Awesome 5 Free';
+                font-weight: 900;
+            }
+            
+            &[aria-expanded="false"] {
+                & > span::before {
+                   content: "\f07b";
+                }
+            }
+        
+            &[aria-expanded="true"] {
+                & > span::before {
+                    content: "\f07c";
+                }
+            }
+        }
+                
+    }
+    
+}

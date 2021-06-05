@@ -27,18 +27,23 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import org.jdrupes.json.JsonBeanEncoder;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
+import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.AbstractConlet;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
@@ -47,6 +52,8 @@ import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.DisplayNotification;
+import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
@@ -159,20 +166,48 @@ public class JmxBrowserConlet
                     .setRenderAs(
                         RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
+            channel.respond(new NotifyConletView(type(),
+                conletModel.getConletId(), "mbeansTree", genMBeansTree(),
+                "view", true));
             renderedAs.add(RenderMode.View);
         }
         return renderedAs;
     }
 
+    @Override
+    protected void doNotifyConletModel(NotifyConletModel event,
+            ConsoleSession channel, JmxBrowserModel conletModel)
+            throws Exception {
+        event.stop();
+
+//        String jsonState = JsonBeanEncoder.create()
+//            .writeObject(conletModel).toJson();
+//        channel.respond(new KeyValueStoreUpdate().update(
+//            storagePath(channel.browserSession()) + conletModel.getConletId(),
+//            jsonState));
+//        channel.respond(new NotifyConletView(type(),
+//            conletModel.getConletId(), "setWorldVisible",
+//            conletModel.isWorldVisible()));
+//        channel.respond(new DisplayNotification("<span>"
+//            + resourceBundle(channel.locale()).getString("visibilityChange")
+//            + "</span>")
+//                .addOption("autoClose", 2000));
+    }
+
     public static class NodeDTO {
         public String segment;
         public String label;
-        List<NodeDTO> children;
+        public Set<NodeDTO> children;
 
-        public NodeDTO(String segment, String label, List<NodeDTO> children) {
+        public NodeDTO(String segment, String label, Set<NodeDTO> children) {
             this.segment = segment;
             this.label = label;
             this.children = children;
+        }
+
+        public NodeDTO(String segment, String label) {
+            this(segment, label,
+                new TreeSet<>(Comparator.comparing((node) -> node.label)));
         }
 
         public String getSegment() {
@@ -183,8 +218,39 @@ public class JmxBrowserConlet
             return label;
         }
 
-        public List<NodeDTO> getChildren() {
+        public Set<NodeDTO> getChildren() {
             return children;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result
+                = prime * result + ((segment == null) ? 0 : segment.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            NodeDTO other = (NodeDTO) obj;
+            if (segment == null) {
+                if (other.segment != null) {
+                    return false;
+                }
+            } else if (!segment.equals(other.segment)) {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -192,24 +258,39 @@ public class JmxBrowserConlet
         Map<String, NodeDTO> trees = new TreeMap<>();
         Set<ObjectName> mbeanNames = mbeanServer.queryNames(null, null);
         for (ObjectName mbn : mbeanNames) {
-            NodeDTO domain = trees.computeIfAbsent(mbn.getDomain(),
-                key -> new NodeDTO(mbn.getDomain(), mbn.getDomain(),
-                    new ArrayList<>()));
-            List<NodeDTO> types = domain.children;
-            String typeName
-                = Optional.ofNullable(mbn.getKeyProperty("type")).orElse("");
-            String typeProp = "type=" + typeName;
-            NodeDTO typeNode = types.stream()
-                .filter(n -> n.segment.equals(typeProp)).findFirst()
-                .orElseGet(() -> {
-                    NodeDTO node = new NodeDTO(typeProp, typeName, null);
-                    types.add(node);
-                    return node;
-                });
+            NodeDTO domainGroup = trees.computeIfAbsent(mbn.getDomain(),
+                key -> new NodeDTO(mbn.getDomain(), mbn.getDomain()));
+            appendToGroup(domainGroup, "type",
+                new Hashtable<>(mbn.getKeyPropertyList()), mbn);
         }
         List<NodeDTO> roots = new ArrayList<>(trees.values());
-        roots.sort(Comparator.comparing(node -> node.label));
         return roots;
+    }
+
+    private void appendToGroup(NodeDTO parent, String property,
+            Hashtable<String, String> propsLeft, ObjectName mbn) {
+        if (!propsLeft.keySet().contains(property)) {
+            try {
+                String left = ObjectName.getInstance("tmp", propsLeft)
+                    .getCanonicalKeyPropertyListString();
+                parent.children.add(new NodeDTO(left, left, null));
+            } catch (MalformedObjectNameException e) {
+                // Shoudn't happen
+            }
+            return;
+        }
+        Set<NodeDTO> candidates = parent.children;
+        String partition = property + "=" + propsLeft.get(property);
+        NodeDTO match = candidates.stream()
+            .filter(n -> n.segment.equals(partition)).findFirst()
+            .orElseGet(() -> {
+                NodeDTO node = new NodeDTO(partition, propsLeft.get(property));
+                candidates.add(node);
+                return node;
+            });
+        propsLeft.remove(property);
+        appendToGroup(match, property.equals("type") ? "name" : "", propsLeft,
+            mbn);
     }
 
     /**

@@ -1,7 +1,25 @@
 <div class="jgrapes-osgi-jmxbrowser jgrapes-osgi-jmxbrowser-view"
   data-jgwc-on-load="orgJGrapesWebconletJmxBrowser.initView"
   data-jgwc-on-unload="orgJGrapesWebconletJmxBrowser.onUnload">
-  <div>
-  View
-  </div> 
+  <div class="browser-view">
+    <div class="browser-tree">
+      <aash-tree-view :on-toggle="(path, newStateOpen, event) => {
+          window.console.log(path.join('/') + ' now ' + newStateOpen);
+          return newStateOpen;
+        }"
+        :on-focus="(path) => {
+          window.console.log(path.join('/') + ' has focus');
+        }"
+        :on-selected="selectMBean"
+        :path="[]" :roots="[]" v-slot="{ node, label, tabindex, 
+            isLeaf, isExpanded }">
+        <span tabindex="tabindex">{{ label }}</span>
+      </aash-tree-view>
+    </div>
+    <div class="browser-details">
+      <p>
+        Details
+      </p>
+    </div>
+  </div>
 </div>

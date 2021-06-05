@@ -31,6 +31,20 @@ window.orgJGrapesWebconletJmxBrowser.initPreview = function(preview) {
 };
 
 window.orgJGrapesWebconletJmxBrowser.initView = function(view) {
+    const app = createApp({
+        setup(_props) {
+            const conletId = view.parentNode.dataset["conletId"];
+
+            const selectMBean = (path, even) => {
+                JGConsole.notifyConletModel(conletId, "sendMBean", path);
+            }
+
+            return { selectMBean }            
+        }
+    });
+    app.use(AashPlugin);
+    app.config.globalProperties.window = window;
+    app.mount(view);
 };
 
 window.orgJGrapesWebconletJmxBrowser.onUnload = function(content) {
@@ -48,23 +62,14 @@ JGConsole.registerConletFunction(
         let tree = preview.querySelector(":scope [role='tree']");
         let treeApi = getApi(tree);
         treeApi.setRoots(params[0]);
-
-/*                let preview = $(JGConsole.findConletPreview(conletId));
-                let vm = null;
-                if (preview && (vm = findVueVm($(preview)
-                        .find(".jgrapes-osgi-upnpbrowser-preview")[0]))) {
-                    updateInfos(vm, params[0], params[2]);
-                }
-*/            }
+    }
                 
-            // View
-/*            if (params[1] === "view" || params[1] === "*") {
-                let view = JGConsole.findConletView(conletId);
-                let vm = null;
-                if (view && (vm = findVueVm($(view)
-                        .find(".jgrapes-osgi-upnpbrowser-view div")[0]))) {
-                    updateInfos(vm, params[0], params[2]);
-                }
-            }
-*/        });
+    if (params[1] === "view" || params[1] === "*") {
+        let view = JGConsole.findConletView(conletId);
+        let tree = view.querySelector(":scope [role='tree']");
+        let treeApi = getApi(tree);
+        treeApi.setRoots(params[0]);
+    }
+                
+});
 
