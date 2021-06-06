@@ -10,6 +10,6 @@
     "experimentalDecorators": true,
     "lib": ["DOM", "ES2020"]
   },
-  "include": ["resources/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }

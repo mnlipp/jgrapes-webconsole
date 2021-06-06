@@ -25,6 +25,8 @@ import Notification from "./Notification";
 import TableController from "./TableController";
 import OptionsSet from "./OptionsSet";
 
+import "./console.css";
+
 // Re-export
 export { Console, parseHtml, rootQuery, formatMemorySize, 
     Renderer, RenderMode, 
