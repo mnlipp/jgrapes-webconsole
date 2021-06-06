@@ -24,6 +24,8 @@ import { reactive, ref, createApp, onMounted, computed, Ref } from "@Vue";
 import AashPlugin, { provideApi, getApi, AashTablist, 
     AashModalDialogComponent, AashModalDialog } from "@Aash";
 
+import "./console.scss"
+
 var log = JGConsole.Log;
 
 export default class Renderer extends JGConsole.Renderer {

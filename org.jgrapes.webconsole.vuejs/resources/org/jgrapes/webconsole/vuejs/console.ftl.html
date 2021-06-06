@@ -20,8 +20,6 @@
   href="${renderSupport.pageResource('fontawesome-free/css/all' + minifiedExtension + '.css')}" />
 <link rel="stylesheet"
   href="${renderSupport.consoleBaseResource('console' + minifiedExtension + '.css')}" />
-<link rel="stylesheet"
-  href="${renderSupport.consoleResource('console.css')}" />
 
 <!-- Scripts(s) -->
 <script data-jgwc-provides="jquery"
@@ -77,7 +75,7 @@
 <script type="module">
 import "${renderSupport.pageResource('jgwc-vue-components/jgwc-components.js')}";
 import JGConsole from "${renderSupport.consoleBaseResource('jgconsole.esm.js')}";
-import VueJsRenderer from "${renderSupport.consoleResource('vuejsrenderer.js')}";
+import VueJsRenderer from "${renderSupport.consoleResource('vuejsrenderer.min.js')}";
 
 const localeMenuitems = [
   // <#list supportedLanguages() as l>

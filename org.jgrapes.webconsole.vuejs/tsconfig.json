@@ -13,11 +13,9 @@
     "paths": {
       "@JGConsole": ["org.jgrapes.webconsole.base/resources/org/jgrapes/webconsole/base/JGConsole"],
       "@Vue": ["org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
-      "@Aash": ["aash-vue-components/lib/AashPlugin"],
-      "@AashTablist": ["aash-vue-components/lib/components/tablist/AashTablist"],
-      "@AashModalDialog": ["aash-vue-components/lib/components/modal-dialog/AashModalDialog"]
+      "@Aash": ["aash-vue-components/lib/AashPlugin"]
     }
   },
-  "include": ["resources/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
