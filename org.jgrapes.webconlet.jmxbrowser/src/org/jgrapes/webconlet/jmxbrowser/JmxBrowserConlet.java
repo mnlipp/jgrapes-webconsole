@@ -100,10 +100,8 @@ public class JmxBrowserConlet
                 localizations(channel.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setScriptUri(event.renderSupport().conletResource(
-                    type(), "JmxBrowser-functions.ftl.js"))
-                .setScriptType("module"))
-            .addCss(event.renderSupport(),
-                WebConsoleUtils.uriFromPath("JmxBrowser-style.css")));
+                    type(), "jmxbrowser.min.js"))
+                .setScriptType("module")));
     }
 
     @Override

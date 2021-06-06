@@ -16,26 +16,35 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import JGConsole from "../../console-base-resource/jgconsole.esm.js";
-import { createApp } from "../../page-resource/vue/vue.esm-browser.js";
-import AashPlugin, { getApi }
-    from "../../page-resource/aash-vue-components/lib/aash-vue-components.js";
+import JGConsole from "@JGConsole"
+import { createApp } from "@Vue";
+import AashPlugin, { getApi, AashTreeView } from "@Aash";
+
+import "./JmxBrowser-style.scss"
+
+// For global access
+declare global {
+  interface Window {
+    orgJGrapesWebconletJmxBrowser: any;
+  }
+}
 
 window.orgJGrapesWebconletJmxBrowser = {};
 
-window.orgJGrapesWebconletJmxBrowser.initPreview = function(preview) {
+window.orgJGrapesWebconletJmxBrowser.initPreview = (preview: HTMLElement) => {
     const app = createApp({});
     app.use(AashPlugin);
     app.config.globalProperties.window = window;
     app.mount(preview);
 };
 
-window.orgJGrapesWebconletJmxBrowser.initView = function(view) {
+window.orgJGrapesWebconletJmxBrowser.initView = (view: HTMLElement) => {
     const app = createApp({
         setup(_props) {
-            const conletId = view.parentNode.dataset["conletId"];
+            const conletId: string 
+                = (<HTMLElement>view.parentNode!).dataset["conletId"]!;
 
-            const selectMBean = (path, even) => {
+            const selectMBean = (path: string[], _event: Event) => {
                 JGConsole.notifyConletModel(conletId, "sendMBean", path);
             }
 
@@ -47,7 +56,7 @@ window.orgJGrapesWebconletJmxBrowser.initView = function(view) {
     app.mount(view);
 };
 
-window.orgJGrapesWebconletJmxBrowser.onUnload = function(content) {
+window.orgJGrapesWebconletJmxBrowser.onUnload = function(content: any) {
     if(content.__vue_app__) {
         content.__vue_app__.unmount();
     }
@@ -59,15 +68,15 @@ JGConsole.registerConletFunction(
             // Preview
     if (params[1] === "preview" || params[1] === "*") {
         let preview = JGConsole.findConletPreview(conletId);
-        let tree = preview.querySelector(":scope [role='tree']");
-        let treeApi = getApi(tree);
+        let tree = <HTMLElement>preview?.querySelector(":scope [role='tree']");
+        let treeApi = <AashTreeView.Api>getApi(tree);
         treeApi.setRoots(params[0]);
     }
                 
     if (params[1] === "view" || params[1] === "*") {
         let view = JGConsole.findConletView(conletId);
-        let tree = view.querySelector(":scope [role='tree']");
-        let treeApi = getApi(tree);
+        let tree = <HTMLElement>view?.querySelector(":scope [role='tree']");
+        let treeApi = <AashTreeView.Api>getApi(tree);
         treeApi.setRoots(params[0]);
     }
                 

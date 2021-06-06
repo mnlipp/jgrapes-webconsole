@@ -8,37 +8,30 @@ ext.releaseVersion = "0.1.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
-apply plugin: 'io.miret.etienne.sass'
+apply plugin: 'com.moowork.node'
 
-sass {
-    // Base URL where to download dart-sass from:
-    baseUrl = 'https://github.com/sass/dart-sass/releases/download'
-    // dart-sass version to use:
-    version = '1.26.2'
+task buildLib(type: NodeTask) {
+    mustRunAfter ':npm_install'
+    mustRunAfter ':aash-vue-components:buildLib'
+    mustRunAfter ':org.jgrapes.webconsole.base:buildLib'
+    mustRunAfter ':org.jgrapes.webconsole.provider.vue:npm_install'
+    inputs.dir project.file('src')
+    inputs.file project.file('tsconfig.json')
+    inputs.file project.file('rollup.config.js')
+    outputs.dir project.file('build/generated/resources')
+    script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
+    args = ["-c"]
 }
-
-compileSass {
-  // Source directory containing sass to compile:
-  sourceDir = project.file("$projectDir/resources/org/jgrapes/webconlet/jmxbrowser/scss")
-  
-  // Directory where to output generated CSS:
-  outputDir = project.file("$buildDir/generated/resources/org/jgrapes/webconlet/jmxbrowser")
-  
-  // Set the output style:
-  // Possible values are “expanded” and “compressed”, default is “expanded”.
-  style = expanded
-
-  // Source map style:
-  //  - file: output source map in a separate file (default)
-  //  - embed: embed source map in CSS
-  //  - none: do not emit source map.
-  sourceMap = file
-}
-
-processResources.dependsOn 'compileSass'
 
 sourceSets.main.resources.srcDir 'build/generated/resources'
 
+processResources.dependsOn 'buildLib'
+
+processResources.dependsOn ':npm_install'
+processResources.dependsOn ':aash-vue-components:buildLib'
+processResources.dependsOn ':org.jgrapes.webconsole.base:buildLib'
+processResources.dependsOn ':org.jgrapes.webconsole.provider.vue:npm_install'
+
 eclipse {
-    autoBuildTasks compileSass
+    autoBuildTasks buildLib
 }
