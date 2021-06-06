@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "declarationDir": "build/generated/resources/org/jgrapes/webconsole/base/",
     "target": "es2015",
     "module": "es2015",
     "sourceMap": true,
