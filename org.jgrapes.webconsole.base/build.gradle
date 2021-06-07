@@ -33,7 +33,7 @@ apply plugin: 'com.moowork.node'
 
 task buildLib(type: NodeTask) {
     mustRunAfter ':npm_install'
-    inputs.dir project.file('resources')
+    inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
     outputs.dir project.file('build/generated/resources')
@@ -54,7 +54,7 @@ ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/base/
 
 task tsdoc(type: NodeTask) {
     dependsOn ':npm_install'
-    inputs.dir project.file('resources')
+    inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
     outputs.dir project.file(jsDocDestDir)
     script = file("${rootProject.rootDir}/node_modules/typedoc/bin/typedoc")
