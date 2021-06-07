@@ -9,7 +9,7 @@
     "lib": ["DOM", "ES2020"],
     "baseUrl": "..",
     "paths": {
-      "@JGConsole": ["org.jgrapes.webconsole.base/resources/org/jgrapes/webconsole/base/JGConsole"],
+      "@JGConsole": ["org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
       "@Vue": ["org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
       "@Aash": ["aash-vue-components/lib/AashPlugin"]
     }
