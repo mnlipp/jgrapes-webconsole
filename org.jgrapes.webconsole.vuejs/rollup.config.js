@@ -7,7 +7,7 @@ let module = "build/generated/resources/org/jgrapes/webconsole/vuejs/vuejsrender
 
 let pathsMap = {
     "@Vue": "../page-resource/vue/vue.esm-browser.js",
-    "@JGConsole": "../console-base-resource/jgconsole.esm.js",
+    "@JGConsole": "../console-base-resource/jgconsole.js",
     "@Aash": "../page-resource/aash-vue-components/lib/aash-vue-components.js"
 }
 

@@ -18,7 +18,7 @@
 
 'use strict';
 
-import JGConsole, { RenderMode } from "../console-base-resource/jgconsole.esm.js"
+import JGConsole, { RenderMode } from "../console-base-resource/jgconsole.js"
 
 /**
  * @module b4uiconsole

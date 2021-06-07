@@ -20,7 +20,7 @@ import { ref } from "../vue/vue.esm-browser.js"
 import AashPlugin, { 
     AashDropdownMenu, AashTablist, AashModalDialog, AashDisclosureButton } 
     from "../aash-vue-components/lib/aash-vue-components.js"
-import JGConsole from "../../console-base-resource/jgconsole.esm.js"
+import JGConsole from "../../console-base-resource/jgconsole.js"
 
 var scopeCounter = 1;
 

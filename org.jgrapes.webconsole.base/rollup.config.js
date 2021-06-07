@@ -3,7 +3,7 @@ import {terser} from 'rollup-plugin-terser';
 import path from 'path';
 import postcss from 'rollup-plugin-postcss'
 
-let module = "build/generated/resources/org/jgrapes/webconsole/base/jgconsole.esm.js"
+let module = "build/generated/resources/org/jgrapes/webconsole/base/jgconsole.js"
 
 export default {
   input: "src/org/jgrapes/webconsole/base/browser/JGConsole.ts",

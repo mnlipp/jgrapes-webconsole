@@ -19,7 +19,7 @@
 
 import { reactive, createApp, computed, defineComponent }
     from "../../page-resource/vue/vue.esm-browser.js";
-import JGConsole from "../../console-base-resource/jgconsole.esm.js"
+import JGConsole from "../../console-base-resource/jgconsole.js"
 import JgwcPlugin, { JGWC } 
     from "../../page-resource/jgwc-vue-components/jgwc-components.js";
 
