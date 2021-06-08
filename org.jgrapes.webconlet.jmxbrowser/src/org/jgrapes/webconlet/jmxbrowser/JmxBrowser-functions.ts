@@ -31,16 +31,24 @@ declare global {
 
 window.orgJGrapesWebconletJmxBrowser = {};
 
-window.orgJGrapesWebconletJmxBrowser.initPreview = (preview: HTMLElement) => {
+window.orgJGrapesWebconletJmxBrowser.initPreview 
+        = (preview: HTMLElement, isUpdate: boolean) => {
+    if (isUpdate) {
+        return;
+    }
     const app = createApp({});
     app.use(AashPlugin);
     app.config.globalProperties.window = window;
     app.mount(preview);
 };
 
-window.orgJGrapesWebconletJmxBrowser.initView = (view: HTMLElement) => {
+window.orgJGrapesWebconletJmxBrowser.initView 
+        = (view: HTMLElement, isUpdate: boolean) => {
+    if (isUpdate) {
+        return;
+    }
     const app = createApp({
-        setup(_props) {
+        setup(_props: any) {
             const conletId: string 
                 = (<HTMLElement>view.parentNode!).dataset["conletId"]!;
 
@@ -56,7 +64,11 @@ window.orgJGrapesWebconletJmxBrowser.initView = (view: HTMLElement) => {
     app.mount(view);
 };
 
-window.orgJGrapesWebconletJmxBrowser.onUnload = function(content: any) {
+window.orgJGrapesWebconletJmxBrowser.onUnload 
+        = function(content: any, isUpdate: boolean) {
+    if (isUpdate) {
+        return;
+    }
     if(content.__vue_app__) {
         content.__vue_app__.unmount();
     }
