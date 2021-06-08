@@ -46,13 +46,15 @@
             
             &[aria-expanded="false"] {
                 & > span::before {
-                   content: "\f07b";
+                    content: "\f07b";
+                    padding-right: 0.325rem;
                 }
             }
         
             &[aria-expanded="true"] {
                 & > span::before {
                     content: "\f07c";
+                    padding-right: 0.2rem;
                 }
             }
         }
