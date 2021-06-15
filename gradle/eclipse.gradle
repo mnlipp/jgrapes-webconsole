@@ -28,9 +28,9 @@ eclipse {
         // buildCommand 'bndtools.core.bndbuilder'
         buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
         buildCommand 'org.jdrupes.eclipse.minify.plugin.minifyBuilder'
+        // 'bndtools.core.bndnature', 
         // 'org.eclipse.buildship.core.gradleprojectnature',
         natures 'org.eclipse.jdt.core.javanature', \
-            'bndtools.core.bndnature', \
             'net.sf.eclipsecs.core.CheckstyleNature', \
             'org.jdrupes.eclipse.minify.plugin.minifyNature'
     }
