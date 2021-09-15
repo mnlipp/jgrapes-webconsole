@@ -107,6 +107,4 @@ configure(stage) {
 	group = 'build'
 }
 
-apply plugin: 'eclipse'
-
-tasks.eclipse.dependsOn(cleanEclipse)
+apply from: "${project.rootDir}/gradle/eclipse.gradle"

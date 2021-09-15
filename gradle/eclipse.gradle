@@ -51,4 +51,3 @@ eclipse {
         }
     }
 }
-tasks.eclipse.dependsOn(cleanEclipse)
