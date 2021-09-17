@@ -137,7 +137,7 @@ export default class ConsoleWebSocket {
             var msg;
             try {
                 msg = JSON.parse(event.data);
-            } catch (e) {
+            } catch (e: any) {
                 Log.error(e.name + ":" + e.lineNumber + ":" + e.columnNumber
                     + ": " + e.message + ". Data: ");
                 Log.error(event.data);
@@ -275,8 +275,8 @@ export default class ConsoleWebSocket {
         if (this._debugHandler) {
             try {
                 throw new Error("Lock");
-            } catch (exc) {
-                Log.debug("Locking receiver:\n" + exc.stack);
+            } catch (e: any) {
+                Log.debug("Locking receiver:\n" + e.stack);
             }
         }
     }
@@ -286,8 +286,8 @@ export default class ConsoleWebSocket {
         if (this._debugHandler) {
             try {
                 throw new Error("Unlock");
-            } catch (exc) {
-                Log.debug("Unlocking receiver:\n" + exc.stack);
+            } catch (e: any) {
+                Log.debug("Unlocking receiver:\n" + e.stack);
             }
         }
         if (this._recvQueueLocks == 0) {

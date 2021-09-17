@@ -47,7 +47,7 @@ export default class Log {
      * Output a debug message.
      * @param message the message to print
      */
-    static debug (message: string) {
+    static debug (message: any) {
         if (console && console.debug) {
             console.debug(this.format(new Date()) + ": " + message);
         }
@@ -57,7 +57,7 @@ export default class Log {
      * Output an info message.
      * @param message the message to print
      */
-    static info(message: string) {
+    static info(message: any) {
         if (console && console.info) {
             console.info(this.format(new Date()) + ": " + message)
         }
@@ -67,7 +67,7 @@ export default class Log {
      * Output a warn message.
      * @param message the message to print
      */
-    static warn(message: string) {
+    static warn(message: any) {
         if (console && console.warn) {
             console.warn(this.format(new Date()) + ": " + message);
         }
@@ -77,7 +77,7 @@ export default class Log {
      * Output an error message.
      * @param message the message to print
      */
-    static error(message: string) {
+    static error(message: any) {
         if (console && console.error) {
             console.error(this.format(new Date()) + ": " + message);
         }
