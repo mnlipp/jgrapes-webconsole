@@ -12,7 +12,7 @@ dependencies {
     compile 'org.jgrapes:org.jgrapes.http:[1.1.1,2)'
     compile 'org.jgrapes:org.jgrapes.util:[1.1.1,2)'
     //  compile 'com.github.mnlipp:jgrapes:master-SNAPSHOT'
-    compile 'org.jdrupes.json:json:[2.1.0,2.2.0)'
+    compile 'org.jdrupes.json:json:[2.2.0-SNAPSHOT,2.3.0)'
     compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 }
 
