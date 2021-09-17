@@ -1,20 +1,19 @@
 {
        "devDependencies": {
-              "@rollup/plugin-node-resolve": "^8.4.0",
-              "@rollup/plugin-replace": "^2.4.1",
+              "@rollup/plugin-node-resolve": "^13.0.4",
+              "@rollup/plugin-replace": "^3.0.0",
               "documentation": "^13.2.5",
               "install": "^0.13.0",
               "jsdoc": "^3.6.7",
               "node-sass": "^6.0.1",
-              "npm": "^7.23.0",
+              "npm": "^7.24.0",
               "rollup": "^2.56.3",
               "rollup-plugin-peer-deps-external": "^2.2.3",
               "rollup-plugin-postcss": "^4.0.1",
               "rollup-plugin-terser": "^7.0.2",
               "rollup-plugin-typescript2": "^0.30.0",
               "tslib": "^2.3.1",
-              "typedoc": "^0.20.37",
-              "typedoc-plugin-sourcefile-url": "^1.0.6",
+              "typedoc": "^0.22.3",
               "typescript": "^4.4.3"
        }
 }

@@ -4,6 +4,5 @@
   "exclude": ["**/*.vue", "index.js"],
   "out": "../build/aashdoc",
   "categorizeByGroup": true,
-  "categoryOrder": ["Vue Component", "*"],
-  "sourcefile-url-map": "typedoc-sourcefile-map.json"
+  "categoryOrder": ["Vue Component", "*"]
 }
