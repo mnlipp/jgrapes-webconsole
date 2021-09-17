@@ -1,6 +1,6 @@
 buildscript {
 	repositories {
-		jcenter()
+		mavenCentral()
 	}
 	dependencies {
 		classpath 'com.github.ksoichiro:gradle-web-resource-plugin:1.7.3'
