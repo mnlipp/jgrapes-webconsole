@@ -16,6 +16,7 @@ task buildLib(type: NodeTask) {
     mustRunAfter ':org.jgrapes.webconsole.base:buildLib'
     mustRunAfter ':org.jgrapes.webconsole.provider.vue:npm_install'
     inputs.files project.fileTree(dir: 'src', include: '**/*.ts')
+    inputs.files project.fileTree(dir: 'src', include: '**/*.scss')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
     outputs.dir project.file('build/generated/resources')
