@@ -39,8 +39,8 @@ export interface Api {
   setRoots(roots: TreeNode[]): void;
 }
 
-interface Expanded {
-    children: Map<string,Expanded> | null;
+interface Presentation {
+    children: Map<string,Presentation> | null;
     expanded: boolean;
 }
 
@@ -59,12 +59,15 @@ class Controller {
     private _onToggle: ToggleVetoer;
     private _onFocus: (path: string[]) => void;
     private _onSelected: (path: string[], event: Event) => void;
-    private _expanded: Expanded = reactive({ children: null, expanded: false });
+    private _singlePath: boolean;
+    private _expanded: Presentation = reactive({ children: null, 
+                                                 expanded: false });
     private _focusHolder: string[] = reactive([]);
 
     constructor(roots: TreeNode[], onToggle: ToggleVetoer, 
         onFocus: (path: string[]) => void, 
-        onSelected: (path: string[], event: Event) => void) {
+        onSelected: (path: string[], event: Event) => void,
+        singlePath: boolean) {
         this._roots = reactive(roots);
         if (roots.length > 0) {
             this._focusHolder.push(roots[0].segment);
@@ -72,6 +75,7 @@ class Controller {
         this._onToggle = onToggle;
         this._onFocus = onFocus;
         this._onSelected = onSelected;
+        this._singlePath = singlePath;
     }
 
     setDomRoot(root: HTMLElement) {
@@ -212,6 +216,15 @@ class Controller {
             if (!cur.children.has(path[i])) {
                 cur.children.set(path[i], { children: null, expanded: false })
             }
+            if (this._singlePath) {
+                // collapse others on same level
+                for (let [key, value] of cur.children) {
+                    if (key !== path[i] && value.expanded) {
+                        value.expanded = this._onToggle(path.slice(i+1),
+                                                        false, event);
+                    }
+                }
+            }
             cur = cur.children.get(path[i])!;
         }
         
@@ -284,6 +297,8 @@ class Controller {
  *      ((path: string[], event: Event) => void)
  *      that is invoked when a leaf is selected (by clicking on it or
  *      pressing space or enter while it has focus)
+ * @param {Boolean} props.singlePath if true, closes other paths if a
+ *      new path is opened (closing may be vetoed, however)
  */
 export default defineComponent({
     props: {
@@ -303,6 +318,7 @@ export default defineComponent({
             type: Function as PropType<(path: string[], event: Event) => void>,
             default: (_path: string[], _event: Event) => {}
         },
+        singlePath: { type: Boolean, required: false, default: false },
         _controller: { type: Controller, required: false },
         _path: { type: Array as PropType<string[]>, required: false, default: [] },
         _nodes: { type: Array as PropType<TreeNode[]>, required: false },
@@ -311,7 +327,7 @@ export default defineComponent({
     setup(props) {
         let ctrl = props._controller 
             || new Controller(props.roots, props.onToggle, props.onFocus,
-                props.onSelected);
+                props.onSelected, props.singlePath);
 
         const nodes = computed(() => {
             return (props._path.length == 0 ? ctrl.roots : props._nodes)!
