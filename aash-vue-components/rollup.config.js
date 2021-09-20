@@ -29,7 +29,7 @@ export default {
       file: packageJson.module.replace(".js", ".min.js"),
       sourcemap: true,
       paths: {
-        'vue': './vue.js'
+        'vue': './vue.esm.re-export.js'
       },
       plugins: [terser()]
     }
