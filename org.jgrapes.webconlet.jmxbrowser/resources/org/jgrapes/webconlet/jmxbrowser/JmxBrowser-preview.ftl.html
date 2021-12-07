@@ -1,6 +1,6 @@
 <div class="jgrapes-osgi-jmxbrowser jgrapes-osgi-jmxbrowser-preview"
   data-jgwc-on-load="orgJGrapesWebconletJmxBrowser.initPreview"
-  data-jgwc-on-unload="orgJGrapesWebconletJmxBrowser.onUnload"> 
+  data-jgwc-on-unload="JGConsole.jgwc.unmountVueApps"> 
   <div>Preview</div>
       <aash-tree-view :on-toggle="(path, newStateOpen, event) => {
           window.console.log(path.join('/') + ' now ' + newStateOpen);

@@ -24,8 +24,11 @@ import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -34,25 +37,29 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import org.jdrupes.json.JsonBeanEncoder;
+import javax.management.ReflectionException;
+import javax.management.RuntimeMBeanException;
+import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
-import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.AbstractConlet;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
-import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DisplayNotification;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
@@ -177,19 +184,25 @@ public class JmxBrowserConlet
             ConsoleSession channel, JmxBrowserModel conletModel)
             throws Exception {
         event.stop();
-
-//        String jsonState = JsonBeanEncoder.create()
-//            .writeObject(conletModel).toJson();
-//        channel.respond(new KeyValueStoreUpdate().update(
-//            storagePath(channel.browserSession()) + conletModel.getConletId(),
-//            jsonState));
-//        channel.respond(new NotifyConletView(type(),
-//            conletModel.getConletId(), "setWorldVisible",
-//            conletModel.isWorldVisible()));
-//        channel.respond(new DisplayNotification("<span>"
-//            + resourceBundle(channel.locale()).getString("visibilityChange")
-//            + "</span>")
-//                .addOption("autoClose", 2000));
+        if (event.method().equals("sendMBean")) {
+            JsonArray segments = (JsonArray) event.params().get(0);
+            String domain = segments.asString(0);
+            Hashtable<String, String> props = new Hashtable<>();
+            for (int i = 1; i < segments.size(); i++) {
+                String[] keyProp = segments.asString(i).split("=", 2);
+                props.put(keyProp[0], keyProp[1]);
+            }
+            Set<ObjectName> mbeanNames
+                = mbeanServer.queryNames(new ObjectName(domain, props), null);
+            if (mbeanNames.size() == 0) {
+                return;
+            }
+            ObjectName mbeanName = mbeanNames.iterator().next();
+            MBeanInfo info = mbeanServer.getMBeanInfo(mbeanName);
+            channel.respond(new NotifyConletView(type(),
+                conletModel.getConletId(), "mbeanDetails",
+                new Object[] { genAttributesInfo(mbeanName, info), null }));
+        }
     }
 
     public static class NodeDTO {
@@ -289,6 +302,68 @@ public class JmxBrowserConlet
         propsLeft.remove(property);
         appendToGroup(match, property.equals("type") ? "name" : "", propsLeft,
             mbn);
+    }
+
+    public static class AttributeDTO {
+        private String name;
+        private Object value;
+        private boolean writable;
+
+        public AttributeDTO(String name, Object value, boolean writable) {
+            super();
+            this.name = name;
+            this.value = value;
+            this.writable = writable;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public boolean getWritable() {
+            return writable;
+        }
+    }
+
+    private static Set<Class<?>> simpleTypes = new HashSet<>();
+
+    static {
+        simpleTypes.add(BigDecimal.class);
+        simpleTypes.add(BigInteger.class);
+        simpleTypes.add(Boolean.class);
+        simpleTypes.add(Byte.class);
+        simpleTypes.add(Character.class);
+        simpleTypes.add(Date.class);
+        simpleTypes.add(Double.class);
+        simpleTypes.add(Float.class);
+        simpleTypes.add(Integer.class);
+        simpleTypes.add(Long.class);
+        simpleTypes.add(ObjectName.class);
+        simpleTypes.add(Short.class);
+        simpleTypes.add(String.class);
+        simpleTypes.add(Void.class);
+    }
+
+    private List<AttributeDTO> genAttributesInfo(ObjectName mbeanName,
+            MBeanInfo info) {
+        List<AttributeDTO> result = new ArrayList<>();
+        for (MBeanAttributeInfo attr : info.getAttributes()) {
+            try {
+                Object value
+                    = mbeanServer.getAttribute(mbeanName, attr.getName());
+                result.add(new AttributeDTO(attr.getName(), value,
+                    attr.isWritable()));
+            } catch (InstanceNotFoundException | RuntimeMBeanException
+                    | AttributeNotFoundException | ReflectionException
+                    | MBeanException | IllegalArgumentException e) {
+                // Ignore (shouldn't happen)
+            }
+        }
+        return result;
     }
 
     /**

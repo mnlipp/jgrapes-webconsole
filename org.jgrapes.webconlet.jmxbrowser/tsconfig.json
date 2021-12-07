@@ -15,5 +15,5 @@
       "@Aash": ["aash-vue-components/lib/AashPlugin"]
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.vue"]
 }

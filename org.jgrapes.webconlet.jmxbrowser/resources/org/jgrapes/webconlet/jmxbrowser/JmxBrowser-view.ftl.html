@@ -1,6 +1,6 @@
 <div class="jgrapes-osgi-jmxbrowser jgrapes-osgi-jmxbrowser-view"
   data-jgwc-on-load="orgJGrapesWebconletJmxBrowser.initView"
-  data-jgwc-on-unload="orgJGrapesWebconletJmxBrowser.onUnload">
+  data-jgwc-on-unload="JGConsole.jgwc.unmountVueApps">
   <div class="browser-view">
     <div class="browser-tree">
       <aash-tree-view :on-toggle="(path, newStateOpen, event) => {
@@ -11,14 +11,33 @@
           window.console.log(path.join('/') + ' has focus');
         }"
         :on-selected="selectMBean"
+        :single-path="true"
         :path="[]" :roots="[]" v-slot="{ node, label, tabindex, 
             isLeaf, isExpanded }">
         <span tabindex="tabindex">{{ label }}</span>
       </aash-tree-view>
     </div>
     <div class="browser-details">
+      <table class="table--basic--striped">
+        <caption v-if="objectName">ObjectName: {{ objectName }}</caption>
+        <tbody>
+          <template v-for="(attr, index) in filteredDetails">
+            <tr :class='(index % 2 == 0) ? "even" : "odd"'>
+              <td>
+                {{ attr.name }}
+              </td>
+              <td>
+                <mbean-value-renderer :value="attr.value"></mbean-value-renderer>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <hr>
       <p>
-        Details
+        <pre>
+{{ JSON.stringify(details, null, 2) }}
+        </pre>
       </p>
     </div>
   </div>

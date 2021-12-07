@@ -17,8 +17,9 @@
  */
 
 import JGConsole from "@JGConsole"
-import { createApp } from "@Vue";
-import AashPlugin, { getApi, AashTreeView } from "@Aash";
+import { createApp, ref, Ref, reactive, computed } from "@Vue";
+import AashPlugin, { getApi, AashTreeView, provideApi } from "@Aash";
+import MBeanValueRendererComponent, * as MBeanValueRenderer from "./components/MBeanValueRenderer.vue";
 
 import "./JmxBrowser-style.scss"
 
@@ -33,9 +34,6 @@ window.orgJGrapesWebconletJmxBrowser = {};
 
 window.orgJGrapesWebconletJmxBrowser.initPreview 
         = (preview: HTMLElement, isUpdate: boolean) => {
-    if (isUpdate) {
-        return;
-    }
     const app = createApp({});
     app.use(AashPlugin);
     app.config.globalProperties.window = window;
@@ -44,9 +42,12 @@ window.orgJGrapesWebconletJmxBrowser.initPreview
 
 window.orgJGrapesWebconletJmxBrowser.initView 
         = (view: HTMLElement, isUpdate: boolean) => {
-    if (isUpdate) {
-        return;
+    class AttributeDTO {
+        name: string = "";
+        value: any;
+        class?: any;
     }
+    
     const app = createApp({
         setup(_props: any) {
             const conletId: string 
@@ -56,22 +57,28 @@ window.orgJGrapesWebconletJmxBrowser.initView
                 JGConsole.notifyConletModel(conletId, "sendMBean", path);
             }
 
-            return { selectMBean }            
+            const details = reactive<AttributeDTO[]>([]);
+
+            const objectName = computed(() => 
+                details.find(d => d.name == "ObjectName")?.value || null);
+
+            const filteredDetails = computed(() =>
+                details.filter(d => d.name != "ObjectName"));
+
+            provideApi(view, {
+                setDetails: (newDetails: AttributeDTO[]) => {
+                    details.length = 0;
+                    details.push(...newDetails);
+                }
+            });
+
+            return { selectMBean, details, objectName, filteredDetails }            
         }
     });
     app.use(AashPlugin);
     app.config.globalProperties.window = window;
+    app.component('mbean-value-renderer', MBeanValueRendererComponent);
     app.mount(view);
-};
-
-window.orgJGrapesWebconletJmxBrowser.onUnload 
-        = function(content: any, isUpdate: boolean) {
-    if (isUpdate) {
-        return;
-    }
-    if(content.__vue_app__) {
-        content.__vue_app__.unmount();
-    }
 };
 
 JGConsole.registerConletFunction(
@@ -81,16 +88,24 @@ JGConsole.registerConletFunction(
     if (params[1] === "preview" || params[1] === "*") {
         let preview = JGConsole.findConletPreview(conletId);
         let tree = <HTMLElement>preview?.querySelector(":scope [role='tree']");
-        let treeApi = <AashTreeView.Api>getApi(tree);
-        treeApi.setRoots(params[0]);
+        let treeApi = <AashTreeView.Api | null>getApi(tree);
+        treeApi?.setRoots(params[0]);
     }
-                
+
     if (params[1] === "view" || params[1] === "*") {
         let view = JGConsole.findConletView(conletId);
         let tree = <HTMLElement>view?.querySelector(":scope [role='tree']");
-        let treeApi = <AashTreeView.Api>getApi(tree);
-        treeApi.setRoots(params[0]);
+        let treeApi = <AashTreeView.Api | null>getApi(tree);
+        treeApi?.setRoots(params[0]);
     }
                 
 });
 
+JGConsole.registerConletFunction(
+    "org.jgrapes.webconlet.jmxbrowser.JmxBrowserConlet",
+    "mbeanDetails", function(conletId, attributes) {
+    let view = JGConsole.findConletView(conletId);
+    let app = <HTMLElement>view?.querySelector
+        (":scope .jgrapes-osgi-jmxbrowser-view");
+    (<any>getApi(app)).setDetails(attributes);
+});

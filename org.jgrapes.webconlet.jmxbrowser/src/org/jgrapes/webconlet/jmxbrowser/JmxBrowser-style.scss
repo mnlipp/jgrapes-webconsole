@@ -28,6 +28,10 @@
     
     .browser-details {
         padding-left: 1em;
+        
+        td {
+            vertical-align: top;
+        }
     }
     
     ul[role="tree"] {
