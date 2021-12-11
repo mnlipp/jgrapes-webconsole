@@ -1,10 +1,12 @@
 # Configure Repositories
 -plugin.1.CentralMvn: \
-    aQute.bnd.repository.maven.provider.MavenBndRepository; \
+    aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
         name="Central (Maven)"; \
         snapshotUrl=https://oss.sonatype.org/content/repositories/snapshots/; \
         releaseUrl=https://repo.maven.apache.org/maven2/; \
-        index=${.}/central.mvn
+        revision=\
+            org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.2,\
+            org.apache.servicemix.bundles:org.apache.servicemix.bundles.junit:4.12_1
 
 -plugin.2.OSGi: \
     aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
