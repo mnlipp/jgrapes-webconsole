@@ -19,6 +19,14 @@ if (project.file("bnd.bnd").exists()) {
     ext.bundleVersion = """${ -> releaseVersion +
         (isSnapshot ? '.-\${tstamp}-SNAPSHOT' : '.ga') }"""
 
+    task listSnapshots {
+        doLast {
+            if (isSnapshot) {
+                println "Snapshot: " + project.name
+            }
+        }
+    }
+    
     java {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
