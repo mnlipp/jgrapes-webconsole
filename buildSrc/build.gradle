@@ -1,6 +1,6 @@
 dependencies {
-	compile gradleApi()
-	compile localGroovy()
+	implementation gradleApi()
+	implementation localGroovy()
 }
 
 apply plugin:'groovy'
@@ -28,11 +28,5 @@ sourceSets {
 
 apply plugin: 'eclipse'
 
-eclipse {
-    project {
-        buildCommand 'bndtools.core.bndbuilder'
-        natures 'org.eclipse.jdt.groovy.core.groovyNature'
-    }
-}
 tasks.eclipse.dependsOn(cleanEclipse)
 

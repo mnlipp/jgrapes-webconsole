@@ -1,38 +1,18 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.github.ksoichiro:gradle-web-resource-plugin:1.7.3'
-    }
-}
-
 dependencies {
     // BndPomRepository (3.5.0) cannot handle ranges without upper limit
-    compile 'org.jgrapes:org.jgrapes.http:[1.1.1,2)'
-    compile 'org.jgrapes:org.jgrapes.util:[1.1.1,2)'
-    //  compile 'com.github.mnlipp:jgrapes:master-SNAPSHOT'
-    compile 'org.jdrupes.json:json:[2.3.0-SNAPSHOT,2.4.0)'
-    compile 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
+    api 'org.jgrapes:org.jgrapes.http:[1.1.1,2)'
+    api 'org.jgrapes:org.jgrapes.util:[1.1.1,2)'
+    api 'org.jdrupes.json:json:[2.3.0-SNAPSHOT,2.4.0)'
+    api 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 }
 
 ext.releaseVersion = "0.31.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
-jar {
-    into('META-INF') {
-        from 'resources/META-INF'
-    }
-    into('.') {
-        from 'build/generated/resources'
-    }
-}
-
 apply plugin: 'com.moowork.node'
 
-task buildLib(type: NodeTask) {
-    mustRunAfter ':npm_install'
+task buildLib(type: NodeTask, dependsOn: ':npmInstall') {
     inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
@@ -41,9 +21,14 @@ task buildLib(type: NodeTask) {
     args = ["-c"]
 }
 
-sourceSets.main.resources.srcDir 'build/generated/resources'
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
 
-processResources.dependsOn ':npm_install'
 processResources.dependsOn 'buildLib'
 
 eclipse {
@@ -52,8 +37,7 @@ eclipse {
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/base/jsdoc"
 
-task tsdoc(type: NodeTask) {
-    dependsOn ':npm_install'
+task tsdoc(type: NodeTask, dependsOn: ':npmInstall') {
     inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
     outputs.dir project.file(jsDocDestDir)
@@ -118,16 +102,13 @@ task java11doc(type: JavaExec) {
     
 }
 
-task javadocJar(type: Jar) {
-    from java11doc.destinationDir
-    classifier "javadoc"
-}
-
-artifacts {
-    archives javadocJar
-}
-
 task buildDoc(type: Task) {
     dependsOn 'java11doc'
     dependsOn 'tsdoc'
+}
+
+task javadocJar(type: Jar) {
+    dependsOn buildDoc
+    from java11doc.destinationDir
+    classifier "javadoc"
 }

@@ -1,7 +1,5 @@
 dependencies {
-	
-	compile project(':org.jgrapes.webconsole.base')
-	
+	api project(':org.jgrapes.webconsole.base')
 }
 
 ext.releaseVersion = "0.26.0"

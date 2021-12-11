@@ -16,11 +16,11 @@ repositories {
 
 dependencies {
 
-    compile 'org.osgi:osgi.core:6.0.0'
-    compile project(':org.jgrapes.webconsole.vuejs')
-    compile project(':org.jgrapes.webconsole.bootstrap4')
-    compile project(':org.jgrapes.webconsole.jqueryui')
-    compile project(':org.jgrapes.webconlet.markdowndisplay')
+    implementation 'org.osgi:osgi.core:6.0.0'
+    implementation project(':org.jgrapes.webconsole.vuejs')
+    implementation project(':org.jgrapes.webconsole.bootstrap4')
+    implementation project(':org.jgrapes.webconsole.jqueryui')
+    implementation project(':org.jgrapes.webconlet.markdowndisplay')
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
     runtimeOnly project(':org.jgrapes.webconsole.provider.datatables')
     runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')

@@ -2,13 +2,13 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 apply plugin: 'signing'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 group = 'org.jgrapes'
 
 if (project.file("bnd.bnd").exists()) {
 
+    apply plugin: 'java-library'
     apply plugin: 'biz.aQute.bnd.builder'
 
     // Defaults, overridden in subproject's build.gradle
@@ -19,81 +19,77 @@ if (project.file("bnd.bnd").exists()) {
     ext.bundleVersion = """${ -> releaseVersion +
         (isSnapshot ? '.-\${tstamp}-SNAPSHOT' : '.ga') }"""
 
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
     jar {
         manifest {
             attributes('Bundle-Version': bundleVersion)
         }
     }
-
 }
 
-compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-}
+if (project.name.startsWith('org.jgrapes.') 
+    || project.name == 'WebConsoleDemo') {
 
-jar {
-    manifest {
-        attributes([
-            "Git-Descriptor": grgit.describe(always: true),
-            "Git-SHA": grgit.head().id
-        ])
-    }
-}
-
-jar {
-    manifest {
-        inputs.property("gitDescriptor", { grgit.describe(always: true) })
-           
-        // Set Git revision information in the manifests of built bundles
-        attributes('Git-SHA': grgit.head().id)
-    }
-    doFirst {
+    jar {
+        duplicatesStrategy = 'exclude'
+    
+        doFirst {
+            manifest {
+                attributes(
+                    'Git-Descriptor': inputs.properties['gitDescriptor']
+                )
+            }
+        }
+        
         manifest {
-            attributes('Git-Descriptor': inputs.properties['gitDescriptor'])
+            inputs.property("gitDescriptor", { grgit.describe(always: true) })
+               
+            // Set Git revision information in the manifests of built bundles
+            attributes([
+                "Git-Descriptor": grgit.describe(always: true),
+                "Git-SHA": grgit.head().id
+            ])
         }
     }
-}
-
-dependencies {
-    compileOnly 'org.osgi:org.osgi.annotation:6.0.0'
-    testCompile 'junit:junit:4.12', 'net.jodah:concurrentunit:0.4.2'
-}
-
-apply from: "${project.rootDir}/gradle/layout.gradle"
-
-if (project.name.startsWith("org.jgrapes.")) {
-    tasks.compileJava {
-        if (!JavaVersion.current().isJava8()) {
-            options.compilerArgs.addAll(['--release', '8'])
-        }
+    
+    dependencies {
+        compileOnly 'org.osgi:org.osgi.annotation:6.0.0'
+        testImplementation 'junit:junit:4.12', 'net.jodah:concurrentunit:0.4.2'
     }
-}
-
-test {
-//    if (!rootProject.isCiBuild) {
-//        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=18888'
-//    }
-
-    testLogging {
-        events TestLogEvent.FAILED,
-               TestLogEvent.SKIPPED,
-               TestLogEvent.PASSED,
-               TestLogEvent.STANDARD_ERROR,
-               TestLogEvent.STANDARD_OUT
-
-        exceptionFormat TestExceptionFormat.FULL
-
-        showStandardStreams = true
-        showExceptions = true
-        showStackTraces = true
-        showCauses = true
+    
+    apply from: "${project.rootDir}/gradle/layout.gradle"
+    
+    test {
+    //    if (!rootProject.isCiBuild) {
+    //        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=18888'
+    //    }
+    
+        testLogging {
+            events TestLogEvent.FAILED,
+                   TestLogEvent.SKIPPED,
+                   TestLogEvent.PASSED,
+                   TestLogEvent.STANDARD_ERROR,
+                   TestLogEvent.STANDARD_OUT
+    
+            exceptionFormat TestExceptionFormat.FULL
+    
+            showStandardStreams = true
+            showExceptions = true
+            showStackTraces = true
+            showCauses = true
+        }
+            
+        if (isCiBuild) {
+            maxParallelForks = 2
+            maxHeapSize = '768m'
+        }
     }
         
-    if (isCiBuild) {
-        maxParallelForks = 2
-        maxHeapSize = '768m'
-    }
+    apply from: "${project.rootDir}/gradle/eclipse.gradle"
 }
 
 if (project.name.startsWith("org.jgrapes.")) {
@@ -102,5 +98,4 @@ if (project.name.startsWith("org.jgrapes.")) {
     apply from: "${project.rootDir}/gradle/baseline.gradle"
 }
 
-apply from: "${project.rootDir}/gradle/eclipse.gradle"
 

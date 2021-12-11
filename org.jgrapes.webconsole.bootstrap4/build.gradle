@@ -1,19 +1,5 @@
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'com.github.ksoichiro:gradle-web-resource-plugin:1.7.3'
-	}
-}
-
-artifacts {
-	archives sourcesJar
-	archives javadocJar
-}
-
 dependencies {
-    compile project(':org.jgrapes.webconsole.base')
+    api project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquery')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')
@@ -25,16 +11,10 @@ ext.releaseVersion = "0.35.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
-jar {
-    into('META-INF') {
-        from 'resources/META-INF'
-    }
-}
-
 apply plugin: 'com.moowork.node'
 
 task prepareNpmLibs(type: Copy) {
-    mustRunAfter 'npm_install'
+    dependsOn 'npmInstall'
     description '''
     Helper task that copies the the libraries from the npm_modules 
     directory into a package scoped subdirectory. The root is added 
@@ -47,21 +27,25 @@ task prepareNpmLibs(type: Copy) {
     }
 }
 
-processResources.dependsOn 'npm_install'
-processResources.dependsOn 'prepareNpmLibs'
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
 
-sourceSets.main.resources.srcDir 'build/generated/resources'
+processResources {
+    dependsOn 'prepareNpmLibs'
+}
 
 eclipse {
     autoBuildTasks prepareNpmLibs
 }
 
-apply plugin: 'com.moowork.node'
-
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
 
-task jsdoc(type: NodeTask) {
-    dependsOn(':npm_install')
+task jsdoc(type: NodeTask, dependsOn: ':npmInstall') {
     new File(jsDocDestDir).mkdirs()
     script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
     args = ["-c", "${rootProject.projectDir}/jsdoc.json",

@@ -4,10 +4,6 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     classifier "sources"
 }
-    
-artifacts {
-    archives sourcesJar
-}
 
 // MavenPublishing (new)
 
@@ -76,6 +72,13 @@ configurePublishing {
                 }
             }
         }
+    }
+}
+
+jar {
+    into("META-INF/maven/$project.group/$project.name") {
+        from { generatePomFileForMavenPublication }
+        rename ".*", "pom.xml"
     }
 }
 

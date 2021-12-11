@@ -1,26 +1,15 @@
 dependencies {
-	
-	compile project(':org.jgrapes.webconsole.base')
-	
+	api project(':org.jgrapes.webconsole.base')
 }
 
 ext.releaseVersion = "0.2.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
-jar {
-    into('META-INF') {
-        from 'resources/META-INF'
-    }
-    into('.') {
-        from 'build/generated/resources'
-    }
-}
-
 apply plugin: 'com.moowork.node'
 
 task prepareNpmLibs(type: Copy) {
-    mustRunAfter 'npm_install'
+    mustRunAfter 'npmInstall'
     description '''
     Helper task that copies the the libraries from the npm_modules 
     directory into a package scoped subdirectory. The root is added 
@@ -32,10 +21,17 @@ task prepareNpmLibs(type: Copy) {
     from file("node_modules/lodash/lodash.min.js")
 }
 
-processResources.dependsOn 'npm_install'
-processResources.dependsOn 'prepareNpmLibs'
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
 
-sourceSets.main.resources.srcDir 'build/generated/resources'
+processResources {
+    dependsOn 'prepareNpmLibs'
+}
 
 eclipse {
     autoBuildTasks prepareNpmLibs

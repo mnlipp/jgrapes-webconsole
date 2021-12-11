@@ -6,8 +6,6 @@ Export-Package: org.jgrapes.webconsole.provider.fontawesome
 -sources: true
 -runee: JavaSE-1.8
 
--includeresource: resources
-
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
 

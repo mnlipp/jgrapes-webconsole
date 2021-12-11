@@ -1,5 +1,5 @@
 dependencies {
-	compile project(':org.jgrapes.webconsole.base')
+	api project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
 }

@@ -15,13 +15,8 @@ import org.kravemir.gradle.sass.SassCompileTask;
 
 apply plugin: 'com.moowork.node'
 
-artifacts {
-	archives sourcesJar
-	archives javadocJar
-}
-
 dependencies {
-    compile project(':org.jgrapes.webconsole.base')
+    api project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jgwcvuecomponents')
     runtimeOnly project(':org.jgrapes.webconsole.provider.moment')
@@ -35,19 +30,10 @@ ext.releaseVersion = "0.9.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
-jar {
-    into('META-INF') {
-        from 'resources/META-INF'
-    }
-    into('.') {
-        from 'build/generated/resources'
-    }
-}
-
 apply plugin: 'com.moowork.node'
 
 task prepareNpmLibs(type: Copy) {
-    mustRunAfter 'npm_install'
+    dependsOn 'npmInstall'
     description '''
     Helper task that copies the the libraries from the npm_modules 
     directory into a package scoped subdirectory. The root is added 
@@ -58,15 +44,12 @@ task prepareNpmLibs(type: Copy) {
     from file("node_modules/normalize.css/normalize.css")
 }
 
-processResources.dependsOn 'npm_install'
-processResources.dependsOn 'prepareNpmLibs'
-
 task buildLib(type: NodeTask) {
-    mustRunAfter ':npm_install'
-    mustRunAfter ':aash-vue-components:buildLib'
-    mustRunAfter ':org.jgrapes.webconsole.base:buildLib'
-    mustRunAfter ':org.jgrapes.webconsole.provider.vue:npm_install'
-    mustRunAfter ':org.jgrapes.webconsole.provider.gridstack:npm_install'
+    dependsOn ':npmInstall'
+    dependsOn ':aash-vue-components:buildLib'
+    dependsOn ':org.jgrapes.webconsole.base:buildLib'
+    dependsOn ':org.jgrapes.webconsole.provider.vue:npmInstall'
+    dependsOn ':org.jgrapes.webconsole.provider.gridstack:npmInstall'
     inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
@@ -75,15 +58,18 @@ task buildLib(type: NodeTask) {
     args = ["-c"]
 }
 
-sourceSets.main.resources.srcDir 'build/generated/resources'
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
 
-processResources.dependsOn 'buildLib'
-
-processResources.dependsOn ':npm_install'
-processResources.dependsOn ':aash-vue-components:buildLib'
-processResources.dependsOn ':org.jgrapes.webconsole.base:buildLib'
-processResources.dependsOn ':org.jgrapes.webconsole.provider.vue:npm_install'
-processResources.dependsOn ':org.jgrapes.webconsole.provider.gridstack:npm_install'
+processResources {
+    dependsOn 'prepareNpmLibs'
+    dependsOn 'buildLib'
+}
 
 eclipse {
     autoBuildTasks buildLib

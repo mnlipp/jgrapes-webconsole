@@ -1,19 +1,5 @@
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'com.github.ksoichiro:gradle-web-resource-plugin:1.7.3'
-	}
-}
-
-artifacts {
-	archives sourcesJar
-	archives javadocJar
-}
-
 dependencies {
-    compile project(':org.jgrapes.webconsole.base')
+    api project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquery')
     runtimeOnly project(':org.jgrapes.webconsole.provider.moment')
@@ -25,18 +11,12 @@ ext.releaseVersion = "0.30.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
-jar {
-    into('META-INF') {
-        from 'resources/META-INF'
-    }
-}
-
 apply plugin: 'com.moowork.node'
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
 
 task jsdoc(type: NodeTask) {
-    dependsOn(':npm_install')
+    dependsOn(':npmInstall')
     new File(jsDocDestDir).mkdirs()
     script = file("${rootProject.projectDir}/node_modules/jsdoc/jsdoc.js")
     args = ["-c", "${rootProject.projectDir}/jsdoc.json",

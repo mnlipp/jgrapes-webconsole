@@ -1,16 +1,8 @@
 dependencies {
-	
-	compile project(':org.jgrapes.webconsole.base')
-	
+	api project(':org.jgrapes.webconsole.base')
 }
 
 ext.releaseVersion = "0.1.2"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
-
-jar {
-    into('META-INF') {
-        from 'resources/META-INF'
-    }
-}
 

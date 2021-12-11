@@ -1,5 +1,5 @@
 dependencies {
-	compile project(':org.jgrapes.webconsole.base')
+	api project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
 }
@@ -11,10 +11,10 @@ version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 apply plugin: 'com.moowork.node'
 
 task buildLib(type: NodeTask) {
-    mustRunAfter ':npm_install'
-    mustRunAfter ':aash-vue-components:buildLib'
-    mustRunAfter ':org.jgrapes.webconsole.base:buildLib'
-    mustRunAfter ':org.jgrapes.webconsole.provider.vue:npm_install'
+    dependsOn ':npmInstall'
+    dependsOn ':aash-vue-components:buildLib'
+    dependsOn ':org.jgrapes.webconsole.base:buildLib'
+    dependsOn ':org.jgrapes.webconsole.provider.vue:npmInstall'
     inputs.files project.fileTree(dir: 'src', include: '**/*.ts')
     inputs.files project.fileTree(dir: 'src', include: '**/*.vue')
     inputs.files project.fileTree(dir: 'src', include: '**/*.scss')
@@ -25,14 +25,17 @@ task buildLib(type: NodeTask) {
     args = ["-c"]
 }
 
-sourceSets.main.resources.srcDir 'build/generated/resources'
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
 
-processResources.dependsOn 'buildLib'
-
-processResources.dependsOn ':npm_install'
-processResources.dependsOn ':aash-vue-components:buildLib'
-processResources.dependsOn ':org.jgrapes.webconsole.base:buildLib'
-processResources.dependsOn ':org.jgrapes.webconsole.provider.vue:npm_install'
+processResources {
+    dependsOn 'buildLib'
+}
 
 eclipse {
     autoBuildTasks buildLib

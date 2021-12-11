@@ -1,19 +1,11 @@
 dependencies {
-	
-	compile project(':org.jgrapes.webconsole.base')
+	api project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
-    
 }
 
 ext.releaseVersion = "0.6.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
-
-jar {
-    into('META-INF') {
-        from 'resources/META-INF'
-    }
-}
 
 apply plugin: 'com.moowork.node'
 
@@ -24,6 +16,7 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
+    dependsOn ':aash-vue-components:assemble'
     into('build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components')
     from ("${rootProject.projectDir}/aash-vue-components/") {
         include 'lib/**/*'
@@ -31,10 +24,18 @@ task prepareNpmLibs(type: Copy) {
     }
 }
 
-sourceSets.main.resources.srcDir 'build/generated/resources'
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
 
-processResources.dependsOn ':aash-vue-components:assemble'
-processResources.dependsOn 'prepareNpmLibs'
+processResources {
+    dependsOn 'prepareNpmLibs'
+}
+
 
 eclipse {
     autoBuildTasks prepareNpmLibs
@@ -43,7 +44,7 @@ eclipse {
 ext.jsDocumentJsDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/provider/jgwcvuecomponents/jsdoc"
 
 task documentjs(type: NodeTask) {
-    dependsOn(':npm_install')
+    dependsOn(':npmInstall')
     new File(jsDocumentJsDir).mkdirs()
     script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
     def input = "resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components.js"
