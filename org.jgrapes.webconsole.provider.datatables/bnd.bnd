@@ -5,11 +5,6 @@ Export-Package: org.jgrapes.webconsole.provider.datatables
 
 api_version = 0.10.1.${tstamp}
 
--sources: true
--runee: JavaSE-1.8
-
--includeresource: resources
-
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
 
@@ -18,7 +13,6 @@ Provide-Capability: osgi.serviceloader; \
         uses:="org.jgrapes.webconsole.base,org.jgrapes.core", \
     org.jgrapes.webconsole.page.resource;name:List<String>="datatables.net"
 
--fixupmessages: \
-    "Found source folder 'resources' that is not on bnd's source path 'src'", \
+-fixupmessages.local: \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
     "The .classpath contains a library that will not be available during continuous integration:"

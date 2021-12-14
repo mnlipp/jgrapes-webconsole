@@ -1,47 +1,16 @@
-# Configure Repositories
--plugin.1.CentralMvn: \
-    aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
-        name="Central (Maven)"; \
-        snapshotUrl=https://oss.sonatype.org/content/repositories/snapshots/; \
-        releaseUrl=https://repo.maven.apache.org/maven2/; \
-        revision=\
-            org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.2,\
-            org.apache.servicemix.bundles:org.apache.servicemix.bundles.junit:4.12_1
-
--plugin.2.OSGi: \
-    aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
-        name=OSGi; \
-        snapshotUrls=https://oss.sonatype.org/content/repositories/snapshots/; \
-        releaseUrls=https://repo1.maven.org/maven2; \
-        query='q=g:%22org.osgi%22&rows=1000'
-
--plugin.3.Felix: \
-    aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
-        name=Felix; \
-        snapshotUrls=https://oss.sonatype.org/content/repositories/snapshots/; \
-        releaseUrls=https://repo1.maven.org/maven2; \
-        query='q=g:%22org.apache.felix%22&rows=1000'
-
--plugin.4.JGrapes: \
-    de.mnl.osgi.bnd.repository.maven.provider.NexusSearchRepositoryProvider; \
-        path:="${workspace}/cnf/plugins/de.mnl.osgi.bnd.repository-2.0.1.jar,\
-            ${workspace}/cnf/plugins/biz.aQute.repository-4.2.0.jar"; \
-        name=JGrapes; \
-        server="https://oss.sonatype.org"; \
-        query="g=org.jgrapes"
-
--plugin.5.Local: \
-    aQute.bnd.deployer.repository.LocalIndexedRepo; \
-        name = Local; \
-        pretty = true; \
-        local = ${build}/local
-
--baselinerepo: JGrapes
-
-bin=bin/main
-testbin=bin/test
 
 -diffignore: Git-Descriptor, Git-SHA
 
+-sources: true
+
+-output: build
+
+#bin=bin/main
+#testbin=bin/test
+
 # JUnit
 junit: org.apache.servicemix.bundles.junit; version=4.12
+
+-fixupmessages.general: \
+    "warning: osgi.serviceloader capability found with no *"    
+

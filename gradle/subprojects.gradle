@@ -6,10 +6,12 @@ apply plugin: 'maven-publish'
 
 group = 'org.jgrapes'
 
-if (project.file("bnd.bnd").exists()) {
+if (project.name.startsWith("org.jgrapes") 
+    || project.name == "WebConsoleDemo") {
 
     apply plugin: 'java-library'
     apply plugin: 'biz.aQute.bnd.builder'
+    apply from: "${project.rootDir}/gradle/layout.gradle"
 
     // Defaults, overridden in subproject's build.gradle
     ext.releaseVersion = "0.0.0"
@@ -19,12 +21,10 @@ if (project.file("bnd.bnd").exists()) {
     ext.bundleVersion = """${ -> releaseVersion +
         (isSnapshot ? '.-\${tstamp}-SNAPSHOT' : '.ga') }"""
 
-    task listSnapshots {
-        doLast {
-            if (isSnapshot) {
-                println "Snapshot: " + project.name
-            }
-        }
+    if (project.name != "WebConsoleDemo") {
+        apply from: "${project.rootDir}/gradle/baseline.gradle"
+        apply from: "${project.rootDir}/gradle/javadoc.gradle"
+        apply from: "${project.rootDir}/gradle/publishing.gradle"
     }
     
     java {
@@ -33,18 +33,8 @@ if (project.file("bnd.bnd").exists()) {
     }
 
     jar {
-        manifest {
-            attributes('Bundle-Version': bundleVersion)
-        }
-    }
-}
-
-if (project.name.startsWith('org.jgrapes.') 
-    || project.name == 'WebConsoleDemo') {
-
-    jar {
         duplicatesStrategy = 'exclude'
-    
+        
         doFirst {
             manifest {
                 attributes(
@@ -62,15 +52,17 @@ if (project.name.startsWith('org.jgrapes.')
                 "Git-SHA": grgit.head().id
             ])
         }
+        
+        manifest {
+            attributes('Bundle-Version': bundleVersion)
+        }
     }
     
     dependencies {
         compileOnly 'org.osgi:org.osgi.annotation:6.0.0'
         testImplementation 'junit:junit:4.12', 'net.jodah:concurrentunit:0.4.2'
     }
-    
-    apply from: "${project.rootDir}/gradle/layout.gradle"
-    
+
     test {
     //    if (!rootProject.isCiBuild) {
     //        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=18888'
@@ -97,13 +89,13 @@ if (project.name.startsWith('org.jgrapes.')
         }
     }
         
-    apply from: "${project.rootDir}/gradle/eclipse.gradle"
+    task listSnapshots {
+        doLast {
+            if (isSnapshot) {
+                println "Snapshot: " + project.name
+            }
+        }
+    }
+    
 }
-
-if (project.name.startsWith("org.jgrapes.")) {
-    apply from: "${project.rootDir}/gradle/javadoc.gradle"
-    apply from: "${project.rootDir}/gradle/publishing.gradle"
-    apply from: "${project.rootDir}/gradle/baseline.gradle"
-}
-
 

@@ -28,3 +28,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconlet.sysinfo')
     runtimeOnly project(':org.jgrapes.webconlet.jmxbrowser')
 }
+
+ext.releaseVersion = "0.0.0"
+ext.isSnapshot = false
+version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")

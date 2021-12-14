@@ -1,53 +1,99 @@
 apply plugin: 'eclipse'
     
 eclipse {
-    classpath {
-        // 'org.eclipse.buildship.core.gradleclasspathcontainer',
-        // containers 'aQute.bnd.classpath.container'
-        downloadJavadoc = true
-        downloadSources = true
-        
-        if (project.name != "WebConsoleDemo") {
-//            file.whenMerged {
-//                configurations.runtimeOnly.allDependencies.each { dep ->
-//                    if (dep instanceof org.gradle.api.artifacts.ProjectDependency) {
-//                        def depPrj = dep.dependencyProject
-//                        def depPrjPath = "/" + rootProject.relativePath(depPrj.file("."))
-//                        entries.removeAll { it.kind == 'src' && it.path == depPrjPath }
-//                    }
-//                }
-//            }
-            plusConfigurations -= [ configurations.runtimeClasspath,
-                configurations.testRuntimeClasspath ]
-        }
-    }
+
     project {
-        // buildCommand 'bndtools.core.bndbuilder'
-        buildCommand 'org.eclipse.jdt.core.javabuilder'
-        // buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
-        // buildCommand 'bndtools.core.bndbuilder'
-        buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
-        buildCommand 'org.jdrupes.eclipse.minify.plugin.minifyBuilder'
-        // 'bndtools.core.bndnature', 
-        // 'org.eclipse.buildship.core.gradleprojectnature',
-        natures 'org.eclipse.jdt.core.javanature', \
-            'net.sf.eclipsecs.core.CheckstyleNature', \
-            'org.jdrupes.eclipse.minify.plugin.minifyNature'
-    }
-    jdt {
-        if (project.name.startsWith("org.jgrapes.")
-            || project.name == 'WebConsoleDemo') {
-            sourceCompatibility = 1.8
-            targetCompatibility = 1.8
-            javaRuntimeName = "JavaSE-1.8"
-        }
         file {
-            withProperties { properties ->
-                def formatterPrefs = new Properties()
-                rootProject.file("gradle/org.eclipse.jdt.core.formatter.prefs")
-                    .withInputStream { formatterPrefs.load(it) }
-                properties.putAll(formatterPrefs)
+            // closure executed after .project content is loaded from existing file
+            // and before gradle build information is merged
+            beforeMerged { project ->
+                project.natures.clear()
+                project.buildCommands.clear()
+            }
+            
+            project.buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
+            
+            if (project.name.startsWith('org.jgrapes.')) {
+                project.buildCommand 'org.eclipse.jdt.core.javabuilder'
+                project.buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
+                project.natures += 'org.eclipse.buildship.core.gradleprojectnature'
+                project.natures += 'net.sf.eclipsecs.core.CheckstyleNature'
             }
         }
     }
+    
+    if (plugins.hasPlugin('biz.aQute.bnd.builder')) {
+        classpath {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    
+        jdt {
+            javaRuntimeName = "JavaSE-11"
+            file {
+                withProperties { properties ->
+                    def formatterPrefs = new Properties()
+                    rootProject.file("gradle/org.eclipse.jdt.core.formatter.prefs")
+                        .withInputStream { formatterPrefs.load(it) }
+                    properties.putAll(formatterPrefs)
+                }
+            }
+        }
+    }
+
+    /*
+    if (!project.name.startsWith("org.jgrapes")
+        && !project.name == "WebConsoleDemo") {
+        // Dummy project. Nothing to do for Eclipse, but must show
+        // up as project
+        project {
+            file {
+                //closure executed after .project content is loaded from existing file
+                //and after gradle build information is merged
+                whenMerged { project ->
+                    project.natures.clear()
+                    project.buildCommands.clear()
+                }
+            }
+        }
+    } else {
+        classpath {
+            // Only for bnd projects
+            if (plugins.hasPlugin('biz.aQute.bnd.builder')) {
+                containers 'aQute.bnd.classpath.container'
+            }
+            downloadJavadoc = true
+            downloadSources = true
+            
+//            if (project.name != "WebConsoleDemo") {
+//                plusConfigurations -= [ configurations.runtimeClasspath,
+//                    configurations.testRuntimeClasspath ]
+//            }
+        }
+        project {
+            // buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
+            buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
+            // 'org.eclipse.buildship.core.gradleprojectnature',
+            natures 'org.eclipse.jdt.core.javanature', \
+                'net.sf.eclipsecs.core.CheckstyleNature'
+                // Only for bnd projects
+                if (plugins.hasPlugin('biz.aQute.bnd')) {
+                    // buildCommand 'org.eclipse.jdt.core.javabuilder'
+                    buildCommand 'bndtools.core.bndbuilder'
+                    natures += 'bndtools.core.bndnature'
+                }
+        }
+        jdt {
+            javaRuntimeName = "JavaSE-11"
+            file {
+                withProperties { properties ->
+                    def formatterPrefs = new Properties()
+                    rootProject.file("gradle/org.eclipse.jdt.core.formatter.prefs")
+                        .withInputStream { formatterPrefs.load(it) }
+                    properties.putAll(formatterPrefs)
+                }
+            }
+        }
+    }
+    */
 }

@@ -1,4 +1,6 @@
-if (project.name != "WebConsoleDemo") {
+if (project.name != "WebConsoleDemo" 
+    && project.name != 'org.jgrapes.webconlet.jmxbrowser'
+    && project.name != 'org.jgrapes.webconsole.provider.browserrequire') {
         
     dependencies {
         // Use gradle mechanims to get the artifact to baseline against.

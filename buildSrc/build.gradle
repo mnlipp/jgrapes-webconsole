@@ -1,27 +1,20 @@
-dependencies {
-	implementation gradleApi()
-	implementation localGroovy()
-}
-
-apply plugin:'groovy'
-
 // Configure sensible layout
 sourceSets {
 	main {
 		groovy {
-			srcDir 'src'
+			srcDirs = ['src']
 		}
 		resources {
-			srcDir 'resources'
+			srcDirs = ['resources']
 		}
 	}
 
 	test {
 		groovy {
-			srcDir 'test'
+			srcDirs = ['test']
 		}
 		resources {
-			srcDir 'resources'
+			srcDirs = ['resources']
 		}
 	}
 }
