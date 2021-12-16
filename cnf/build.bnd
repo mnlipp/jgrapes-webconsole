@@ -3,11 +3,6 @@
 
 -sources: true
 
--output: build
-
-#bin=bin/main
-#testbin=bin/test
-
 # JUnit
 junit: org.apache.servicemix.bundles.junit; version=4.12
 
