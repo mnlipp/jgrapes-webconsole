@@ -11,9 +11,9 @@ eclipse {
                 project.buildCommands.clear()
             }
             
+            project.natures += 'org.eclipse.buildship.core.gradleprojectnature'
             project.buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
             
-            project.natures += 'org.eclipse.buildship.core.gradleprojectnature'
             if (project.name.startsWith('org.jgrapes.')) {
                 project.buildCommand 'org.eclipse.jdt.core.javabuilder'
                 project.buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
@@ -41,3 +41,5 @@ eclipse {
         }
     }
 }
+
+tasks.eclipse.dependsOn(cleanEclipse)
