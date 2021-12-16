@@ -9,6 +9,12 @@ dependencies {
         transitive = true }
 }
 
+// Nothing to compile, but avoids Eclipse warning.
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 import aQute.bnd.gradle.Bndrun
 
 task deb {
@@ -22,4 +28,16 @@ task run(type: Bndrun) {
     workingDirectory = project.file('.')
     bndrun = file("WebConsoleOSGiDemo.bndrun")
     bundles = project.sourceSets.main.runtimeClasspath
+}
+
+eclipse {
+    project {
+       natures += 'bndtools.core.bndnature'
+    }
+    classpath {
+        containers 'aQute.bnd.classpath.container'
+    }
+    jdt {
+        javaRuntimeName = "JavaSE-11"
+    }
 }
