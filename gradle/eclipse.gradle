@@ -13,10 +13,10 @@ eclipse {
             
             project.buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
             
+            project.natures += 'org.eclipse.buildship.core.gradleprojectnature'
             if (project.name.startsWith('org.jgrapes.')) {
                 project.buildCommand 'org.eclipse.jdt.core.javabuilder'
                 project.buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
-                project.natures += 'org.eclipse.buildship.core.gradleprojectnature'
                 project.natures += 'net.sf.eclipsecs.core.CheckstyleNature'
             }
         }
