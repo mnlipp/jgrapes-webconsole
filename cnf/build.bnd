@@ -1,3 +1,8 @@
+# Used for JavaExec tasks that run bnd (cli)
+-plugin.RunRepo: \
+    aQute.bnd.deployer.repository.LocalIndexedRepo; \
+        name = RunRepo; \
+        local = ${workspace}/build/runRepo
 
 -diffignore: Git-Descriptor, Git-SHA
 
