@@ -161,7 +161,7 @@ public class SysInfoConlet
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);
         }
-        if (renderedAs.size() > 0) {
+        if (!renderedAs.isEmpty()) {
             updateView(consoleSession, conletModel.getConletId());
         }
         return renderedAs;

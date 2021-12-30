@@ -37,17 +37,24 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 /**
  * Provider for the [Gridstack.js](http://gridstackjs.com/) library.
  */
+@SuppressWarnings("PMD.GuardLogStatement")
 public class GridstackProvider extends PageResourceProvider {
 
+    @SuppressWarnings({ "PMD.FieldNamingConventions",
+        "PMD.VariableNamingConventions" })
     private static Logger LOG
         = Logger.getLogger(GridstackProvider.class.getName());
 
+    /**
+     * The Configuration.
+     */
+    @SuppressWarnings("PMD.FieldNamingConventions")
     public enum Configuration {
         CoreOnly, CoreWithJQUiPlugin, All
     }
 
     private Configuration configuration = Configuration.CoreOnly;
-    private boolean requireTouchPunch;
+    private final boolean requireTouchPunch;
 
     /**
      * Creates a new component with its channel set to the given 
@@ -102,6 +109,7 @@ public class GridstackProvider extends PageResourceProvider {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     public void onConsoleReady(ConsoleReady event,
             ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
@@ -142,6 +150,9 @@ public class GridstackProvider extends PageResourceProvider {
                     "gridstack", "gridstack.all")
                 .setScriptUri(event.renderSupport().pageResource(
                     "gridstack/gridstack.all.js")));
+            break;
+        default:
+            break;
         }
         consoleSession.respond(addRequest);
     }

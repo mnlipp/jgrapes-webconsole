@@ -55,7 +55,7 @@ import org.jgrapes.webconsole.jqueryui.themes.base.Provider;
  * web console components.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
-    "PMD.TooManyMethods" })
+    "PMD.TooManyMethods", "PMD.LinguisticNaming" })
 public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 
     private ServiceLoader<ThemeProvider> themeLoader;
@@ -130,10 +130,11 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     }
 
     @Override
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     protected void provideConsoleResource(Request.In.Get event,
             String requestPath, IOSubchannel channel) {
         String[] requestParts = ResourcePattern.split(requestPath, 1);
-        if (requestParts.length == 2 && requestParts[0].equals("theme")) {
+        if (requestParts.length == 2 && "theme".equals(requestParts[0])) {
             sendThemeResource(event, channel, requestParts[1]);
             return;
         }
