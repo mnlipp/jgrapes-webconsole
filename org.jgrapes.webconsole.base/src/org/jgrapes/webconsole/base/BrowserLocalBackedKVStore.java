@@ -106,9 +106,10 @@ public class BrowserLocalBackedKVStore extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     public void onJsonInput(JsonInput event, ConsoleSession channel)
             throws InterruptedException, IOException {
-        if (!event.request().method().equals("retrievedLocalData")) {
+        if (!"retrievedLocalData".equals(event.request().method())) {
             return;
         }
         channel.associated(this, ConsoleReady.class)

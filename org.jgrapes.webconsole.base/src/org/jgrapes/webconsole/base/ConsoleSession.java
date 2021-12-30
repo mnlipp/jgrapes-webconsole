@@ -111,6 +111,7 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * ConsoleSession "*" -up-> "1" Session: browser session
  * @enduml
  */
+@SuppressWarnings("PMD.LinguisticNaming")
 public final class ConsoleSession extends DefaultIOSubchannel {
 
     private static Map<String, WeakReference<ConsoleSession>> consoleSessions
@@ -129,11 +130,19 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     private Session browserSession;
     private IOSubchannel upstreamChannel;
 
+    /**
+     * Weak refrence to session.
+     */
     private static class SessionReference
             extends WeakReference<ConsoleSession> {
 
-        private String id;
+        private final String id;
 
+        /**
+         * Instantiates a new session reference.
+         *
+         * @param referent the referent
+         */
         public SessionReference(ConsoleSession referent) {
             super(referent, unusedSessions);
             id = referent.consoleSessionId();

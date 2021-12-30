@@ -53,7 +53,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
  */
 public class SetLocale extends Event<Void> {
 
-    private RenderSupport renderSupport;
+    private final RenderSupport renderSupport;
     private final Locale locale;
     private boolean reload;
 

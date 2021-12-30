@@ -145,6 +145,7 @@ public class WebSocketInputReader extends Thread {
     public void run() {
         while (true) {
             JsonBeanDecoder jsonDecoder = JsonBeanDecoder.create(jsonSource);
+            @SuppressWarnings("PMD.UnusedAssignment")
             JsonRpc rpc = null;
             try {
                 rpc = jsonDecoder.readObject(DefaultJsonRpc.class);

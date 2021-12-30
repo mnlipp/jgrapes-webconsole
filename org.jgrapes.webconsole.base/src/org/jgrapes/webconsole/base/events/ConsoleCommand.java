@@ -41,6 +41,7 @@ public abstract class ConsoleCommand extends Event<Void> {
      * 
      * @param writer the writer
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     public abstract void toJson(Writer writer)
             throws InterruptedException, IOException;
 
@@ -51,6 +52,7 @@ public abstract class ConsoleCommand extends Event<Void> {
      * @param writer the writer
      * @throws IOException 
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     protected void toJson(Writer writer, String method, Object... params)
             throws IOException {
         JsonRpc rpc = JsonRpc.create();

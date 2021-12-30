@@ -30,7 +30,6 @@ import org.jgrapes.http.events.Response;
 import org.jgrapes.io.util.ByteBufferOutputStream;
 import org.jgrapes.webconsole.base.events.ResourceRequest;
 
-// TODO: Auto-generated Javadoc
 /**
  * Returns a {@link Runnable} that writes to an {@link OutputStream} as result.
  */
@@ -80,6 +79,7 @@ public class ResourceByGenerator extends ResourceResult {
      * @see org.jgrapes.webconsole.base.base.ResourceResult#process()
      */
     @Override
+    @SuppressWarnings("PMD.ConfusingTernary")
     public void process() throws IOException, InterruptedException {
         if (generator == null) {
             ResponseCreationSupport.sendResponse(request().httpRequest(),

@@ -2,7 +2,7 @@ dependencies {
     // BndPomRepository (3.5.0) cannot handle ranges without upper limit
     api 'org.jgrapes:org.jgrapes.http:[1.1.1,2)'
     api 'org.jgrapes:org.jgrapes.util:[1.1.1,2)'
-    api 'org.jdrupes.json:json:[2.3.0-SNAPSHOT,2.4.0)'
+    api 'org.jdrupes.json:json:[2.3.1,2.4.0)'
     api 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 }
 
@@ -65,6 +65,7 @@ task java11doc(type: JavaExec) {
     enabled = JavaVersion.current().isJava11() && !isJitPackBuild
     
     dependsOn classes
+    dependsOn 'tsdoc'
     inputs.file "${rootProject.rootDir}/overview.md"
     ext.destinationDir = file("${rootProject.buildDir}/javadoc")
 
@@ -104,7 +105,6 @@ task java11doc(type: JavaExec) {
 
 task buildDoc(type: Task) {
     dependsOn 'java11doc'
-    dependsOn 'tsdoc'
 }
 
 task javadocJar(type: Jar) {

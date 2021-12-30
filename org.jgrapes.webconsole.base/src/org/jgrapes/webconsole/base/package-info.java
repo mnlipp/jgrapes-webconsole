@@ -406,16 +406,20 @@
  *     package "JGrapes Core Components" {
  *     }
  * 
- *     package org.jgrapes.webconsole.base [[org/jgrapes/webconsole/base/package-summary.html#package.description]] {
+ *     package org.jgrapes.webconsole.base \
+ *      [[org/jgrapes/webconsole/base/package-summary.html#package.description]] {
  *     }
  * 
- *     package org.jgrapes.webconsole.vuejs [[org/jgrapes/webconsole/vuejs/package-summary.html#package.description]] {
+ *     package org.jgrapes.webconsole.vuejs \
+ *      [[org/jgrapes/webconsole/vuejs/package-summary.html#package.description]] {
  *     }
  * 
- *     package org.jgrapes.webconsole.bootstrap4 [[org/jgrapes/webconsole/bootstrap4/package-summary.html#package.description]] {
+ *     package org.jgrapes.webconsole.bootstrap4 \
+ *      [[org/jgrapes/webconsole/bootstrap4/package-summary.html#package.description]] {
  *     }
  * 
- *     package org.jgrapes.webconsole.jqueryui [[org/jgrapes/webconsole/jqueryui/package-summary.html#package.description]] {
+ *     package org.jgrapes.webconsole.jqueryui \
+ *      [[org/jgrapes/webconsole/jqueryui/package-summary.html#package.description]] {
  *     }
  * 
  *     package "org.jgrapes.webconsole.jqueryui.themes.*" {

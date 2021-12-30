@@ -72,7 +72,7 @@ public class DisplayNotification extends ConsoleCommand {
      */
     public DisplayNotification addOption(String name, Object value) {
         if (options == null) {
-            options = new HashMap<String, Object>();
+            options = new HashMap<>();
         }
         options.put(name, value);
         return this;

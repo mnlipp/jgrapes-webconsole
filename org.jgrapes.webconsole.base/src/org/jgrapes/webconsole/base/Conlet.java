@@ -36,12 +36,22 @@ public interface Conlet {
     /**
      * The render modes.
      */
+    @SuppressWarnings("PMD.FieldNamingConventions")
     enum RenderMode {
         Preview, View, Edit, Help,
         /** Modifier, indicates that a {@link #Preview} may not be removed. */
         StickyPreview,
         /** Modifier, forces rendered view to be put in foreground. */
         Foreground;
+
+        /**
+         * The basic modes (the modes without modifiers).
+         */
+        @SuppressWarnings("PMD.VariableNamingConventions")
+        public static final Set<RenderMode> basicModes
+            = Collections.unmodifiableSet(
+                asSet(RenderMode.Preview, RenderMode.View, RenderMode.Edit,
+                    RenderMode.Help));
 
         /**
          * Utility method that creates a {@link Set} of render modes
@@ -53,13 +63,6 @@ public interface Conlet {
         public static Set<RenderMode> asSet(RenderMode... modes) {
             return new HashSet<>(Arrays.asList(modes));
         }
-
-        /**
-         * The basic modes (the modes without modifiers).
-         */
-        public static Set<RenderMode> basicModes = Collections.unmodifiableSet(
-            asSet(RenderMode.Preview, RenderMode.View, RenderMode.Edit,
-                RenderMode.Help));
 
         /**
          * Retrieves the modifiers.

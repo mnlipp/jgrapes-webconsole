@@ -103,6 +103,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  * deactivate PageResourceProvider
  * @enduml
  */
+@SuppressWarnings("PMD.LinguisticNaming")
 public class AddPageResources extends ConsoleCommand {
 
     private final List<ScriptResource> scriptResources = new ArrayList<>();
@@ -279,6 +280,7 @@ public class AddPageResources extends ConsoleCommand {
          * @return this object for easy chaining
          * @throws IOException 
          */
+        @SuppressWarnings("PMD.ShortVariable")
         public ScriptResource loadScriptSource(Reader in) throws IOException {
             try (BufferedReader buffered = new BufferedReader(in)) {
                 this.scriptSource

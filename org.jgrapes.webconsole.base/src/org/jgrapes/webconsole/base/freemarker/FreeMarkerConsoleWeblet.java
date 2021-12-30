@@ -173,7 +173,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
 
         // Add supported languages
         model.put("supportedLanguages", new TemplateMethodModelEx() {
-            Object cachedResult;
+            private Object cachedResult;
 
             @Override
             public Object exec(@SuppressWarnings("rawtypes") List arguments)

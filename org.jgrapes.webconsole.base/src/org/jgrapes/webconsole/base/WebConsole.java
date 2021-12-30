@@ -62,8 +62,10 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 /**
  * Provides the web console component related part of the console.
  */
+@SuppressWarnings("PMD.GuardLogStatement")
 public class WebConsole extends Component {
 
+    @SuppressWarnings("PMD.FieldNamingConventions")
     private static final Logger logger
         = Logger.getLogger(WebConsole.class.getName());
 
@@ -72,7 +74,7 @@ public class WebConsole extends Component {
     /**
      * @param componentChannel
      */
-    WebConsole(Channel componentChannel) {
+    /* default */ WebConsole(Channel componentChannel) {
         super(componentChannel);
     }
 
@@ -179,7 +181,7 @@ public class WebConsole extends Component {
      * @param event the event
      * @param channel the channel
      */
-    @Handler(priority = -1000000)
+    @Handler(priority = -1_000_000)
     public void onRenderConlet(
             RenderConletRequest event, ConsoleSession channel) {
         if (!event.hasBeenRendered()) {
@@ -246,6 +248,7 @@ public class WebConsole extends Component {
         private ObjectName mbeanName;
         private final WeakReference<WebConsole> consoleRef;
 
+        @SuppressWarnings("PMD.GuardLogStatement")
         public WebConsoleInfo(WebConsole console) {
             try {
                 mbeanName = new ObjectName("org.jgrapes.webconsole:type="

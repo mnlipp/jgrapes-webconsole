@@ -74,7 +74,7 @@ public class ConsoleResourceBundleControl extends Control {
      */
     @Override
     @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
-        "PMD.AvoidInstantiatingObjectsInLoops" })
+        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.CognitiveComplexity" })
     public ResourceBundle newBundle(String baseName, Locale locale,
             String format, ClassLoader loader, boolean reload)
             throws IllegalAccessException, InstantiationException, IOException {
@@ -85,6 +85,7 @@ public class ConsoleResourceBundleControl extends Control {
         Properties props = new Properties();
         while (iter.hasPrevious()) {
             Class<?> cls = iter.previous();
+            @SuppressWarnings("PMD.CloseResource")
             InputStream inStream = null;
             if (reload) {
                 URL url = cls.getResource(resourceName);

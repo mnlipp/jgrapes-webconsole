@@ -115,6 +115,7 @@ public class AddConletType extends ConsoleCommand {
      * @param displayNames the display names
      * @return the event for easy chaining
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     public AddConletType setDisplayNames(Map<Locale, String> displayNames) {
         this.displayNames = displayNames;
         return this;

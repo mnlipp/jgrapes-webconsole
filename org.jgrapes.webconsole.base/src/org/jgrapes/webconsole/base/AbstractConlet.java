@@ -285,16 +285,22 @@ import org.jgrapes.webconsole.base.events.SetLocale;
  * @enduml 
  */
 @SuppressWarnings({ "PMD.TooManyMethods",
-    "PMD.EmptyMethodInAbstractClassShouldBeAbstract" })
+    "PMD.EmptyMethodInAbstractClassShouldBeAbstract", "PMD.GodClass" })
 public abstract class AbstractConlet<S extends Serializable>
         extends Component {
 
+    @SuppressWarnings({ "PMD.FieldNamingConventions",
+        "PMD.VariableNamingConventions", "PMD.UseConcurrentHashMap",
+        "PMD.AvoidDuplicateLiterals" })
     private static final Map<Class<?>,
             Map<Locale, ResourceBundle>> supportedLocales
                 = Collections.synchronizedMap(new WeakHashMap<>());
+    @SuppressWarnings({ "PMD.FieldNamingConventions",
+        "PMD.VariableNamingConventions", "PMD.UseConcurrentHashMap" })
     private static final Map<Class<?>,
             Map<Locale, ResourceBundle>> l10nBundles
                 = Collections.synchronizedMap(new WeakHashMap<>());
+    @SuppressWarnings("PMD.LongVariable")
     private Map<ConsoleSession,
             Map<String, ConletTrackingInfo>> conletInfosByConsoleSession;
     private Duration refreshInterval;
@@ -335,6 +341,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param supplier the supplier
      * @return the web console component for easy chaining
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     public AbstractConlet<S> setPeriodicRefresh(
             Duration interval, Supplier<Event<?>> supplier) {
         refreshInterval = interval;
@@ -442,8 +449,10 @@ public abstract class AbstractConlet<S extends Serializable>
      * @return the map with locales and bundles
      */
     protected Map<Locale, ResourceBundle> l10nBundles(Set<Locale> toGet) {
+        @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<Locale, ResourceBundle> result = new HashMap<>();
         for (Locale locale : toGet) {
+            @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
             ResourceBundle bundle = l10nBundles
                 .computeIfAbsent(getClass(), cls -> new HashMap<>())
                 .computeIfAbsent(locale, l -> resourceBundle(locale));
@@ -464,6 +473,7 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     protected Map<Locale, String> localizations(Set<Locale> locales,
             String key) {
+        @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<Locale, String> result = new HashMap<>();
         Map<Locale, ResourceBundle> bundles = l10nBundles(locales);
         for (Map.Entry<Locale, ResourceBundle> entry : bundles.entrySet()) {
@@ -484,9 +494,10 @@ public abstract class AbstractConlet<S extends Serializable>
     protected Map<Locale, ResourceBundle> supportedLocales() {
         return supportedLocales.computeIfAbsent(getClass(), cls -> {
             ResourceBundle.clearCache(cls.getClassLoader());
+            @SuppressWarnings("PMD.UseConcurrentHashMap")
             Map<Locale, ResourceBundle> bundles = new HashMap<>();
             for (Locale locale : Locale.getAvailableLocales()) {
-                if (locale.getLanguage().equals("")) {
+                if ("".equals(locale.getLanguage())) {
                     continue;
                 }
                 ResourceBundle bundle = resourceBundle(locale);
@@ -571,7 +582,8 @@ public abstract class AbstractConlet<S extends Serializable>
             = conletInfosByConsoleSession.computeIfAbsent(consoleSession,
                 newKey -> new ConcurrentHashMap<>());
         ConletTrackingInfo result = infos.computeIfAbsent(conletId,
-            key -> info != null ? info : new ConletTrackingInfo(conletId));
+            key -> Optional.ofNullable(info)
+                .orElse(new ConletTrackingInfo(conletId)));
         updateRefresh();
         return result;
     }
@@ -760,16 +772,18 @@ public abstract class AbstractConlet<S extends Serializable>
     /**
      * Called by {@link #onConletDeleted} to propagate the event to derived
      * classes.
-     * 
+     *
      * @param event the event
      * @param channel the channel
      * @param conletId the web console component id
      * @param conletState the web console component state
+     * @throws Exception if a problem occurs
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     protected void doConletDeleted(ConletDeleted event,
             ConsoleSession channel, String conletId, S conletState)
             throws Exception {
+        // May be defined by derived class.
     }
 
     /**
@@ -871,6 +885,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @return true, if the locale could be changed
      * @throws Exception the exception
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     protected boolean doSetLocale(SetLocale event, ConsoleSession channel,
             String conletId) throws Exception {
         fire(new RenderConletRequest(event.renderSupport(), conletId,
@@ -951,8 +966,8 @@ public abstract class AbstractConlet<S extends Serializable>
      * with "deletable preview" mapped to "preview").
      */
     protected static class ConletTrackingInfo {
-        private String conletId;
-        private Set<RenderMode> renderedAs;
+        private final String conletId;
+        private final Set<RenderMode> renderedAs;
 
         /**
          * Instantiates a new conlet tracking info.

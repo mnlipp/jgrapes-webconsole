@@ -52,6 +52,7 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
  * function is invoked when changes made in the form must be
  * applied (e.g. before the dialog is closed).
  */
+@SuppressWarnings("PMD.LinguisticNaming")
 public abstract class RenderConlet extends ConsoleCommand {
 
     private static final Set<RenderMode> DEFAULT_SUPPORTED

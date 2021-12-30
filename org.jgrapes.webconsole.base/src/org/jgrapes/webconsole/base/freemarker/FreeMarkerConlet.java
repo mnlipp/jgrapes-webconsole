@@ -65,7 +65,8 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet.LanguageIn
 public abstract class FreeMarkerConlet<S extends Serializable>
         extends AbstractConlet<S> {
 
-    @SuppressWarnings("PMD.VariableNamingConventions")
+    @SuppressWarnings({ "PMD.VariableNamingConventions",
+        "PMD.FieldNamingConventions" })
     private static final Pattern templatePattern
         = Pattern.compile(".*\\.ftl\\.[a-z]+$");
 
@@ -135,6 +136,7 @@ public abstract class FreeMarkerConlet<S extends Serializable>
             fmModel = new HashMap<>();
             fmModel.put("conletResource", new TemplateMethodModelEx() {
                 @Override
+                @SuppressWarnings("PMD.AvoidDuplicateLiterals")
                 public Object exec(@SuppressWarnings("rawtypes") List arguments)
                         throws TemplateModelException {
                     @SuppressWarnings("unchecked")
@@ -197,7 +199,7 @@ public abstract class FreeMarkerConlet<S extends Serializable>
         });
         // Add supported languages
         model.put("supportedLanguages", new TemplateMethodModelEx() {
-            Object cachedResult;
+            private Object cachedResult;
 
             @Override
             public Object exec(@SuppressWarnings("rawtypes") List arguments)

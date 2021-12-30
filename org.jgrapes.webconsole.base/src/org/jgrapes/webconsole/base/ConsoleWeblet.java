@@ -91,7 +91,7 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * that affect the console representation in the browser.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
-    "PMD.TooManyMethods" })
+    "PMD.TooManyMethods", "PMD.GodClass" })
 public abstract class ConsoleWeblet extends Component {
 
     private static final String CONSOLE_SESSION_IDS
@@ -104,14 +104,15 @@ public abstract class ConsoleWeblet extends Component {
 
     private final RenderSupport renderSupport = new RenderSupportImpl();
     private boolean useMinifiedResources = true;
-    private long psNetworkTimeout = 45000;
-    private long psRefreshInterval = 30000;
+    private long psNetworkTimeout = 45_000;
+    private long psRefreshInterval = 30_000;
     private long psInactivityTimeout = -1;
 
     private List<Class<?>> consoleResourceSearchSeq;
     private final List<Class<?>> resourceClasses = new ArrayList<>();
     private final ResourceBundle.Control resourceControl
         = new ConsoleResourceBundleControl(resourceClasses);
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final Map<Locale, ResourceBundle> supportedLocales
         = new HashMap<>();
 
@@ -225,6 +226,7 @@ public abstract class ConsoleWeblet extends Component {
      * @param timeout the timeout in milli seconds
      * @return the console view for easy chaining
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     public ConsoleWeblet setConsoleSessionNetworkTimeout(long timeout) {
         psNetworkTimeout = timeout;
         return this;
@@ -248,6 +250,7 @@ public abstract class ConsoleWeblet extends Component {
      * @param interval the interval in milliseconds
      * @return the console view for easy chaining
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     public ConsoleWeblet setConsoleSessionRefreshInterval(long interval) {
         psRefreshInterval = interval;
         return this;
@@ -271,6 +274,7 @@ public abstract class ConsoleWeblet extends Component {
      * @param timeout the timeout in milliseconds
      * @return the console view for easy chaining
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     public ConsoleWeblet setConsoleSessionInactivityTimeout(long timeout) {
         psInactivityTimeout = timeout;
         return this;
@@ -334,7 +338,7 @@ public abstract class ConsoleWeblet extends Component {
         supportedLocales.clear();
         ResourceBundle.clearCache(ConsoleWeblet.class.getClassLoader());
         for (Locale locale : Locale.getAvailableLocales()) {
-            if (locale.getLanguage().equals("")) {
+            if ("".equals(locale.getLanguage())) {
                 continue;
             }
             ResourceBundle bundle = ResourceBundle.getBundle("l10n", locale,
@@ -536,6 +540,7 @@ public abstract class ConsoleWeblet extends Component {
         fire(pageResourceRequest, consoleChannel(channel));
     }
 
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     private void provideConletResource(Request.In.Get event,
             IOSubchannel channel,
             URI resource) throws InterruptedException {
@@ -648,7 +653,7 @@ public abstract class ConsoleWeblet extends Component {
      * @throws InterruptedException the interrupted exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    @Handler(channels = ConsoleChannel.class, priority = 10000)
+    @Handler(channels = ConsoleChannel.class, priority = 10_000)
     public void onSetLocale(SetLocale event, ConsoleSession channel)
             throws InterruptedException, IOException {
         channel.setLocale(event.locale());

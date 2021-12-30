@@ -62,6 +62,7 @@ public final class WebConsoleUtils {
      * @throws IllegalArgumentException if the string violates 
      * RFC 2396
      */
+    @SuppressWarnings("PMD.AvoidUncheckedExceptionsInSignatures")
     public static URI uriFromPath(String path) throws IllegalArgumentException {
         try {
             return new URI(null, null, path, null);
@@ -98,7 +99,8 @@ public final class WebConsoleUtils {
      * @param parameters the parameters
      * @return the new URI
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops",
+        "PMD.UselessParentheses" })
     public static URI mergeQuery(URI uri, Map<String, String> parameters) {
         Map<String, List<String>> oldQuery = queryAsMap(uri);
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
