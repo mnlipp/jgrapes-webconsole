@@ -8,7 +8,7 @@ version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 apply plugin: 'com.moowork.node'
 
-task prepareNpmLibs(type: Copy, dependsOn: ':npmInstall') {
+task prepareNpmLibs(type: Copy, dependsOn: 'npmInstall') {
     description '''
     Helper task that copies the the libraries from the npm_modules 
     directory into a package scoped subdirectory. The root is added 
