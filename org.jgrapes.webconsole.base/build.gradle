@@ -6,7 +6,7 @@ dependencies {
     api 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 }
 
-ext.releaseVersion = "0.31.1"
+ext.releaseVersion = "0.31.2"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
