@@ -193,9 +193,11 @@ export default class TableController {
     clearFilter(event: Event) {
         let form = (<Element>(event.currentTarget!)).closest("form");
         if (form) {
-            let input = form.find("input");
-            input.value = '';
-            this._filterKey = '';
+            let input = <HTMLInputElement>form.querySelector(":scope input");
+            if (input) {
+                input.value = '';
+                this._filterKey = '';
+            }
         }
     }
 
