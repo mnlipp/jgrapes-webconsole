@@ -4,7 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-import org.jgrapes.core.Components;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class QueryUtilTests {
     public void testMergeAbs() throws URISyntaxException {
         URI uri = new URI("/test/it?p2=world&p2=all");
         uri = WebConsoleUtils.mergeQuery(uri,
-            Components.mapOf("p1", "hello", "p3", "!"));
+            Map.of("p1", "hello", "p3", "!"));
         Map<String, List<String>> map = WebConsoleUtils.queryAsMap(uri);
         assertEquals("/test/it", uri.getPath());
         assertEquals(3, map.size());
@@ -41,8 +40,7 @@ public class QueryUtilTests {
     @Test
     public void testMergeRel() throws URISyntaxException {
         URI uri = new URI("test/it?p2=world&p2=all");
-        uri = WebConsoleUtils.mergeQuery(uri,
-            Components.mapOf("p1", "hello", "p3", "!"));
+        uri = WebConsoleUtils.mergeQuery(uri, Map.of("p1", "hello", "p3", "!"));
         Map<String, List<String>> map = WebConsoleUtils.queryAsMap(uri);
         assertEquals("test/it", uri.getPath());
         assertEquals(3, map.size());
@@ -56,8 +54,7 @@ public class QueryUtilTests {
     @Test
     public void testMergeFrag() throws URISyntaxException {
         URI uri = new URI("test/it?p2=world&p2=all#frag");
-        uri = WebConsoleUtils.mergeQuery(uri,
-            Components.mapOf("p1", "hello", "p3", "!"));
+        uri = WebConsoleUtils.mergeQuery(uri, Map.of("p1", "hello", "p3", "!"));
         Map<String, List<String>> map = WebConsoleUtils.queryAsMap(uri);
         assertEquals("test/it", uri.getPath());
         assertEquals("frag", uri.getFragment());

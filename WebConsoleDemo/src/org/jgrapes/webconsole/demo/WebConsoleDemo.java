@@ -34,12 +34,12 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
-import org.jgrapes.core.ComponentCollector;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.NamedChannel;
 import org.jgrapes.core.events.Stop;
@@ -53,6 +53,7 @@ import org.jgrapes.io.NioDispatcher;
 import org.jgrapes.io.util.PermitsPool;
 import org.jgrapes.net.SslCodec;
 import org.jgrapes.net.TcpServer;
+import org.jgrapes.util.ComponentCollector;
 import org.jgrapes.util.PreferencesStore;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
@@ -159,7 +160,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 switch (type) {
                 case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
                     return Arrays.asList(
-                        Components.mapOf("configuration", "CoreWithJQUiPlugin",
+                        Map.of("configuration", "CoreWithJQUiPlugin",
                             "requireTouchPunch", true));
                 default:
                     return Arrays.asList(Collections.emptyMap());
@@ -190,7 +191,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 switch (type) {
                 case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
                     return Arrays.asList(
-                        Components.mapOf("configuration", "CoreWithJQUiPlugin",
+                        Map.of("configuration", "CoreWithJQUiPlugin",
                             "requireTouchPunch", true));
                 default:
                     return Arrays.asList(Collections.emptyMap());
@@ -221,7 +222,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 switch (type) {
                 case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
                     return Arrays.asList(
-                        Components.mapOf("requireTouchPunch", true,
+                        Map.of("requireTouchPunch", true,
                             "configuration", "CoreWithJQUiPlugin"));
                 default:
                     return Arrays.asList(Collections.emptyMap());
