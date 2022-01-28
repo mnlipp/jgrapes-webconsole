@@ -47,7 +47,7 @@ public class JQueryUiProviderFactory implements PageResourceProviderFactory {
      */
     @Override
     public Optional<ComponentType> create(
-            Channel componentChannel, Map<Object, Object> properties) {
+            Channel componentChannel, Map<?, ?> properties) {
         return Optional.of(new JQueryUi(componentChannel));
     }
 

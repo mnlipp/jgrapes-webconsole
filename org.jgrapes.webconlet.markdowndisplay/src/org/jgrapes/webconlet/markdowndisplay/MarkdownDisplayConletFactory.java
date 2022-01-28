@@ -47,7 +47,7 @@ public class MarkdownDisplayConletFactory implements ConletComponentFactory {
      */
     @Override
     public Optional<ComponentType> create(
-            Channel componentChannel, Map<Object, Object> properties) {
+            Channel componentChannel, Map<?, ?> properties) {
         return Optional.of(new MarkdownDisplayConlet(componentChannel));
     }
 

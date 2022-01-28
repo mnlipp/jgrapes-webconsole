@@ -23,6 +23,7 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
@@ -79,11 +80,11 @@ public class GridstackProvider extends PageResourceProvider {
      * {@link Manager#fire(Event, Channel...)} sends the event to
      * @param properties the properties used to configure the component
      */
-    public GridstackProvider(Channel componentChannel,
-            Map<Object, Object> properties) {
+    public GridstackProvider(Channel componentChannel, Map<?, ?> properties) {
         super(componentChannel);
         requireTouchPunch
-            = (boolean) properties.getOrDefault("requireTouchPunch", false);
+            = Optional.ofNullable((boolean) properties.get("requireTouchPunch"))
+                .orElse(false);
         if (properties.containsKey("configuration")) {
             String config = (String) properties.get("configuration");
             try {

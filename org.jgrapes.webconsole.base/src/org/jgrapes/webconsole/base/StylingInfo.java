@@ -28,7 +28,7 @@ import org.jgrapes.core.Components;
 public class StylingInfo {
 
     private final ComponentType component;
-    private final Map<Object, Object> properties;
+    private final Map<?, ?> properties;
     private String styling;
 
     /**
@@ -37,8 +37,7 @@ public class StylingInfo {
      * @param component the component
      * @param properties the properties
      */
-    public StylingInfo(ComponentType component,
-            Map<Object, Object> properties) {
+    public StylingInfo(ComponentType component, Map<?, ?> properties) {
         super();
         this.component = component;
         this.properties = properties;

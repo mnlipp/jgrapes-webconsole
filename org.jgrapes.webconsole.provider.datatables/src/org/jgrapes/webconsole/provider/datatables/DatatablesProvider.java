@@ -51,8 +51,7 @@ public class DatatablesProvider extends PageResourceProvider {
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
-    public DatatablesProvider(Channel componentChannel,
-            Map<Object, Object> properties) {
+    public DatatablesProvider(Channel componentChannel, Map<?, ?> properties) {
         super(componentChannel);
         stylingInfo = new StylingInfo(this, properties);
     }

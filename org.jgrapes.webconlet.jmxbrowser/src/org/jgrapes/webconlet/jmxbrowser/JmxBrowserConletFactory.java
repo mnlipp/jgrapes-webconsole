@@ -47,7 +47,7 @@ public class JmxBrowserConletFactory implements ConletComponentFactory {
      */
     @Override
     public Optional<ComponentType> create(Channel componentChannel,
-            Map<Object, Object> properties) {
+            Map<?, ?> properties) {
         return Optional.of(new JmxBrowserConlet(componentChannel));
     }
 

@@ -48,7 +48,7 @@ public class JgWcComponentsProviderFactory
      */
     @Override
     public Optional<ComponentType> create(
-            Channel componentChannel, Map<Object, Object> properties) {
+            Channel componentChannel, Map<?, ?> properties) {
         return Optional.of(new JgWcComponentsProvider(componentChannel));
     }
 
