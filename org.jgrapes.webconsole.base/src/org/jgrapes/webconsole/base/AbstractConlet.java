@@ -448,14 +448,20 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param toGet the locales to get bundles for
      * @return the map with locales and bundles
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     protected Map<Locale, ResourceBundle> l10nBundles(Set<Locale> toGet) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<Locale, ResourceBundle> result = new HashMap<>();
         for (Locale locale : toGet) {
-            @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-            ResourceBundle bundle = l10nBundles
-                .computeIfAbsent(getClass(), cls -> new HashMap<>())
-                .computeIfAbsent(locale, l -> resourceBundle(locale));
+            ResourceBundle bundle;
+            synchronized (l10nBundles) {
+                // Due to the nested computeIfAbsent, it is not sufficient
+                // that l10nBundels is thread safe.
+                bundle = l10nBundles
+                    .computeIfAbsent(getClass(),
+                        cls -> new ConcurrentHashMap<>())
+                    .computeIfAbsent(locale, l -> resourceBundle(locale));
+            }
             result.put(locale, bundle);
         }
         return Collections.unmodifiableMap(result);
