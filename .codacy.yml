@@ -4,3 +4,4 @@ exclude_paths:
   - '*/test/**'
   - '*/test-resources/**'
   - 'org.jgrapes.webconsole.jqueryui/resources/org/jgrapes/webconsole/jqueryui/lib/**'  
+  - 'org.jgrapes.webconsole.provider.datatables/resources/org/jgrapes/webconsole/provider/datatables/datatables-20180804/**'
