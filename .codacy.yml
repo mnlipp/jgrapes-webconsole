@@ -3,4 +3,4 @@ exclude_paths:
   - 'buildSrc/**'
   - '*/test/**'
   - '*/test-resources/**'
-  
+  - 'org.jgrapes.webconsole.jqueryui/resources/org/jgrapes/webconsole/jqueryui/lib/**'  
