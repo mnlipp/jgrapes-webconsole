@@ -117,11 +117,6 @@
     flex-grow: 1;
 }
 
-:not(.form--no-markup-styling) form 
-    label.form__label--top-aligned {
-    display: block;
-}
-
 /* div cannot be used in label context. */
 :not(.form--no-markup-styling) form 
     label.form__label--top-aligned > :nth-child(2) {
