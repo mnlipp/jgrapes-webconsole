@@ -15,11 +15,27 @@ eclipse {
             project.buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
             
             if (project.name.startsWith('org.jgrapes.')) {
+                project.natures += 'net.sf.eclipsecs.core.CheckstyleNature'
                 project.buildCommand 'org.eclipse.jdt.core.javabuilder'
                 project.natures += 'net.sf.eclipsecs.core.CheckstyleNature'
                 project.buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
                 project.natures += 'ch.acanda.eclipse.pmd.builder.PMDNature'
                 project.buildCommand 'ch.acanda.eclipse.pmd.builder.PMDBuilder'
+            }
+            
+            // Java is added to root project for unknwon reasons
+            if (project.name == rootProject.name) {
+                whenMerged {
+                    project ->
+                        project.natures -= 'org.eclipse.jdt.core.javanature'
+                        def bcs = []
+                        for (def bc in project.getBuildCommands()) {
+                            if (bc.name != 'org.eclipse.jdt.core.javabuilder') {
+                                bcs += bc
+                            }
+                        }
+                        project.setBuildCommands bcs
+                }
             }
         }
     }
