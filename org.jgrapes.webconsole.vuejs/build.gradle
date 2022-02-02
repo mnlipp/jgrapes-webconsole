@@ -13,7 +13,7 @@ buildscript {
 
 import org.kravemir.gradle.sass.SassCompileTask;
 
-apply plugin: 'com.moowork.node'
+apply plugin: 'com.github.node-gradle.node'
 
 dependencies {
     api project(':org.jgrapes.webconsole.base')
@@ -29,8 +29,6 @@ dependencies {
 ext.releaseVersion = "0.9.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
-
-apply plugin: 'com.moowork.node'
 
 task prepareNpmLibs(type: Copy) {
     dependsOn 'npmInstall'

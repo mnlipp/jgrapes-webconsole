@@ -11,7 +11,7 @@ ext.releaseVersion = "0.31.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
-apply plugin: 'com.moowork.node'
+apply plugin: 'com.github.node-gradle.node'
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
 

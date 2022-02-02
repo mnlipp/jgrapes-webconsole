@@ -10,7 +10,7 @@ ext.releaseVersion = "0.31.5"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
-apply plugin: 'com.moowork.node'
+apply plugin: 'com.github.node-gradle.node'
 
 task buildLib(type: NodeTask, dependsOn: ':npmInstall') {
     inputs.dir project.file('src')
