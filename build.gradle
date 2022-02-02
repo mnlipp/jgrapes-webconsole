@@ -43,15 +43,6 @@ subprojects {
     apply from: "${project.rootDir}/gradle/subprojects.gradle"
 }
 
-configurations {
-    javadocTaglets
-}
-
-dependencies {
-    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:1.0.+"
-    // javadocTaglets "com.github.mnlipp:jdrupes-taglets:master-SNAPSHOT"
-}
-
 gitPublish {
 	repoUri = 'https://github.com/mnlipp/jgrapes.git'
 	branch = 'gh-pages'
@@ -88,5 +79,3 @@ configure(stage) {
 	description = 'To be executed by travis, build and update JavaDoc.'
 	group = 'build'
 }
-
-apply from: "${project.rootDir}/gradle/eclipse.gradle"
