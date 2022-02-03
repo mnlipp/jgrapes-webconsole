@@ -62,7 +62,7 @@ dependencies {
 }
 
 task java11doc(type: JavaExec) {
-    enabled = JavaVersion.current().isJava11() && !isJitPackBuild
+    enabled = !isJitPackBuild
     
     dependsOn classes
     dependsOn 'tsdoc'
