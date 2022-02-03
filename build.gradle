@@ -8,7 +8,6 @@ plugins {
 	id "com.github.node-gradle.node" version "3.1.1"
     id 'org.ajoberstar.grgit' version '4.1.0'
 	id 'org.ajoberstar.git-publish' version '3.0.0'
-    id 'io.miret.etienne.sass' version '1.1.1'
 }
 
 // Makes Eclipse-groovy handle *.gradle file in buildSrc properly
@@ -63,13 +62,13 @@ tasks.gitPublishCopy.dependsOn(":org.jgrapes.webconsole.base:buildDoc")
 tasks.gitPublishCopy.dependsOn(":aash-vue-components:buildDoc")
 
 task stage {
-    description = 'To be executed by GitHub, build and update JavaDoc.'
+    description = 'To be executed by CI, build and update JavaDoc.'
     group = 'build'
 
     // Build everything first
     subprojects.tasks.each { tc -> tc.findByName("build") }
 
-    if (!isCiBuild || JavaVersion.current().isJava11()) {
+    if (!isCiBuild || JavaVersion.current() == JavaVersion.VERSION_15) {
         // Publish JavaDoc
         dependsOn gitPublishPush
     }	
