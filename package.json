@@ -24,5 +24,7 @@
             "quotes": "off"
         }
     },
-    "eslintIgnore": ["node_modules/**"]
+    "eslintIgnore": [
+        "node_modules/**"
+    ]
 }
