@@ -52,7 +52,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
  * See {@link ResourceRequest} for details about the processing
  * of the {@link ConletResourceRequest}.
  * 
- * A portelt's JavaScript may (and probably must) make use of
+ * A conlet's JavaScript may (and probably must) make use of
  * the functions provided by the web console page. See the 
  * <a href="../jsdoc/classes/console.html">JavaScript
  * documentation of these functions</a> for details.
