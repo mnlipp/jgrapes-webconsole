@@ -23,6 +23,7 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -33,7 +34,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -52,22 +52,17 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.http.Session;
-import org.jgrapes.webconsole.base.AbstractConlet;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
-import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
-import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
-public class JmxBrowserConlet
-        extends FreeMarkerConlet<JmxBrowserConlet.JmxBrowserModel> {
+public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.Preview, RenderMode.View);
@@ -112,53 +107,22 @@ public class JmxBrowserConlet
     }
 
     @Override
-    protected String generateConletId() {
-        return type() + "-" + super.generateConletId();
-    }
-
-    @Override
-    protected Optional<JmxBrowserModel> stateFromSession(
-            Session session, String conletId) {
-        if (conletId.startsWith(type() + "-")) {
-            return Optional.of(new JmxBrowserModel(conletId));
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    protected ConletTrackingInfo doAddConlet(AddConletRequest event,
-            ConsoleSession channel)
+    protected Set<RenderMode> doRenderConlet(
+            RenderConletRequestBase<?> event, ConsoleSession channel,
+            String conletId, Serializable conletState)
             throws Exception {
-        JmxBrowserModel conletModel
-            = new JmxBrowserModel(generateConletId());
-        return new ConletTrackingInfo(conletModel.getConletId())
-            .addModes(renderConlet(event, channel, conletModel));
-    }
-
-    @Override
-    protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
-            ConsoleSession channel, String conletId,
-            JmxBrowserModel conletModel)
-            throws Exception {
-        return renderConlet(event, channel, conletModel);
-    }
-
-    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, JmxBrowserModel conletModel)
-            throws TemplateNotFoundException,
-            MalformedTemplateNameException, ParseException, IOException {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("JmxBrowser-preview.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                type(), conletModel.getConletId(), tpl,
-                fmModel(event, channel, conletModel))
+                type(), conletId, tpl,
+                fmModel(event, channel, conletId, conletState))
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             channel.respond(new NotifyConletView(type(),
-                conletModel.getConletId(), "mbeansTree", genMBeansTree(),
+                conletId, "mbeansTree", genMBeansTree(),
                 "preview", true));
             renderedAs.add(RenderMode.Preview);
         }
@@ -166,13 +130,13 @@ public class JmxBrowserConlet
             Template tpl
                 = freemarkerConfig().getTemplate("JmxBrowser-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                type(), conletModel.getConletId(), tpl,
-                fmModel(event, channel, conletModel))
+                type(), conletId, tpl,
+                fmModel(event, channel, conletId, conletState))
                     .setRenderAs(
                         RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             channel.respond(new NotifyConletView(type(),
-                conletModel.getConletId(), "mbeansTree", genMBeansTree(),
+                conletId, "mbeansTree", genMBeansTree(),
                 "view", true));
             renderedAs.add(RenderMode.View);
         }
@@ -180,13 +144,14 @@ public class JmxBrowserConlet
     }
 
     @Override
-    protected void doNotifyConletModel(NotifyConletModel event,
-            ConsoleSession channel, JmxBrowserModel conletModel)
+    protected void doUpdateConletState(NotifyConletModel event,
+            ConsoleSession channel, Serializable conletModel)
             throws Exception {
         event.stop();
-        if (event.method().equals("sendMBean")) {
+        if ("sendMBean".equals(event.method())) {
             JsonArray segments = (JsonArray) event.params().get(0);
             String domain = segments.asString(0);
+            @SuppressWarnings("PMD.ReplaceHashtableWithMap")
             Hashtable<String, String> props = new Hashtable<>();
             for (int i = 1; i < segments.size(); i++) {
                 String[] keyProp = segments.asString(i).split("=", 2);
@@ -194,13 +159,13 @@ public class JmxBrowserConlet
             }
             Set<ObjectName> mbeanNames
                 = mbeanServer.queryNames(new ObjectName(domain, props), null);
-            if (mbeanNames.size() == 0) {
+            if (mbeanNames.isEmpty()) {
                 return;
             }
             ObjectName mbeanName = mbeanNames.iterator().next();
             MBeanInfo info = mbeanServer.getMBeanInfo(mbeanName);
             channel.respond(new NotifyConletView(type(),
-                conletModel.getConletId(), "mbeanDetails",
+                event.conletId(), "mbeanDetails",
                 new Object[] { genAttributesInfo(mbeanName, info), null }));
         }
     }
@@ -366,20 +331,4 @@ public class JmxBrowserConlet
         return result;
     }
 
-    /**
-     * The conlet's model.
-     */
-    @SuppressWarnings("serial")
-    public class JmxBrowserModel extends AbstractConlet.ConletBaseModel {
-
-        /**
-         * Instantiates a new service list model.
-         *
-         * @param conletId the conlet id
-         */
-        public JmxBrowserModel(String conletId) {
-            super(conletId);
-        }
-
-    }
 }

@@ -25,6 +25,7 @@ import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonBeanEncoder;
@@ -37,12 +38,11 @@ import org.jgrapes.http.Session;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webconsole.base.AbstractConlet.ConletBaseModel;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
+import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.UserPrincipal;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
-import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConletDeleted;
@@ -50,7 +50,6 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.DisplayNotification;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
-import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 import org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldConlet;
@@ -115,43 +114,34 @@ public class HelloWorldConlet
         for (String json : event.data().values()) {
             HelloWorldModel model = JsonBeanDecoder.create(json)
                 .readObject(HelloWorldModel.class);
-            putInSession(channel.browserSession(), model);
+            putInSession(channel.browserSession(), model.getConletId(), model);
         }
     }
 
     @Override
-    public ConletTrackingInfo doAddConlet(AddConletRequest event,
-            ConsoleSession channel) throws Exception {
-        String conletId = generateConletId();
-        HelloWorldModel conletModel = putInSession(
-            channel.browserSession(), new HelloWorldModel(conletId));
-        String jsonState = JsonBeanEncoder.create()
-            .writeObject(conletModel).toJson();
+    protected Optional<HelloWorldModel> createStateRepresentation(
+            RenderConletRequestBase<?> event,
+            ConsoleSession channel, String conletId) throws IOException {
+        HelloWorldModel conletModel = new HelloWorldModel(conletId);
+        String jsonState
+            = JsonBeanEncoder.create().writeObject(conletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
             storagePath(channel.browserSession()) + conletModel.getConletId(),
             jsonState));
-        return new ConletTrackingInfo(conletId)
-            .addModes(renderConlet(event, channel, conletModel));
+        return Optional.of(conletModel);
     }
 
     @Override
-    protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
+    protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, String conletId,
-            HelloWorldModel conletModel) throws Exception {
-        return renderConlet(event, channel, conletModel);
-    }
-
-    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, HelloWorldModel conletModel)
-            throws TemplateNotFoundException, MalformedTemplateNameException,
-            ParseException, IOException {
+            HelloWorldModel conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                type(), conletModel.getConletId(), tpl,
-                fmModel(event, channel, conletModel))
+                type(), conletId, tpl,
+                fmModel(event, channel, conletId, conletState))
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
@@ -161,13 +151,13 @@ public class HelloWorldConlet
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                type(), conletModel.getConletId(), tpl,
-                fmModel(event, channel, conletModel))
+                type(), conletState.getConletId(), tpl,
+                fmModel(event, channel, conletId, conletState))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             channel.respond(new NotifyConletView(type(),
-                conletModel.getConletId(), "setWorldVisible",
-                conletModel.isWorldVisible()));
+                conletState.getConletId(), "setWorldVisible",
+                conletState.isWorldVisible()));
             renderedAs.add(RenderMode.View);
         }
         return renderedAs;
@@ -184,7 +174,7 @@ public class HelloWorldConlet
     }
 
     @Override
-    protected void doNotifyConletModel(NotifyConletModel event,
+    protected void doUpdateConletState(NotifyConletModel event,
             ConsoleSession channel, HelloWorldModel conletModel)
             throws Exception {
         event.stop();

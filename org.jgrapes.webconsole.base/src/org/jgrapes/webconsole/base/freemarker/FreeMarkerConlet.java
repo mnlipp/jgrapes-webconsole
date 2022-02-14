@@ -49,7 +49,6 @@ import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.webconsole.base.AbstractConlet;
-import org.jgrapes.webconsole.base.AbstractConlet.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.ResourceByGenerator;
@@ -130,8 +129,7 @@ public abstract class FreeMarkerConlet<S extends Serializable>
      * @param renderSupport the render support from the web console
      * @return the result
      */
-    protected Map<String, Object> fmTypeModel(
-            RenderSupport renderSupport) {
+    protected Map<String, Object> fmTypeModel(RenderSupport renderSupport) {
         if (fmModel == null) {
             fmModel = new HashMap<>();
             fmModel.put("conletResource", new TemplateMethodModelEx() {
@@ -221,23 +219,29 @@ public abstract class FreeMarkerConlet<S extends Serializable>
      * 
      * This model provides:
      *  * The `event` property (of type {@link RenderConletRequest}).
-     *  * The `conlet` property (of type {@link ConletBaseModel}).
+     *  * The `conletId` property (of type {@link String}).
+     *  * The `conlet` property with the conlet's state (if not `null`).
      *  * The function `_Id(String base)` that creates a unique
      *    id for an HTML element by appending the web console component 
      *    id to the provided base.
      *    
+     *
      * @param event the event
      * @param channel the channel
-     * @param conletModel the web console component model
+     * @param conletId the conlet id
+     * @param conletState the conlet's state information
      * @return the model
      */
     protected Map<String, Object> fmConletModel(
-            RenderConletRequestBase<?> event,
-            IOSubchannel channel, ConletBaseModel conletModel) {
+            RenderConletRequestBase<?> event, IOSubchannel channel,
+            String conletId, Serializable conletState) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
         model.put("event", event);
-        model.put("conlet", conletModel);
+        model.put("conletId", conletState);
+        if (conletState != null) {
+            model.put("conlet", conletState);
+        }
         model.put("_id", new TemplateMethodModelEx() {
             @Override
             public Object exec(@SuppressWarnings("rawtypes") List arguments)
@@ -248,7 +252,7 @@ public abstract class FreeMarkerConlet<S extends Serializable>
                     throw new TemplateModelException("Not a string.");
                 }
                 return ((SimpleScalar) args.get(0)).getAsString()
-                    + "-" + conletModel.getConletId();
+                    + "-" + conletId;
             }
         });
         return model;
@@ -257,19 +261,20 @@ public abstract class FreeMarkerConlet<S extends Serializable>
     /**
      * Build a freemarker model that combines {@link #fmTypeModel},
      * {@link #fmSessionModel} and {@link #fmConletModel}.
-     * 
+     *
      * @param event the event
      * @param channel the channel
-     * @param conletModel the web console component model
+     * @param conletId the conlet id
+     * @param conletState the conlet's state information
      * @return the model
      */
     protected Map<String, Object> fmModel(RenderConletRequestBase<?> event,
-            ConsoleSession channel, ConletBaseModel conletModel) {
+            ConsoleSession channel, String conletId, Serializable conletState) {
         final Map<String, Object> model
             = fmSessionModel(channel.browserSession());
         model.put("locale", channel.locale());
         model.putAll(fmTypeModel(event.renderSupport()));
-        model.putAll(fmConletModel(event, channel, conletModel));
+        model.putAll(fmConletModel(event, channel, conletId, conletState));
         return model;
     }
 

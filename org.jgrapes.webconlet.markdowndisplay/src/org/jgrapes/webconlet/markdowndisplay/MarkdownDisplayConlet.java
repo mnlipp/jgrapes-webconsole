@@ -28,6 +28,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import org.jdrupes.json.JsonBeanDecoder;
@@ -42,8 +43,8 @@ import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webconsole.base.AbstractConlet;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
+import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.UserPrincipal;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
@@ -54,7 +55,6 @@ import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
-import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.UpdateConletModel;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
@@ -65,9 +65,8 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  * a user himself. A typical use case, however, is to create
  * an instance during startup by a web console policy.
  */
-@SuppressWarnings("PMD.DataClass")
-public class MarkdownDisplayConlet
-        extends
+@SuppressWarnings({ "PMD.DataClass", "PMD.DataflowAnomalyAnalysis" })
+public class MarkdownDisplayConlet extends
         FreeMarkerConlet<MarkdownDisplayConlet.MarkdownDisplayModel> {
 
     /** Property for forcing a conlet id (used for singleton instances). */
@@ -159,14 +158,26 @@ public class MarkdownDisplayConlet
         for (String json : event.data().values()) {
             MarkdownDisplayModel model = JsonBeanDecoder.create(json)
                 .readObject(MarkdownDisplayModel.class);
-            putInSession(channel.browserSession(), model);
+            putInSession(channel.browserSession(), model.getConletId(), model);
         }
     }
 
     /**
-     * Adds the web console component to the console. The web console 
-     * component supports the 
-     * following options (see {@link AddConletRequest#properties()}:
+     * Generates a new component instance id or uses the one stored in the
+     * event's properties as `CONLET_ID` (see 
+     * {@link AddConletRequest#properties()})
+     */
+    @Override
+    protected String generateInstanceId(AddConletRequest event,
+            ConsoleSession session) {
+        return Optional.ofNullable((String) event.properties().get(CONLET_ID))
+            .orElse(super.generateInstanceId(event, session));
+    }
+
+    /**
+     * Creates a new model for the conlet. The following properties
+     * are copied from the {@link AddConletRequest} event
+     * (see {@link AddConletRequest#properties()}:
      * 
      * * `CONLET_ID` (String): The web console component id.
      * 
@@ -185,18 +196,12 @@ public class MarkdownDisplayConlet
      *   the web console component instance.
      */
     @Override
-    public ConletTrackingInfo doAddConlet(AddConletRequest event,
-            ConsoleSession consoleSession) throws Exception {
-        ResourceBundle resourceBundle = resourceBundle(consoleSession.locale());
+    protected Optional<MarkdownDisplayModel> createNewState(
+            AddConletRequest event, ConsoleSession session, String conletId)
+            throws Exception {
+        ResourceBundle resourceBundle = resourceBundle(session.locale());
 
-        // Create new model
-        String conletId = (String) event.properties().get(CONLET_ID);
-        if (conletId == null) {
-            conletId = generateConletId();
-        }
-        MarkdownDisplayModel model = putInSession(
-            consoleSession.browserSession(),
-            new MarkdownDisplayModel(conletId));
+        MarkdownDisplayModel model = new MarkdownDisplayModel(conletId);
         model.setTitle((String) event.properties().getOrDefault(TITLE,
             resourceBundle.getString("conletName")));
         model.setPreviewContent((String) event.properties().getOrDefault(
@@ -213,27 +218,19 @@ public class MarkdownDisplayConlet
         // Save model
         String jsonState = JsonBeanEncoder.create()
             .writeObject(model).toJson();
-        consoleSession.respond(new KeyValueStoreUpdate().update(
-            storagePath(consoleSession.browserSession()) + model.getConletId(),
+        session.respond(new KeyValueStoreUpdate().update(
+            storagePath(session.browserSession()) + model.getConletId(),
             jsonState));
 
-        // Send HTML
-        return new ConletTrackingInfo(conletId)
-            .addModes(renderConlet(event, consoleSession, model));
+        // Return model
+        return Optional.of(model);
     }
 
     @Override
-    protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
-            ConsoleSession consoleSession, String conletId,
-            MarkdownDisplayModel model) throws Exception {
-        return renderConlet(event, consoleSession, model);
-    }
-
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession consoleSession, MarkdownDisplayModel model)
-            throws TemplateNotFoundException, MalformedTemplateNameException,
-            ParseException, IOException {
+    protected Set<RenderMode> doRenderConlet(
+            RenderConletRequestBase<?> event, ConsoleSession consoleSession,
+            String conletId, MarkdownDisplayModel model)
+            throws Exception {
         Set<RenderMode> supported = renderModes(model);
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
@@ -241,7 +238,7 @@ public class MarkdownDisplayConlet
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
                 type(), model.getConletId(),
-                tpl, fmModel(event, consoleSession, model))
+                tpl, fmModel(event, consoleSession, conletId, model))
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(supported));
@@ -253,7 +250,7 @@ public class MarkdownDisplayConlet
                 .getTemplate("MarkdownDisplay-view.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
                 type(), model.getConletId(),
-                tpl, fmModel(event, consoleSession, model))
+                tpl, fmModel(event, consoleSession, conletId, model))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(supported));
             updateView(consoleSession, model);
@@ -264,7 +261,7 @@ public class MarkdownDisplayConlet
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
                 type(), model.getConletId(),
-                tpl, fmModel(event, consoleSession, model))
+                tpl, fmModel(event, consoleSession, conletId, model))
                     .setRenderAs(RenderMode.Edit.addModifiers(event.renderAs()))
                     .setSupportedModes(supported));
         }
@@ -305,7 +302,7 @@ public class MarkdownDisplayConlet
     }
 
     @Override
-    protected void doNotifyConletModel(NotifyConletModel event,
+    protected void doUpdateConletState(NotifyConletModel event,
             ConsoleSession consoleSession, MarkdownDisplayModel conletState)
             throws Exception {
         event.stop();
@@ -367,8 +364,7 @@ public class MarkdownDisplayConlet
      * The web console component's model.
      */
     @SuppressWarnings("serial")
-    public static class MarkdownDisplayModel
-            extends AbstractConlet.ConletBaseModel {
+    public static class MarkdownDisplayModel extends ConletBaseModel {
 
         private String title = "";
         private String previewContent = "";

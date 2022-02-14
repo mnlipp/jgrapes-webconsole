@@ -23,28 +23,24 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.http.Session;
-import org.jgrapes.webconsole.base.AbstractConlet.ConletBaseModel;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
-import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
 /**
  * 
  */
-public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
+public class TableDemoConlet extends FreeMarkerConlet<Serializable> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.Preview, RenderMode.View);
@@ -74,50 +70,16 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
     }
 
     @Override
-    protected String generateConletId() {
-        return type() + "-" + super.generateConletId();
-    }
-
-    @Override
-    protected Optional<ConletBaseModel> stateFromSession(
-            Session session, String conletId) {
-        if (conletId.startsWith(type() + "-")) {
-            return super.stateFromSession(session, conletId)
-                .map(m -> Optional.of(m))
-                .orElse(Optional.of(putInSession(
-                    session, new ConletBaseModel(conletId))));
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public ConletTrackingInfo doAddConlet(AddConletRequest event,
-            ConsoleSession channel) throws Exception {
-        String conletId = generateConletId();
-        ConletBaseModel conletModel = putInSession(
-            channel.browserSession(), new ConletBaseModel(conletId));
-        return new ConletTrackingInfo(conletId)
-            .addModes(renderConlet(event, channel, conletModel));
-    }
-
-    @Override
-    protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
+    protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, String conletId,
-            ConletBaseModel conletModel) throws Exception {
-        return renderConlet(event, channel, conletModel);
-    }
-
-    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, ConletBaseModel conletModel)
-            throws TemplateNotFoundException, MalformedTemplateNameException,
-            ParseException, IOException {
+            Serializable conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-preview.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                type(), conletModel.getConletId(), tpl,
-                fmModel(event, channel, conletModel))
+                type(), conletId, tpl,
+                fmModel(event, channel, conletId, conletState))
                     .setRenderAs(event.renderAs())
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);
@@ -126,8 +88,8 @@ public class TableDemoConlet extends FreeMarkerConlet<ConletBaseModel> {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-view.ftl.html");
             channel.respond(new RenderConletFromTemplate(event,
-                type(), conletModel.getConletId(), tpl,
-                fmModel(event, channel, conletModel))
+                type(), conletId, tpl,
+                fmModel(event, channel, conletId, conletState))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.View);

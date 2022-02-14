@@ -22,8 +22,8 @@ import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
-import java.beans.ConstructorProperties;
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Optional;
@@ -33,18 +33,14 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.http.Session;
-import org.jgrapes.webconsole.base.AbstractConlet;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
-import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
-import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
@@ -104,48 +100,23 @@ public class SysInfoConlet
     }
 
     @Override
-    protected String generateConletId() {
-        return type() + "-" + super.generateConletId();
+    protected Optional<SysInfoModel> createStateRepresentation(
+            RenderConletRequestBase<?> event, ConsoleSession session,
+            String conletId) throws Exception {
+        return Optional.of(new SysInfoModel());
     }
 
     @Override
-    protected Optional<SysInfoModel> stateFromSession(
-            Session session, String conletId) {
-        if (conletId.startsWith(type() + "-")) {
-            return Optional.of(new SysInfoModel(conletId));
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public ConletTrackingInfo doAddConlet(AddConletRequest event,
-            ConsoleSession consoleSession) throws Exception {
-        String conletId = generateConletId();
-        SysInfoModel conletModel = putInSession(
-            consoleSession.browserSession(), new SysInfoModel(conletId));
-        return new ConletTrackingInfo(conletId)
-            .addModes(renderConlet(event, consoleSession, conletModel));
-    }
-
-    @Override
-    protected Set<RenderMode> doRenderConlet(RenderConletRequest event,
+    protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
             ConsoleSession consoleSession, String conletId,
-            SysInfoModel conletModel) throws Exception {
-        return renderConlet(event, consoleSession, conletModel);
-    }
-
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private Set<RenderMode> renderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession consoleSession, SysInfoModel conletModel)
-            throws TemplateNotFoundException, MalformedTemplateNameException,
-            ParseException, IOException {
+            SysInfoModel conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
-                type(), conletModel.getConletId(), tpl,
-                fmModel(event, consoleSession, conletModel))
+                type(), conletId, tpl,
+                fmModel(event, consoleSession, conletId, conletState))
                     .setRenderAs(
                         RenderMode.Preview.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
@@ -155,14 +126,14 @@ public class SysInfoConlet
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
             consoleSession.respond(new RenderConletFromTemplate(event,
-                type(), conletModel.getConletId(), tpl,
-                fmModel(event, consoleSession, conletModel))
+                type(), conletId, tpl,
+                fmModel(event, consoleSession, conletId, conletState))
                     .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
                     .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);
         }
         if (!renderedAs.isEmpty()) {
-            updateView(consoleSession, conletModel.getConletId());
+            updateView(consoleSession, conletId);
         }
         return renderedAs;
     }
@@ -195,7 +166,7 @@ public class SysInfoConlet
 
     @Override
     @SuppressWarnings("PMD.DoNotCallGarbageCollectionExplicitly")
-    protected void doNotifyConletModel(NotifyConletModel event,
+    protected void doUpdateConletState(NotifyConletModel event,
             ConsoleSession consoleSession, SysInfoModel conletState)
             throws Exception {
         event.stop();
@@ -209,18 +180,7 @@ public class SysInfoConlet
      * The conlet's model.
      */
     @SuppressWarnings("serial")
-    public static class SysInfoModel
-            extends AbstractConlet.ConletBaseModel {
-
-        /**
-         * Creates a new model with the given type and id.
-         * 
-         * @param conletId the web console component id
-         */
-        @ConstructorProperties({ "conletId" })
-        public SysInfoModel(String conletId) {
-            super(conletId);
-        }
+    public static class SysInfoModel implements Serializable {
 
         /**
          * Return the system properties.
