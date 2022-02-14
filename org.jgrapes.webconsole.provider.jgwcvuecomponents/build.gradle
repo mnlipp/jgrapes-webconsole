@@ -16,7 +16,7 @@ task prepareNpmLibs(type: Copy) {
     to eclipse as resource directory thus making the files available 
     as package scoped resources when running a process in eclipse.
     '''
-    dependsOn ':aash-vue-components:assemble'
+    dependsOn ':aash-vue-components:buildLib'
     into('build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components')
     from ("${rootProject.projectDir}/aash-vue-components/") {
         include 'lib/**/*'
