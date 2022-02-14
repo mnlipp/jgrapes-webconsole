@@ -109,6 +109,19 @@ export default abstract class Renderer {
     }
 
     /**
+     * Called from the {@link Console} when a conlet type is removed.
+     *
+     * The expected action of the renderer is to remove the 
+     * conlet type from e.g. a menu that allows adding conlets.
+     * However, front-ends can also force a reload of the application.
+     *
+     * @param conletType the conlet type
+     */
+    removeConletType(conletType: string) {
+        Log.warn("Not implemented!");
+    }
+
+    /**
      * Called from the {@link Console} when the console layout is received
      * from the server.
      *
