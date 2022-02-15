@@ -4,8 +4,6 @@ Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
 api_version = 0.0.0
 
--dsannotations: 
-
 Require-Capability: \
     org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)", \
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery)", \
@@ -23,9 +21,9 @@ Provide-Capability: osgi.serviceloader; \
     uses:="org.jgrapes.webconsole.jqueryui"
 
 Export-Package: \
-	org.jgrapes.webconsole.jqueryui,\
-	org.jgrapes.webconsole.jqueryui.events,\
-	org.jgrapes.webconsole.jqueryui.themes.base
+	org.jgrapes.webconsole.jqueryui;version="${api_version}",\
+	org.jgrapes.webconsole.jqueryui.events;version="${api_version}",\
+	org.jgrapes.webconsole.jqueryui.themes.base;version="${api_version}"
 
 -fixupmessages.local: \
     "Found source folder 'resources' that is not on bnd's source path 'src'", \

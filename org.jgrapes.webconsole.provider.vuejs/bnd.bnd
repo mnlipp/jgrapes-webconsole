@@ -1,9 +1,10 @@
 Bundle-Name: JGrapes Web Console Vue.js (non-module) Provider
 Bundle-Copyright: Michael N. Lipp (c) 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
-Export-Package: org.jgrapes.webconsole.provider.vuejs
 
 api_version = 2.5.17.${tstamp}
+
+Export-Package: org.jgrapes.webconsole.provider.vuejs;version="${api_version}"
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"

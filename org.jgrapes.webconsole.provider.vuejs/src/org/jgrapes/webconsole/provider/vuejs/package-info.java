@@ -20,5 +20,4 @@
  * Provides a component for adding the [vue.js](https://vuejs.org/) 
  * library to a web console.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconsole.provider.vuejs;

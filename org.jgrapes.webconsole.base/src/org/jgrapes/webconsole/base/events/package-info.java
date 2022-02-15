@@ -19,5 +19,4 @@
 /**
  * The events used by the web console related components.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconsole.base.events;

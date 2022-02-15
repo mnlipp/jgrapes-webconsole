@@ -4,13 +4,11 @@ Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
 api_version = 0.0.0
 
--dsannotations: 
-
 Export-Package: \
-	org.jgrapes.webconsole.base,\
-	org.jgrapes.webconsole.base.util,\
-	org.jgrapes.webconsole.base.events,\
-	org.jgrapes.webconsole.base.freemarker
+	org.jgrapes.webconsole.base;version="${api_version}",\
+	org.jgrapes.webconsole.base.util;version="${api_version}",\
+	org.jgrapes.webconsole.base.events;version="${api_version}",\
+	org.jgrapes.webconsole.base.freemarker;version="${api_version}"
 
 -fixupmessages.local: \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \

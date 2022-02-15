@@ -19,5 +19,4 @@
 /**
  * The events used by the jQuery UI web console.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconsole.jqueryui.events;

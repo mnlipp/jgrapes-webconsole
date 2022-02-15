@@ -20,5 +20,4 @@
  * Provides a web console weblet that implements the web console page using the
  * [Bootstrap 4](https://getbootstrap.com) framework.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconsole.bootstrap4;

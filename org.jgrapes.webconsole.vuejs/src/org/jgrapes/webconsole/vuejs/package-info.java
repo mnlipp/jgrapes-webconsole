@@ -20,5 +20,4 @@
  * Provides a web console weblet that implements the main page using the
  * [Vue.js](https://vuejs.org/) library.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconsole.vuejs;

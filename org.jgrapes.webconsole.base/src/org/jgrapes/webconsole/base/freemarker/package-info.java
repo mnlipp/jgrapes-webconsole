@@ -19,5 +19,4 @@
 /**
  * Classes for implementing a freemarker based web console component.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconsole.base.freemarker;

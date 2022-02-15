@@ -20,5 +20,4 @@
  * Provides a web console weblet that implements the web console page using the
  * [JQuery UI](http://jqueryui.com/) framework.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconsole.jqueryui;

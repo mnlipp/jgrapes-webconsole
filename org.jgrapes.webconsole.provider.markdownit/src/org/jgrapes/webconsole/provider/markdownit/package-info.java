@@ -21,5 +21,4 @@
  * [markdownit](https://github.com/markdown-it/markdown-it) library 
  * to a web console.
  */
-@org.osgi.annotation.versioning.Version("${api_version}")
 package org.jgrapes.webconsole.provider.markdownit;

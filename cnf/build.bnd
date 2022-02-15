@@ -4,6 +4,8 @@
         name = RunRepo; \
         local = ${workspace}/build/runRepo
 
+-dsannotations: 
+
 -diffignore: Git-Descriptor, Git-SHA
 
 -sources: true
