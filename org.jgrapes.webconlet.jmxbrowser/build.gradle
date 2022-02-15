@@ -20,6 +20,7 @@ task buildLib(type: NodeTask) {
     inputs.files project.fileTree(dir: 'src', include: '**/*.scss')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
+    outputs.cacheIf { true }
     outputs.dir project.file('build/generated/resources')
     script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
     args = ["-c"]

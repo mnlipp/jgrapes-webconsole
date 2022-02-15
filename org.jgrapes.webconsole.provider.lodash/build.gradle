@@ -9,7 +9,7 @@ version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 apply plugin: 'com.github.node-gradle.node'
 
 task prepareNpmLibs(type: Copy) {
-    mustRunAfter 'npmInstall'
+    dependsOn(':npmInstall')
     description '''
     Helper task that copies the the libraries from the npm_modules 
     directory into a package scoped subdirectory. The root is added 

@@ -49,6 +49,7 @@ task documentjs(type: NodeTask) {
     script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
     def input = "resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components.js"
     inputs.file(file(input))
+    outputs.dir project.file(jsDocumentJsDir)
     args = [
         "build",
         "-f", "html",

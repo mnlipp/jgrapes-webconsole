@@ -11,6 +11,7 @@ if (project.name.startsWith("org.jgrapes")
 
     apply plugin: 'java-library'
     apply plugin: 'biz.aQute.bnd.builder'
+    apply plugin: 'org.ajoberstar.grgit'
     apply from: "${project.rootDir}/gradle/layout.gradle"
 
     // Defaults, overridden in subproject's build.gradle

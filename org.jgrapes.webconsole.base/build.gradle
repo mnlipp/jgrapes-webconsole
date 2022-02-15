@@ -16,6 +16,7 @@ task buildLib(type: NodeTask, dependsOn: ':npmInstall') {
     inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
+    outputs.cacheIf { true }
     outputs.dir project.file('build/generated/resources')
     script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
     args = ["-c"]
@@ -70,8 +71,11 @@ task java11doc(type: JavaExec) {
     ext.destinationDir = file("${rootProject.buildDir}/javadoc")
 
     jvmArgs = ['--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED']
-    classpath files(rootProject.subprojects.collect {project ->
-        project.sourceSets.main.compileClasspath})    
+    classpath files(rootProject.subprojects
+        .findAll {project -> project.pluginManager.hasPlugin('java-library')
+            || project.pluginManager.hasPlugin('application') }
+        .collect {project ->
+            project.sourceSets.main.compileClasspath})    
     main = 'jdk.javadoc.internal.tool.Main'
     args = ['-doctitle', "JGrapes Web Console ${project.version}",
         '-overview', "${rootProject.rootDir}/overview.md",
