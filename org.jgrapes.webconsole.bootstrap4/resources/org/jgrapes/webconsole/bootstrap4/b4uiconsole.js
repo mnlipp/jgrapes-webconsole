@@ -154,6 +154,17 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         }
     }
 
+    removeConletType(conletType) {
+        // Remove from menu
+        let _this = this;
+        $("#consoleNavbarConletList").find(".dropdown-item").each(function(index, el) {
+            if (conletType == $(el).data("conletType")) {
+                $(el).remove();
+                return false;
+            }
+        });
+    }
+
     lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
         this._lastPreviewLayout = previewLayout;
         this._lastTabsLayout = tabsLayout;

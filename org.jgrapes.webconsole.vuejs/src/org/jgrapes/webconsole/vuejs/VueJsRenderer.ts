@@ -168,6 +168,13 @@ export default class Renderer extends JGConsole.Renderer {
         };
         _this._conletTypes.push([label, conletType, renderModes]);
     }
+
+    removeConletType(conletType: string) {
+        // Remove from menu
+        let _this = this;
+        _this._conletTypes.splice(0, _this._conletTypes.length,
+            ..._this._conletTypes.filter(el => el[1] != conletType));             
+    }
     
     consoleConfigured() {
         this._layoutChanged();

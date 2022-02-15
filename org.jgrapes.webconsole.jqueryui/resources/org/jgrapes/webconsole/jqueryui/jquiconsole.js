@@ -162,6 +162,13 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
 
     }
 
+    removeConletType(conletType) {
+        // Remove from menu
+        let item = $("#addon-menu-list").find(
+            'li div[data-conlet-type="' + conletType + '"]');
+        item.parent().remove();
+    }
+
     lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {
         this._lastPreviewLayout = previewLayout;
         this._lastTabsLayout = tabsLayout;

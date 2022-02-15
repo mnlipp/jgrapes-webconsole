@@ -663,6 +663,21 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
+     * Returns a map of all conlet ids and the modes in which 
+     * views are currently rendered. 
+     *
+     * @param consoleSession the console session
+     * @return the map
+     */
+    protected Map<String, Set<RenderMode>>
+            conletViews(ConsoleSession consoleSession) {
+        return conletInfosByConsoleSession.getOrDefault(
+            consoleSession, Collections.emptyMap()).entrySet().stream()
+            .collect(Collectors.toMap(e -> e.getKey(),
+                e -> e.getValue().renderedAs));
+    }
+
+    /**
      * Track the given web console component from the given session. 
      * This is invoked by 
      * {@link #onAddConletRequest(AddConletRequest, ConsoleSession)} and
@@ -733,21 +748,19 @@ public abstract class AbstractConlet<S extends Serializable>
      * @return the web console component state
      */
     protected Optional<S> stateFromSession(Session session, String conletId) {
-        return Optional.of(typeContext(session).get(conletId));
+        return Optional.ofNullable(typeContext(session).get(conletId));
     }
 
     /**
-     * Returns all web console component states of this web console 
+     * Returns all conlet ids and conlet states of this web console 
      * component's type from the session.
      *
      * @param channel the channel, used to access the session
      * @return the states
      */
-    protected Collection<S> statesFromSession(IOSubchannel channel) {
-        return channel.associated(Session.class)
-            .map(session -> typeContext(session).values())
-            .orElseThrow(
-                () -> new IllegalStateException("Session is missing."));
+    protected Collection<Map.Entry<String, S>>
+            statesFromSession(ConsoleSession session) {
+        return typeContext(session.browserSession()).entrySet();
     }
 
     /**
