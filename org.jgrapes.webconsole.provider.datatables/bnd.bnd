@@ -2,9 +2,7 @@ Bundle-Name: JGrapes Web Console datatables.js Provider
 Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
-api_version = 0.10.1.${tstamp}
-
-Export-Package: org.jgrapes.webconsole.provider.datatables;version="${api_version}"
+Export-Package: org.jgrapes.webconsole.provider.datatables
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"

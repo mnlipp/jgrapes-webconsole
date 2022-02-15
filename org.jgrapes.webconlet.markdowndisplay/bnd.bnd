@@ -2,9 +2,7 @@ Bundle-Name: JGrapes Markdown Display Conlet
 Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
-api_version = 0.10.1.${tstamp}
-
-Export-Package: org.jgrapes.webconlet.markdowndisplay;version="${api_version}"
+Export-Package: org.jgrapes.webconlet.markdowndisplay
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\

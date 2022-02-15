@@ -1,9 +1,8 @@
 Bundle-Name: JGrapes JMXBrowser Conlet
 Bundle-Copyright: Michael N. Lipp (c) 2021
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
-Export-Package: org.jgrapes.webconlet.jmxbrowser
 
-api_version = 0.0.0.${tstamp}
+Export-Package: org.jgrapes.webconlet.jmxbrowser
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\

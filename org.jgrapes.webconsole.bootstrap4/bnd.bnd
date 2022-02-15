@@ -2,9 +2,7 @@ Bundle-Name: JGrapes Bootstrap 4 Web Console
 Bundle-Copyright: Michael N. Lipp (c) 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
-api_version = 0.0.0
-
-Export-Package: org.jgrapes.webconsole.bootstrap4;version="${api_version}"
+Export-Package: org.jgrapes.webconsole.bootstrap4
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\

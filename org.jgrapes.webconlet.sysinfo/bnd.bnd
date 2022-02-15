@@ -2,9 +2,7 @@ Bundle-Name: JGrapes System Info Conlet
 Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 
-api_version = 0.11.0.${tstamp}
-
-Export-Package: org.jgrapes.webconlet.sysinfo;version="${api_version}"
+Export-Package: org.jgrapes.webconlet.sysinfo
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
