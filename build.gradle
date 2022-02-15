@@ -16,20 +16,6 @@ buildscript {
 apply plugin: 'org.ajoberstar.git-publish'
 apply plugin: 'com.github.node-gradle.node'
 
-/*
-plugins {
-    id "biz.aQute.bnd.builder" version "6.1.0"
-	id "maven-publish"
-	id "signing"
-	id "com.github.node-gradle.node" version "3.1.1"
-    id 'org.ajoberstar.grgit' version '4.1.0'
-	id 'org.ajoberstar.git-publish' version '3.0.0'
-}
-*/
-
-// Makes Eclipse-groovy handle *.gradle file in buildSrc properly
-// apply plugin:'groovy'
-
 ext {
 	isCiBuild = System.getenv().get("CI") == 'true'
     isJitPackBuild = System.getenv().get("JITPACK") == 'true'
