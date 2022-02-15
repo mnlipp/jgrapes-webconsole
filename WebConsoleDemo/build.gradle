@@ -32,11 +32,3 @@ dependencies {
 ext.releaseVersion = "0.0.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
-
-eclipse {
-    project {
-        natures += 'net.sf.eclipsecs.core.CheckstyleNature'
-        buildCommand 'org.eclipse.jdt.core.javabuilder'
-        buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
-    }
-}
