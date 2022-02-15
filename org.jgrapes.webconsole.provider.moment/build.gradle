@@ -36,5 +36,5 @@ processResources {
 }
 
 eclipse {
-    autoBuildTasks prepareNpmLibs
+    synchronizationTasks prepareNpmLibs
 }

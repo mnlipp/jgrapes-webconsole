@@ -40,7 +40,7 @@ processResources {
 }
 
 eclipse {
-    autoBuildTasks prepareNpmLibs
+    synchronizationTasks prepareNpmLibs
 }
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"
