@@ -24,24 +24,16 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
 
+/**
+ * A factory for creating StyleTestConlet objects.
+ */
 public class StyleTestConletFactory implements ConletComponentFactory {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.core.ComponentFactory#componentType()
-     */
     @Override
     public Class<? extends ComponentType> componentType() {
         return StyleTestConlet.class;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel,
-     * java.util.Map)
-     */
     @Override
     public Optional<ComponentType> create(
             Channel componentChannel, Map<?, ?> properties) {

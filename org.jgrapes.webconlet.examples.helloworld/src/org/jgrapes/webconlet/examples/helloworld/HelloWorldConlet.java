@@ -80,6 +80,16 @@ public class HelloWorldConlet
             + "/conlets/" + HelloWorldConlet.class.getName() + "/";
     }
 
+    /**
+     * Trigger loading of resources when the console is ready.
+     *
+     * @param event the event
+     * @param consoleSession the console session
+     * @throws TemplateNotFoundException the template not found exception
+     * @throws MalformedTemplateNameException the malformed template name exception
+     * @throws ParseException the parse exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     @Handler
     public void onConsoleReady(ConsoleReady event,
             ConsoleSession consoleSession)
@@ -102,6 +112,13 @@ public class HelloWorldConlet
         fire(query, consoleSession);
     }
 
+    /**
+     * Invoked when the key/value store provides data.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws JsonDecodeException the json decode exception
+     */
     @Handler
     public void onKeyValueStoreData(
             KeyValueStoreData event, ConsoleSession channel)
@@ -193,6 +210,9 @@ public class HelloWorldConlet
                 .addOption("autoClose", 2000));
     }
 
+    /**
+     * Model with world's state.
+     */
     @SuppressWarnings("serial")
     public static class HelloWorldModel extends ConletBaseModel {
 

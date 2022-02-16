@@ -24,6 +24,9 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
 
+/**
+ * A factory for creating HelloWorldConlet objects.
+ */
 public class HelloWorldConletFactory implements ConletComponentFactory {
 
     @Override
