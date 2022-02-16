@@ -185,7 +185,8 @@ public final class ConsoleSession extends DefaultIOSubchannel {
         Set<ConsoleSession> result = new HashSet<>();
         for (WeakReference<ConsoleSession> psr : consoleSessions.values()) {
             ConsoleSession psess = psr.get();
-            if (psess.console.equals(console)) {
+            if (psess != null && psess.console != null
+                && psess.console.equals(console)) {
                 result.add(psess);
             }
         }
