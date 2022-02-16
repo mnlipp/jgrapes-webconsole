@@ -28,7 +28,7 @@ var orgJGrapesConletsWorldDemoConlet = {};
     })
 
     JGConsole.registerConletFunction(
-            "org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldConlet",
+            "org.jgrapes.webconlet.examples.helloworld.HelloWorldConlet",
             "setWorldVisible", function(conletId, state) {
                 let conlet = JGConsole.instance.findConletView(conletId);
                 let image = $(conlet).find(".helloWorldIcon");

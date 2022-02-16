@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.webconsole.demo.conlet.helloworld;
+package org.jgrapes.webconlet.examples.helloworld;
 
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
@@ -52,10 +52,9 @@ import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
-import org.jgrapes.webconsole.demo.conlet.helloworld.HelloWorldConlet;
 
 /**
- * 
+ * Example of a simple conlet.
  */
 public class HelloWorldConlet
         extends FreeMarkerConlet<HelloWorldConlet.HelloWorldModel> {

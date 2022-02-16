@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.webconsole.demo.conlet.helloworld;
+package org.jgrapes.webconlet.examples.helloworld;
 
 import java.util.Map;
 import java.util.Optional;
@@ -26,22 +26,11 @@ import org.jgrapes.webconsole.base.ConletComponentFactory;
 
 public class HelloWorldConletFactory implements ConletComponentFactory {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.core.ComponentFactory#componentType()
-     */
     @Override
     public Class<? extends ComponentType> componentType() {
         return HelloWorldConlet.class;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jgrapes.core.ComponentFactory#create(org.jgrapes.core.Channel,
-     * java.util.Map)
-     */
     @Override
     public Optional<ComponentType> create(
             Channel componentChannel, Map<?, ?> properties) {

@@ -1,8 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'biz.aQute.bnd.builder'
 
 dependencies {
-
-    runtimeOnly 'org.apache.felix:org.apache.felix.framework:6.0.5'
+    runtimeOnly 'org.apache.felix:org.apache.felix.framework:7.0.3'
     runtimeOnly ('org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.4') {
         transitive = true }
     runtimeOnly 'org.apache.felix:org.apache.felix.gogo.command:1.1.2'
@@ -60,6 +60,16 @@ task runGoGo(type: JavaExec) {
     classpath = configurations.bndCli
     main = 'aQute.bnd.main.bnd'
     args = ['gogo.bndrun']
+    standardInput = System.in
+}
+
+// For debugging
+task runRepoList(type: JavaExec) {
+    dependsOn createRunRepo
+    
+    classpath = configurations.bndCli
+    main = 'aQute.bnd.main.bnd'
+    args = ['repo', 'list']
     standardInput = System.in
 }
 
