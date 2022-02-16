@@ -9,6 +9,7 @@ JGrapes rules
     </description>
 
     <exclude-pattern>.*/test/.*</exclude-pattern>
+    <exclude-pattern>.*/node_modules/.*</exclude-pattern>
 
     <rule ref="category/java/bestpractices.xml">
         <exclude name="AccessorMethodGeneration"/>
