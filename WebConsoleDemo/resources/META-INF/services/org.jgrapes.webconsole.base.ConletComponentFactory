@@ -1,3 +1,2 @@
 org.jgrapes.webconsole.demo.conlet.removeself.RemoveSelfConletFactory
 org.jgrapes.webconsole.demo.conlet.tabledemo.TableDemoConletFactory
-org.jgrapes.webconsole.demo.conlet.styletest.StyleTestConletFactory
