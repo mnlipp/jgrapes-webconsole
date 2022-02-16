@@ -37,12 +37,13 @@ allprojects {
         // Experimental, not sure if this is the way tpo go...
         maven { url 'https://jitpack.io' }
     }
-    
-    apply from: "${project.rootDir}/gradle/eclipse.gradle"
 }
 
 subprojects {
     apply from: "${project.rootDir}/gradle/subprojects.gradle"
+    // Must be applied after configuring the subprojects,
+    // can therefore not be applied in allprojects.
+    apply from: "${project.rootDir}/gradle/eclipse.gradle"
 }
 
 gitPublish {
@@ -81,3 +82,5 @@ configure(stage) {
 	description = 'To be executed by travis, build and update JavaDoc.'
 	group = 'build'
 }
+
+apply from: "${project.rootDir}/gradle/eclipse.gradle"
