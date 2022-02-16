@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.webconsole.demo.conlet.formtest;
+package org.jgrapes.webconlet.examples.formtest;
 
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;

@@ -26,6 +26,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vuejs')
     runtimeOnly project(':org.jgrapes.webconlet.examples.helloworld')
+    runtimeOnly project(':org.jgrapes.webconlet.examples.formtest')
     runtimeOnly project(':org.jgrapes.webconlet.sysinfo')
     runtimeOnly project(':org.jgrapes.webconlet.jmxbrowser')
 }
