@@ -35,7 +35,6 @@ import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
-import org.jgrapes.webconsole.base.events.DeleteConlet;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.RemoveConletType;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
@@ -49,6 +48,7 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.Preview);
+    private boolean deleteConlets;
 
     /**
      * Creates a new component with its channel set to the given 
@@ -102,15 +102,21 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleSession channel, Serializable conletState)
-            throws Exception {
+            ConsoleSession channel, Serializable conletState) throws Exception {
         event.stop();
-        if (event.params().asBoolean(1)) {
-            for (var info : conletViews(channel).entrySet()) {
-                channel.respond(
-                    new DeleteConlet(info.getKey(), RenderMode.basicModes));
-            }
-        }
-        channel.respond(new RemoveConletType(event.params().asString(0)));
+        deleteConlets = event.params().asBoolean(1);
+        detach();
     }
+
+    @Override
+    protected void doRemoveConletType() {
+        if (deleteConlets) {
+            super.doRemoveConletType();
+            return;
+        }
+        for (ConsoleSession session : trackedSessions()) {
+            session.respond(new RemoveConletType(type()));
+        }
+    }
+
 }

@@ -51,6 +51,7 @@ import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
+import org.jgrapes.core.events.Detached;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.io.events.Closed;
@@ -60,8 +61,10 @@ import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.DeleteConlet;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
+import org.jgrapes.webconsole.base.events.RemoveConletType;
 import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
@@ -176,10 +179,12 @@ import org.jgrapes.webconsole.base.events.SetLocale;
  * Support for unsolicited updates
  * -------------------------------
  * 
- * In addition, the class provides support for tracking the 
- * relationship between {@link ConsoleSession}s and the ids 
- * of web console components displayed in the console session and support for
- * unsolicited updates.
+ * The class tracks the relationship between the known
+ * {@link ConsoleSession}s and the web console components displayed 
+ * in these console session. The information is available from
+ * {@link #conletInfosByConsoleSession}. It can e.g. be used to send
+ * events to the web console(s) in response to an event on the server
+ * side.
  *
  * @param <S> the type of the conlet's state information
  * 
@@ -1041,6 +1046,35 @@ public abstract class AbstractConlet<S extends Serializable>
      */
     protected void afterOnClosed(Closed event, ConsoleSession consoleSession) {
         // Default is to do nothing.
+    }
+
+    /**
+     * Calls {@link #doRemoveConletType()} if this component
+     * is detached.
+     *
+     * @param event the event
+     */
+    @Handler
+    public void onDetached(Detached event) {
+        if (!equals(event.node())) {
+            return;
+        }
+        doRemoveConletType();
+    }
+
+    /**
+     * Iterates over all sessions and fires {@link DeleteConlet}
+     * events for all known conlets and a {@link RemoveConletType} 
+     * event.
+     */
+    protected void doRemoveConletType() {
+        conletIdsByConsoleSession().forEach((session, conletIds) -> {
+            conletIds.forEach(conletId -> {
+                session.respond(
+                    new DeleteConlet(conletId, RenderMode.basicModes));
+            });
+            session.respond(new RemoveConletType(type()));
+        });
     }
 
     /**
