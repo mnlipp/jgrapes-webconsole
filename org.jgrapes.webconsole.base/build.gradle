@@ -8,7 +8,7 @@ dependencies {
     api 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 }
 
-ext.releaseVersion = "0.33.0"
+ext.releaseVersion = "0.33.1"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
@@ -53,7 +53,7 @@ configurations {
 }
  
 dependencies {
-    markdownDoclet "org.jdrupes.mdoclet:doclet:2.0.0"
+    markdownDoclet "org.jdrupes.mdoclet:doclet:2.1.0"
 }
 
 configurations {
@@ -61,7 +61,7 @@ configurations {
 }
  
 dependencies {
-    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:2.0.0"
+    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:2.0.1"
 }
 
 task java11doc(type: JavaExec) {
@@ -70,40 +70,45 @@ task java11doc(type: JavaExec) {
     dependsOn classes
     dependsOn 'tsdoc'
     inputs.file "${rootProject.rootDir}/overview.md"
-    ext.destinationDir = file("${rootProject.buildDir}/javadoc")
 
-    jvmArgs = ['--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED']
+    jvmArgs = ['--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED',
+        '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED']
     classpath files(rootProject.subprojects
         .findAll {project -> project.pluginManager.hasPlugin('java-library')
             || project.pluginManager.hasPlugin('application') }
-        .collect {project ->
-            project.sourceSets.main.compileClasspath})    
+        .collect {project -> project.sourceSets.main.compileClasspath})
+    var sourceDirs = rootProject.subprojects
+        .findAll({project -> project.name.startsWith("org.jgrapes")})
+        .collect{project -> project.sourceSets.main.allJava.getSrcDirs() }
+        .flatten().findAll(dir -> dir.exists())
+    sourceDirs.each { inputs.dir(it) }
+            
+    ext.destinationDir = file("${rootProject.buildDir}/javadoc")
+    outputs.dir(destinationDir)
+    
     main = 'jdk.javadoc.internal.tool.Main'
     args = ['-doctitle', "JGrapes Web Console ${project.version}",
-        '-overview', "${rootProject.rootDir}/overview.md",
         '-use',
         '-linksource',
         '-link', 'https://docs.oracle.com/en/java/javase/11/docs/api/',
         '-link', 'https://mnlipp.github.io/jgrapes/latest-release/javadoc/',
         '--add-exports', 'jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED',
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
         '-docletpath', configurations.markdownDoclet.files.asType(List).join(":"),
         '-doclet', 'org.jdrupes.mdoclet.MDoclet',
         '-tagletpath', configurations.javadocTaglets.files.asType(List).join(":"),
         '-taglet', 'org.jdrupes.taglets.plantUml.PlantUml',
         '-taglet', 'org.jdrupes.taglets.plantUml.StartUml',
         '-taglet', 'org.jdrupes.taglets.plantUml.EndUml',
+        '-overview', "${rootProject.rootDir}/overview.md",
         '-d', destinationDir,
+        '-sourcepath', sourceDirs.join(':'),
+        '-subpackages', 'org.jgrapes',
         '-bottom', file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text,
         '--allow-script-in-comments',
         '-Xdoclint:-html',
         '-quiet'
         ]
-
-    rootProject.subprojects.findAll({project ->
-        project.name.startsWith("org.jgrapes.") && project.name != "org.jgrapes.webcon"}) \
-        .collect {project -> project.sourceSets.main.allJava }.each {
-            args it
-        }
 
     ignoreExitValue true
     
