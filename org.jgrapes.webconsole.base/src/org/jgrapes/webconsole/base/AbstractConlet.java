@@ -760,7 +760,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * Returns all conlet ids and conlet states of this web console 
      * component's type from the session.
      *
-     * @param channel the channel, used to access the session
+     * @param session the console session
      * @return the states
      */
     protected Collection<Map.Entry<String, S>>
@@ -783,7 +783,11 @@ public abstract class AbstractConlet<S extends Serializable>
 
     /**
      * Checks if the request applies to this component. If so, stops the event,
-     * and calls {@link #doAddConlet}. 
+     * creates a new conlet id (see {@link #generateInstanceId}) and 
+     * new state information (see {@link #createNewState}). The state
+     * is saved in the session (see {@link #putInSession}),
+     * {@link #doRenderConlet} is called and its result is passed to
+     * {@link #trackConlet}.
      *
      * @param event the event
      * @param consoleSession the channel
@@ -986,7 +990,7 @@ public abstract class AbstractConlet<S extends Serializable>
 
     /**
      * If {@link #stateFromSession(Session, String)} returns a model,
-     * calls {@link #doNotifyConletModel} with the model. 
+     * calls {@link #doUpdateConletState} with the model. 
      *
      * @param event the event
      * @param channel the channel
