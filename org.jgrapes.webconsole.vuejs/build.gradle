@@ -65,8 +65,8 @@ sourceSets {
 }
 
 processResources {
-    dependsOn 'prepareNpmLibs'
-    dependsOn 'buildLib'
+    dependsOn prepareNpmLibs
+    dependsOn buildLib
 }
 
 eclipse {
