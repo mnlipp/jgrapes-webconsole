@@ -11,18 +11,20 @@ export default {
     {
       format: "esm",
       file: module,
-      sourcemap: true,
+      sourcemap: true
+      /* Not needed because we use inlineSources (see tsconfig.js):
       sourcemapPathTransform: (relativeSourcePath, _sourcemapPath) => {
         return "./" + path.basename(relativeSourcePath);
-      }
+      }*/
     },
     {
       format: "esm",
       file: module.replace(".js", ".min.js"),
       sourcemap: true,
+      /* Not needed because we use inlineSources (see tsconfig.js):
       sourcemapPathTransform: (relativeSourcePath, _sourcemapPath) => {
         return "./" + path.basename(relativeSourcePath);
-      },
+      }*/
       plugins: [terser()]
     }
   ],
