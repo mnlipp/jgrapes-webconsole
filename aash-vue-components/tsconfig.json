@@ -4,6 +4,7 @@
     "target": "es2015",
     "module": "es2015",
     "sourceMap": true,
+    "inlineSources": true,
     "declaration": true,
     "importHelpers": true,
     "strict": true,
