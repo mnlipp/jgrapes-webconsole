@@ -1,6 +1,5 @@
 import typescript from 'rollup-plugin-typescript2';
 import {terser} from 'rollup-plugin-terser';
-import path from 'path';
 import postcss from 'rollup-plugin-postcss'
 
 let module = "build/generated/resources/org/jgrapes/webconsole/vuejs/vuejsrenderer.js"
