@@ -15,7 +15,7 @@ version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 apply plugin: 'com.github.node-gradle.node'
 
 task buildLib(type: NodeTask, dependsOn: ':npmInstall') {
-    inputs.dir project.file('src')
+    inputs.files(project.fileTree(dir: 'src', include: '**/*.ts').flatten())
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.js')
     outputs.cacheIf { true }
