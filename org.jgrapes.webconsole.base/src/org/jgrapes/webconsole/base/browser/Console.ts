@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2016, 2021  Michael N. Lipp
+ * Copyright (C) 2016, 2022  Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -71,6 +71,7 @@ export default class Console {
                 // Should we wait with further actions?
                 _this._resourceManager.lockWhileLoading();
                 _this._renderer!.lastConsoleLayout(previewLayout, tabsLayout, xtraInfo);
+                _this._resolveComponents();
             });
         this._webSocket.addMessageHandler('notifyConletView',
             (conletClass, conletId, method, params) => {
@@ -105,6 +106,8 @@ export default class Console {
                         document.querySelector("body")?.append(container);
                     }
                     _this._execOnLoad(container, false);
+                } else if (renderAs.includes(RenderMode.Component)) {
+                    _this._updateComponent(conletType, conletId, supported, content);
                 }
             });
         this._webSocket.addMessageHandler('deleteConlet',
@@ -257,6 +260,86 @@ export default class Console {
 
     // Conlet management
 
+    private _addConletProperties(properties: Map<string,string>,
+            element: HTMLElement) {
+        for (let key in element.dataset) {
+            if (key.startsWith("conlet") && key.length >= 7
+                && key.substring(6, 7).toUpperCase() == key.substring(6, 7)
+                && key != "conletType" && key != "conletId" 
+                && key.substring(6, 7) != "_") {
+                let shortened = key.substring(6, 7).toLowerCase()
+                    + key.substring(7);
+                properties.set(shortened, element.dataset[key]!);
+            }
+        } 
+    }
+
+    public collectConletProperties(container: HTMLElement): Map<string,string> {
+        let result = new Map<string,string>();
+        this._addConletProperties(result, container);
+        for (let i = 0; i < container.children.length; i++) {
+            if (container.children[i] instanceof HTMLElement) {
+                this._addConletProperties(result, 
+                    <HTMLElement>container.children[i]);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Called when the console layout is received or when a conlet 
+     * has been added or updated. Attempts to resolve all unresolved 
+     * components, i.e. calls {@link Console#addConlet} for the conlets
+     * that provide the missing component. 
+     */
+    private _resolveComponents() {
+        let _this = this;
+        let components = _this._renderer!.findConletComponents();
+        components.forEach((ref: HTMLElement) => {
+            if (!ref.dataset["conlet_state"]) {
+                ref.dataset["conlet_state"] = "resolving"
+                let type = ref.dataset["conletType"];
+                if (type) {
+                    _this.addConlet(type, [RenderMode.Component],
+                        _this.collectConletProperties(ref));
+                }
+            }
+        });
+    }
+
+    private _updateComponent(conletType: string, conletId: string, 
+            modes: RenderMode[], content: string) {
+        let _this = this;
+        let components = this._renderer!.findConletComponents();
+        let container: HTMLElement | null = null;
+        let isNew = true;
+        for (let i = 0; i < components.length; i++) {
+            let el = components[i];
+            if (el.dataset["conletId"] == conletId) {
+                container = el;
+                isNew = false;
+                break;
+            }
+            if (el.dataset["conletType"] == conletType
+                && el.dataset["conlet_state"] == "resolving") {
+                container = el;
+            }
+        }
+        if (!container) {
+            this.send("conletDeleted", conletId, [RenderMode.Component]);
+            return;
+        }
+        if (isNew) {
+            container.dataset["conletId"] = conletId;
+            container.dataset["conlet_state"] = "resolved";
+        } else {
+            this._execOnUnload(container!, true);
+        }
+        this._renderer!.updateConletComponent(container, content);
+        this._execOnLoad(container!, !isNew);
+        this._resolveComponents();
+    };
+
     private _updatePreview(conletType: string, conletId: string, 
         modes: RenderMode[], content: string, sticky: boolean, foreground: boolean) {
         let container = this._renderer!.findConletPreview(conletId);
@@ -276,6 +359,7 @@ export default class Console {
         this._renderer!.updateConletPreview(isNew, container!, modes,
             content, foreground);
         this._execOnLoad(container!, !isNew);
+        this._resolveComponents();
     };
 
     private _updateView(conletType: string, conletId: string, modes: RenderMode[], 
@@ -292,6 +376,7 @@ export default class Console {
         this._renderer!.updateConletView(isNew, container!, modes,
             content, foreground);
         this._execOnLoad(container!, !isNew);
+        this._resolveComponents();
     };
 
     private _execOnLoad(container: HTMLElement, isUpdate: boolean) {
@@ -311,8 +396,16 @@ export default class Console {
         });
     }
 
-    private _execOnUnload(container: Element, isUpdate: boolean) {
-        container.querySelectorAll("[data-jgwc-on-unload]").forEach((element) => {
+    /**
+     * Execute unload functions depth first. 
+     */
+    private _execOnUnload(element: Element, isUpdate: boolean) {
+        for (let i = 0; i < element.children.length; i++) {
+            if (element.children[i] instanceof HTMLElement) {
+                this._execOnUnload(<HTMLElement>element.children[i], isUpdate);
+            }
+        }
+        if (element.hasAttribute("data-jgwc-on-unload")) {
             let onUnload = (<HTMLElement>element).dataset["jgwcOnUnload"];
             let segs = onUnload!.split(".");
             let obj: any = window;
@@ -325,7 +418,7 @@ export default class Console {
                 Log.warn('Specified jgwc-on-unload function "' 
                     + onUnload + '" not found.');
             }
-        });
+        }
     }
 
     /**
@@ -471,12 +564,18 @@ export default class Console {
      * @param renderModes the requested render mode(s),
      *      {@link RenderMode.Foreground} is automatically added
      */
-    addConlet(conletType: string, renderModes: RenderMode[]) {
+    addConlet(conletType: string, renderModes: RenderMode[],
+            properties: Map<string,string> | null = null) {
         if (!renderModes) {
             renderModes = [];
         }
         renderModes.push(RenderMode.Foreground);
-        this.send("addConlet", conletType, renderModes);
+        if (properties !== null) {
+            this.send("addConlet", conletType, renderModes, 
+                Object.fromEntries(properties));
+        } else {
+            this.send("addConlet", conletType, renderModes);
+        } 
     };
 
     /**
@@ -484,32 +583,45 @@ export default class Console {
      * of the associated renderer. If a view of the conlet is
      * displayed, it will be removed, too.
      *
-     * Finally a JSON RPC notification with method `conletDeleted`
-     * and the conlet id as parameter is sent to the server.
+     * After un-displaying the conlet, any "execOnUnload" functions
+     * in the conlet tree are invoked (depth first) and JSON RPC 
+     * notifications with method `conletDeleted` and the conlet id 
+     * as parameter are sent to the server for nested component 
+     * conlets and the preview itself (again depth first). The 
+     * notifications for the component conlets have as additional
+     * argument the collected properties.  
      *
      * @param the conlet id
      */
     removePreview(conletId: string) {
         let view = this._renderer!.findConletView(conletId);
+        let notifications = new Array<Object>();
         if (view) {
             this._renderer!.removeConletDisplays([view]);
             this._execOnUnload(view, false);
+            this._removeComponents(notifications, view);
         }
         let preview = this._renderer!.findConletPreview(conletId);
         if (preview) {
             this._renderer!.removeConletDisplays([preview]);
             this._execOnUnload(preview, false);
+            this._removeComponents(notifications, preview);
         }
-        this.send("conletDeleted", conletId, []);
+        notifications.push([conletId, []]);
+        this.send("conletsDeleted", notifications);
     }
 
     /**
      * Removes a conlet view by invoking the respective methods
      * of the associated renderer.
      *
-     * Finally a JSON RPC notification with method `conletDeleted`,
-     * and the conlet id and {@link RenderMode.View} as parameters 
-     * is sent to the server.
+     * After un-displaying the conlet, any "execOnUnload" functions
+     * in the conlet tree are invoked (depth first) and JSON RPC 
+     * notifications with method `conletDeleted` and the conlet id 
+     * as parameter are sent to the server for nested component 
+     * conlets and the view itself (again depth first). The 
+     * notifications for the component conlets have as additional
+     * argument the collected properties.  
      *
      * @param the conlet id
      */
@@ -518,13 +630,41 @@ export default class Console {
         if (!view) {
             return;
         }
+        let notifications = new Array<Object>();
         this._renderer!.removeConletDisplays([view]);
         this._execOnUnload(view, false);
+        this._removeComponents(notifications, view);
         if (this._renderer!.findConletPreview(conletId)) {
-            this.send("conletDeleted", conletId, [RenderMode.View]);
+            notifications.push([conletId, [RenderMode.View]]);
         } else {
-            this.send("conletDeleted", conletId, []);
+            notifications.push([conletId, []]);
         }
+        this.send("conletsDeleted", notifications);
+    }
+
+    private _removeComponents(notifications: Array<Object>,
+            element: HTMLElement) {
+        for (let i = 0; i < element.children.length; i++) {
+            if (element.children[i] instanceof HTMLElement) {
+                this._removeComponents(notifications, 
+                    <HTMLElement>element.children[i]);
+            }
+        }
+        if (element.classList.contains("conlet")
+            && element.classList.contains("conlet-component")) {
+                let conletId = element.dataset["conletId"];
+                if (!conletId) {
+                    return;
+                }
+                let preview = this._renderer!.findConletPreview(conletId);
+                let view = this._renderer!.findConletView(conletId);
+                let renderModes: RenderMode[] = [];
+                if (preview || view) {
+                    renderModes = [RenderMode.Component];
+                }
+                notifications.push([conletId, renderModes, 
+                    Object.fromEntries(this.collectConletProperties(element))]);
+            }
     }
 
     /**

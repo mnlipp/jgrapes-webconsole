@@ -38,7 +38,7 @@ public interface Conlet {
      */
     @SuppressWarnings("PMD.FieldNamingConventions")
     enum RenderMode {
-        Preview, View, Edit, Help,
+        Preview, View, Edit, Help, Component,
         /** Modifier, indicates that a {@link #Preview} may not be removed. */
         StickyPreview,
         /** Modifier, forces rendered view to be put in foreground. */

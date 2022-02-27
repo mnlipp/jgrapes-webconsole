@@ -92,7 +92,8 @@ public class WebConsole extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
+        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.NcssCount" })
     public void onJsonInput(JsonInput event, ConsoleSession channel)
             throws InterruptedException, IOException {
         // Send events to web console components on console's channel
@@ -106,7 +107,9 @@ public class WebConsole extends Component {
             fire(new AddConletRequest(view.renderSupport(),
                 params.asString(0), params.asArray(1).stream().map(
                     value -> RenderMode.valueOf((String) value))
-                    .collect(Collectors.toSet())),
+                    .collect(Collectors.toSet()),
+                params.size() < 3 ? Collections.emptyMap()
+                    : ((JsonObject) params.get(2)).backing()),
                 channel);
             break;
         }
@@ -116,6 +119,21 @@ public class WebConsole extends Component {
                     value -> RenderMode.valueOf((String) value))
                     .collect(Collectors.toSet())),
                 channel);
+            break;
+        }
+        case "conletsDeleted": {
+            for (var item : params.asArray(0).backing()) {
+                var conletInfo = (JsonArray) item;
+                fire(
+                    new ConletDeleted(view.renderSupport(),
+                        conletInfo.asString(0),
+                        conletInfo.asArray(1).stream().map(
+                            value -> RenderMode.valueOf((String) value))
+                            .collect(Collectors.toSet()),
+                        conletInfo.size() < 3 ? Collections.emptyMap()
+                            : ((JsonObject) conletInfo.get(2)).backing()),
+                    channel);
+            }
             break;
         }
         case "consoleLayout": {

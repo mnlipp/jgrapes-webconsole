@@ -18,6 +18,8 @@
 
 package org.jgrapes.webconsole.base.events;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import org.jgrapes.core.Event;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
@@ -26,11 +28,13 @@ import org.jgrapes.webconsole.base.RenderSupport;
 /**
  * A notification that a conlet view was deleted in the browser.
  */
+@SuppressWarnings("PMD.DataClass")
 public class ConletDeleted extends Event<Void> {
 
     private final RenderSupport renderSupport;
     private final String conletId;
     private final Set<RenderMode> renderModes;
+    private Map<? extends Object, ? extends Object> properties;
 
     /**
      * Creates a new event.
@@ -41,13 +45,36 @@ public class ConletDeleted extends Event<Void> {
      * directed at
      * @param renderModes the kind of views that have been deleted. If
      * empty, the last view has been deleted, i.e. the conlet is no longer
-     * used in the broweser.
+     * used in the browser.
      */
     public ConletDeleted(RenderSupport renderSupport,
             String conletId, Set<RenderMode> renderModes) {
         this.renderSupport = renderSupport;
         this.conletId = conletId;
         this.renderModes = renderModes;
+        this.properties = new HashMap<>();
+    }
+
+    /**
+     * Creates a new event.
+     *
+     * @param renderSupport the render support from the web console in case
+     * the response requires it
+     * @param conletId the web console component model that the notification is
+     * directed at
+     * @param renderModes the kind of views that have been deleted. If
+     * empty, the last view has been deleted, i.e. the conlet is no longer
+     * used in the browser.
+     * @param properties optional values for properties of the 
+     * web console component instance
+     */
+    public ConletDeleted(RenderSupport renderSupport,
+            String conletId, Set<RenderMode> renderModes,
+            Map<? extends Object, ? extends Object> properties) {
+        this.renderSupport = renderSupport;
+        this.conletId = conletId;
+        this.renderModes = renderModes;
+        this.properties = new HashMap<>(properties);
     }
 
     /**
@@ -77,5 +104,19 @@ public class ConletDeleted extends Event<Void> {
      */
     public Set<RenderMode> renderModes() {
         return renderModes;
+    }
+
+    /**
+     * Returns the properties. Every event returns a mutable map,
+     * thus allowing event handlers to modify the map even if
+     * none was passed to the constructor.
+     */
+    public Map<Object, Object> properties() {
+        if (properties == null) {
+            properties = new HashMap<>();
+        }
+        @SuppressWarnings("unchecked")
+        Map<Object, Object> props = (Map<Object, Object>) properties;
+        return props;
     }
 }

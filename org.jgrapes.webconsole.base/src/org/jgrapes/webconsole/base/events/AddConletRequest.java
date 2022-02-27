@@ -75,6 +75,7 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
             Set<RenderMode> renderModes) {
         super(renderSupport, renderModes);
         this.conletType = conletType;
+        this.properties = new HashMap<>();
     }
 
     /**
@@ -88,11 +89,8 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
      */
     public AddConletRequest(RenderSupport renderSupport, String conletType,
             Set<RenderMode> renderModes, Map<?, ?> properties) {
-        super(renderSupport, renderModes);
-        this.conletType = conletType;
-        @SuppressWarnings("unchecked")
-        Map<Object, Object> props = (Map<Object, Object>) properties;
-        this.properties = props;
+        this(renderSupport, conletType, renderModes);
+        this.properties = new HashMap<>(properties);
     }
 
     /**

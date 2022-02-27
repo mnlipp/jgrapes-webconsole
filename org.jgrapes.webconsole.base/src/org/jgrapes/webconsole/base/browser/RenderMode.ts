@@ -24,6 +24,7 @@ enum RenderMode {
     View =  "View",
     Edit = "Edit",
     Help = "Help",
+    Component = "Component",
     StickyPreview = "StickyPreview",
     Foreground = "Foreground"
 };

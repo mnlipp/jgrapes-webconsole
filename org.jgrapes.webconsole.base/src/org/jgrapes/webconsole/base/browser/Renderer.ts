@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2016, 2021  Michael N. Lipp
+ * Copyright (C) 2016, 2022  Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -20,6 +20,7 @@ import Log from "./Log";
 import ConsoleNotification from "./Notification";
 import NotificationOptions from "./NotificationOptions";
 import RenderMode from "./RenderMode";
+import { parseHtml } from "./Util";
 
 /**
  * A base class for implementing a web console renderer. The renderer
@@ -137,11 +138,36 @@ export default abstract class Renderer {
     }
 
     /**
-     * Called from the {@link Console} to update the preview of 
-     * the given conlet.
+     * Called from the {@link Console} to update a conlet that is used
+     * as component. The default implementation removes all children
+     * from the container and inserts the new content.
      *
-     * @param isNew `true` if it is a new conlet preview
-     * @param container a prepared container for the preview,
+     * @param container the container, i.e. a `HTMLElement` returned
+     * from {@link Renderer.findConletComponents}
+     * @param content the component content as received from the server,
+     * usually inserted into the container
+     */
+    updateConletComponent(container: HTMLElement, content: string) {
+        let _this = this;
+        let newContent = parseHtml(content)[0];
+        while (container.firstChild) {
+            container.removeChild(container.lastChild!);
+        }
+        container.append(newContent);
+    }
+
+    /**
+     * Called from the {@link Console} to update the preview of 
+     * the given conlet. If the preview is new (no preview with the
+     * given conlet id exists), the console provides DOM for the
+     * container as a convenience. Implementations of this method
+     * are free to extract the data from the `container` argument 
+     * and provide their own markup for a new container. 
+     *
+     * @param isNew `true` if it is a new (not yet existing) conlet preview
+     * @param container the container for the preview. Either the result
+     * from {@link Renderer.findConletPreview}, if an existing preview
+     * is updated, or a prepared container for the preview,
      * provided as:
      * ```
      * <section class='conlet conlet-preview' 
@@ -161,10 +187,16 @@ export default abstract class Renderer {
 
     /**
      * Called from the {@link Console} to pdate the view of the given conlet.
+     * If the view is new (no view with the
+     * given conlet id exists), the console provides DOM for the
+     * container as a convenience. Implementations of this method
+     * are free to extract the data from the `conatiner` argument and 
+     * provide their own markup for a new container
      *
      * @param isNew `true` if it is a new conlet view
-     * @param container a prepared container for the view,
-     * provided as:
+     * @param container a prepared container for the view. Either the result
+     * from {@link Renderer.findConletView}, if an existing preview
+     * is updated, or a new container provided as:
      * ```
      * <article class="conlet conlet-view conlet-content 
      *      data-conlet-type='...' data-conlet-id='...'"></article>"
@@ -248,10 +280,24 @@ export default abstract class Renderer {
      * @param conletId the conlet id
      * @return the elements found
      */
-    findConletContainers(conletId: string): NodeList {
+    findConlets(conletId: string): NodeListOf<HTMLElement> {
         return document.querySelectorAll(
-            ".conlet[data-conlet-id='" + conletId + "']");
+            ".conlet[data-conlet-id='" + conletId + "']"
+            ) as NodeListOf<HTMLElement>;
     };
+
+    /**
+     * Find the HTML elements that display a conlet component. 
+     * The default implementation returns all nodes that match 
+     * `body .conlet.conlet-component`.
+     * 
+     * @param conletId the conlet id
+     * @return the elements found
+     */
+    findConletComponents(): NodeListOf<HTMLElement> {
+        return document.querySelectorAll(
+            ":scope body .conlet.conlet-component") as NodeListOf<HTMLElement>;
+    }
 
     /**
      * Find the HTML element that displays the preview of the
@@ -302,6 +348,5 @@ export default abstract class Renderer {
             document.querySelectorAll(".conlet-view[data-conlet-id]"),
             node => node.getAttribute("data-conlet-id"));
     }
-
 }
 

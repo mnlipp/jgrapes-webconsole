@@ -131,10 +131,12 @@ public class AddConletType extends ConsoleCommand {
     }
 
     /**
-     * Add a render mode. The render mode determines how the web console 
-     * component is initially rendered (i.e. when added). Several modes may be
-     * added in order of preference. The default mode (i.e. none 
-     * specified) is {@link RenderMode#Preview}.
+     * Add a render mode to be offered to the user. Several modes may
+     * be added. The modes {@link RenderModer#Preview} and 
+     * {@link RenderModer#View} usually cause the conlet type to be added 
+     * to a menu. If a conlet type's only mode is
+     * {@link RenderModer#Component}, it shouldn't be offered to the user
+     * at all.  
      *
      * @param mode the mode
      * @return the event for easy chaining
@@ -154,7 +156,7 @@ public class AddConletType extends ConsoleCommand {
      */
     public List<RenderMode> renderModes() {
         if (renderModes == null) {
-            return Arrays.asList(RenderMode.Preview);
+            return Collections.emptyList();
         }
         return renderModes;
     }
