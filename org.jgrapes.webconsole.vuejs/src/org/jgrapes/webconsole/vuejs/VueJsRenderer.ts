@@ -161,8 +161,12 @@ export default class Renderer extends JGConsole.Renderer {
 
     addConletType(conletType: string, displayNames: Map<string,string>,
             renderModes: RenderMode[]) {
-        // Add to menu
         let _this = this;
+        if (!renderModes.includes(RenderMode.Preview)
+            && !renderModes.includes(RenderMode.View)) {
+            return;
+        }
+        // Add to menu
         let label = function() {
             return <string>JGConsole.forLang(displayNames, _this.locale()) || "Conlet";
         };

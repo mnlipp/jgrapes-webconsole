@@ -69,7 +69,7 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
             ParseException, IOException {
         // Add conlet resources to page
         consoleSession.respond(new AddConletType(type())
-            .setDisplayNames(
+            .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().conletResource(type(),

@@ -129,8 +129,12 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
     }
 
     addConletType(conletType, displayNames, renderModes) {
-        this._conletDisplayNames[conletType] = displayNames;
+        if (!renderModes.includes(RenderMode.Preview)
+            && !renderModes.includes(RenderMode.View)) {
+            return;
+        }
         // Add to menu
+        this._conletDisplayNames[conletType] = displayNames;
         let _this = this;
         let lang = document.querySelector("html").getAttribute('lang');
         let displayName = JGConsole.forLang(displayNames, lang);

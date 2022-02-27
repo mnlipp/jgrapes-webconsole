@@ -64,7 +64,7 @@ public class TableDemoConlet extends FreeMarkerConlet<Serializable> {
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
         consoleSession.respond(new AddConletType(type())
-            .setDisplayNames(
+            .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(consoleSession.supportedLocales(), "conletName"))
             .addRenderMode(RenderMode.View));
     }

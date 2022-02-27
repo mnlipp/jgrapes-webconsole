@@ -97,7 +97,7 @@ public class HelloWorldConlet
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
         consoleSession.respond(new AddConletType(type())
-            .setDisplayNames(
+            .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().conletResource(type(),

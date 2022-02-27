@@ -98,7 +98,7 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
             ParseException, IOException {
         // Add conlet resources to page
         channel.respond(new AddConletType(type())
-            .setDisplayNames(
+            .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(channel.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setScriptUri(event.renderSupport().conletResource(

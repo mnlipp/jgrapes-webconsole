@@ -77,9 +77,8 @@ public class StyleTestConlet extends FreeMarkerConlet<Serializable> {
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
         consoleSession.respond(new AddConletType(type())
-            .setDisplayNames(
+            .addRenderMode(RenderMode.View).setDisplayNames(
                 localizations(consoleSession.supportedLocales(), "conletName"))
-            .addRenderMode(RenderMode.View)
             .addScript(new ScriptResource()
                 .setScriptType("module").setScriptUri(
                     event.renderSupport().conletResource(type(),

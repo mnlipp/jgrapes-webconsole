@@ -89,7 +89,7 @@ public class SysInfoConlet
             ParseException, IOException {
         // Add SysInfoConlet resources to page
         consoleSession.respond(new AddConletType(type())
-            .setDisplayNames(
+            .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires("chart.js")

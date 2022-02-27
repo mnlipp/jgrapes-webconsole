@@ -140,8 +140,12 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
     }
 
     addConletType(conletType, displayNames, renderModes) {
-        this._conletDisplayNames[conletType] = displayNames;
+        if (!renderModes.includes(RenderMode.Preview)
+            && !renderModes.includes(RenderMode.View)) {
+            return;
+        }
         // Add to menu
+        this._conletDisplayNames[conletType] = displayNames;
         let lang = document.querySelector("html").getAttribute('lang');
         let displayName = JGConsole.forLang(displayNames, lang);
         let item = $('<li class="ui-menu-item">'

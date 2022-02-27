@@ -118,7 +118,7 @@ public class MarkdownDisplayConlet extends
             ParseException, IOException {
         // Add MarkdownDisplayConlet resources to page
         consoleSession.respond(new AddConletType(type())
-            .setDisplayNames(
+            .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires(new String[] { "markdown-it.github.io",
