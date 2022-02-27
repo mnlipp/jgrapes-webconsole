@@ -326,7 +326,7 @@ export default class Console {
             }
         }
         if (!container) {
-            this.send("conletDeleted", conletId, [RenderMode.Component]);
+            this.send("conletsDeleted", [conletId, [RenderMode.Component]]);
             return;
         }
         if (isNew) {

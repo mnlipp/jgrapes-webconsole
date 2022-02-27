@@ -113,14 +113,6 @@ public class WebConsole extends Component {
                 channel);
             break;
         }
-        case "conletDeleted": {
-            fire(new ConletDeleted(view.renderSupport(), params.asString(0),
-                params.asArray(1).stream().map(
-                    value -> RenderMode.valueOf((String) value))
-                    .collect(Collectors.toSet())),
-                channel);
-            break;
-        }
         case "conletsDeleted": {
             for (var item : params.asArray(0).backing()) {
                 var conletInfo = (JsonArray) item;
