@@ -5,7 +5,7 @@
     overflow: auto;
 }
 
-.top-bar span {
+.top-bar > span {
     display: block;
     float: right;
     padding: 10px;
