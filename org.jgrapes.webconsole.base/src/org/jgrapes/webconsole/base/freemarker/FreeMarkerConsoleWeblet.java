@@ -138,6 +138,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
     protected Map<String, Object> createConsoleBaseModel() {
         // Create console model
         Map<String, Object> consoleModel = new HashMap<>();
+        consoleModel.put("consoleType", getClass().getName());
         consoleModel.put("renderSupport", renderSupport());
         consoleModel.put("useMinifiedResources", useMinifiedResources());
         consoleModel.put("minifiedExtension",

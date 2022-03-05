@@ -1,0 +1,21 @@
+<#if consoleType == "org.jgrapes.webconsole.bootstrap4.Bootstrap4Weblet">
+
+<li class="nav-item active">
+  <div class="nav-link conlet conlet-component " 
+    data-conlet-type="org.jgrapes.webconlet.messagebox.MessageBoxConlet">
+  </div>
+</li>
+
+<#elseif consoleType == "org.jgrapes.webconsole.jqueryui.JQueryUiWeblet">
+
+<span class="conlet conlet-component " 
+  data-conlet-type="org.jgrapes.webconlet.messagebox.MessageBoxConlet">
+</span>
+
+<#else>
+
+<div class="conlet conlet-component " 
+  data-conlet-type="org.jgrapes.webconlet.messagebox.MessageBoxConlet">
+</div>
+
+</#if>

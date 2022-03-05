@@ -10,8 +10,6 @@
     v-bind:label="'<span class=\'fas fa-language\'></span>'"
     v-bind:items="this.$consoleRenderer.localeMenuItems()"
     v-bind:action="function(row) { this.$consoleRenderer.setLocale(row[1]) }"></aash-dropdown-menu>
-  <div class="conlet conlet-component " 
-    data-conlet-type="org.jgrapes.webconlet.messagebox.MessageBoxConlet">
-  </div>
+  <#include "console-header-append.ftl.html">
 
 </header>
