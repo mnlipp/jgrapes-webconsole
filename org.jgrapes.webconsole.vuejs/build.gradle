@@ -26,7 +26,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
-ext.releaseVersion = "0.11.0"
+ext.releaseVersion = "0.12.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
