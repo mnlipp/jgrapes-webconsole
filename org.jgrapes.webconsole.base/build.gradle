@@ -92,6 +92,7 @@ task java11doc(type: JavaExec) {
         '-linksource',
         '-link', 'https://docs.oracle.com/en/java/javase/11/docs/api/',
         '-link', 'https://mnlipp.github.io/jgrapes/latest-release/javadoc/',
+        '-link', 'https://freemarker.apache.org/docs/api/',
         '--add-exports', 'jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED',
         '--add-exports', 'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
         '-docletpath', configurations.markdownDoclet.files.asType(List).join(":"),

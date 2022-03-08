@@ -56,7 +56,8 @@ import org.jgrapes.io.util.ByteBufferOutputStream;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
 
 /**
- * 
+ * A console weblet that uses a freemarker template to generate
+ * the HTML source for the console page.  
  */
 public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
 
@@ -75,8 +76,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public FreeMarkerConsoleWeblet(Channel webletChannel,
-            Channel consoleChannel,
-            URI consolePrefix) {
+            Channel consoleChannel, URI consolePrefix) {
         super(webletChannel, consoleChannel, consolePrefix);
         freeMarkerConfig = new Configuration(Configuration.VERSION_2_3_26);
         List<TemplateLoader> loaders = new ArrayList<>();
@@ -219,6 +219,34 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
         return model;
     }
 
+    /**
+     * Render the console page using the freemarker template 
+     * "console.ftl.html". The template for the console page
+     * (and all included templates) are loaded using the 
+     * a list of template class loaders created as follows:
+     * 
+     *  1. Start with the actual type of the console conlet.
+     *  
+     *  2. Using the current type, add a freemarker class template loader
+     *    {@link ClassTemplateLoader#ClassTemplateLoader(ClassLoader, String)}
+     *    that uses the package name as path (all dots replaced with
+     *    slashes).
+     *    
+     *  3. Repeat step 2 with the super class of the current type
+     *     until type {@link FreeMarkerConsoleWeblet} is reached.
+     *     
+     *  This approach allows a (base) console weblet to provide a
+     *  console page template that includes another template
+     *  e.g. "footer.ftl.html" to provide a specific part of the 
+     *  console page. A derived console weblet can then provide its
+     *  own "footer.ftl.html" and thus override the version from the
+     *  base class(es).
+     * 
+     * @param event the event
+     * @param channel the channel
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws InterruptedException the interrupted exception
+     */
     @Override
     protected void renderConsole(Request.In.Get event, IOSubchannel channel,
             UUID consoleSessionId) throws IOException, InterruptedException {
