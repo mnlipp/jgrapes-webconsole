@@ -102,6 +102,14 @@ task stageOnOssrh {
     dependsOn "publishMavenPublicationToReleaseRepository"
 }
 
+task publishSnapshots {
+    afterEvaluate {
+        if (isSnapshot) {
+            dependsOn 'publishMavenPublicationToSnapshotRepository'
+        }
+    }
+}
+
 afterEvaluate {
     if(!project.name.startsWith("org.jgrapes")) {
         tasks.matching { it.group == "publishing" }.all {
