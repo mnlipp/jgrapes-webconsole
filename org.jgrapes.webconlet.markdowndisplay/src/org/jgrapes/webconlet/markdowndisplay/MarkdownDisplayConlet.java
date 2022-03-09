@@ -55,6 +55,7 @@ import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.UpdateConletModel;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
@@ -236,34 +237,36 @@ public class MarkdownDisplayConlet extends
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
-            consoleSession.respond(new RenderConletFromTemplate(event,
-                type(), model.getConletId(),
-                tpl, fmModel(event, consoleSession, conletId, model))
-                    .setRenderAs(
-                        RenderMode.Preview.addModifiers(event.renderAs()))
-                    .setSupportedModes(supported));
+            consoleSession.respond(new RenderConlet(type(), model.getConletId(),
+                processTemplate(event, tpl,
+                    fmModel(event, consoleSession, conletId, model)))
+                        .setRenderAs(
+                            RenderMode.Preview.addModifiers(event.renderAs()))
+                        .setSupportedModes(supported));
             updateView(consoleSession, model);
             renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-view.ftl.html");
-            consoleSession.respond(new RenderConletFromTemplate(event,
-                type(), model.getConletId(),
-                tpl, fmModel(event, consoleSession, conletId, model))
-                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
-                    .setSupportedModes(supported));
+            consoleSession.respond(new RenderConlet(type(), model.getConletId(),
+                processTemplate(event, tpl,
+                    fmModel(event, consoleSession, conletId, model)))
+                        .setRenderAs(
+                            RenderMode.View.addModifiers(event.renderAs()))
+                        .setSupportedModes(supported));
             updateView(consoleSession, model);
             renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
-            consoleSession.respond(new RenderConletFromTemplate(event,
-                type(), model.getConletId(),
-                tpl, fmModel(event, consoleSession, conletId, model))
-                    .setRenderAs(RenderMode.Edit.addModifiers(event.renderAs()))
-                    .setSupportedModes(supported));
+            consoleSession.respond(new RenderConlet(type(), model.getConletId(),
+                processTemplate(event, tpl,
+                    fmModel(event, consoleSession, conletId, model)))
+                        .setRenderAs(
+                            RenderMode.Edit.addModifiers(event.renderAs()))
+                        .setSupportedModes(supported));
         }
         return renderedAs;
     }

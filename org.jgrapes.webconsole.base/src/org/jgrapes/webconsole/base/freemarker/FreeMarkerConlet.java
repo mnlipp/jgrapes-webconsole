@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
@@ -53,7 +54,6 @@ import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.ResourceByGenerator;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
-import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet.LanguageInfo;
@@ -325,43 +325,29 @@ public abstract class FreeMarkerConlet<S extends Serializable>
     }
 
     /**
-     * Specifies how to render web console component content using a template.
+     * Returns a future string providing the result
+     * from processing the given template with the given data. 
+     *
+     * @param request the request, used to obtain the
+     * {@link ExecutorService} service related with the request being
+     * processed
+     * @param template the template
+     * @param dataModel the data model
+     * @return the future
      */
-    public static class RenderConletFromTemplate extends RenderConlet {
+    public Future<String> processTemplate(
+            RenderConletRequestBase<?> request, Template template,
+            Object dataModel) {
+        return request.processedBy().map(procBy -> procBy.executorService())
+            .orElse(Components.defaultExecutorService()).submit(() -> {
+                StringWriter out = new StringWriter();
+                try {
+                    template.process(dataModel, out);
+                } catch (TemplateException | IOException e) {
+                    throw new IllegalArgumentException(e);
+                }
+                return out.toString();
 
-        private final Future<String> content;
-
-        /**
-         * Instantiates a new event.
-         *
-         * @param request the request
-         * @param conletType the conlet type
-         * @param conletId the web console component id
-         * @param template the template
-         * @param dataModel the data model
-         */
-        public RenderConletFromTemplate(RenderConletRequestBase<?> request,
-                String conletType, String conletId, Template template,
-                Object dataModel) {
-            super(conletType, conletId);
-            // Start to prepare the content immediately and concurrently.
-            content
-                = request.processedBy().map(procBy -> procBy.executorService())
-                    .orElse(Components.defaultExecutorService()).submit(() -> {
-                        StringWriter out = new StringWriter();
-                        try {
-                            template.process(dataModel, out);
-                        } catch (TemplateException | IOException e) {
-                            throw new IllegalArgumentException(e);
-                        }
-                        return out.toString();
-
-                    });
-        }
-
-        @Override
-        public Future<String> content() {
-            return content;
-        }
+            });
     }
 }

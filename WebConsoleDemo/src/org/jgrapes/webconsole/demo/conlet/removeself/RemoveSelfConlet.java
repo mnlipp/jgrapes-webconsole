@@ -37,6 +37,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.RemoveConletType;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
@@ -89,12 +90,12 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("RemoveSelf-preview.ftl.html");
-            channel.respond(new RenderConletFromTemplate(event,
-                type(), conletId, tpl,
-                fmModel(event, channel, conletId, conletState))
-                    .setRenderAs(
-                        RenderMode.Preview.addModifiers(event.renderAs()))
-                    .setSupportedModes(MODES));
+            channel.respond(new RenderConlet(type(), conletId,
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .setRenderAs(
+                            RenderMode.Preview.addModifiers(event.renderAs()))
+                        .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);
         }
         return renderedAs;

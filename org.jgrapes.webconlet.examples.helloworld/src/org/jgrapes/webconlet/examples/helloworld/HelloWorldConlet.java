@@ -50,6 +50,7 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.DisplayNotification;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
@@ -155,22 +156,23 @@ public class HelloWorldConlet
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-preview.ftl.html");
-            channel.respond(new RenderConletFromTemplate(event,
-                type(), conletId, tpl,
-                fmModel(event, channel, conletId, conletState))
-                    .setRenderAs(
-                        RenderMode.Preview.addModifiers(event.renderAs()))
-                    .setSupportedModes(MODES));
+            channel.respond(new RenderConlet(type(), conletId,
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .setRenderAs(
+                            RenderMode.Preview.addModifiers(event.renderAs()))
+                        .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloWorld-view.ftl.html");
-            channel.respond(new RenderConletFromTemplate(event,
-                type(), conletState.getConletId(), tpl,
-                fmModel(event, channel, conletId, conletState))
-                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
-                    .setSupportedModes(MODES));
+            channel.respond(new RenderConlet(type(), conletState.getConletId(),
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .setRenderAs(
+                            RenderMode.View.addModifiers(event.renderAs()))
+                        .setSupportedModes(MODES));
             channel.respond(new NotifyConletView(type(),
                 conletState.getConletId(), "setWorldVisible",
                 conletState.isWorldVisible()));

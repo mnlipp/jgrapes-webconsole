@@ -34,6 +34,7 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
@@ -77,21 +78,22 @@ public class TableDemoConlet extends FreeMarkerConlet<Serializable> {
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-preview.ftl.html");
-            channel.respond(new RenderConletFromTemplate(event,
-                type(), conletId, tpl,
-                fmModel(event, channel, conletId, conletState))
-                    .setRenderAs(event.renderAs())
-                    .setSupportedModes(MODES));
+            channel.respond(new RenderConlet(type(), conletId,
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .setRenderAs(event.renderAs())
+                        .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("TableDemo-view.ftl.html");
-            channel.respond(new RenderConletFromTemplate(event,
-                type(), conletId, tpl,
-                fmModel(event, channel, conletId, conletState))
-                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
-                    .setSupportedModes(MODES));
+            channel.respond(new RenderConlet(type(), conletId,
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .setRenderAs(
+                            RenderMode.View.addModifiers(event.renderAs()))
+                        .setSupportedModes(MODES));
             renderedAs.add(RenderMode.View);
         }
         return renderedAs;

@@ -36,6 +36,7 @@ import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
@@ -95,11 +96,12 @@ public class FormTestConlet extends FreeMarkerConlet<Serializable> {
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("FormTest-view.ftl.html");
-            channel.respond(new RenderConletFromTemplate(event,
-                type(), conletId, tpl,
-                fmModel(event, channel, conletId, conletState))
-                    .setRenderAs(RenderMode.View.addModifiers(event.renderAs()))
-                    .setSupportedModes(MODES));
+            channel.respond(new RenderConlet(type(), conletId,
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .setRenderAs(
+                            RenderMode.View.addModifiers(event.renderAs()))
+                        .setSupportedModes(MODES));
             renderedAs.add(RenderMode.View);
         }
         return renderedAs;

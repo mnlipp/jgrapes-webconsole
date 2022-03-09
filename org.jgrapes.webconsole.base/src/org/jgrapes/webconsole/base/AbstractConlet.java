@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -1175,54 +1176,50 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
-     * Send to the web console page for adding or updating a complete web 
-     * console component representation.
+     * Returns a future string providing the result
+     * from reading everything from the provided reader. 
+     *
+     * @param request the request, used to obtain the 
+     * {@link ExecutorService} service related with the request being
+     * processed
+     * @param contentReader the reader
+     * @return the future
      */
-    public static class RenderConletFromReader extends RenderConlet {
-
-        private final Future<String> content;
-
-        /**
-         * Creates a new event.
-         *
-         * @param request the request
-         * @param conletType the conlet type
-         * @param conletId the id of the web console component
-         * @param contentReader the content reader
-         */
-        public RenderConletFromReader(RenderConletRequestBase<?> request,
-                String conletType, String conletId, Reader contentReader) {
-            super(conletType, conletId);
-            // Start to prepare the content immediately and concurrently.
-            content = request.processedBy().map(pby -> pby.executorService())
-                .orElse(Components.defaultExecutorService()).submit(() -> {
-                    StringWriter content = new StringWriter();
-                    CharBuffer buffer = CharBuffer.allocate(8192);
-                    try (Reader rdr = new BufferedReader(contentReader)) {
-                        while (true) {
-                            if (rdr.read(buffer) < 0) {
-                                break;
-                            }
-                            buffer.flip();
-                            content.append(buffer);
-                            buffer.clear();
-                        }
-                    } catch (IOException e) {
-                        throw new IllegalStateException(e);
-                    }
-                    return content.toString();
-                });
-
-        }
-
-        /**
-         * Content.
-         *
-         * @return the future
-         */
-        @Override
-        public Future<String> content() {
-            return content;
-        }
+    public Future<String> readContent(RenderConletRequestBase<?> request,
+            Reader contentReader) {
+        return readContent(
+            request.processedBy().map(pby -> pby.executorService())
+                .orElse(Components.defaultExecutorService()),
+            contentReader);
     }
+
+    /**
+     * Returns a future string providing the result
+     * from reading everything from the provided reader. 
+     *
+     * @param execSvc the executor service for reading the content
+     * @param contentReader the reader
+     * @return the future
+     */
+    public Future<String> readContent(ExecutorService execSvc,
+            Reader contentReader) {
+        return execSvc.submit(() -> {
+            StringWriter content = new StringWriter();
+            CharBuffer buffer = CharBuffer.allocate(8192);
+            try (Reader rdr = new BufferedReader(contentReader)) {
+                while (true) {
+                    if (rdr.read(buffer) < 0) {
+                        break;
+                    }
+                    buffer.flip();
+                    content.append(buffer);
+                    buffer.clear();
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+            return content.toString();
+        });
+    }
+
 }

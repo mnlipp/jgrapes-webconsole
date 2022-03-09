@@ -33,8 +33,8 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.events.AddConletType;
-import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
@@ -86,11 +86,11 @@ public class MessageBoxConlet extends FreeMarkerConlet<Serializable> {
         if (event.renderAs().contains(RenderMode.Component)) {
             Template tpl
                 = freemarkerConfig().getTemplate("MessageBox.ftl.html");
-            channel.respond(new RenderConletFromTemplate(event,
-                type(), conletId, tpl,
-                fmModel(event, channel, conletId, conletState))
-                    .setRenderAs(RenderMode.Component)
-                    .setSupportedModes(MODES));
+            channel.respond(new RenderConlet(type(), conletId,
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .setRenderAs(RenderMode.Component)
+                        .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Component);
         }
         return renderedAs;

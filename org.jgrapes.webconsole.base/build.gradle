@@ -8,8 +8,8 @@ dependencies {
     api 'org.freemarker:freemarker:[2.3.27-incubating,2.4)'
 }
 
-ext.releaseVersion = "0.35.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.36.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 apply plugin: 'com.github.node-gradle.node'
