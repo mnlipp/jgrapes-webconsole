@@ -152,8 +152,9 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
     }
 
     /**
-     * Expand the given console model with data from the event 
-     * (console session id, locale information).
+     * Invoked by {@link #renderConsole renderConsole} 
+     * to expand the {@link #createConsoleBaseModel()
+     * base model} with information from the current event.
      *
      * @param model the model
      * @param event the event
@@ -277,8 +278,13 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
     }
 
     /**
-    * Holds the information about the selected language.
-    */
+     * Holds the information about a supported language. Used by
+     * {@link FreeMarkerConsoleWeblet#expandConsoleModel(Map, 
+     * org.jgrapes.http.events.Request.In.Get, UUID)} and
+     * {@link FreeMarkerConlet#fmSessionModel(org.jgrapes.http.Session)}
+     * to provide the function "supportedLanguages" during template
+     * evaluation.
+     */
     public static class LanguageInfo {
         private final Locale locale;
         private final ResourceBundle bundle;
