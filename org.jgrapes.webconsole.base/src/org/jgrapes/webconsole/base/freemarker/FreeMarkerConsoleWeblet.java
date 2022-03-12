@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2018 Michael N. Lipp
+ * Copyright (C) 2018,2022 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -274,57 +274,6 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
             tpl.process(consoleModel, out);
         } catch (TemplateException e) {
             throw new IOException(e);
-        }
-    }
-
-    /**
-     * Holds the information about a supported language. Used by
-     * {@link FreeMarkerConsoleWeblet#expandConsoleModel(Map, 
-     * org.jgrapes.http.events.Request.In.Get, UUID)} and
-     * {@link FreeMarkerConlet#fmSessionModel(org.jgrapes.http.Session)}
-     * to provide the function "supportedLanguages" during template
-     * evaluation.
-     */
-    public static class LanguageInfo {
-        private final Locale locale;
-        private final ResourceBundle bundle;
-
-        /**
-         * Instantiates a new language info.
-         *
-         * @param locale the locale
-         */
-        public LanguageInfo(Locale locale, ResourceBundle bundle) {
-            this.locale = locale;
-            this.bundle = bundle;
-        }
-
-        /**
-         * Gets the locale.
-         *
-         * @return the locale
-         */
-        public Locale getLocale() {
-            return locale;
-        }
-
-        /**
-         * Gets the label.
-         *
-         * @return the label
-         */
-        public String getLabel() {
-            String str = locale.getDisplayName(locale);
-            return Character.toUpperCase(str.charAt(0)) + str.substring(1);
-        }
-
-        /**
-         * Gets the bundle.
-         *
-         * @return the bundle
-         */
-        public ResourceBundle getL10nBundle() {
-            return bundle;
         }
     }
 

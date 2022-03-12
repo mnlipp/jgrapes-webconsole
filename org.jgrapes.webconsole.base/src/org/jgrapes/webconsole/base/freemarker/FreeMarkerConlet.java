@@ -56,7 +56,6 @@ import org.jgrapes.webconsole.base.ResourceByGenerator;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
-import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet.LanguageInfo;
 
 /**
  * 
