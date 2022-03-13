@@ -12,7 +12,7 @@ import { provideApi } from "../../AashUtil";
  *
  * @memberof module:AashTreeView
  */
-export type LabelSupplier = string | (() => string);
+export type LabelSupplier = (string | (() => string));
 
 /**
  * The information about a tree node managed by the view. 
