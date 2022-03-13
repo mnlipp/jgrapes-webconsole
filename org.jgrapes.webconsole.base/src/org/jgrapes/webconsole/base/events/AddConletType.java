@@ -132,10 +132,10 @@ public class AddConletType extends ConsoleCommand {
 
     /**
      * Add a render mode to be offered to the user. Several modes may
-     * be added. The modes {@link RenderModer#Preview} and 
-     * {@link RenderModer#View} usually cause the conlet type to be added 
+     * be added. The modes {@link RenderMode#Preview} and 
+     * {@link RenderMode#View} usually cause the conlet type to be added 
      * to a menu. If a conlet type's only mode is
-     * {@link RenderModer#Component}, it shouldn't be offered to the user
+     * {@link RenderMode#Component}, it shouldn't be offered to the user
      * at all.  
      *
      * @param mode the mode
