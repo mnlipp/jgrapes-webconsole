@@ -17,7 +17,10 @@
  */
 
 /**
- * Provides a component for adding the [vue.js](https://vuejs.org/) 
+ * Provides a component for adding the old [vue.js 2](https://vuejs.org/) 
  * library to a web console.
+ * 
+ * This package is deprecated. Use the Vue 3 library instead.
  */
+@Deprecated
 package org.jgrapes.webconsole.provider.vuejs;

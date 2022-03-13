@@ -35,6 +35,7 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 /**
  * Provider for the [Vue.js](http://www.vuejs.org/) library.
  */
+@Deprecated
 public class VueJsProvider extends PageResourceProvider {
 
     /**

@@ -27,6 +27,7 @@ import org.jgrapes.webconsole.base.PageResourceProviderFactory;
 /**
  * A factory for creating {@link VueJsProvider}s.
  */
+@Deprecated
 public class VueJsProviderFactory implements PageResourceProviderFactory {
 
     /*
