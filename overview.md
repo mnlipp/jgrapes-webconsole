@@ -1,8 +1,3 @@
-Web Console components for the JGrapes framework.
-
-JGrapes-WebConsole
-==================
-
 Web Console components for the JGrapes framework. The components build on
 the core framework and components.
 
