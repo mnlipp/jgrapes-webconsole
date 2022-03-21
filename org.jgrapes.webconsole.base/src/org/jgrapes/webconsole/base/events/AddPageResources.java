@@ -34,9 +34,9 @@ import org.jgrapes.webconsole.base.PageResourceProvider;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
 
 /**
- * Adds {@code <link .../>}, `<style>...</style>` or `<script ...></script>` nodes
- * to the web console's `<head>` node on behalf of components that provide
- * such resources.
+ * Adds {@code <link .../>}, `<style>...</style>` or 
+ * `<script &#x2e;&#x2e;&#x2e;></script>` nodes to the web console's 
+ * `<head>` node on behalf of components that provide such resources.
  * 
  * Adding resource references causes the browser to issue `GET` request that
  * (usually) refer to resources that are then provided by the component
