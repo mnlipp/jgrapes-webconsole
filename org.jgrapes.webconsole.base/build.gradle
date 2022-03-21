@@ -53,7 +53,7 @@ configurations {
 }
  
 dependencies {
-    markdownDoclet "org.jdrupes.mdoclet:doclet:2.1.0"
+    markdownDoclet "org.jdrupes.mdoclet:doclet:3.0.0"
 }
 
 configurations {
@@ -65,7 +65,8 @@ dependencies {
 }
 
 task java11doc(type: JavaExec) {
-    enabled = !isJitPackBuild
+    // Does not work on JitPack, no /usr/bin/dot
+    enabled = JavaVersion.current() == JavaVersion.VERSION_17 && !isJitPackBuild
     
     dependsOn classes
     dependsOn 'tsdoc'
