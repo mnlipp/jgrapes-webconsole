@@ -79,7 +79,7 @@
  * page. This allows differently styles consoles to be build on a
  * common foundation. The {@link org.jgrapes.webconsole.base.ConsoleWeblet}
  * provides some JavaScript classes
- * <a href="jsdoc/classes/console.html">functions</a>
+ * <a href="jsdoc/classes/Console.html">functions</a>
  * that can be used to build the SPA.
  * 
  * ### Page Resource Providers

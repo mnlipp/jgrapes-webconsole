@@ -63,8 +63,8 @@ public class DisplayNotification extends ConsoleCommand {
 
     /**
      * Adds an option to the event. See the JavaScript documentation of the
-     * <a href="../jsdoc/index.html#notificationplugin">
-     * notification plugin</a> for details about the available options.
+     * <a href="../jsdoc/interfaces/NotificationOptions.html">
+     * client side</a> for details about the available options.
      * 
      * @param name the option name
      * @param value the option value (must be serializable as JSON)
