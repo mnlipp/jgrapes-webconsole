@@ -43,7 +43,7 @@ eclipse {
 
 ext.jsDocumentJsDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/provider/jgwcvuecomponents/jsdoc"
 
-task documentjs(type: NodeTask) {
+task buildDoc(type: NodeTask) {
     dependsOn(':npmInstall')
     new File(jsDocumentJsDir).mkdirs()
     script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
@@ -61,6 +61,6 @@ task documentjs(type: NodeTask) {
 javadoc {
     if (!isJitPackBuild) {
         // Does not work on jitpack
-        finalizedBy documentjs
+        finalizedBy buildDoc
     }
 }
