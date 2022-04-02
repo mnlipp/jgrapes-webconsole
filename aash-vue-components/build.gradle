@@ -12,10 +12,6 @@ task buildLib(type: NpmTask, dependsOn: 'npmInstall') {
 
 build.dependsOn 'buildLib'
 
-eclipse {
-    autoBuildTasks buildLib
-}
-
 ext.jsDocDestDir = "${rootProject.buildDir}/aashdoc"
 
 task buildDoc(type: NpmTask, dependsOn: 'npmInstall') {
@@ -30,10 +26,7 @@ build.dependsOn 'buildDoc'
 apply plugin: 'eclipse'
 
 eclipse {
-    project {
-        buildCommand 'org.eclipse.wst.validation.validationbuilder'
-        natures 'org.eclipse.wst.jsdt.core.jsNature'
-    }
+    autoBuildTasks buildLib
 }
 
 tasks.eclipse.dependsOn(cleanEclipse)
