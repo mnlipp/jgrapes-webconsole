@@ -1,0 +1,19 @@
+<template>
+  <component :is="headerType" 
+    :role="headerType.match('[hH][123456789]') ? null : 'header'">
+    <component :is="buttonType" :id="sectionId + '-control'" tabindex="0"
+      :role="buttonType == 'button' ? null : 'button'"
+      :aria-controls="sectionId + '-panel'"
+      :aria-expanded="isExpanded() ? 'true' : 'false'"
+      @click="onClick($event)" @keydown="onKey($event)">
+      <slot name="title"><span>{{ title }}</span></slot>
+    </component>
+  </component>
+  <component :is="panelType" :id="sectionId + '-panel'" role="region" 
+    :aria-labelledby="sectionId + '-control'"
+    :hidden="isExpanded() ? null : ''">
+    <slot></slot>
+  </component>
+</template>
+
+<script lang="ts" src="./AashAccordionSection.ts"></script>

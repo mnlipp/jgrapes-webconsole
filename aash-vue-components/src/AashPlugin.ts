@@ -7,6 +7,10 @@
 
 import { App, Ref, ref } from 'vue'
 import { provideApi, getApi } from "./AashUtil";
+import AashAccordionComponent from "./components/accordion/AashAccordion.vue";
+import * as AashAccordion from "./components/accordion/AashAccordion";
+import AashAccordionSectionComponent from "./components/accordion/AashAccordionSection.vue";
+import * as AashAccordionSection from "./components/accordion/AashAccordionSection";
 import AashDisclosureButtonComponent from "./components/disclosure/AashDisclosureButton.vue";
 import * as AashDisclosureButton from "./components/disclosure/AashDisclosureButton";
 import AashDropdownMenuComponent from "./components/dropdown-menu/AashDropdownMenu.vue";
@@ -98,5 +102,7 @@ export default {
         app.component('aash-modal-dialog', AashModalDialogComponent);
         app.component('aash-tablist', AashTablistComponent);
         app.component('aash-tree-view', AashTreeViewComponent);
+        app.component('aash-accordion', AashAccordionComponent);
+        app.component('aash-accordion-section', AashAccordionSectionComponent);
   }
 }

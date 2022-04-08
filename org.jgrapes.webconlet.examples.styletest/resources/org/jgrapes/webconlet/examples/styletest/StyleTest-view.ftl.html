@@ -4,138 +4,142 @@
 
 <h1>Style Tests</h1>
 
-  <h2>{{ localize("Disclosure (in table)") }}</h2>
+  <aash-accordion :header-type="'h2'">
+      
+    <aash-accordion-section :title="localize('Disclosure (in table)')">
+      <table class="table--basic--striped jgrapes-osgi-style-test-table-with-disclosures">
+        <thead>
+          <tr>
+            <th v-for="key in controller.keys" aria-role="button" tabindex="0"
+              class="sortable" v-on:click="controller.sortBy(key)">
+              {{ localize(controller.label(key)) }}<span v-if="controller.sortedByAsc(key)">&#x25B2;</span><span
+                v-if="controller.sortedByDesc(key)">&#x25BC;</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="(entry, rowIndex) in filteredData">
+            <tr role="row" :class="[(rowIndex % 2) ? 'odd' : 'even']">
+              <td>
+                <aash-disclosure-button v-if="rowIndex === 0" 
+                  :id-ref="scopedId(rowIndex)"
+                  :on-toggle="function() { JGConsole.notification('Changed.') }"
+                  :on-show="function() { JGConsole.notification('Now showing.') }"
+                  :on-hide="function() { JGConsole.notification('Now hidden.') }"
+                  >
+                  <span v-html="entry[controller.keys[0]]"></span>
+                </aash-disclosure-button>
+                <aash-disclosure-button v-else 
+                  v-bind:id-ref="scopedId(rowIndex)" :type="'div'">
+                  <span v-html="entry[controller.keys[0]]"></span>
+                </aash-disclosure-button>
+              </td>
+              <td v-for="(key, colIndex) in controller.keys.slice(1)">
+                <span v-html="entry[key]"></span>
+                <span v-if="key === 'title' 
+                  && $aash.isDisclosed(scopedId(rowIndex))">(see below)</span>
+              </td>
+            </tr>
+            <tr :id="scopedId(rowIndex)" v-if="$aash.isDisclosed(scopedId(rowIndex))"
+              class="details" :class="[(rowIndex % 2) ? 'odd' : 'even']">
+              <td colspan="3">
+                Those are the details...
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </aash-accordion-section>
 
-  <table class="table--basic--striped jgrapes-osgi-style-test-table-with-disclosures">
-    <thead>
-      <tr>
-        <th v-for="key in controller.keys" aria-role="button" tabindex="0"
-          class="sortable" v-on:click="controller.sortBy(key)">
-          {{ localize(controller.label(key)) }}<span v-if="controller.sortedByAsc(key)">&#x25B2;</span><span
-            v-if="controller.sortedByDesc(key)">&#x25BC;</span>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <template v-for="(entry, rowIndex) in filteredData">
-        <tr role="row" :class="[(rowIndex % 2) ? 'odd' : 'even']">
-          <td>
-            <aash-disclosure-button v-if="rowIndex === 0" 
-              :id-ref="scopedId(rowIndex)"
-              :on-toggle="function() { JGConsole.notification('Changed.') }"
-              :on-show="function() { JGConsole.notification('Now showing.') }"
-              :on-hide="function() { JGConsole.notification('Now hidden.') }"
-              >
-              <span v-html="entry[controller.keys[0]]"></span>
-            </aash-disclosure-button>
-            <aash-disclosure-button v-else 
-              v-bind:id-ref="scopedId(rowIndex)" :type="'div'">
-              <span v-html="entry[controller.keys[0]]"></span>
-            </aash-disclosure-button>
-          </td>
-          <td v-for="(key, colIndex) in controller.keys.slice(1)">
-            <span v-html="entry[key]"></span>
-            <span v-if="key === 'title' 
-              && $aash.isDisclosed(scopedId(rowIndex))">(see below)</span>
-          </td>
-        </tr>
-        <tr :id="scopedId(rowIndex)" v-if="$aash.isDisclosed(scopedId(rowIndex))"
-          class="details" :class="[(rowIndex % 2) ? 'odd' : 'even']">
-          <td colspan="3">
-            Those are the details...
-          </td>
-        </tr>
-      </template>
-    </tbody>
-  </table>
-
-  <h2>Tree</h2>
-  
-  <div style="display: flex;">
-    <div style="min-width: 20%;">
-      <aash-tree-view :on-toggle="(path, newStateOpen, event) => {
-          logToggleMessage(path.join('/') + ' now ' 
-            + (newStateOpen ? 'disclosed' : 'concealed'));
-          return newStateOpen;
-        }"
-        :on-focus="(path) => {
-          logToggleMessage(path.join('/') + ' has focus');
-        }"
-        :on-selected="(path, event) => {
-          logToggleMessage(path.join('/') + ' selected');
-        }"
-        :path="[]" :roots="[
-        {
-          segment: 'fruits',
-          label: 'Fruits',
-          children: [
+    <aash-accordion-section :title="'Tree'">
+      <div style="display: flex;">
+        <div style="min-width: 20%;">
+          <aash-tree-view :on-toggle="(path, newStateOpen, event) => {
+              logToggleMessage(path.join('/') + ' now ' 
+                + (newStateOpen ? 'disclosed' : 'concealed'));
+              return newStateOpen;
+            }"
+            :on-focus="(path) => {
+              logToggleMessage(path.join('/') + ' has focus');
+            }"
+            :on-selected="(path, event) => {
+              logToggleMessage(path.join('/') + ' selected');
+            }"
+            :path="[]" :roots="[
             {
-              segment: 'oranges',
-              label: 'Oranges',
-            },
-            {
-              segment: 'pineapple',
-              label: 'Pineapple',
-            },
-            {
-              segment: 'apples',
-              label: 'Apples',
+              segment: 'fruits',
+              label: 'Fruits',
               children: [
                 {
-                  segment: 'macintosh',
-                  label: 'Macintosh',
+                  segment: 'oranges',
+                  label: 'Oranges',
                 },
                 {
-                  segment: 'granny_smith',
-                  label: 'Granny Smith',
+                  segment: 'pineapple',
+                  label: 'Pineapple',
                 },
                 {
-                  segment: 'fuji',
-                  label: 'Fuji',
+                  segment: 'apples',
+                  label: 'Apples',
+                  children: [
+                    {
+                      segment: 'macintosh',
+                      label: 'Macintosh',
+                    },
+                    {
+                      segment: 'granny_smith',
+                      label: 'Granny Smith',
+                    },
+                    {
+                      segment: 'fuji',
+                      label: 'Fuji',
+                    },
+                  ]
+                },
+                {
+                  segment: 'bananas',
+                  label: 'Bananas',
+                },
+                {
+                  segment: 'pears',
+                  label: 'Pears',
+                  children: [
+                    {
+                      segment: 'anjou',
+                      label: 'Anjou',
+                    },
+                    {
+                      segment: 'bartlett',
+                      label: 'Bartlett',
+                    },
+                    {
+                      segment: 'bosc',
+                      label: 'Bosc',
+                    },
+                  ]
                 },
               ]
             },
             {
-              segment: 'bananas',
-              label: 'Bananas',
+              segment: 'vegetables',
+              label: 'Vegetables',
+              
             },
             {
-              segment: 'pears',
-              label: 'Pears',
-              children: [
-                {
-                  segment: 'anjou',
-                  label: 'Anjou',
-                },
-                {
-                  segment: 'bartlett',
-                  label: 'Bartlett',
-                },
-                {
-                  segment: 'bosc',
-                  label: 'Bosc',
-                },
-              ]
-            },
-          ]
-        },
-        {
-          segment: 'vegetables',
-          label: 'Vegetables',
-          
-        },
-        {
-          segment: 'grains',
-          label: 'Grains',
-          
-        }
-      ]" v-slot="{ label, tabindex }"></aash-tree-view>
-    </div>
-    <div style="padding-left: 1em;">
-      <p>
-        <toggle-event-list :messages="toggleMessages"></toggle-event-list>
-      </p>
-    </div>
-  </div>
+              segment: 'grains',
+              label: 'Grains',
+              
+            }
+          ]" v-slot="{ label, tabindex }"></aash-tree-view>
+        </div>
+        <div style="padding-left: 1em;">
+          <p>
+            <toggle-event-list :messages="toggleMessages"></toggle-event-list>
+          </p>
+        </div>
+      </div>
+    </aash-accordion-section>
+
+  </aash-accordion>
 
 </div>

@@ -3,7 +3,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
 }
 
-ext.releaseVersion = "0.7.0"
+ext.releaseVersion = "0.8.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
