@@ -2,7 +2,7 @@ dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
 
-ext.releaseVersion = "0.7.0"
+ext.releaseVersion = "0.8.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
