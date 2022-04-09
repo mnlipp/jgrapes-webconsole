@@ -41,6 +41,13 @@ processResources {
 
 eclipse {
     synchronizationTasks prepareNpmLibs
+    
+    project {
+        file {
+            project.natures += 'org.jdrupes.eclipse.minify.plugin.minifyNature'
+            project.buildCommand 'org.jdrupes.eclipse.minify.plugin.minifyBuilder'
+        }
+    }
 }
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/jsdoc"

@@ -23,3 +23,12 @@ task jsdoc(type: NodeTask) {
         "--destination", jsDocDestDir,
         "resources/org/jgrapes/webconsole/jqueryui/jquiconsole.js"]
 }
+
+eclipse {
+    project {
+        file {
+            project.natures += 'org.jdrupes.eclipse.minify.plugin.minifyNature'
+            project.buildCommand 'org.jdrupes.eclipse.minify.plugin.minifyBuilder'
+        }
+    }
+}
