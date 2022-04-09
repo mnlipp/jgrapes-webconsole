@@ -3,7 +3,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.moment')
 }
 
-ext.releaseVersion = "0.27.0"
+ext.releaseVersion = "0.28.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
