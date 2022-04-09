@@ -83,8 +83,8 @@ public class GridstackProvider extends PageResourceProvider {
     public GridstackProvider(Channel componentChannel, Map<?, ?> properties) {
         super(componentChannel);
         requireTouchPunch
-            = Optional.ofNullable((boolean) properties.get("requireTouchPunch"))
-                .orElse(false);
+            = Optional.ofNullable((Boolean) properties.get("requireTouchPunch"))
+                .orElse(Boolean.FALSE);
         if (properties.containsKey("configuration")) {
             String config = (String) properties.get("configuration");
             try {
