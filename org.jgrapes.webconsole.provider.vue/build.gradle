@@ -2,7 +2,7 @@ dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
 
-ext.releaseVersion = "0.5.0"
+ext.releaseVersion = "0.6.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
@@ -18,7 +18,26 @@ task prepareNpmLibs(type: Copy) {
     '''
     into('build/generated/resources/org/jgrapes/webconsole/provider/vue/vue')
     from ('node_modules/vue/dist') {
+        include 'vue.d.ts'
+        filter({ line -> line.replace('@vue/', './')} )
+    }
+    from ('node_modules/vue/dist') {
         include '*-browser.*'
+    }
+    from ('node_modules/@vue/runtime-core/dist') {
+        include '*.d.ts'
+    }
+    from ('node_modules/@vue/runtime-dom/dist') {
+        include '*.d.ts'
+    }
+    doLast {
+        new File(projectDir, 
+            'build/generated/resources/org/jgrapes/webconsole/provider/vue/vue/vue.d.ts').text = """
+export * from "./runtime-core";
+export * from "./runtime-dom";
+
+export { }
+"""
     }
 }
 
