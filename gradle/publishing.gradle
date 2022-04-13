@@ -75,9 +75,13 @@ configurePublishing {
     }
 }
 
+processResources {
+    dependsOn generatePomFileForMavenPublication
+}
+
 jar {
     into("META-INF/maven/$project.group/$project.name") {
-        from { generatePomFileForMavenPublication }
+        from generatePomFileForMavenPublication
         rename ".*", "pom.xml"
     }
 }
