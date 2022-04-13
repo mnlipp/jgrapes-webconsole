@@ -1,0 +1,8 @@
+{
+  "name": "Client-side Webconsole Vue support",
+  "tsconfig": "./tsconfig-typedoc.json",
+  "entryPoints": ["./src/org/jgrapes/webconsole/provider/jgwcvuecomponents/browser/jgwc-components.ts"],
+  "out": "../build/javadoc/org/jgrapes/webconsole/provider/jgwcvuecomponents/jsdoc",
+  "categorizeByGroup": true,
+  "categoryOrder": ["*"]
+}

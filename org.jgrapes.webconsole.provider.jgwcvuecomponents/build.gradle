@@ -3,13 +3,16 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
 }
 
-ext.releaseVersion = "0.8.0"
+// Prevents deadlock.
+generatePomFileForMavenPublication.mustRunAfter(':org.jgrapes.webconsole.provider.vue:generatePomFileForMavenPublication')
+
+ext.releaseVersion = "0.9.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 apply plugin: 'com.github.node-gradle.node'
 
-task prepareNpmLibs(type: Copy) {
+task prepareAashLib(type: Copy) {
     description '''
     Helper task that copies the the libraries from the npm_modules 
     directory into a package scoped subdirectory. The root is added 
@@ -32,30 +35,39 @@ sourceSets {
     }
 }
 
-processResources {
-    dependsOn 'prepareNpmLibs'
+task compileTs(type: NodeTask) {
+    dependsOn ':npmInstall'
+    dependsOn ':org.jgrapes.webconsole.provider.vue:prepareNpmLibs'
+    dependsOn prepareAashLib
+    inputs.dir project.file('src')
+    inputs.file project.file('tsconfig.json')
+    inputs.file project.file('rollup.config.js')
+    outputs.dir project.file('build/generated/resources')
+    script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
+    args = ["-c"]
 }
 
+processResources {
+    dependsOn compileTs
+}
 
 eclipse {
-    autoBuildTasks prepareNpmLibs
+    autoBuildTasks prepareAashLib
+    autoBuildTasks compileTs
 }
 
-ext.jsDocumentJsDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/provider/jgwcvuecomponents/jsdoc"
+ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/provider/jgwcvuecomponents/jsdoc"
 
-task buildDoc(type: NodeTask) {
-    dependsOn(':npmInstall')
-    new File(jsDocumentJsDir).mkdirs()
-    script = file("${rootProject.projectDir}/node_modules/documentation/bin/documentation.js")
-    def input = "resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components.js"
-    inputs.file(file(input))
-    outputs.dir project.file(jsDocumentJsDir)
-    args = [
-        "build",
-        "-f", "html",
-        "-o", jsDocumentJsDir, "--shallow",
-        input
-    ]
+/**
+ * Needs its own tsconfig.js (tsconfig-typedoc.js) else aash lib cannot be
+ * fully resolved. 
+ */
+task buildDoc(type: NodeTask, dependsOn: ':npmInstall') {
+    inputs.dir project.file('src')
+    inputs.file project.file('tsconfig.json')
+    outputs.dir project.file(jsDocDestDir)
+    script = file("${rootProject.rootDir}/node_modules/typedoc/bin/typedoc")
+    args = []
 }
 
 javadoc {

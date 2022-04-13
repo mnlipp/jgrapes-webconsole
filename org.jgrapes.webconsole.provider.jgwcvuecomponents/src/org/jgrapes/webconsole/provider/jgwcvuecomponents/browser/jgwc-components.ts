@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2019, 2021  Michael N. Lipp
+ * Copyright (C) 2019, 2022  Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -16,15 +16,16 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ref } from "../vue/vue.esm-browser.js"
-import AashPlugin, { 
-    AashDropdownMenu, AashTablist, AashModalDialog, AashDisclosureButton } 
-    from "../aash-vue-components/lib/aash-vue-components.js"
-import JGConsole from "../../console-base-resource/jgconsole.js"
+import { ref } from "vue"
+import AashPlugin, { AashDropdownMenu, AashTablist, AashModalDialog, 
+    AashDisclosureButton } from "aash-plugin"
+import JGConsole from "jgconsole"
 
 var scopeCounter = 1;
 
 class IdScope {
+
+    private _idScope: number;
     
     constructor() {
         this._idScope = scopeCounter++;
@@ -35,7 +36,7 @@ class IdScope {
      *
      * @param {string} id the id to prefix
      */
-    scopedId(id) {
+    scopedId(id: string) {
         return "jgwc-id-" + this._idScope + "-" + id;
     }    
 }
@@ -45,7 +46,7 @@ class IdScope {
  * that feeds back the value to a the lang attribute of the
  * Vue observable Vue.prototype.jgwc.observed.
  */
-let htmlRoot = document.querySelector("html");
+let htmlRoot = document.querySelector("html")!;
 let langRef = ref(htmlRoot.getAttribute('lang'));
 
 new MutationObserver(function(mutations) {
@@ -73,13 +74,13 @@ export class JGWC {
      * @param {HTMLElement} content the root of the subtree to be search for
      *      vue vms
      */
-    static unmountVueApps(content) {
-        if ("__vue_app__" in content) {
-            content.__vue_app__.unmount();
+    static unmountVueApps(content: HTMLElement) {
+        if ("__vue_app__" in <any>content) {
+            (<any>content).__vue_app__.unmount();
             return;
         }
-        for (let child of content.children) {
-            JGConsole.jgwc.unmountVueApps(child);
+        for (let child = 0; child < content.children.length; child++) {
+            this.unmountVueApps(<HTMLElement>content.children.item(child)!);
         }
     }
     
@@ -99,10 +100,11 @@ export class JGWC {
     }
 }
 
-JGConsole.jgwc = JGWC;
+// For access from plain JavaScript.
+(<any>JGConsole).jgwc = JGWC;
 
 export default {
-    install: (app, options) => {
+    install: (app: any, options: any) => {
         app.config.globalProperties.$jgwc = JGWC;
         app.config.globalProperties.JGConsole = JGConsole;
         app.use(AashPlugin);
