@@ -10,6 +10,7 @@
     </component>
   </component>
   <component :is="panelType" :id="sectionId + '-panel'" role="region" 
+    :class="panelClass"
     :aria-labelledby="sectionId + '-control'"
     :hidden="isExpanded() ? null : ''">
     <slot></slot>
