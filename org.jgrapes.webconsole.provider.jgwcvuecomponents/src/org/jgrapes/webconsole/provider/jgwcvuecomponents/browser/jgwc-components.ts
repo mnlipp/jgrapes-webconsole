@@ -80,7 +80,7 @@ export class JGWC {
             return;
         }
         for (let child = 0; child < content.children.length; child++) {
-            this.unmountVueApps(<HTMLElement>content.children.item(child)!);
+            JGWC.unmountVueApps(<HTMLElement>content.children.item(child)!);
         }
     }
     
