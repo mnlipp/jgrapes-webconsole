@@ -103,9 +103,6 @@ public class HelloWorldConlet
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().conletResource(type(),
                     "HelloWorld-functions.js")))
-            .addScript(new ScriptResource().setScriptId("testsource")
-                .setScriptType("text/x-test")
-                .setScriptSource("Just a test."))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "HelloWorld-style.css")));
         KeyValueStoreQuery query = new KeyValueStoreQuery(
