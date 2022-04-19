@@ -1,0 +1,16 @@
+Bundle-Name: JGrapes Web Console Moment Provider
+Bundle-Copyright: Michael N. Lipp (c) 2020
+Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
+Export-Package: org.jgrapes.webconsole.provider.moment
+
+Require-Capability: \
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+
+Provide-Capability: osgi.serviceloader; \
+    osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \
+        uses:="org.jgrapes.webconsole.base,org.jgrapes.core", \
+    org.jgrapes.webconsole.page.resource;name:List<String>="moment,moment-with-locales"
+
+-fixupmessages.local: \
+    "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
+    "The .classpath contains a library that will not be available during continuous integration:"

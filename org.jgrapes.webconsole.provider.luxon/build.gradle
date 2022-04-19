@@ -1,0 +1,52 @@
+dependencies {
+	api project(':org.jgrapes.webconsole.base')
+}
+
+ext.releaseVersion = "0.1.0"
+ext.isSnapshot = true
+version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
+
+apply plugin: 'com.github.node-gradle.node'
+
+task prepareTypes(type: Copy) {
+    dependsOn 'npmInstall'
+    into('build/generated/resources/org/jgrapes/webconsole/provider/luxon/luxon/types')
+    from ("node_modules/@types/luxon")
+}
+
+task prepareNpmLibs(type: Copy) {
+    dependsOn 'npmInstall'
+    dependsOn prepareTypes
+    description '''
+    Helper task that copies the the libraries from the npm_modules 
+    directory into a package scoped subdirectory. The root is added 
+    to eclipse as resource directory thus making the files available 
+    as package scoped resources when running a process in eclipse.
+    '''
+    into('build/generated/resources/org/jgrapes/webconsole/provider/luxon/luxon')
+    from ("node_modules/luxon") {
+        include 'build/es6/**'
+        include 'src/**'
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
+
+processResources {
+    dependsOn 'prepareNpmLibs'
+}
+
+// Prevents deadlock
+generatePomFileForMavenPublication {
+    mustRunAfter ':org.jgrapes.webconsole.base:jar'
+}
+
+eclipse {
+    synchronizationTasks prepareNpmLibs
+}
