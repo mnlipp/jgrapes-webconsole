@@ -34,6 +34,9 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 
 /**
  * Provider for the [Chart.js](http://www.chartjs.org/) library.
+ * 
+ * Chart.js is automatically configured to use luxon for time
+ * handling.
  */
 public class ChartJsProvider extends PageResourceProvider {
 
@@ -64,12 +67,14 @@ public class ChartJsProvider extends PageResourceProvider {
             ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        String minExt = event.renderSupport()
-            .useMinifiedResources() ? ".min" : "";
         consoleSession.respond(new AddPageResources()
             .addScriptResource(new ScriptResource()
-                .setProvides("chart.js")
+                .setScriptType("module").setProvides("chart.js")
                 .setScriptUri(event.renderSupport().pageResource(
-                    "chart.js/Chart" + minExt + ".js"))));
+                    "chart.js/auto/auto.esm.js")))
+            .addScriptResource(new ScriptResource()
+                .setScriptType("module")
+                .setScriptUri(event.renderSupport().pageResource(
+                    "chart.js/adapters/chartjs-adapter-luxon.js"))));
     }
 }

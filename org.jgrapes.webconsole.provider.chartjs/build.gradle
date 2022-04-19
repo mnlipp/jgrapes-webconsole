@@ -1,10 +1,10 @@
 dependencies {
 	api project(':org.jgrapes.webconsole.base')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.moment')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.luxon')
 }
 
-ext.releaseVersion = "0.29.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.30.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 apply plugin: 'com.github.node-gradle.node'
@@ -18,10 +18,26 @@ task prepareNpmLibs(type: Copy) {
     as package scoped resources when running a process in eclipse.
     '''
     into('build/generated/resources/org/jgrapes/webconsole/provider/chartjs/chart.js')
-    from ("node_modules/chart.js/dist") {
-        include "**/*"
-        exclude "*.bundle.*"
+    from ("node_modules/chart.js") {
+        include "auto/**/*"
+        exclude "auto/auto.esm.js"
+        include "dist/**/*"
+        include "helpers/**/*"
+        include "types/**/*"
     }
+    from ("resources") {
+        include "auto/**/*"
+    }
+}
+
+task rollup(type: NodeTask) {
+    dependsOn ':npmInstall'
+    dependsOn npmInstall
+    inputs.dir project.file('node_modules/chartjs-adapter-luxon')
+    inputs.file project.file('rollup.config.js')
+    outputs.dir project.file('build/generated/resources')
+    script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
+    args = ["-c"]
 }
 
 sourceSets {
@@ -33,7 +49,14 @@ sourceSets {
 }
 
 processResources {
-    dependsOn 'prepareNpmLibs'
+    dependsOn prepareNpmLibs
+    dependsOn rollup
+}
+
+// Prevents deadlock.
+generatePomFileForMavenPublication {
+    mustRunAfter ':org.jgrapes.webconsole.base:jar'
+    mustRunAfter ':org.jgrapes.webconsole.provider.luxon:jar'
 }
 
 eclipse {
