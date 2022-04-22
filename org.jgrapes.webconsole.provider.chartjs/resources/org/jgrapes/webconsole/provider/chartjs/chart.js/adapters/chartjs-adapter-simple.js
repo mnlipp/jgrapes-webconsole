@@ -256,32 +256,3 @@ let funcs = {
 };
 
 _adapters._date.override(funcs);
-
-let success = true;
-let date1 = new Date('2021-10-31T12:00:00');
-let date2 = funcs.add(date1, 4, 'hour');
-if (date2.getTime() != new Date('2021-10-31T16:00:00').getTime()) {
-    console.log (end);
-    success = false;
-}
-date2 = funcs.add(date1, 4, 'month');
-if (date2.getTime() != new Date('2022-02-28T12:00:00').getTime()) {
-    console.log (end);
-    success = false;
-}
-if (funcs.diff(date2, date1, 'month') != 4) {
-    console.log (date1);
-    console.log (date2);
-    console.log (funcs.diff(date2, date1, 'month'));
-    success = false;
-}
-date1 = new Date('2020-10-15T12:00:00');
-date2 = new Date('2022-10-14T12:00:00');
-if (funcs.diff(date2, date1, 'month') != 23) {
-    console.log (date1);
-    console.log (date2);
-    console.log (funcs.diff(date2, date1, 'month'));
-    success = false;
-}
-
-console.log("Tests successful: ", success);
