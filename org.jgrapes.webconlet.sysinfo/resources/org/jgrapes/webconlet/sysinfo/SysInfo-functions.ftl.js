@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2016, 2020  Michael N. Lipp
+ * Copyright (C) 2016, 2022  Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -16,140 +16,142 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+import JGConsole from "../../console-base-resource/jgconsole.js"
+import { Chart } from "../../page-resource/chart.js/dist/chart.esm.js";
 
-var orgJGrapesConletsSysInfo = {
-    };
+let orgJGrapesConletsSysInfo = {};
+window.orgJGrapesConletsSysInfo = orgJGrapesConletsSysInfo;
 
-(function() {
+$("body").on("click", ".jgrapes-conlet-sysinfo-view .GarbageCollection-action",
+        function(event) {
+    let conletId = $(this).closest("[data-conlet-id]").attr("data-conlet-id");
+    JGConsole.notifyConletModel(conletId, "garbageCollection");
+})
 
-    $("body").on("click", ".jgrapes-conlet-sysinfo-view .GarbageCollection-action",
-            function(event) {
-        let conletId = $(this).closest("[data-conlet-id]").attr("data-conlet-id");
-        JGConsole.notifyConletModel(conletId, "garbageCollection");
-    })
+let timeData = [];
+let maxMemoryData = [];
+let totalMemoryData = [];
+let usedMemoryData = [];
 
-    let timeData = [];
-    let maxMemoryData = [];
-    let totalMemoryData = [];
-    let usedMemoryData = [];
-    
-    JGConsole.registerConletFunction(
-            "org.jgrapes.webconlet.sysinfo.SysInfoConlet",
-            "updateMemorySizes", function(conletId, time, 
-                maxMemory, totalMemory, usedMemory) {
-                if (timeData.length >= 301) {
-                    timeData.shift();
-                    maxMemoryData.shift();
-                    totalMemoryData.shift();
-                    usedMemoryData.shift();
-                }
-                timeData.push(time);
-                maxMemoryData.push(maxMemory);
-                totalMemoryData.push(totalMemory);
-                usedMemoryData.push(usedMemory);
-                let maxFormatted = "";
-                let totalFormatted = "";
-                let usedFormatted = "";
-                let conlet = JGConsole.findConletPreview(conletId);
-                let lang = 'en';
-                if (conlet) {
-                    conlet = $(conlet);
-                    lang = conlet.closest('[lang]').attr('lang') || 'en'
-                    maxFormatted = JGConsole.formatMemorySize(maxMemory, 1, lang);
-                    totalFormatted = JGConsole.formatMemorySize(totalMemory, 1, lang);
-                    usedFormatted = JGConsole.formatMemorySize(usedMemory, 1, lang);
-                    let col = conlet.find(".maxMemory");
-                    col.html(maxFormatted);
-                    col = conlet.find(".totalMemory");
-                    col.html(totalFormatted);
-                    col = conlet.find(".usedMemory");
-                    col.html(usedFormatted);
-                }
-                conlet = JGConsole.findConletView(conletId);
-                if (conlet) {
-                    conlet = $(conlet);
-                    let col = conlet.find(".maxMemory");
-                    col.html(maxFormatted);
-                    col = conlet.find(".totalMemory");
-                    col.html(totalFormatted);
-                    col = conlet.find(".usedMemory");
-                    col.html(usedFormatted);
-                    let chartCanvas = conlet.find(".memoryChart");
-                    if (conlet.find(".memoryChart").parent(":hidden").length === 0) {
-                        let chart = chartCanvas.data('chartjs-chart');
-                        if (chart) {
-                            moment.locale(lang);
-                            chart.update(0);
-                        }
+const simpleTimeFormatter = new Intl.DateTimeFormat(
+    JGConsole.jgwc.lang() || 'en',
+    { hour: 'numeric', minute: 'numeric', second: 'numeric' });
+
+JGConsole.registerConletFunction(
+        "org.jgrapes.webconlet.sysinfo.SysInfoConlet",
+        "updateMemorySizes", function(conletId, time, 
+            maxMemory, totalMemory, usedMemory) {
+            if (timeData.length >= 301) {
+                timeData.shift();
+                maxMemoryData.shift();
+                totalMemoryData.shift();
+                usedMemoryData.shift();
+            }
+            timeData.push(time);
+            maxMemoryData.push(maxMemory);
+            totalMemoryData.push(totalMemory);
+            usedMemoryData.push(usedMemory);
+            let maxFormatted = "";
+            let totalFormatted = "";
+            let usedFormatted = "";
+            let conlet = JGConsole.findConletPreview(conletId);
+            let lang = 'en';
+            if (conlet) {
+                conlet = $(conlet);
+                lang = conlet.closest('[lang]').attr('lang') || 'en'
+                maxFormatted = JGConsole.formatMemorySize(maxMemory, 1, lang);
+                totalFormatted = JGConsole.formatMemorySize(totalMemory, 1, lang);
+                usedFormatted = JGConsole.formatMemorySize(usedMemory, 1, lang);
+                let col = conlet.find(".maxMemory");
+                col.html(maxFormatted);
+                col = conlet.find(".totalMemory");
+                col.html(totalFormatted);
+                col = conlet.find(".usedMemory");
+                col.html(usedFormatted);
+            }
+            conlet = JGConsole.findConletView(conletId);
+            if (conlet) {
+                conlet = $(conlet);
+                let col = conlet.find(".maxMemory");
+                col.html(maxFormatted);
+                col = conlet.find(".totalMemory");
+                col.html(totalFormatted);
+                col = conlet.find(".usedMemory");
+                col.html(usedFormatted);
+                let chartCanvas = conlet.find(".memoryChart");
+                if (conlet.find(".memoryChart").parent(":hidden").length === 0) {
+                    let chart = chartCanvas.data('chartjs-chart');
+                    if (chart) {
+                        chart.options.scales["xAxes"].adapters.date.locale
+                            = JGConsole.jgwc.lang() || 'en';
+                        chart.update(0);
                     }
-                }
-            });
-
-    orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
-        let chartCanvas = $(content).find(".memoryChart");
-        let ctx = chartCanvas[0].getContext('2d');
-        let lang = chartCanvas.closest('[lang]').attr('lang') || 'en'
-        let chart = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'line',
-
-            // The data for our datasets
-            data: {
-                labels: timeData,
-                datasets: [{
-                    lineTension: 0,
-                    fill: false,
-                    borderWidth: 2,
-                    pointRadius: 1,
-                    borderColor: "rgba(255,0,0,1)",
-                    label: '${_("maxMemory")}',
-                    data: maxMemoryData,
-                },{
-                    lineTension: 0,
-                    fill: false,
-                    borderWidth: 2,
-                    pointRadius: 1,
-                    borderColor: "rgba(255,165,0,1)",
-                    label: '${_("totalMemory")}',
-                    data: totalMemoryData,
-                },{
-                    lineTension: 0,
-                    fill: false,
-                    borderWidth: 2,
-                    pointRadius: 1,
-                    borderColor: "rgba(0,255,0,1)",
-                    label: '${_("usedMemory")}',
-                    data: usedMemoryData,
-                }]
-            },
-
-            // Configuration options go here
-            options: {
-                maintainAspectRatio: false,
-                scales: {
-                    xAxes: [{
-                        type: 'time',
-                        distribution: 'linear',
-                        time: {
-                            displayFormats: {
-                                millisecond: 'LTS',
-                                second: 'LTS',
-                            }
-                        }
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            callback: function(value, index, values) {
-                                return JGConsole.formatMemorySize(value, 0, lang);
-                            }
-                        }
-                    }]
                 }
             }
         });
-        chartCanvas.data('chartjs-chart', chart);
-    }
-    
-})();
+
+orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
+    let chartCanvas = $(content).find(".memoryChart");
+    let ctx = chartCanvas[0].getContext('2d');
+    let lang = chartCanvas.closest('[lang]').attr('lang') || 'en'
+    let chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our datasets
+        data: {
+            labels: timeData,
+            datasets: [{
+                lineTension: 0,
+                fill: false,
+                borderWidth: 2,
+                pointRadius: 1,
+                borderColor: "rgba(255,0,0,1)",
+                label: '${_("maxMemory")}',
+                data: maxMemoryData,
+            },{
+                lineTension: 0,
+                fill: false,
+                borderWidth: 2,
+                pointRadius: 1,
+                borderColor: "rgba(255,165,0,1)",
+                label: '${_("totalMemory")}',
+                data: totalMemoryData,
+            },{
+                lineTension: 0,
+                fill: false,
+                borderWidth: 2,
+                pointRadius: 1,
+                borderColor: "rgba(0,255,0,1)",
+                label: '${_("usedMemory")}',
+                data: usedMemoryData,
+            }]
+        },
+
+        // Configuration options go here
+        options: {
+            animation: false,
+            maintainAspectRatio: false,
+            scales: {
+                xAxes: {
+                    distribution: 'linear',
+                    type: 'time',
+                    adapters: {
+                        date: {
+                            locale: 'de'
+                        }
+                    }
+                },
+                yAxes: {
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return JGConsole.formatMemorySize(value, 0, lang);
+                        }
+                    }
+                }
+            }
+        }
+    });
+    chartCanvas.data('chartjs-chart', chart);
+}
 

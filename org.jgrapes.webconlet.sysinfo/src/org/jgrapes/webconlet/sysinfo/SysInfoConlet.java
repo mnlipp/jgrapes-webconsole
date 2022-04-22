@@ -93,7 +93,7 @@ public class SysInfoConlet
             .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(consoleSession.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
-                .setRequires("chart.js")
+                .setScriptType("module")
                 .setScriptUri(event.renderSupport().conletResource(
                     type(), "SysInfo-functions.ftl.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
