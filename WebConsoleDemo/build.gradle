@@ -24,7 +24,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
     runtimeOnly project(':org.jgrapes.webconsole.provider.datatables')
     runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.vuejs')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
     runtimeOnly project(':org.jgrapes.webconlet.examples.helloworld')
     runtimeOnly project(':org.jgrapes.webconlet.examples.formtest')
     runtimeOnly project(':org.jgrapes.webconlet.examples.styletest')
