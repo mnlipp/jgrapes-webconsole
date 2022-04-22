@@ -65,7 +65,7 @@ public class JgWcComponentsProvider extends PageResourceProvider {
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         consoleSession.respond(new AddPageResources()
-            .addScriptResource(new ScriptResource()
+            .addScriptResource(new ScriptResource().setScriptType("module")
                 .setProvides(new String[] { "jgwc-vue-components" })));
     }
 }
