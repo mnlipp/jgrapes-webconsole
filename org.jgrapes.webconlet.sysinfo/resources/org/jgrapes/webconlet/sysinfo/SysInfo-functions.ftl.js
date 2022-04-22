@@ -33,10 +33,6 @@ let maxMemoryData = [];
 let totalMemoryData = [];
 let usedMemoryData = [];
 
-const simpleTimeFormatter = new Intl.DateTimeFormat(
-    JGConsole.jgwc.lang() || 'en',
-    { hour: 'numeric', minute: 'numeric', second: 'numeric' });
-
 JGConsole.registerConletFunction(
         "org.jgrapes.webconlet.sysinfo.SysInfoConlet",
         "updateMemorySizes", function(conletId, time, 
