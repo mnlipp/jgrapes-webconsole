@@ -75,6 +75,6 @@ public class ChartJsProvider extends PageResourceProvider {
             .addScriptResource(new ScriptResource()
                 .setScriptType("module")
                 .setScriptUri(event.renderSupport().pageResource(
-                    "chart.js/adapters/chartjs-adapter-luxon.js"))));
+                    "chart.js/adapters/chartjs-adapter-simple.js"))));
     }
 }
