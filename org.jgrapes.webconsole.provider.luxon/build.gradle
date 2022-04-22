@@ -3,7 +3,7 @@ dependencies {
 }
 
 ext.releaseVersion = "0.1.0"
-ext.isSnapshot = true
+ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 apply plugin: 'com.github.node-gradle.node'
