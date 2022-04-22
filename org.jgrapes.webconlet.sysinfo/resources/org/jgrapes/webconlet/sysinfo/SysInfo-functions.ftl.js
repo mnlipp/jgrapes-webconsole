@@ -79,7 +79,7 @@ JGConsole.registerConletFunction(
                     let chart = chartCanvas.data('chartjs-chart');
                     if (chart) {
                         chart.options.scales["xAxes"].adapters.date.locale
-                            = JGConsole.jgwc.lang() || 'en';
+                            = chartCanvas.closest('[lang]').attr('lang') || 'en';
                         chart.update(0);
                     }
                 }
