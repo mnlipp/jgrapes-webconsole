@@ -78,8 +78,6 @@ JGConsole.registerConletFunction(
                 if (conlet.find(".memoryChart").parent(":hidden").length === 0) {
                     let chart = chartCanvas.data('chartjs-chart');
                     if (chart) {
-                        chart.options.scales["xAxes"].adapters.date.locale
-                            = chartCanvas.closest('[lang]').attr('lang') || 'en';
                         chart.update(0);
                     }
                 }
@@ -134,7 +132,7 @@ orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
                     type: 'time',
                     adapters: {
                         date: {
-                            locale: 'de'
+                            locale: chartCanvas.closest('[lang]').attr('lang') || 'en'
                         }
                     }
                 },
