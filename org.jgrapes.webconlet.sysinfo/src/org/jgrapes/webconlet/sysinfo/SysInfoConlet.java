@@ -132,7 +132,7 @@ public class SysInfoConlet
                         .setRenderAs(
                             RenderMode.View.addModifiers(event.renderAs()))
                         .setSupportedModes(MODES));
-            renderedAs.add(RenderMode.Preview);
+            renderedAs.add(RenderMode.View);
         }
         if (!renderedAs.isEmpty()) {
             updateView(consoleSession, conletId);
