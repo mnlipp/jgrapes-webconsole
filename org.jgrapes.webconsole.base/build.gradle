@@ -64,13 +64,25 @@ dependencies {
     javadocTaglets "org.jdrupes.taglets:plantuml-taglet:2.0.1"
 }
 
+task javadocResources(type: Copy) {
+    into file("${rootProject.buildDir}/javadoc")
+    from (rootProject.rootDir) {
+        include 'WebConsole-pic1.png'
+    }
+    from ("${rootProject.rootDir}/misc") {
+        include '*.woff2'
+    }
+}
+
 task java11doc(type: JavaExec) {
     // Does not work on JitPack, no /usr/bin/dot
     enabled = JavaVersion.current() == JavaVersion.VERSION_17 && !isJitPackBuild
     
+    dependsOn javadocResources
     dependsOn classes
-    dependsOn 'tsdoc'
+    dependsOn tsdoc
     inputs.file "${rootProject.rootDir}/overview.md"
+    inputs.file "${rootProject.rootDir}/misc/stylesheet.css"
 
     jvmArgs = ['--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED',
         '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED']
@@ -109,6 +121,7 @@ task java11doc(type: JavaExec) {
         '-bottom', file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text,
         '--allow-script-in-comments',
         '-Xdoclint:-html',
+        '--main-stylesheet', "${rootProject.rootDir}/misc/stylesheet.css",
         '-quiet'
         ]
 

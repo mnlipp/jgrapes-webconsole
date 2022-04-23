@@ -426,11 +426,11 @@
  *     }
  * }
  * 
- * "JGrapes Core Components" <.. org.jgrapes.webconsole.base
- * org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.jqueryui"
+ * org.jgrapes.webconsole.base ..> "JGrapes Core Components"
+ * "org.jgrapes.webconsole.jqueryui" ..> org.jgrapes.webconsole.base
  * org.jgrapes.webconsole.jqueryui <.. "org.jgrapes.webconsole.jqueryui.themes.*"
- * org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.bootstrap4"
- * org.jgrapes.webconsole.base <.. "org.jgrapes.webconsole.vuejs"
+ * "org.jgrapes.webconsole.bootstrap4" ..> org.jgrapes.webconsole.base
+ * "org.jgrapes.webconsole.vuejs" ..> org.jgrapes.webconsole.base
  * 
  * @enduml
  */
