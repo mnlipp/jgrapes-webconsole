@@ -47,7 +47,7 @@ import org.jgrapes.webconsole.base.events.RenderConletRequest;
  * A component that restores the console layout
  * using key/value events for persisting the data between sessions.
  * 
- * ![Boot Event Sequence](KVPPBootSeq.svg)
+ * <img src="KVPPBootSeq.svg" alt="Boot Event Sequence">
  * 
  * This component requires another component that handles the key/value
  * store events ({@link KeyValueStoreUpdate}, {@link KeyValueStoreQuery})
