@@ -49,7 +49,7 @@ style and a large view that is supposed to fill the complete frame.
 Tabs or a menu in a side bar can be used to switch between
 the overview panel(s) and the large views of the different conlets. 
 
-<img src="README-pic1.png" width="75%" alt="Web Console Demo">
+<img src="WebConsole-pic1.png" width="75%" alt="Web Console Demo">
 
 The JGrapes WebConsole could roughly be classified as a micro frontend
 with run-time integration via JavaScript, though it favors a common 
