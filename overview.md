@@ -60,6 +60,21 @@ The project currently includes three sample SPA providers:
    get a completely different appearance. (Actually, it's possible
    to derive a class from `VueJsConsoleWeblet` that only "overrides"
    the style sheet.)
+
+The SPA frame consist of the HTML for the basic page layout and JavaScript 
+code for communicating with the server and managing the content. To 
+simplify the implementation, package {@link org.jgrapes.webconsole.base} 
+includes the JavaScript classes
+[`Console`](org/jgrapes/webconsole/base/jsdoc/classes/Console.html) and 
+[`Renderer`](org/jgrapes/webconsole/base/jsdoc/classes/Renderer.html).
+
+Class [`Console`](org/jgrapes/webconsole/base/jsdoc/classes/Console.html)
+provides methods that are independent of a particular front-end
+implementation such as establishing and maintaining a websocket
+connection with the server.
+
+Class [`Renderer`](org/jgrapes/webconsole/base/jsdoc/classes/Renderer.html)
+provides methods that simplify the implementation of a specific front-end.
    
 ## Styling Conlets
 
@@ -127,6 +142,27 @@ In the JGrapes web console, the necessary dependency tracking and
 ordered insertion of the `script` nodes is handled by a class that
 obtains the required information from `ScriptResource` instances
 as described in {@link org.jgrapes.webconsole.base.events.AddPageResources}.
+
+#### I180n support
+
+The currently selected language is maintained in the `lang` attribute
+of the `html` element. The renderer implementation must provide some
+UI element that allows the user to modify the value of the `lang`
+attribute. Whenever the value of the attribute is changed, the
+server must be notified by calling
+[`setLocale`](org/jgrapes/webconsole/base/jsdoc/classes/Console.html#setLocale).
+
+In response, the server fires a 
+{@link org.jgrapes.webconsole.base.events.SetLocale} 
+event which is handled by the console weblet and all contlets.
+Depending on the implementation on the client side, the console weblet
+(or a conlet) can trigger a full reload of the page. Assuming that
+the SPA frame can adapt to a change of language without reload,
+a conlet can trigger a reload of its representations (the default behavior of 
+{@link org.jgrapes.webconsole.base.AbstractConlet#doSetLocale onSetLocale}
+as implemented by `AbstractConlet`)
+or do nothing if its representation can also adapt to a change of the `lang`
+attribute dynamically.
 
 ## Component Packages
 
