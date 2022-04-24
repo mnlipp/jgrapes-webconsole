@@ -7,7 +7,6 @@ api_version = 1.0.0
 Require-Capability: \
     org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)", \
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery)", \
-    org.jgrapes.webconsole.page.resource;filter:="(name=moment)", \
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui)", \
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui.touch-punch)", \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)", \
