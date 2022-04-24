@@ -4,8 +4,7 @@ Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 Export-Package: org.jgrapes.webconsole.provider.chartjs
 
 Require-Capability: \
-    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=moment-with-locales)"
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \
