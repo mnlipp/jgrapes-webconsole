@@ -1,7 +1,7 @@
-Bundle-Name: JGrapes Web Console Moment Provider
-Bundle-Copyright: Michael N. Lipp (c) 2020
+Bundle-Name: JGrapes Web Console Luxon Provider
+Bundle-Copyright: Michael N. Lipp (c) 2022
 Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
-Export-Package: org.jgrapes.webconsole.provider.moment
+Export-Package: org.jgrapes.webconsole.provider.luxon
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
@@ -9,7 +9,7 @@ Require-Capability: \
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \
         uses:="org.jgrapes.webconsole.base,org.jgrapes.core", \
-    org.jgrapes.webconsole.page.resource;name:List<String>="moment,moment-with-locales"
+    org.jgrapes.webconsole.page.resource;name:List<String>="luxon"
 
 -fixupmessages.local: \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
