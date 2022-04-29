@@ -27,6 +27,20 @@
     background-color: #F8F8F8;
   }
   
+  [data-aash-role="accordion"] [role=region] {
+    transition: height 0.2s, padding 0.2s;
+  }
+  
+  [data-aash-role="accordion"] [role=region][data-transitioning] {
+    overflow: hidden;
+    display: block;
+  }
+  
+  [data-aash-role="accordion"] [role=region][hidden] {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  
   </style>
   <script>
   function onToggleFunc(path, newStateOpen, event) {
