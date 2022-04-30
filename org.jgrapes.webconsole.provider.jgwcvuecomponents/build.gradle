@@ -6,7 +6,7 @@ dependencies {
 // Prevents deadlock.
 generatePomFileForMavenPublication.mustRunAfter(':org.jgrapes.webconsole.provider.vue:generatePomFileForMavenPublication')
 
-ext.releaseVersion = "0.10.0"
+ext.releaseVersion = "0.11.0"
 ext.isSnapshot = false
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
