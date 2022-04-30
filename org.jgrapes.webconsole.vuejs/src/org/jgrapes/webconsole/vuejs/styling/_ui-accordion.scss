@@ -27,54 +27,50 @@
 
 [data-aash-role="accordion"] {
 
-    > :nth-child(2n+1) {
+    > div {
 
-        margin: 0.5rem 0 0rem 0;
-            
-        button, [role=button] {
-            position: relative;
-            font: inherit;
-            width: 100%;
-            text-align: left;
-            background-color: var(--background);
-            border: 0px solid var(--white);
-            border-radius: var(--corner-radius);
-            padding: 0.5rem;
-            
-            &:before {
-                content: "";
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: -1;
-                box-shadow: 0 .25rem 1rem var(--shadow-color);
-            }
-
-            &[aria-expanded="true"] {
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-            }       
-        }
-    }
-
-    > :nth-child(2n) {
-        position: relative;
-        padding: 0.5rem 0.5rem 1rem 0.5rem;
+        box-shadow: 0 .25rem 1rem var(--shadow-color);
         border: 0px solid var(--white);
-        border-radius: 0 0 var(--corner-radius) var(--corner-radius);
-        background-color: var(--background);
-        
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: -1;
-            box-shadow: 0 .25rem 1rem var(--shadow-color);
+        border-radius: var(--corner-radius);
+
+        > :first-child {
+    
+            margin: 0.5rem 0 0rem 0;
+                
+            button, [role=button] {
+                position: relative;
+                font: inherit;
+                width: 100%;
+                text-align: left;
+                background-color: var(--background);
+                border: 0px solid var(--white);
+                border-radius: var(--corner-radius);
+                padding: 0.5rem;
+                
+                &[aria-expanded="true"] {
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                }       
+            }
+        }
+    
+        > :last-child {
+            position: relative;
+            border: 0px solid var(--white);
+            border-radius: 0 0 var(--corner-radius) var(--corner-radius);
+            background-color: var(--background);
+            max-height: 100%;
+            overflow: hidden;
+            transition:  height 0.3s linear;
+            > div {
+                padding: 0.5rem 0.5rem 1rem 0.5rem;
+            }
+            
+            &[hidden] {
+                display: block;
+                height: 0;
+            }
+            
         }
     }
 }
