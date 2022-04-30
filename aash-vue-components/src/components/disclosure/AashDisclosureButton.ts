@@ -1,5 +1,5 @@
 /**
- * Provides an element that controlls the visibility of another element.
+ * Provides an element that controls the visibility of another element.
  *
  * @module AashDisclosureButton
  */
