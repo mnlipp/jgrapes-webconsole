@@ -107,7 +107,7 @@ export class Controller {
  *
  * Example source:
  * ```html
- * <aash-accordion>
+ * <aash-accordion :always-expanded="true">
  *   <aash-accordion-section :title="'Header 1'">
  *     Panel 1
  *   </aash-accordion-section>
@@ -118,23 +118,40 @@ export class Controller {
  * </aash-accordion>
  * ```
  *
- * Resulting HTML:
+ * The resulting DOM follows the example shown in the 
+ * [WAI-ARIA Authoring Practices 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html).
+ * Notable differences are a `div` surrounding the pairs of headers and panels
+ * and an additional div between the panel and its content.
+ *
+ * The former simplifies styling of a section independant of its expanded state
+ * with e.g. a shadow.
+ *
+ * The latter is required for animating accordions. Details can be found in
+ * the documentation od `AashAccordionSection`.
+ *
  * ```html
  * <div data-aash-role="accordion">
- *   <div role="header">
- *     <button id="aash-id-6-control" aria-controls="aash-id-6-panel" 
- *       aria-expanded="true"><span>Header 1</span></button>
+ *   <div>
+ *     <div role="header">
+ *       <button id="aash-id-6-control" tabindex="0" 
+ *         aria-controls="aash-id-6-panel" aria-expanded="true">
+ *         <span>Header 1</span>
+ *       </button>
+ *     </div>
+ *     <div id="aash-id-6-panel" role="region" class="" 
+ *       aria-labelledby="aash-id-6-control">
+ *       <div> Panel 1 </div>
+ *     </div>
  *   </div>
- *   <div id="aash-id-6-panel" role="region" aria-labelledby="aash-id-6-control">
- *     Panel 1 
- *   </div>
- *   <div role="header">
- *     <button id="aash-id-7-control" aria-controls="aash-id-7-panel" 
- *       aria-expanded="false">Header 2</button>
- *   </div>
- *   <div id="aash-id-7-panel" role="region" aria-labelledby="aash-id-7-control"
- *     hidden="">
- *     Panel 2
+ *   <div>
+ *     <div role="header">
+ *       <button id="aash-id-7-control" tabindex="0" 
+ *         aria-controls="aash-id-7-panel" aria-expanded="false">Header 2</button>
+ *     </div>
+ *     <div id="aash-id-7-panel" role="region" class="" 
+ *       aria-labelledby="aash-id-7-control" hidden="">
+ *       <div> Panel 2 </div>
+ *     </div>
  *   </div>
  * </div>
  * ```

@@ -3,6 +3,14 @@
 <head>
   <title>AaSH Demo</title>
   <style>
+  html {
+      box-sizing: border-box;
+  }
+
+  *, *:before, *:after {
+      box-sizing: inherit;
+  }
+    
   /* Required for firefox, does not show focus on span by default. */
   span:focus {
       box-shadow: black 0px 0px 1px 1px;
@@ -28,7 +36,7 @@
   }
   
   [data-aash-role="accordion"] [role=region] {
-    transition: height 0.2s, padding 0.2s;
+    transition: height 0.2s;
   }
   
   [data-aash-role="accordion"] [role=region][data-transitioning] {
@@ -37,8 +45,7 @@
   }
   
   [data-aash-role="accordion"] [role=region][hidden] {
-    padding-top: 0;
-    padding-bottom: 0;
+    height: 0;
   }
   
   </style>

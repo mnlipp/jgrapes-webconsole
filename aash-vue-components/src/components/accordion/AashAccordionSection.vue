@@ -16,7 +16,7 @@
       :aria-labelledby="sectionId + '-control'"
       :hidden="isExpanded ? null : ''"
       :data-transitioning="isTransitioning ? '' : null">
-      <slot></slot>
+      <div><slot></slot></div>
     </component>
   </div>
 </template>
