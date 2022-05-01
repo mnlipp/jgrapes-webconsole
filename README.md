@@ -35,28 +35,7 @@ the web console components of the JGrapes framework.
 Short Overview
 --------------
 
-A web console built with the components provided here is a single
-page application (SPA) that &mdash;from the user's point of view&mdash;
-consists of a fixed frame with configurable content. The frame provides
-some means to add content (typically by using a dropdown menu) and to 
-configure global settings such as the locale.
-
-The content of the frame is provided by web console display components 
-or "conlets" for short. These components typically provide a summary
-or preview display that can be put on an overview panel in a dashboard
-style and a large view that is supposed to fill the complete frame.
-
-Tabs or a menu in a side bar can be used to switch between
-the overview panel(s) and the large views of the different conlets. 
-
-<img src="WebConsole-pic1.png" width="75%" alt="Web Console Demo">
-
-The JGrapes WebConsole could roughly be classified as a micro frontend
-with run-time integration via JavaScript, though it favors a common 
-approach to styling for all components, which is unusual for most
-micro frontend architectures.
-
-See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
+See the [project's home page](https://mnlipp.github.io/jgrapes/WebConsole.html).
 
 Demo
 ----
