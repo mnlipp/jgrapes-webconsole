@@ -181,7 +181,8 @@ public class HelloWorldConlet
                 .getTemplate("HelloWorld-help.ftl.html");
             channel.respond(new OpenModalDialog(processTemplate(event, tpl,
                 fmModel(event, channel, conletId, conletState)))
-                    .addOption("cancelable", true));
+                    .addOption("cancelable", true)
+                    .addOption("closeLabel", ""));
         }
         return renderedAs;
     }
