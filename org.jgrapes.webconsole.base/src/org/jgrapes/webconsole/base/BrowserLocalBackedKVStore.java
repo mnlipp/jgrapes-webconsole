@@ -75,13 +75,12 @@ public class BrowserLocalBackedKVStore extends Component {
             throws InterruptedException {
         // Put there by onJsonInput if retrieval has been done.
         if (TypedIdKey.get(channel.browserSession(), Store.class,
-            consolePrefix)
-            .isPresent()) {
+            consolePrefix).isPresent()) {
             // Already have store, nothing to do
             return;
         }
-        // Remove web console ready event from queue and save it
-        event.cancel(false);
+        // Suspend and trigger data retrieval
+        event.suspendHandling();
         channel.setAssociated(this, event);
         String keyStart = consolePrefix
             + BrowserLocalBackedKVStore.class.getName() + "/";
@@ -128,10 +127,10 @@ public class BrowserLocalBackedKVStore extends Component {
                             keyStart.length() - 1), item.asString(1));
                     }
                 });
-                // Don't intercept again
+                // Don't re-use
                 channel.setAssociated(this, null);
                 // Let others process the web console ready event
-                fire(new ConsoleReady(origEvent.renderSupport()), channel);
+                origEvent.resumeHandling();
             });
     }
 
