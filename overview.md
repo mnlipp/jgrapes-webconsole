@@ -18,7 +18,9 @@ configure global settings  such as the locale.
 The content of the frame is provided by web console display components 
 or "conlets" for short. These components typically support a summary
 or preview display that can be put on an overview panel in a dashboard
-style and a large view that is supposed to fill the complete frame.
+style and a large view that is supposed to fill the complete frame. 
+(They can also provide a "component display" and thus be embedded in 
+other conlets.)
 
 Tabs or a menu in a side bar can be used to switch between
 the overview panel(s) and the large views of the different conlets. 
