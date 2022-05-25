@@ -9,8 +9,8 @@
       </header>
       <section v-if="content" v-html="content" :class="contentClasses"></section>
       <section v-else :class="contentClasses"><slot></slot></section>
-      <footer>
-        <button type="button" v-on:click="close()">{{ closeLabel || "Okay" }}</button>
+      <footer v-if="closeLabel != ''">
+        <button type="button" v-on:click="close()">{{ closeLabel }}</button>
       </footer>
     </div>
   </div>

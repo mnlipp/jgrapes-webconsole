@@ -76,7 +76,10 @@ export default defineComponent({
         },
         content: String,
         contentClasses: Array,
-        closeLabel: String,
+        closeLabel: {
+            type: String,
+            default: "Okay"
+        },
         onClose: Function as PropType<(confirmed: boolean) => void>
     },
   
@@ -104,7 +107,7 @@ export default defineComponent({
             }
             isOpen.value = false;
         }
-  
+
         const close = () => {
             if (props.onClose) {
                 props.onClose(true);
