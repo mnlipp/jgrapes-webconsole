@@ -50,6 +50,7 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.DisplayNotification;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
+import org.jgrapes.webconsole.base.events.OpenModalDialog;
 import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
@@ -61,7 +62,7 @@ public class HelloWorldConlet
         extends FreeMarkerConlet<HelloWorldConlet.HelloWorldModel> {
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
-        RenderMode.Preview, RenderMode.View);
+        RenderMode.Preview, RenderMode.View, RenderMode.Help);
 
     /**
      * Creates a new component with its channel set to the given 
@@ -174,6 +175,13 @@ public class HelloWorldConlet
                 conletState.getConletId(), "setWorldVisible",
                 conletState.isWorldVisible()));
             renderedAs.add(RenderMode.View);
+        }
+        if (event.renderAs().contains(RenderMode.Help)) {
+            Template tpl = freemarkerConfig()
+                .getTemplate("HelloWorld-help.ftl.html");
+            channel.respond(new OpenModalDialog(processTemplate(event, tpl,
+                fmModel(event, channel, conletId, conletState)))
+                    .addOption("cancelable", true));
         }
         return renderedAs;
     }

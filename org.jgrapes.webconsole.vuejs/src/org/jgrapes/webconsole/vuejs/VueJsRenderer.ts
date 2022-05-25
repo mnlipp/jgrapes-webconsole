@@ -305,7 +305,9 @@ export default class Renderer extends JGConsole.Renderer {
         createApp({
             template: `
               <p>{{ evalTitle }}</p>
-              <button v-if="isEditable"
+              <button v-if="hasHelp"
+                type='button' class='fa fa-question-circle' @click="showHelp()"
+              ></button><button v-if="isEditable"
                 type='button' class='fa fa-wrench' @click="edit()"
               ></button><button v-if="isRemovable" 
                 type="button" class="fa fa-times" @click="removePreview()"
@@ -335,6 +337,10 @@ export default class Renderer extends JGConsole.Renderer {
                     return !modes.includes(RenderMode.StickyPreview);
                 });
 
+                const hasHelp = computed(() => {
+                    return modes.includes(RenderMode.Help);
+                });
+
                 const hasView = computed(() => {
                     return modes.includes(RenderMode.View);
                 });
@@ -353,6 +359,11 @@ export default class Renderer extends JGConsole.Renderer {
                         conletId, [RenderMode.View, RenderMode.Foreground]);
                 };
 
+                const showHelp = () => {
+                    _this.console.renderConlet(
+                        conletId, [RenderMode.Help, RenderMode.Foreground]);
+                };
+
                 provideApi (header, {
                     setTitle, isEditable, isRemovable,
                     hasView, edit, removePreview, showView,
@@ -363,7 +374,8 @@ export default class Renderer extends JGConsole.Renderer {
                 });
 
                 return { conletId, evalTitle, isEditable, isRemovable,
-                    hasView, edit, removePreview, showView, header }
+                    hasHelp, showHelp, hasView, edit, removePreview, showView, 
+                    header }
             }
         }).mount(header);
     }
