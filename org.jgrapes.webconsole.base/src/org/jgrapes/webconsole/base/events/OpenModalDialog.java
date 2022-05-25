@@ -23,30 +23,31 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
- * Causes a notification to be display on the top of the web console page.
- * 
- * The event triggers the creation of a notification widget in the
- * web console page. 
+ * Causes a modal dialog to be display on the top of the web console page.
  */
-public class DisplayNotification extends ConsoleCommand {
+public class OpenModalDialog extends ConsoleCommand {
 
-    private String content;
+    private Future<String> content;
     private Map<String, Object> options;
 
     /**
      * Creates a new event. The content must be valid HTML, i.e. it
-     * must start with a tag (usually a "`<span>`"). See the console's
-     * <a href="../jsdoc/classes/Console.html#notification">
-     * notification</a> method and the JavaScript documentation of the
-     * <a href="../jsdoc/interfaces/NotificationOptions.html">
-     * notification options</a> for details.
+     * must start with a tag.  See the JavaScript documentation of the
+     * <a href="../jsdoc/interfaces/ModalDialogOptions.html">
+     * modal dialog options</a> for details.
      * 
      * @param content the content (valid HTML)
-     * @param options the options (must be serializable as JSON)
+     * @param options the options (must be serializable as JSON), see 
+     * the JavaScript documentation of the
+     * <a href="../jsdoc/interfaces/ModalDialogOptions.html">
+     * modal dialog options</a> for details.
      */
-    public DisplayNotification(String content, Map<String, Object> options) {
+    public OpenModalDialog(Future<String> content,
+            Map<String, Object> options) {
         this.content = content;
         this.options = options;
     }
@@ -54,11 +55,11 @@ public class DisplayNotification extends ConsoleCommand {
     /**
      * Creates a new event without any options.
      * The content must be valid HTML, i.e. it
-     * must start with a tag (usually a "`<span>`").
+     * must start with a tag.
      * 
      * @param content the content (valid HTML)
      */
-    public DisplayNotification(String content) {
+    public OpenModalDialog(Future<String> content) {
         this(content, null);
     }
 
@@ -69,7 +70,7 @@ public class DisplayNotification extends ConsoleCommand {
      * @param value the option value (must be serializable as JSON)
      * @return the event for easy chaining
      */
-    public DisplayNotification addOption(String name, Object value) {
+    public OpenModalDialog addOption(String name, Object value) {
         if (options == null) {
             options = new HashMap<>();
         }
@@ -82,7 +83,7 @@ public class DisplayNotification extends ConsoleCommand {
      * 
      * @return the content
      */
-    public String content() {
+    public Future<String> content() {
         return content;
     }
 
@@ -98,8 +99,11 @@ public class DisplayNotification extends ConsoleCommand {
     @Override
     public void toJson(Writer writer) throws IOException {
         Map<String, Object> options = options();
-        options.put("destroyOnClose", true);
-        toJson(writer, "displayNotification", content(), options);
+        try {
+            toJson(writer, "openModalDialog", content().get(), options);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new IOException(e);
+        }
     }
 
 }

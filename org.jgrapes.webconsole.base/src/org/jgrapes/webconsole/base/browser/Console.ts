@@ -22,6 +22,7 @@ import RenderMode from "./RenderMode";
 import Renderer from "./Renderer";
 import ConsoleWebSocket from "./ConsoleWebSocket";
 import NotificationOptions from "./NotificationOptions";
+import ModalDialogOptions from "./ModalDialogOptions";
 import ConsoleNotification from "./Notification";
 import { parseHtml } from "./Util";
 
@@ -40,11 +41,13 @@ export default class Console {
         '<section class="conlet conlet-preview"></section>')[0];
     private _viewTemplate = parseHtml(
         '<article class="conlet conlet-view conlet-content"></article>')[0];
-    private _editTemplate = parseHtml(
-        '<div class="conlet conlet-edit"></div>')[0];
+    private _modalDialogTemplate = parseHtml(
+        '<div class="console-modal-dialog"></div>')[0];
     private _resourceManager: ResourceManager;
 
     constructor() {
+        document.querySelector("body")?.append(parseHtml(
+            '<div id="console-modal-slot"></div>')[0]);
         let _this = this;
         this._resourceManager = new ResourceManager(this);
         this._webSocket.addMessageHandler('addPageResources',
@@ -97,15 +100,6 @@ export default class Console {
                 } else if (renderAs.includes(RenderMode.View)) {
                     _this._updateView(conletType, conletId, supported, content,
                     renderAs.includes(RenderMode.Foreground));
-                } else if (renderAs.includes(RenderMode.Edit)) {
-                    let container = <HTMLElement>_this._editTemplate.cloneNode(true);
-                    container.dataset["conletType"] = conletType;
-                    container.dataset["conletId"] = conletId;
-                    _this._renderer!.showEditDialog(container, supported, content);
-                    if (!container.parentNode) {
-                        document.querySelector("body")?.append(container);
-                    }
-                    _this._execOnLoad(container, false);
                 } else if (renderAs.includes(RenderMode.Component)) {
                     _this._updateComponent(conletType, conletId, supported, content);
                 }
@@ -123,6 +117,22 @@ export default class Console {
         this._webSocket.addMessageHandler('displayNotification',
             (content, options) => {
                 _this._renderer!.notification(content, options);
+            });
+        this._webSocket.addMessageHandler('openModalDialog',
+            (content, options) => {
+                let container = <HTMLElement>_this._modalDialogTemplate.cloneNode(true);
+                _this._renderer!.openModalDialog(container, options, content);
+                if (!container.parentNode) {
+                    // Must be attached to DOM tree
+                    let slot = document.querySelector("#console-modal-slot");
+                    if (slot) {
+                        while (slot!.firstChild) {
+                            slot!.removeChild(slot!.firstChild);
+                        }
+                        slot!.append(container);
+                    }
+                }
+                _this._execOnLoad(container, false);
             });
         this._webSocket.addMessageHandler('retrieveLocalData',
             (path) => {
@@ -424,7 +434,7 @@ export default class Console {
     /**
      * Invokes the functions defined in `data-jgwc-on-apply`
      * attributes of the tree with root `container`. Must be 
-     * invoked by edit dialogs when they are closed.
+     * invoked by edit or modal dialogs when they are closed.
      * 
      * @param container the container of the edit dialog
      */

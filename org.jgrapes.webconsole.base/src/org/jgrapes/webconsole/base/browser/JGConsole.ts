@@ -22,6 +22,7 @@ import Renderer from "./Renderer";
 import RenderMode from "./RenderMode";
 import NotificationOptions, { NotificationType } from "./NotificationOptions";
 import Notification from "./Notification";
+import ModalDialogOptions from "./ModalDialogOptions";
 import TableController from "./TableController";
 import OptionsSet from "./OptionsSet";
 
@@ -30,7 +31,7 @@ import "./console.css";
 // Re-export
 export { Console, parseHtml, rootQuery, formatMemorySize, 
     Renderer, RenderMode, 
-    NotificationType, NotificationOptions, Notification, 
+    NotificationType, NotificationOptions, Notification, ModalDialogOptions, 
     TableController, OptionsSet };
 
 /** The singleton that provides the console instance. */

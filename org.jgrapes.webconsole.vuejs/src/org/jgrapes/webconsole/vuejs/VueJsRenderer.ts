@@ -19,7 +19,7 @@
 /// <reference path="../../../../../../org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack.d.ts" />
 
 import JGConsole, { Console, RenderMode, Notification, NotificationOptions,
-    NotificationType, parseHtml } from "@JGConsole"
+    NotificationType, ModalDialogOptions, parseHtml } from "@JGConsole"
 import { reactive, ref, createApp, onMounted, computed, Ref } from "@Vue";
 import AashPlugin, { provideApi, getApi, AashTablist, 
     AashModalDialogComponent, AashModalDialog } from "@Aash";
@@ -474,11 +474,14 @@ export default class Renderer extends JGConsole.Renderer {
         headerComponent.setModes(modes);
     }
 
-    showEditDialog(container: HTMLElement, modes: RenderMode[], content: string) {
+    openModalDialog(container: HTMLElement, options: ModalDialogOptions,
+        content: string) {
         let _this = this;
         let dialog = createApp (AashModalDialogComponent, {
             content: content,
-            contentClasses: ["conlet-content"],
+            title: options.title,
+            showCancel: options.cancelable || false,
+            closeLabel: options.closeLabel,
             onClose: function(applyChanges: boolean) {
                 if (applyChanges) {
                     _this.console.execOnApply(container);
@@ -489,11 +492,6 @@ export default class Renderer extends JGConsole.Renderer {
         
         let dialogEl = dialog.mount(container).$el;
         let dialogApi = getApi<AashModalDialog.Api>(dialogEl.firstChild)!;
-        let contentRoot = dialogEl.querySelector(".conlet-content")
-            .querySelector("* > [title]");
-        if (contentRoot) {
-            dialogApi.updateTitle(contentRoot.getAttribute("title"));
-        }
         dialogApi.open();
     }
     

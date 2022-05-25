@@ -55,6 +55,7 @@ import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
+import org.jgrapes.webconsole.base.events.OpenModalDialog;
 import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.UpdateConletModel;
@@ -261,12 +262,10 @@ public class MarkdownDisplayConlet extends
         if (event.renderAs().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
-            consoleSession.respond(new RenderConlet(type(), model.getConletId(),
-                processTemplate(event, tpl,
+            consoleSession
+                .respond(new OpenModalDialog(processTemplate(event, tpl,
                     fmModel(event, consoleSession, conletId, model)))
-                        .setRenderAs(
-                            RenderMode.Edit.addModifiers(event.renderAs()))
-                        .setSupportedModes(supported));
+                        .addOption("cancelable", true));
         }
         return renderedAs;
     }

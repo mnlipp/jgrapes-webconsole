@@ -19,6 +19,7 @@ import Console from "./Console";
 import Log from "./Log";
 import ConsoleNotification from "./Notification";
 import NotificationOptions from "./NotificationOptions";
+import ModalDialogOptions from "./ModalDialogOptions";
 import RenderMode from "./RenderMode";
 import { parseHtml } from "./Util";
 
@@ -246,13 +247,14 @@ export default abstract class Renderer {
     }
 
     /**
-     * Called by the {@link Console} to open an edit dialog.
+     * Called by the {@link Console} to open a modal dialog.
      * 
      * @param container the container for the dialog
-     * @param modes the modes
+     * @param options the options
      * @param content the content as HTML
      */
-    showEditDialog(container: HTMLElement, modes: RenderMode[], content: string) {
+    openModalDialog(container: HTMLElement, options: ModalDialogOptions, 
+        content: string) {
         Log.warn("Not implemented!");
     }
 

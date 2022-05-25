@@ -408,10 +408,9 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         this._setModeIcons($(conlet), modes);
     }
 
-    showEditDialog(container, modes, content) {
+    openModalDialog(container, options, content) {
         let _this = this;
         container = $(container);
-        container.addClass("conlet-content");
         let dialogContent = $(content);
         container.append(dialogContent);
         container.dialog({

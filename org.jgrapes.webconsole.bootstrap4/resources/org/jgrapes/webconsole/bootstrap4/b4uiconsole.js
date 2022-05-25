@@ -485,7 +485,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         this._setModeIcons($(conlet), modes);
     }
 
-    showEditDialog(container, modes, content) {
+    openModalDialog(container, options, content) {
         let _this = this;
         container = $(container);
         let dialog = $('<div class="modal" tabindex="-1" role="dialog">'
@@ -496,7 +496,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             + ' alt="' + B4UIConsole.l10n.close + '">'
             + '<span aria-hidden="true">&times;</span>'
             + '</button></div>'
-            + '<div class="modal-body conlet-content">'
+            + '<div class="modal-body">'
             + '</div>'
             + '<div class="modal-footer">'
             + '<button type="button" class="btn btn-primary" data-dismiss="modal">'
