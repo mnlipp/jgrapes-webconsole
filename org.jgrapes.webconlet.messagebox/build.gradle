@@ -5,3 +5,34 @@ dependencies {
 ext.releaseVersion = "0.2.0"
 ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
+
+apply plugin: 'com.github.node-gradle.node'
+
+task compileTs(type: NodeTask) {
+    dependsOn ':npmInstall'
+    dependsOn ':org.jgrapes.webconsole.base:buildLib'
+    dependsOn ':org.jgrapes.webconsole.provider.vue:npmInstall'
+    dependsOn ':org.jgrapes.webconsole.provider.jgwcvuecomponents:compileTs'
+    inputs.dir project.file('src')
+    inputs.file project.file('tsconfig.json')
+    inputs.file project.file('rollup.config.js')
+    outputs.dir project.file('build/generated/resources')
+    script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
+    args = ["-c"]
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
+
+processResources {
+    dependsOn compileTs
+}
+
+eclipse {
+    autoBuildTasks compileTs
+}

@@ -33,6 +33,7 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.events.AddConletType;
+import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
@@ -75,7 +76,12 @@ public class MessageBoxConlet extends FreeMarkerConlet<Serializable> {
             ParseException, IOException {
         // Add resources to page
         consoleSession.respond(
-            new AddConletType(type()).addRenderMode(RenderMode.Component));
+            new AddConletType(type())
+                .addScript(new ScriptResource()
+                    .setScriptUri(event.renderSupport().conletResource(
+                        type(), "MessageBox-functions.js"))
+                    .setScriptType("module"))
+                .addRenderMode(RenderMode.Component));
     }
 
     @Override
