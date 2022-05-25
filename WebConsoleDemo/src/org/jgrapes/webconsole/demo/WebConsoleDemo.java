@@ -138,6 +138,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         createJQueryUiConsole();
         createBootstrap4Console();
         createVueJsConsole();
+        createVueJsConsole2();
         Components.start(app);
     }
 
@@ -211,6 +212,36 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConsoleSessionInactivityTimeout(300000);
+        console.attach(new BrowserLocalBackedKVStore(
+            console, consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console));
+        console.attach(new NewConsoleSessionPolicy(console));
+        // Add all available page resource providers
+        console.attach(new ComponentCollector<>(
+            PageResourceProviderFactory.class, console,
+            type -> {
+                switch (type) {
+                case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
+                    return Arrays.asList(
+                        Map.of("requireTouchPunch", true,
+                            "configuration", "CoreWithJQUiPlugin"));
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
+        // Add all available conlets
+        console.attach(new ComponentCollector<>(
+            ConletComponentFactory.class, console));
+    }
+
+    private void createVueJsConsole2() throws URISyntaxException {
+        ConsoleWeblet consoleWeblet
+            = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
+                new URI("/vjconsole2/")))
+                .prependClassTemplateLoader(this.getClass())
+                .prependResourceBundleProvider(WebConsoleDemo.class)
+                .prependConsoleResourceProvider(WebConsoleDemo.class);
+        WebConsole console = consoleWeblet.console();
         console.attach(new BrowserLocalBackedKVStore(
             console, consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console));
