@@ -3,7 +3,3 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
 }
-
-ext.releaseVersion = "0.37.0"
-ext.isSnapshot = false
-version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")

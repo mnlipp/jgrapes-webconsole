@@ -2,10 +2,6 @@ dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
 
-ext.releaseVersion = "0.35.0"
-ext.isSnapshot = true
-version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
-
 // For unknwown reasons required to prevent deadlock
 jar {
     dependsOn ':org.jgrapes.webconsole.base:generatePomFileForMavenPublication'

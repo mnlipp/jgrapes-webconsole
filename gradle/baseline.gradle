@@ -7,6 +7,7 @@ if (!project.hasProperty('noBaseline')
         // Use gradle mechanims to get the artifact to baseline against.
         // We baseline against the previous release 
         // (latest excluding current)
+        def releaseVersion = version.replaceAll(/-SNAPSHOT$/, "")
         def relVer = org.gradle.util.VersionNumber.parse(releaseVersion)
         def cmpVer = null
         if (relVer.getMicro() > 0) {

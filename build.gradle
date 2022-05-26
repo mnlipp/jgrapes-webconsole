@@ -13,6 +13,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '1.13.6' apply false
+}
+
 apply plugin: 'org.ajoberstar.git-publish'
 apply plugin: 'com.github.node-gradle.node'
 

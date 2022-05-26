@@ -7,10 +7,6 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
-ext.releaseVersion = "0.40.0"
-ext.isSnapshot = true
-version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
-
 apply plugin: 'com.github.node-gradle.node'
 
 task prepareNpmLibs(type: Copy) {

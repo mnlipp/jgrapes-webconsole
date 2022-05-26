@@ -2,10 +2,6 @@ dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
 
-ext.releaseVersion = "0.3.0"
-ext.isSnapshot = false
-version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
-
 apply plugin: 'com.github.node-gradle.node'
 
 task prepareNpmLibs(type: Copy) {
