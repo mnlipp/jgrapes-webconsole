@@ -141,6 +141,15 @@ task listChangedFiles {
     }
 }
 
+task listBuildChangedOnly {
+    def released = scmVersion.tag.prefix + scmVersion.previousVersion
+    def onlyBuild = !"git diff --name-only HEAD ${released} ${project.name}"
+        .execute().text.split()
+        .findAll { !it.endsWith('/build.gradle') }.any()
+        if (onlyBuild) {
+            println project.name
+        }
+    }
 
 task stageOnOssrh {
     group = "publishing"
