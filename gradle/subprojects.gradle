@@ -27,6 +27,7 @@ if (project.name.startsWith("org.jgrapes")
     ext.isSnapshot = version.endsWith('-SNAPSHOT')
 
     // Provide the Bundle-Version (derive from project version)
+    def releaseVersion = version.replaceAll(/-SNAPSHOT$/, "")
     ext.bundleVersion = "${ -> releaseVersion +
         (isSnapshot ? '.-\${tstamp}-SNAPSHOT' : '.ga') }"
 
