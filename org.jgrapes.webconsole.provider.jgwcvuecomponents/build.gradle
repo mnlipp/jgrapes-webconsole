@@ -6,8 +6,8 @@ dependencies {
 // Prevents deadlock.
 generatePomFileForMavenPublication.mustRunAfter(':org.jgrapes.webconsole.provider.vue:generatePomFileForMavenPublication')
 
-ext.releaseVersion = "0.12.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.13.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 apply plugin: 'com.github.node-gradle.node'

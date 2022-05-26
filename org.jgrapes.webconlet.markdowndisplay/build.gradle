@@ -2,8 +2,8 @@ dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
 
-ext.releaseVersion = "0.34.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.35.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 // For unknwown reasons required to prevent deadlock

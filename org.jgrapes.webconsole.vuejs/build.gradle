@@ -25,8 +25,8 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
-ext.releaseVersion = "0.15.0"
-ext.isSnapshot = false
+ext.releaseVersion = "0.16.0"
+ext.isSnapshot = true
 version = releaseVersion + (isSnapshot ? "-SNAPSHOT" : "")
 
 task prepareNpmLibs(type: Copy) {

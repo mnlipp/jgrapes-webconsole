@@ -97,6 +97,28 @@ task releaseTag {
     }
 }
 
+task needsToBeSnapshot {
+    doLast {
+        if (project.isSnapshot) {
+            return
+        }
+        String name = project.name.startsWith(project.group + ".") ?
+            project.name.substring(project.group.length() + 1) : project.name
+        name = name.replace('.', '-')
+        String tag = name + "-" + project.version
+        def tagForCurrent = grgit.tag.list().any { it.name == tag }
+        if (tagForCurrent) {
+            def diffs = "git diff --name-only HEAD ${tag} ${project.name}"
+                .execute().text.split()
+            if (diffs.size() > 0) {
+                println "Project ${project.name} was modified since release."
+            }
+        } else {
+            println "Project ${project.name} has no tag for current."
+        }
+    }
+}
+
 build.mustRunAfter "releaseTag"
 
 task stageOnOssrh {
