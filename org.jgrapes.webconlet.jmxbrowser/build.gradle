@@ -4,6 +4,10 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
 }
 
+release {
+    enabled = false
+}
+
 apply plugin: 'com.github.node-gradle.node'
 
 task buildLib(type: NodeTask) {

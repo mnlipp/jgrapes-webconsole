@@ -1,5 +1,9 @@
 apply plugin: 'eclipse'
 
+release {
+    enabled = false
+}
+
 eclipse {
     classpath {
         containers 'aQute.bnd.classpath.container'

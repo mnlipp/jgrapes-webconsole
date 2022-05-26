@@ -1,3 +1,7 @@
 dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
+
+release {
+    enabled = false
+}

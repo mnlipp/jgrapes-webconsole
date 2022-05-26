@@ -12,6 +12,10 @@ dependencies {
         transitive = true }
 }
 
+release {
+    enabled = false
+}
+
 // Nothing to compile, but avoids Eclipse warning.
 java {
     sourceCompatibility = JavaVersion.VERSION_11

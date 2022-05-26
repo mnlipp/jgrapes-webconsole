@@ -1,6 +1,10 @@
 apply plugin: 'base'
 apply plugin: 'com.github.node-gradle.node'
 
+release {
+    enabled = false
+}
+
 task buildLib(type: NpmTask, dependsOn: 'npmInstall') {
     inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')

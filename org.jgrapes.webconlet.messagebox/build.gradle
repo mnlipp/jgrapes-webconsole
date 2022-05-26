@@ -2,6 +2,10 @@ dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
 
+release {
+    enabled = false
+}
+
 apply plugin: 'com.github.node-gradle.node'
 
 task compileTs(type: NodeTask) {

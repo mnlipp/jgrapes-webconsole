@@ -86,6 +86,9 @@ jar {
     }
 }
 
+build.mustRunAfter "release"
+
+/* Replaced by release plugin
 task releaseTag {
     doLast {
         String name = project.name.startsWith(project.group + ".") ?
@@ -97,6 +100,11 @@ task releaseTag {
     }
 }
 
+build.mustRunAfter "releaseTag"
+
+*/
+
+/* Obsoleted by release plugin
 task needsToBeSnapshot {
     doLast {
         if (project.isSnapshot) {
@@ -118,8 +126,21 @@ task needsToBeSnapshot {
         }
     }
 }
+*/
 
-build.mustRunAfter "releaseTag"
+release {
+    enabled = false
+}
+
+task listChangedFiles {
+    doLast {
+        def released = scmVersion.tag.prefix + scmVersion.previousVersion
+        "git diff --name-only HEAD ${released} ${project.name}"
+            .execute().text.split().findAll { !it.endsWith('/build.gradle') }
+            .each { println it }
+    }
+}
+
 
 task stageOnOssrh {
     group = "publishing"
