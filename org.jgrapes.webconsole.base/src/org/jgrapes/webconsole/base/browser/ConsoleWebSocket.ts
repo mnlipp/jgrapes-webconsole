@@ -44,6 +44,7 @@ export default class ConsoleWebSocket {
     private _consoleSessionId: string | null = null;
     private _connectionLost = false;
     private _oldConsoleSessionId: string | null;
+    private _beingHandled: any;
 
     constructor(console: Console) {
         this._console = console;
@@ -252,20 +253,22 @@ export default class ConsoleWebSocket {
                 this._handlerLog(() => "Handler receive queue empty.");
                 break;
             }
-            var message = this._recvQueue.shift();
-            var handler = this._messageHandlers.get(message.method);
+            this._beingHandled = this._recvQueue.shift();
+            var handler = this._messageHandlers.get(this._beingHandled.method);
             if (!handler) {
-                Log.error("No handler for invoked method " + message.method);
+                this._beingHandled = null;
+                Log.error("No handler for invoked method " + this._beingHandled.method);
                 continue;
             }
-            if (message.hasOwnProperty("params")) {
-                this._handlerLog(() => "Handling: " + message.method
-                    + "[" + message.params + "]");
-                handler(...message.params);
+            if (this._beingHandled.hasOwnProperty("params")) {
+                this._handlerLog(() => "Handling: " + this._beingHandled.method
+                    + "[" + this._beingHandled.params + "]");
+                handler(...this._beingHandled.params);
             } else {
-                this._handlerLog(() => "Handling: " + message.method);
+                this._handlerLog(() => "Handling: " + this._beingHandled.method);
                 handler();
             }
+            this._beingHandled = null;
         }
         this._isHandling = false;
     }
@@ -278,6 +281,12 @@ export default class ConsoleWebSocket {
             } catch (e: any) {
                 Log.debug("Locking receiver:\n" + e.stack);
             }
+        }
+    }
+
+    postponeMessage() {
+        if (this._beingHandled) {
+            this._recvQueue.unshift(this._beingHandled);
         }
     }
 

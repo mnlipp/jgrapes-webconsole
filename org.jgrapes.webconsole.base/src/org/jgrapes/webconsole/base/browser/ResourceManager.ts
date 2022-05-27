@@ -189,7 +189,9 @@ export default class ResourceManager {
             this._console.lockMessageQueue();
             this._loadingMsg(function() { return "Locking message queue until all loaded." });
             this._unlockMessageQueueAfterLoad = true;
+            return true;
         }
+        return false;
     }
 }
 

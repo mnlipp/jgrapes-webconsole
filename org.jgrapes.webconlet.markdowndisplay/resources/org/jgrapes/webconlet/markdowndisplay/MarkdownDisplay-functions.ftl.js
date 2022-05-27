@@ -88,7 +88,7 @@ var orgJGrapesConletsMarkdownDisplay = {
         viewSource.on("keyup", function() { debounce(updateView); });
     }
     
-    orgJGrapesConletsMarkdownDisplay.apply = function(element) {
+    orgJGrapesConletsMarkdownDisplay.action = function(element) {
         element = $(element);
         let conletId = element.closest("[data-conlet-id]").attr("data-conlet-id");
         let titleSource = element.find('.jgrapes-conlet-mdp-title-input');
@@ -96,6 +96,7 @@ var orgJGrapesConletsMarkdownDisplay = {
         let viewSource = element.find('.jgrapes-conlet-mdp-view-input');
         JGConsole.notifyConletModel(conletId, "update", titleSource.val(),
                 previewSource.val(), viewSource.val());
+        return true;
     }
     
 })();

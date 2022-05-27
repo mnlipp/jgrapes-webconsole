@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "es2015",
+    "sourceMap": true,
+    "inlineSources": true,
+    "declaration": true,
+    "importHelpers": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "lib": ["DOM", "ES2020"],
+    "paths": {
+      "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
+      "jgwc": ["../org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components"],
+      "vue": ["../org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
+      "l10nBundles": ["./src/org/jgrapes/webconlet/examples/login/browser/l10nBundles-stub"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "l10nBundles-stub.ts"]
+}

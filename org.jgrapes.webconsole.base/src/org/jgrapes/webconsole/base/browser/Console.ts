@@ -120,7 +120,12 @@ export default class Console {
             });
         this._webSocket.addMessageHandler('openModalDialog',
             (content, options) => {
-                let container = <HTMLElement>_this._modalDialogTemplate.cloneNode(true);
+                if (_this._resourceManager.lockWhileLoading()) {
+                    this._webSocket.postponeMessage();
+                    return;
+                }
+                let container 
+                    = <HTMLElement>_this._modalDialogTemplate.cloneNode(true);
                 _this._renderer!.openModalDialog(container, options, content);
                 if (!container.parentNode) {
                     // Must be attached to DOM tree
@@ -432,28 +437,31 @@ export default class Console {
     }
 
     /**
-     * Invokes the functions defined in `data-jgwc-on-apply`
+     * Invokes the functions defined in `data-jgwc-on-action`
      * attributes of the tree with root `container`. Must be 
      * invoked by edit or modal dialogs when they are closed.
      * 
      * @param container the container of the edit dialog
+     * @return `true` if the dialog should be closed
      */
-    execOnApply(container: Element) {
-        container.querySelectorAll("[data-jgwc-on-apply]").forEach((element) => {
-            let onApply = (<HTMLElement>element).dataset["jgwcOnApply"];
-            let segs = onApply!.split(".");
+    execOnAction(container: HTMLElement, apply: boolean, close: boolean) {
+        container.querySelectorAll("[data-jgwc-on-action]").forEach((element) => {
+            let onAction = (<HTMLElement>element).dataset["jgwcOnAction"];
+            let segs = onAction!.split(".");
             let obj: any = window;
             while (obj && segs.length > 0) {
                 obj = obj[<string>segs.shift()];
             }
             if (obj && typeof obj === "function") {
-                obj(element);
+                obj(element, apply, close);
             } else {
-                Log.warn('Specified jgwc-on-apply function "' 
-                    + onApply + '" not found.');
+                Log.warn('Specified jgwc-on-Action function "' 
+                    + onAction + '" not found.');
             }
         });
-        this._execOnUnload(container, false);
+        if (close) {
+            this._execOnUnload(container, false);
+        }
     }
 
     /**

@@ -493,12 +493,15 @@ export default class Renderer extends JGConsole.Renderer {
             content: content,
             title: options.title,
             showCancel: options.cancelable || false,
-            closeLabel: options.closeLabel,
-            onClose: function(applyChanges: boolean) {
-                if (applyChanges) {
-                    _this.console.execOnApply(container);
+            applyLabel: options.applyLabel || "",
+            okayLabel: options.okayLabel || "",
+            onAction: function(apply: boolean, close: boolean) {
+                if (apply) {
+                    _this.console.execOnAction(container, apply, close);
                 }
-                dialog.unmount();
+                if (close) {
+                    dialog.unmount();
+                }
             }
         });
         

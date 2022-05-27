@@ -1,0 +1,34 @@
+<div ref="previewDom" class="ExampleLogin-dialog"
+    data-jgwc-on-load="orgJGrapesExampleLogin.initDialog"
+    data-jgwc-on-unload="JGConsole.jgwc.unmountVueApps"
+    data-jgwc-on-action="orgJGrapesExampleLogin.apply"> 
+  <form onsubmit="return false;">
+    <fieldset>
+      <legend>{{ localize("Login Data") }}</legend>
+      <p>
+        <label class="form__label--full-width">
+          <span>
+            {{ localize("User Name") }}
+            <strong>
+              <abbr v-bind:title='localize("required")'>*</abbr>
+            </strong>
+          </span>
+          <input type="text" name="username" v-model="accountData.username"
+            autocomplete="section-test username">
+        </label>
+      </p>
+      <p>
+        <label class="form__label--full-width">
+          <span>
+            {{ localize("Password") }}
+            <strong>
+              <abbr v-bind:title='localize("required")'>*</abbr>
+            </strong>
+          </span>
+          <input type="password" name="password" v-model="accountData.password"
+            autocomplete="section-test current-password">
+        </label class="form__label--full-width">
+      </p>
+    </fieldset class="form__fieldset--horizontal">
+  </form onsubmit="return true;">
+</div>

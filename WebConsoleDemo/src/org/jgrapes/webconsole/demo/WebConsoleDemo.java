@@ -169,7 +169,14 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console));
+            ConletComponentFactory.class, console, type -> {
+                switch (type) {
+                case "org.jgrapes.webconlet.examples.login.LoginConlet":
+                    return Collections.emptyList();
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
     }
 
     private void createBootstrap4Console() throws URISyntaxException {
@@ -200,7 +207,14 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console));
+            ConletComponentFactory.class, console, type -> {
+                switch (type) {
+                case "org.jgrapes.webconlet.examples.login.LoginConlet":
+                    return Collections.emptyList();
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
     }
 
     private void createVueJsConsole() throws URISyntaxException {
@@ -218,8 +232,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, console,
-            type -> {
+            PageResourceProviderFactory.class, console, type -> {
                 switch (type) {
                 case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
                     return Arrays.asList(
@@ -231,7 +244,14 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console));
+            ConletComponentFactory.class, console, type -> {
+                switch (type) {
+                case "org.jgrapes.webconlet.examples.login.LoginConlet":
+                    return Collections.emptyList();
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
     }
 
     private void createVueJsConsole2() throws URISyntaxException {
