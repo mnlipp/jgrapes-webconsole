@@ -417,7 +417,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
             modal: true,
             width: "auto",
             close: function(event, ui) {
-                _this.console.execOnApply(container[0]);
+                _this.console.execOnAction(container[0], true, true);
             }
         });
     }

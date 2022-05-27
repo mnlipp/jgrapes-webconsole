@@ -507,7 +507,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             + '</div>');
         dialog.find(".modal-body").append($(content));
         dialog.find(".btn-primary").on('click', function() {
-            _this.console.execOnApply(container[0]);
+            _this.console.execOnAction(container[0], true, true);
         });
         container.append(dialog);
         dialog.modal();

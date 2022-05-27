@@ -94,7 +94,8 @@
             <aash-modal-dialog v-bind:id="'sampleDialog'"
                 :title="'Sample Dialog'"
                 :show-cancel="true"
-                :on-close="function(confirmed) { window.alert(confirmed) }"
+                :apply-label="'Apply'"
+                :on-action="function(confirmed, close) { window.alert(confirmed + ' ' + close) }"
                 ><i>Sample dialog content</i></aash-modal-dialog>
           </div>
         </aash-accordion-section>
