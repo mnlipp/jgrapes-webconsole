@@ -13,6 +13,7 @@
     "paths": {
       "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
       "jgwc": ["../org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components"],
+      "aash-plugin": ["../org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components/lib/AashPlugin"],
       "vue": ["../org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
       "l10nBundles": ["./src/org/jgrapes/webconlet/examples/login/browser/l10nBundles-stub"]
     }

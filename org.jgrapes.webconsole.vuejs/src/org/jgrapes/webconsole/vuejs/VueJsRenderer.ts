@@ -201,7 +201,7 @@ export default class Renderer extends JGConsole.Renderer {
             }
         });
         let node = dialog.mount(document.querySelector("#modal-dialog-slot")!)
-            .$el.firstChild;
+            .$el;
         getApi<AashModalDialog.Api>(node)!.open();
     }
 
@@ -506,8 +506,14 @@ export default class Renderer extends JGConsole.Renderer {
         });
         
         let dialogEl = dialog.mount(container).$el;
-        let dialogApi = getApi<AashModalDialog.Api>(dialogEl.firstChild)!;
+        let dialogApi = getApi<AashModalDialog.Api>(dialogEl)!;
         dialogApi.open();
+    }
+    
+    closeModalDialog(container: HTMLElement) {
+        let dialogApi = getApi<AashModalDialog.Api>
+            (<HTMLElement>container.firstChild!)!;
+        dialogApi.cancel();
     }
     
     notification(content: string, options: NotificationOptions): Notification {

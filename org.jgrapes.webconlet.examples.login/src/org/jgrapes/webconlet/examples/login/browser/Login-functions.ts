@@ -19,6 +19,7 @@
 import { reactive, ref, createApp, computed, onMounted } from "vue";
 import JGConsole from "jgconsole"
 import JgwcPlugin, { JGWC } from "jgwc";
+import { provideApi, getApi } from "aash-plugin";
 import l10nBundles from "l10nBundles";
 
 // For global access
@@ -31,34 +32,63 @@ declare global {
 window.orgJGrapesExampleLogin = {}
 
 interface AccountData {
-    website: string;
     username: string;
     password: string;
 }
 
-let accountData: AccountData = reactive({
-    website: "",
-    username: "",
-    password: ""
-});
-
-window.orgJGrapesExampleLogin.initDialog = function(dialogDom: HTMLElement) {
+window.orgJGrapesExampleLogin.initDialog 
+    = function(dialogDom: HTMLElement, isUpdate: boolean) {
+    if (isUpdate) {
+        return;
+    }
     let app = createApp({
         setup() {
-            const submitData = (event: Event) => {
-                let conletId = dialogDom
-                    .closest("[data-conlet-id]")!.getAttribute("data-conlet-id")!;
-                JGConsole.notifyConletModel(conletId, "accountData", 
-                    accountData.website, accountData.username, accountData.password);
-            };
-            
+            const accountData: AccountData = reactive({
+                username: "",
+                password: ""
+            });
+
             const localize = (key: string) => {
                 return JGConsole.localize(
                     l10nBundles, JGWC.lang()!, key);
             };
+
+            const formDom = ref(null);
+
+            provideApi(formDom, accountData );
                         
-            return { localize, submitData, accountData };
-        }
+            return { formDom, localize, accountData };
+        },
+        template: `
+          <form ref="formDom" onsubmit="return false;">
+            <fieldset>
+              <legend>{{ localize("Login Data") }}</legend>
+              <p>
+                <label class="form__label--full-width">
+                  <span>
+                    {{ localize("User Name") }}
+                    <strong>
+                      <abbr v-bind:title='localize("required")'>*</abbr>
+                    </strong>
+                  </span>
+                  <input type="text" name="username" v-model="accountData.username"
+                    autocomplete="section-test username">
+                </label>
+              </p>
+              <p>
+                <label class="form__label--full-width">
+                  <span>
+                    {{ localize("Password") }}
+                    <strong>
+                      <abbr v-bind:title='localize("required")'>*</abbr>
+                    </strong>
+                  </span>
+                  <input type="password" name="password" v-model="accountData.password"
+                    autocomplete="section-test current-password">
+                </label>
+              </p>
+            </fieldset>
+          </form>`
     });
     app.use(JgwcPlugin);
     app.mount(dialogDom);
@@ -66,5 +96,11 @@ window.orgJGrapesExampleLogin.initDialog = function(dialogDom: HTMLElement) {
 
 window.orgJGrapesExampleLogin.apply = function(dialogDom: HTMLElement,
     apply: boolean, close: boolean) {
+    const conletId = (<HTMLElement>dialogDom.closest("[data-conlet-id]")!)
+        .dataset["conletId"]!;
+    const accountData = getApi<AccountData>
+        (dialogDom.querySelector(":scope form")!)!;
+    JGConsole.notifyConletModel(conletId, "loginData", 
+        accountData.username, accountData.password);
     return;
 }

@@ -23,13 +23,14 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
+import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
-
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
@@ -42,8 +43,10 @@ import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
+import org.jgrapes.webconsole.base.events.CloseModalDialog;
 import org.jgrapes.webconsole.base.events.ConsolePrepared;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.OpenModalDialog;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.SetLocale;
@@ -52,7 +55,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 /**
  * A conlet for poll administration.
  */
-public class LoginConlet extends FreeMarkerConlet<ConletBaseModel> {
+public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     /**
      * Creates a new component with its channel set to the given channel.
@@ -90,9 +93,19 @@ public class LoginConlet extends FreeMarkerConlet<ConletBaseModel> {
     }
 
     @Override
-    protected String generateInstanceId(AddConletRequest event,
-            ConsoleSession session) {
-        return "Singleton";
+    protected Optional<AccountModel> createNewState(AddConletRequest event,
+            ConsoleSession session, String conletId) throws Exception {
+        if (stateFromSession(session.browserSession(), conletId).isPresent()) {
+            return Optional.empty();
+        }
+        return super.createNewState(event, session, conletId);
+    }
+
+    @Override
+    protected Optional<AccountModel> createStateRepresentation(
+            RenderConletRequestBase<?> event,
+            ConsoleSession channel, String conletId) throws IOException {
+        return Optional.of(new AccountModel(conletId));
     }
 
     /**
@@ -109,17 +122,26 @@ public class LoginConlet extends FreeMarkerConlet<ConletBaseModel> {
     public void onConsolePrepared(ConsolePrepared event, ConsoleSession channel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        event.stop();
-        Template tpl = freemarkerConfig()
-            .getTemplate("Login-dialog.ftl.html");
-        final Map<String, Object> model
+        event.suspendHandling();
+        channel.setAssociated(this, event);
+
+        // Create model and save in session.
+        String conletId = type() + TYPE_INSTANCE_SEPARATOR + "Singleton";
+        AccountModel accountModel = new AccountModel(conletId);
+        accountModel.setDialogOpen(true);
+        putInSession(channel.browserSession(), conletId, accountModel);
+
+        // Render login dialog
+        Template tpl = freemarkerConfig().getTemplate("Login-dialog.ftl.html");
+        final Map<String, Object> renderModel
             = fmSessionModel(channel.browserSession());
-        model.put("locale", channel.locale());
+        renderModel.put("locale", channel.locale());
         var bundle = resourceBundle(channel.locale());
-        channel.respond(new OpenModalDialog(processTemplate(event, tpl,
-            model)).addOption("title", bundle.getString("title"))
-                .addOption("cancelable", false).addOption("okayLabel", "")
-                .addOption("applyLabel", bundle.getString("Submit")));
+        channel.respond(new OpenModalDialog(type(), conletId,
+            processTemplate(event, tpl,
+                renderModel)).addOption("title", bundle.getString("title"))
+                    .addOption("cancelable", false).addOption("okayLabel", "")
+                    .addOption("applyLabel", bundle.getString("Submit")));
     }
 
     private Future<String> processTemplate(
@@ -141,14 +163,62 @@ public class LoginConlet extends FreeMarkerConlet<ConletBaseModel> {
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, String conletId,
-            ConletBaseModel conletState) throws Exception {
+            AccountModel conletState) throws Exception {
         return Collections.emptySet();
+    }
+
+    @Override
+    protected void doUpdateConletState(NotifyConletModel event,
+            ConsoleSession channel, AccountModel model) throws Exception {
+        channel.respond(new CloseModalDialog(type(), event.conletId()));
+        channel.associated(this, ConsolePrepared.class)
+            .ifPresent(ConsolePrepared::resumeHandling);
     }
 
     @Override
     protected boolean doSetLocale(SetLocale event, ConsoleSession channel,
             String conletId) throws Exception {
-        return true;
+        return stateFromSession(channel.browserSession(),
+            type() + TYPE_INSTANCE_SEPARATOR + "Singleton")
+                .map(model -> !model.isDialogOpen()).orElse(true);
+    }
+
+    /**
+     * Model with account info.
+     */
+    @SuppressWarnings({ "serial", "PMD.DataClass" })
+    public static class AccountModel extends ConletBaseModel {
+
+        private boolean dialogOpen;
+
+        /**
+         * Creates a new model with the given type and id.
+         * 
+         * @param conletId the web console component id
+         */
+        @ConstructorProperties({ "conletId" })
+        public AccountModel(String conletId) {
+            super(conletId);
+        }
+
+        /**
+         * Checks if is dialog open.
+         *
+         * @return true, if is dialog open
+         */
+        public boolean isDialogOpen() {
+            return dialogOpen;
+        }
+
+        /**
+         * Sets the dialog open.
+         *
+         * @param dialogOpen the new dialog open
+         */
+        public void setDialogOpen(boolean dialogOpen) {
+            this.dialogOpen = dialogOpen;
+        }
+
     }
 
 }

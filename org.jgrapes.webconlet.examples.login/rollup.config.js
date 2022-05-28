@@ -10,6 +10,7 @@ let pathsMap = {
     "vue": "../../page-resource/vue/vue.esm-browser.js",
     "jgconsole": "../../console-base-resource/jgconsole.js",
     "jgwc": "../../page-resource/jgwc-vue-components/jgwc-components.js",
+    "aash-plugin": "../../page-resource/aash-vue-components/lib/aash-vue-components.js",
     "l10nBundles": "./" + baseName + "-l10nBundles.ftl.js"
 }
 
