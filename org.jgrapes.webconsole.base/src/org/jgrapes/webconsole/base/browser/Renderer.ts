@@ -259,6 +259,15 @@ export default abstract class Renderer {
     }
 
     /**
+     * Called by the {@link Console} to close a modal dialog.
+     * 
+     * @param container the container for the dialog
+     */
+    closeModalDialog(container: HTMLElement) {
+        Log.warn("Not implemented!");
+    }
+
+    /**
      * Called by the {@link Console} to displays a notification.
      *
      * @param content the content to display
@@ -312,6 +321,19 @@ export default abstract class Renderer {
     findConletPreview(conletId: string): HTMLElement | null {
         return document.querySelector(
             ".conlet-preview[data-conlet-id='" + conletId + "']");
+    };
+
+    /**
+     * Find the HTML element that displays a modal dialog associated
+     * with the conlet with the given id. The default implementation returns
+     * all nodes with `.conlet-modal-dialog[data-conlet-id='<conletId>'`.
+     * 
+     * @param conletId the conlet id
+     * @return the HTML element or null
+     */
+    findModalDialog(conletId: string): HTMLElement | null {
+        return document.querySelector(
+            ".conlet-modal-dialog[data-conlet-id='" + conletId + "']");
     };
 
     /**

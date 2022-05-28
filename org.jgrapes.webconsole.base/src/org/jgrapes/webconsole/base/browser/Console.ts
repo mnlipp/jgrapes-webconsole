@@ -42,7 +42,7 @@ export default class Console {
     private _viewTemplate = parseHtml(
         '<article class="conlet conlet-view conlet-content"></article>')[0];
     private _modalDialogTemplate = parseHtml(
-        '<div class="console-modal-dialog"></div>')[0];
+        '<div class="conlet conlet-modal-dialog"></div>')[0];
     private _resourceManager: ResourceManager;
 
     constructor() {
@@ -119,13 +119,15 @@ export default class Console {
                 _this._renderer!.notification(content, options);
             });
         this._webSocket.addMessageHandler('openModalDialog',
-            (content, options) => {
+            (conletType, conletId, content, options) => {
                 if (_this._resourceManager.lockWhileLoading()) {
                     this._webSocket.postponeMessage();
                     return;
                 }
                 let container 
                     = <HTMLElement>_this._modalDialogTemplate.cloneNode(true);
+                container.dataset["conletType"] = conletType;
+                container.dataset["conletId"] = conletId;
                 _this._renderer!.openModalDialog(container, options, content);
                 if (!container.parentNode) {
                     // Must be attached to DOM tree
@@ -139,6 +141,14 @@ export default class Console {
                 }
                 _this._execOnLoad(container, false);
             });
+        this._webSocket.addMessageHandler('closeModalDialog',
+            (conletType, conletId) => {
+                let container = this._renderer!.findModalDialog(conletId);
+                if (container) {
+                    _this._renderer!.closeModalDialog(container);
+                    _this._execOnLoad(container, false);
+                }
+        });
         this._webSocket.addMessageHandler('retrieveLocalData',
             (path) => {
                 let result = [];

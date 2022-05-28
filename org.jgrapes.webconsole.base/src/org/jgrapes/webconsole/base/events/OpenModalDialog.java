@@ -27,11 +27,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * Causes a modal dialog to be display on the top of the web console page.
+ * Causes a modal dialog to be display on behalf of the conlet.
  */
 public class OpenModalDialog extends ConsoleCommand {
 
-    private Future<String> content;
+    private final String conletType;
+    private final String conletId;
+    private final Future<String> content;
     private Map<String, Object> options;
 
     /**
@@ -39,15 +41,19 @@ public class OpenModalDialog extends ConsoleCommand {
      * must start with a tag.  See the JavaScript documentation of the
      * <a href="../jsdoc/interfaces/ModalDialogOptions.html">
      * modal dialog options</a> for details.
-     * 
+     *
+     * @param conletType the conlet type
+     * @param conletId the conlet id
      * @param content the content (valid HTML)
-     * @param options the options (must be serializable as JSON), see 
+     * @param options the options (must be serializable as JSON), see
      * the JavaScript documentation of the
      * <a href="../jsdoc/interfaces/ModalDialogOptions.html">
      * modal dialog options</a> for details.
      */
-    public OpenModalDialog(Future<String> content,
-            Map<String, Object> options) {
+    public OpenModalDialog(String conletType, String conletId,
+            Future<String> content, Map<String, Object> options) {
+        this.conletType = conletType;
+        this.conletId = conletId;
         this.content = content;
         this.options = options;
     }
@@ -56,11 +62,14 @@ public class OpenModalDialog extends ConsoleCommand {
      * Creates a new event without any options.
      * The content must be valid HTML, i.e. it
      * must start with a tag.
-     * 
+     *
+     * @param conletType the conlet type
+     * @param conletId the conlet id
      * @param content the content (valid HTML)
      */
-    public OpenModalDialog(Future<String> content) {
-        this(content, null);
+    public OpenModalDialog(String conletType, String conletId,
+            Future<String> content) {
+        this(conletType, conletId, content, null);
     }
 
     /**
@@ -100,7 +109,8 @@ public class OpenModalDialog extends ConsoleCommand {
     public void toJson(Writer writer) throws IOException {
         Map<String, Object> options = options();
         try {
-            toJson(writer, "openModalDialog", content().get(), options);
+            toJson(writer, "openModalDialog", conletType, conletId,
+                content().get(), options);
         } catch (ExecutionException | InterruptedException e) {
             throw new IOException(e);
         }
