@@ -256,8 +256,8 @@ export default class ConsoleWebSocket {
             this._beingHandled = this._recvQueue.shift();
             var handler = this._messageHandlers.get(this._beingHandled.method);
             if (!handler) {
-                this._beingHandled = null;
                 Log.error("No handler for invoked method " + this._beingHandled.method);
+                this._beingHandled = null;
                 continue;
             }
             if (this._beingHandled.hasOwnProperty("params")) {
