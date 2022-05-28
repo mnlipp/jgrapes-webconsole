@@ -179,10 +179,11 @@ public class HelloWorldConlet
         if (event.renderAs().contains(RenderMode.Help)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("HelloWorld-help.ftl.html");
-            channel.respond(new OpenModalDialog(processTemplate(event, tpl,
-                fmModel(event, channel, conletId, conletState)))
-                    .addOption("cancelable", true)
-                    .addOption("closeLabel", ""));
+            channel.respond(new OpenModalDialog(type(), conletId,
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .addOption("cancelable", true)
+                        .addOption("closeLabel", ""));
         }
         return renderedAs;
     }

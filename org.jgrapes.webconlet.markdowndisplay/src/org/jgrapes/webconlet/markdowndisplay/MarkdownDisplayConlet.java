@@ -233,6 +233,7 @@ public class MarkdownDisplayConlet extends
             RenderConletRequestBase<?> event, ConsoleSession consoleSession,
             String conletId, MarkdownDisplayModel model)
             throws Exception {
+        ResourceBundle resourceBundle = resourceBundle(consoleSession.locale());
         Set<RenderMode> supported = renderModes(model);
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
@@ -262,10 +263,12 @@ public class MarkdownDisplayConlet extends
         if (event.renderAs().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
-            consoleSession
-                .respond(new OpenModalDialog(processTemplate(event, tpl,
+            consoleSession.respond(new OpenModalDialog(type(), conletId,
+                processTemplate(event, tpl,
                     fmModel(event, consoleSession, conletId, model)))
-                        .addOption("cancelable", true));
+                        .addOption("cancelable", true)
+                        .addOption("okayLabel",
+                            resourceBundle.getString("okayLabel")));
         }
         return renderedAs;
     }
