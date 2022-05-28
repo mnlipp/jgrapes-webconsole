@@ -315,6 +315,8 @@ import org.jgrapes.webconsole.base.events.SetLocale;
 public abstract class AbstractConlet<S extends Serializable>
         extends Component {
 
+    /** Separator used between type and instance when generating the id. */
+    public static final String TYPE_INSTANCE_SEPARATOR = "~";
     @SuppressWarnings({ "PMD.FieldNamingConventions",
         "PMD.VariableNamingConventions", "PMD.UseConcurrentHashMap",
         "PMD.AvoidDuplicateLiterals" })
@@ -570,7 +572,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param session the console session, sometimes required to
      * send events to components that provide a backing store
      * @param conletId the conlet id calculated as
-     * `type() + "~" + generateInstanceId(...)` 
+     * `type() + TYPE_INSTANCE_SEPARATOR + generateInstanceId(...)` 
      * @return the state representation or {@link Optional#empty()} if none is
      * required
      * @throws Exception if an exception occurs
@@ -803,8 +805,8 @@ public abstract class AbstractConlet<S extends Serializable>
             return;
         }
         event.stop();
-        String conletId
-            = type() + "~" + generateInstanceId(event, consoleSession);
+        String conletId = type() + TYPE_INSTANCE_SEPARATOR
+            + generateInstanceId(event, consoleSession);
         Optional<S> state = createNewState(event, consoleSession, conletId);
         state.ifPresent(s -> putInSession(
             consoleSession.browserSession(), conletId, s));
@@ -829,7 +831,7 @@ public abstract class AbstractConlet<S extends Serializable>
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onConletDeleted(ConletDeleted event,
             ConsoleSession consoleSession) throws Exception {
-        if (!event.conletId().startsWith(type() + "~")) {
+        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
             return;
         }
         String conletId = event.conletId();
@@ -877,7 +879,8 @@ public abstract class AbstractConlet<S extends Serializable>
 
     /**
      * Checks if the request applies to this component by verifying 
-     * if the component id starts with {@link #type()} plus "~".
+     * if the component id starts with {@link #type()} 
+     * plus {@link #TYPE_INSTANCE_SEPARATOR}.
      * If the id matches, sets the event's result to `true`, stops the 
      * event and tries to retrieve the model from the session. If this
      * fails, {@link #recreateState} is called as another attempt to
@@ -894,7 +897,7 @@ public abstract class AbstractConlet<S extends Serializable>
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onRenderConletRequest(RenderConletRequest event,
             ConsoleSession consoleSession) throws Exception {
-        if (!event.conletId().startsWith(type() + "~")) {
+        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
             return;
         }
         Optional<S> state = stateFromSession(
@@ -977,7 +980,7 @@ public abstract class AbstractConlet<S extends Serializable>
      * @param event the event
      * @param channel the channel
      * @param conletId the web console component id
-     * @return true, if the locale could be changed
+     * @return true, if adaption to new locale without reload is possible
      * @throws Exception the exception
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
@@ -1001,7 +1004,7 @@ public abstract class AbstractConlet<S extends Serializable>
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onNotifyConletModel(NotifyConletModel event,
             ConsoleSession channel) throws Exception {
-        if (!event.conletId().startsWith(type() + "~")) {
+        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
             return;
         }
         Optional<S> model
