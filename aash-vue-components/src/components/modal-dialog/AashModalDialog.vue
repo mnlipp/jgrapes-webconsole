@@ -1,7 +1,7 @@
 <template>
-  <div class="aash-modal-dialog dialog__backdrop" :hidden="!isOpen">
+  <div class="aash-modal-dialog dialog__backdrop" :hidden="!isOpen" ref="dialog">
     <div :id="effectiveId" role="dialog" :aria-labelledby="effectiveId + '-label'" 
-      aria-modal="true" ref="dialog">
+      aria-modal="true">
       <header :id="effectiveId + '-label'">
         <p>{{ effectiveTitle }}</p>
         <button v-if="showCancel" type="button" class="fa fa-times" 
