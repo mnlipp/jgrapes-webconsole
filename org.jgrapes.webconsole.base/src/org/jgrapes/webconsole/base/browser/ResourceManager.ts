@@ -195,4 +195,4 @@ class ResourceManager {
     }
 }
 
-export default ResourceManager
+export default ResourceManager;
