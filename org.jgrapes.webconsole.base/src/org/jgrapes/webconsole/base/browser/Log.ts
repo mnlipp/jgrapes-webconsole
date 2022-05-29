@@ -19,7 +19,7 @@
 /**
  * Easy access to logging.
  */
-export default class Log {
+class Log {
 
     private static logDateTimeFormat = new Intl.DateTimeFormat(undefined, 
         <Intl.DateTimeFormatOptions>{
@@ -82,5 +82,7 @@ export default class Log {
             console.error(this.format(new Date()) + ": " + message);
         }
     }
-};
+}
+
+export default Log;
 

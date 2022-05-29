@@ -12,7 +12,7 @@ export interface ScriptResource {
 }
 
 
-export default class ResourceManager {
+class ResourceManager {
 
     private _console: Console;
     private _debugLoading = false;
@@ -195,3 +195,4 @@ export default class ResourceManager {
     }
 }
 
+export default ResourceManager

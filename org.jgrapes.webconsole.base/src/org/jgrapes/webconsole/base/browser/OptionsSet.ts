@@ -21,7 +21,7 @@
  * a Set are the toggle functions and the support for temporarily
  * disabling an option.
  */
-export default class OptionsSet {
+class OptionsSet {
 
     private _enabled = new Map<string,string>();
     private _disabled = new Map<string,string>();
@@ -147,3 +147,4 @@ export default class OptionsSet {
     }
 }
 
+export default OptionsSet;

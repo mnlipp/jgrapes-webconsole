@@ -27,7 +27,7 @@ export enum NotificationType {
 /**
  * Options for notification display.
  */
-export default interface NotificationOptions {
+interface NotificationOptions {
     /**
      * The notification type. Defaults to Info.
      */
@@ -45,3 +45,4 @@ export default interface NotificationOptions {
     autoClose?: number;    
 }
 
+export default NotificationOptions;

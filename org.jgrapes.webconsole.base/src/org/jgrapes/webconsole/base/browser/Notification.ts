@@ -19,7 +19,8 @@
 /**
  * Closes the notification.
  */
-export default interface Notification { 
+interface Notification { 
     close(): void;
-};
+}
 
+export default Notification;

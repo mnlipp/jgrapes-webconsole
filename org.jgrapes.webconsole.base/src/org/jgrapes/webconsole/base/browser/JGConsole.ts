@@ -46,7 +46,7 @@ export const theConsole = new Console();
  * The class is also registered as `window.JGConsole` for non-modular 
  * JavaScript.   
  */
-export default class JGConsole {
+class JGConsole {
     static instance = theConsole;
     static Log = Log;
     static Renderer = Renderer;
@@ -199,6 +199,8 @@ export default class JGConsole {
     }
 
 };
+
+export default JGConsole;
 
 export { JGConsole };
 

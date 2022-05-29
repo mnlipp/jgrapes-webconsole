@@ -26,7 +26,7 @@ import RenderMode from "./RenderMode";
  * when the connection is lost. The connection is used to
  * exchange JSON RPC notifications.
  */
-export default class ConsoleWebSocket {
+class ConsoleWebSocket {
 
     private _debugHandler = false;
     private _console: Console;
@@ -305,3 +305,4 @@ export default class ConsoleWebSocket {
     }
 }
 
+export default ConsoleWebSocket;
