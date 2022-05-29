@@ -157,7 +157,7 @@ export default class Renderer extends JGConsole.Renderer {
             }
         }
         this.console.updateLayout(previewLayout, tabsLayout, xtraInfo);
-    };
+    }
 
     addConletType(conletType: string, displayNames: Map<string,string>,
             renderModes: RenderMode[]) {

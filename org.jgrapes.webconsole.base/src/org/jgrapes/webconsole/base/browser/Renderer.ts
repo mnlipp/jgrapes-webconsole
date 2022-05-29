@@ -329,7 +329,7 @@ abstract class Renderer {
     findConletPreview(conletId: string): HTMLElement | null {
         return document.querySelector(
             ".conlet-preview[data-conlet-id='" + conletId + "']");
-    };
+    }
 
     /**
      * Find the HTML element that displays a modal dialog associated
@@ -342,7 +342,7 @@ abstract class Renderer {
     findModalDialog(conletId: string): HTMLElement | null {
         return document.querySelector(
             ".conlet-modal-dialog[data-conlet-id='" + conletId + "']");
-    };
+    }
 
     /**
      * Return the ids of all conlets displayed as preview. The default

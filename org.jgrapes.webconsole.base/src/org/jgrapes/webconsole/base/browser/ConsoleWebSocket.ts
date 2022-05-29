@@ -50,7 +50,7 @@ class ConsoleWebSocket {
         this._console = console;
         this._oldConsoleSessionId = sessionStorage.getItem(
             "org.jgrapes.webconsole.base.sessionId");
-    };
+    }
 
     /**
      * Returns the unique session id used to identify the connection.

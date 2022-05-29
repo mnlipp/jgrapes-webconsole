@@ -131,7 +131,7 @@ class JGConsole {
             "-" + r[0].toString(10) + r[0].toString(11) +
             r[0].toString(12) + r[0].toString(13) +
             r[0].toString(14) + r[0].toString(15));
-    };
+    }
 
     /**
      * Finds the lang specific item in a map of items by language.

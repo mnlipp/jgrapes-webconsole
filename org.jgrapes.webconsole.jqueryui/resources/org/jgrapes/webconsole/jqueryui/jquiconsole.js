@@ -368,7 +368,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         let xtraInfo = {};
 
         this.console.updateLayout(previewLayout, tabsLayout, xtraInfo);
-    };
+    }
 
     /**
      * Update the title of the conlet with the given id.
