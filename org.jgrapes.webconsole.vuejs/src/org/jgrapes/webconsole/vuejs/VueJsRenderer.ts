@@ -488,13 +488,15 @@ export default class Renderer extends JGConsole.Renderer {
 
     openModalDialog(container: HTMLElement, options: ModalDialogOptions,
         content: string) {
-        let _this = this;
-        let dialog = createApp (AashModalDialogComponent, {
+        const _this = this;
+        const formId = container.id! + "-form";
+        const dialog = createApp (AashModalDialogComponent, {
             content: content,
             title: options.title,
             showCancel: options.cancelable || false,
             applyLabel: options.applyLabel || "",
             okayLabel: options.okayLabel || "",
+            submitForm: options.useSubmit ? formId : null,
             onAction: function(apply: boolean, close: boolean) {
                 if (apply) {
                     _this.console.execOnAction(container, apply, close);

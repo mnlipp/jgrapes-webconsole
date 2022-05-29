@@ -141,7 +141,8 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             processTemplate(event, tpl,
                 renderModel)).addOption("title", bundle.getString("title"))
                     .addOption("cancelable", false).addOption("okayLabel", "")
-                    .addOption("applyLabel", bundle.getString("Submit")));
+                    .addOption("applyLabel", bundle.getString("Submit"))
+                    .addOption("useSubmit", true));
     }
 
     private Future<String> processTemplate(

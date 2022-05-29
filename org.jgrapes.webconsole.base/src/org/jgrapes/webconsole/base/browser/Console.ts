@@ -29,7 +29,7 @@ import { parseHtml } from "./Util";
 /**
  * Provides the console related functions.
  */
-export default class Console {
+class Console {
     private _isConfigured = false;
     private _sessionRefreshInterval = 0;
     private _sessionInactivityTimeout = 0;
@@ -44,6 +44,7 @@ export default class Console {
     private _modalDialogTemplate = parseHtml(
         '<div class="conlet conlet-modal-dialog"></div>')[0];
     private _resourceManager: ResourceManager;
+    private _dialogIdCounter = 0;
 
     constructor() {
         document.querySelector("body")?.append(parseHtml(
@@ -58,7 +59,8 @@ export default class Console {
         this._webSocket.addMessageHandler('addConletType',
             function(conletType, displayNames: any, cssUris, 
                 scriptResources, renderModes: RenderMode[]) {
-                _this._resourceManager.addPageResources(cssUris, null, scriptResources);
+                _this._resourceManager.addPageResources
+                    (cssUris, null, scriptResources);
                 let asMap = new Map<string,string>();
                 for (let k of Object.keys(displayNames)) {
                     asMap.set(k, displayNames[k]);
@@ -73,7 +75,8 @@ export default class Console {
             (previewLayout, tabsLayout, xtraInfo) => {
                 // Should we wait with further actions?
                 _this._resourceManager.lockWhileLoading();
-                _this._renderer!.lastConsoleLayout(previewLayout, tabsLayout, xtraInfo);
+                _this._renderer!.lastConsoleLayout
+                    (previewLayout, tabsLayout, xtraInfo);
                 _this._resolveComponents();
             });
         this._webSocket.addMessageHandler('notifyConletView',
@@ -119,7 +122,7 @@ export default class Console {
                 _this._renderer!.notification(content, options);
             });
         this._webSocket.addMessageHandler('openModalDialog',
-            (conletType, conletId, content, options) => {
+            (conletType, conletId, content, options: ModalDialogOptions) => {
                 if (_this._resourceManager.lockWhileLoading()) {
                     this._webSocket.postponeMessage();
                     return;
@@ -128,6 +131,7 @@ export default class Console {
                     = <HTMLElement>_this._modalDialogTemplate.cloneNode(true);
                 container.dataset["conletType"] = conletType;
                 container.dataset["conletId"] = conletId;
+                container.id = "jgwc-modal-dialog-" + ++_this._dialogIdCounter;
                 _this._renderer!.openModalDialog(container, options, content);
                 if (!container.parentNode) {
                     // Must be attached to DOM tree
@@ -729,3 +733,5 @@ export default class Console {
     };
 
 }
+
+export default Console;

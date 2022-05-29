@@ -19,7 +19,7 @@
 /**
  * Options for notification display.
  */
-export default interface ModalDialogOptions {
+interface ModalDialogOptions {
     /**
      * The dialog's title.
      */
@@ -36,4 +36,10 @@ export default interface ModalDialogOptions {
      * The label for the dialog's okay (apply and close) button.
      */
     okayLabel?:string;
+    /**
+     * Create a button that submits the form with the given id. 
+     */
+    useSubmit?:boolean;
 }
+
+export default ModalDialogOptions;

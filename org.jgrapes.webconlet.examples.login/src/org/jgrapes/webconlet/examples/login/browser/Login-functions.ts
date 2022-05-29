@@ -36,13 +36,16 @@ interface AccountData {
     password: string;
 }
 
-window.orgJGrapesExampleLogin.initDialog 
+window.orgJGrapesExampleLogin.openDialog 
     = function(dialogDom: HTMLElement, isUpdate: boolean) {
     if (isUpdate) {
         return;
     }
     let app = createApp({
         setup() {
+            const formId = (<HTMLElement>dialogDom
+                .closest("*[data-conlet-id]")!).id + "-form";
+
             const accountData: AccountData = reactive({
                 username: "",
                 password: ""
@@ -57,10 +60,10 @@ window.orgJGrapesExampleLogin.initDialog
 
             provideApi(formDom, accountData );
                         
-            return { formDom, localize, accountData };
+            return { formDom, formId, localize, accountData };
         },
         template: `
-          <form ref="formDom" onsubmit="return false;">
+          <form :id="formId" ref="formDom" onsubmit="return false;">
             <fieldset>
               <legend>{{ localize("Login Data") }}</legend>
               <p>
