@@ -1,6 +1,7 @@
 <template>
-  <div class="aash-modal-dialog dialog__backdrop" :hidden="!isOpen" ref="dialog">
-    <div :id="effectiveId" role="dialog" :aria-labelledby="effectiveId + '-label'" 
+  <div :id="effectiveId" class="aash-modal-dialog dialog__backdrop" 
+    :hidden="!isOpen" ref="dialog">
+    <div role="dialog" :aria-labelledby="effectiveId + '-label'" 
       aria-modal="true">
       <header :id="effectiveId + '-label'">
         <p>{{ effectiveTitle }}</p>
@@ -10,10 +11,12 @@
       <section v-if="content" v-html="content" :class="contentClasses"></section>
       <section v-else :class="contentClasses"><slot></slot></section>
       <footer v-if="applyLabel != '' || okayLabel != ''">
-        <button v-if="applyLabel != ''"
-            type="button" v-on:click="apply()">{{ applyLabel }}</button>
-        <button v-if="okayLabel != ''"
-            type="button" v-on:click="close()">{{ okayLabel }}</button>
+        <button v-if="applyLabel != ''" :form="submitForm"
+            :type="submitForm ? 'submit' : 'button'"
+            v-on:click="apply()">{{ applyLabel }}</button>
+        <button v-if="okayLabel != ''" :form="submitForm"
+            :type="submitForm ? 'submit' : 'button'" v-on:submit="noSubmit()"
+            v-on:click="close()">{{ okayLabel }}</button>
       </footer>
     </div>
   </div>

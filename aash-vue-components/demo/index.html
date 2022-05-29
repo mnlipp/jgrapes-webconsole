@@ -98,6 +98,19 @@
                 :on-action="function(confirmed, close) { window.alert(confirmed + ' ' + close) }"
                 ><i>Sample dialog content</i></aash-modal-dialog>
           </div>
+          
+          <button onclick="openAashDialog('sampleDialogSubmit')">Open (Submit)</button>
+          <div>
+            <aash-modal-dialog v-bind:id="'sampleDialogSubmit'"
+                :title="'Sample Dialog (Submit)'"
+                :show-cancel="true"
+                :form-id="'toBeSubmitted'"
+                :on-action="function(confirmed, close) { window.alert(confirmed + ' ' + close) }"
+                ><form id="toBeSubmitted">
+                  <input type="text" name="user">
+                  <input type="password" name="password">
+                </form></aash-modal-dialog>
+          </div>
         </aash-accordion-section>
 
         <aash-accordion-section :title="'Disclosure'">

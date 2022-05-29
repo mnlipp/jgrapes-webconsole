@@ -67,7 +67,7 @@
         }
     }
 
-    footer button[type="button"] {
+    footer button[type="button"], footer button[type="submit"] {
         display: inline-block;
         margin-left: 0.75rem;
         font-weight: 400;

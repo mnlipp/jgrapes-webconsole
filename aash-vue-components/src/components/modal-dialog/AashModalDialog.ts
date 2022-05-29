@@ -32,8 +32,9 @@ let instanceCounter = 0;
  *
  * Example:
  * ```html
- * <div class="aash-modal-dialog dialog__backdrop" showcancel="true">
- *   <div id="sampleDialog" role="dialog"
+ * <div id="sampleDialog" class="aash-modal-dialog dialog__backdrop"
+ *     showcancel="true">
+ *   <div role="dialog"
  *       aria-labelledby="sampleDialog-label" aria-modal="true">
  *     <header id="sampleDialog-label">
  *       <p>Sample Dialog</p>
@@ -51,11 +52,20 @@ let instanceCounter = 0;
  * 
  * Once created, the component provides the externally invocable methods
  * defined by {@link module:AashModalDialog.Api} through an object in 
- * a property of the DOM element with `role="dialog"` (see
- * {@link module:AashUtil.getApi}). Note that this is not the mounted element
- * but the mounted element's child. It is, however, the element with the
- * provided `id`. Thus it makes more sense to use this element.
+ * a property of the mounted element (which also has the provided `id`).
  * 
+ * By default, the button is generated with type `button`. If your dialog
+ * contains a form and you want to make use of the browser's support for
+ * autocompletion, the button must have type `submit` (although submitting
+ * will be prevented). You can force this by setting `submitForm` to the
+ * `id` of the form in the dialog content.
+ *
+ * The dialog is generated with an apply button and an okay (confirm)
+ * button. The latter closes the form when pushed. The buttons are
+ * generate when the respective labels aren't empty. If both labels
+ * are empty, there will be no footer. This can be used for a purely
+ * informative dialog that has only a "cancel" (close) element.
+ *
  * @class AashModalDialog
  * @param {Object} props the properties
  * @param {string} props.id the dialog's id
@@ -63,9 +73,12 @@ let instanceCounter = 0;
  * @param {boolean} props.showCancel whether to show a cancel button
  * @param {string} props.content the dialog's content
  * @param {Array.string} props.contentClasses classes to apply to the content
- * @param {string} props.applyLabel the label for the apply button
- * @param {string} props.okayLabel the label for the okay (confirm) button
+ * @param {string} props.applyLabel the label for the apply button; defaults
+ * to empty
+ * @param {string} props.okayLabel the label for the okay (confirm) button;
+ * defaults to "OK"
  * @param {Function} props.onAction the function to invoke on action
+ * @param {string} props.submitForm the id of a form
  */
 export default defineComponent({
     props: {
@@ -75,9 +88,10 @@ export default defineComponent({
         content: String,
         contentClasses: Array,
         applyLabel: { type: String, default: "" },
-        okayLabel: { type: String, default: "Okay" },
+        okayLabel: { type: String, default: "OK" },
         onAction: Function as PropType<(apply: boolean, 
-            close: boolean) => void>
+            close: boolean) => void>,
+        submitForm: { type: String, default: null }
     },
   
     setup(props, context) {
@@ -122,12 +136,16 @@ export default defineComponent({
             effectiveTitle.value = title;
         }
 
+        const noSubmit = (e: Event) => {
+            e.preventDefault();
+        }
+
         const dialog = ref(null);
 
         provideApi(dialog, { open, apply, close, cancel, updateTitle,
                 isOpen: () => { return isOpen.value } });
 
         return { effectiveId, effectiveTitle, isOpen, apply, 
-            cancel, close, dialog };
+            cancel, close, dialog, noSubmit };
     }
 });
