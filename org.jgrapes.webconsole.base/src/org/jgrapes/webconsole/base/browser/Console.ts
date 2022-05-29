@@ -367,7 +367,7 @@ class Console {
         this._renderer!.updateConletComponent(container, content);
         this._execOnLoad(container!, !isNew);
         this._resolveComponents();
-    };
+    }
 
     private _updatePreview(conletType: string, conletId: string, 
         modes: RenderMode[], content: string, sticky: boolean, foreground: boolean) {
@@ -389,7 +389,7 @@ class Console {
             content, foreground);
         this._execOnLoad(container!, !isNew);
         this._resolveComponents();
-    };
+    }
 
     private _updateView(conletType: string, conletId: string, modes: RenderMode[], 
         content: string, foreground: boolean) {
@@ -406,7 +406,7 @@ class Console {
             content, foreground);
         this._execOnLoad(container!, !isNew);
         this._resolveComponents();
-    };
+    }
 
     private _execOnLoad(container: HTMLElement, isUpdate: boolean) {
         container.querySelectorAll("[data-jgwc-on-load]").forEach((element) => {
@@ -576,7 +576,7 @@ class Console {
      */
     setLocale(locale: string, reload: boolean) {
         this.send("setLocale", locale, reload);
-    };
+    }
 
     /**
      * Sends a notification that requests the rendering of a conlet.
@@ -586,7 +586,7 @@ class Console {
      */
     renderConlet(conletId: string, modes: RenderMode[]) {
         this.send("renderConlet", conletId, modes);
-    };
+    }
 
     /**
      * Sends a notification to the server requesting the 
@@ -608,7 +608,7 @@ class Console {
         } else {
             this.send("addConlet", conletType, renderModes);
         } 
-    };
+    }
 
     /**
      * Removes a conlet preview by invoking the respective methods
@@ -713,7 +713,7 @@ class Console {
             return;
         }
         this.send("consoleLayout", previewLayout, tabLayout, xtraInfo);
-    };
+    }
 
     /**
      * Sends a JSON RPC notification to the server with method 
@@ -730,7 +730,7 @@ class Console {
         } else {
             this.send("notifyConletModel", conletId, method, args);
         }
-    };
+    }
 
 }
 

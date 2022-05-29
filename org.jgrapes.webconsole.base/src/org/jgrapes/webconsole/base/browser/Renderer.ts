@@ -366,7 +366,7 @@ abstract class Renderer {
     findConletView(conletId: string): HTMLElement | null {
         return document.querySelector(
             ".conlet-view[data-conlet-id='" + conletId + "']");
-    };
+    }
 
     /**
      * Return the ids of all conlets displayed as view. The default 

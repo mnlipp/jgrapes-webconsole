@@ -198,7 +198,7 @@ class JGConsole {
         return data;
     }
 
-};
+}
 
 export default JGConsole;
 

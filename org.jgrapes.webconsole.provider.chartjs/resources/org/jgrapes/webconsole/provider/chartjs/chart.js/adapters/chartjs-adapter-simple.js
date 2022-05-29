@@ -158,7 +158,7 @@ let funcs = {
     case 'millisecond': break;
     case 'year': return addMonths(date, amount * 12);
     case 'quarter': return addMonths(date, amount * 3);
-    case 'month': return addMonths(date, amount); break;
+    case 'month': return addMonths(date, amount);
     default: return time;
     }
     return new Date(date.getTime() + amount);
@@ -236,7 +236,7 @@ let funcs = {
         date.setFullYear(date.getFullYear(), month + 1, 0);
         date.setHours(23, 59, 59, 999);
         break;
-    };
+    }
     case 'quarter': {
         const curMonth = date.getMonth();
         date.setMonth(currentMonth - (currentMonth % 3) + 3, 0);
@@ -253,6 +253,6 @@ let funcs = {
     }
     return date;
   }
-};
+}
 
 _adapters._date.override(funcs);
