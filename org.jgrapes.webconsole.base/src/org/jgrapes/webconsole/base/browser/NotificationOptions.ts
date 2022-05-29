@@ -22,7 +22,7 @@ export enum NotificationType {
     Success = "Success",
     Warning = "Warning",
     Danger = "Danger",
-};
+}
 
 /**
  * Options for notification display.

@@ -303,7 +303,7 @@ abstract class Renderer {
         return document.querySelectorAll(
             ".conlet[data-conlet-id='" + conletId + "']"
             ) as NodeListOf<HTMLElement>;
-    };
+    }
 
     /**
      * Find the HTML elements that display a conlet component. 

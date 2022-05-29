@@ -48,9 +48,11 @@ class Log {
      * @param message the message to print
      */
     static debug (message: any) {
+        /* eslint-disable no-console */
         if (console && console.debug) {
             console.debug(this.format(new Date()) + ": " + message);
         }
+        /* eslint-enable no-console */
     }
     
     /**
@@ -58,9 +60,11 @@ class Log {
      * @param message the message to print
      */
     static info(message: any) {
+        /* eslint-disable no-console */
         if (console && console.info) {
             console.info(this.format(new Date()) + ": " + message)
         }
+        /* eslint-enable no-console */
     }
     
     /**
@@ -68,9 +72,11 @@ class Log {
      * @param message the message to print
      */
     static warn(message: any) {
+        /* eslint-disable no-console */
         if (console && console.warn) {
             console.warn(this.format(new Date()) + ": " + message);
         }
+        /* eslint-enable no-console */
     }
     
     /**
@@ -78,11 +84,12 @@ class Log {
      * @param message the message to print
      */
     static error(message: any) {
+        /* eslint-disable no-console */
         if (console && console.error) {
             console.error(this.format(new Date()) + ": " + message);
         }
+        /* eslint-enable no-console */
     }
 }
 
 export default Log;
-

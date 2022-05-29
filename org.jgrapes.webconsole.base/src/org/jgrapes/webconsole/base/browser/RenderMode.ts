@@ -27,6 +27,6 @@ enum RenderMode {
     Component = "Component",
     StickyPreview = "StickyPreview",
     Foreground = "Foreground"
-};
+}
 
 export default RenderMode;
