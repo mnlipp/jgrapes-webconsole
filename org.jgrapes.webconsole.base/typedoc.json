@@ -4,5 +4,6 @@
   "readme": "./src/org/jgrapes/webconsole/base/browser/README.md",
   "out": "../build/javadoc/org/jgrapes/webconsole/base/jsdoc",
   "categorizeByGroup": true,
-  "categoryOrder": ["*"]
+  "categoryOrder": ["*"],
+  "excludeExternals": true
 }

@@ -39,6 +39,7 @@ ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/base/
 task tsdoc(type: NodeTask, dependsOn: ':npmInstall') {
     inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
+    inputs.file project.file('typedoc.json')
     outputs.dir project.file(jsDocDestDir)
     script = file("${rootProject.rootDir}/node_modules/typedoc/bin/typedoc")
     args = []
