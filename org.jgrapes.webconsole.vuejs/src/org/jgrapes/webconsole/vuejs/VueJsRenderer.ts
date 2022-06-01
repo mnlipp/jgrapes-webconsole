@@ -195,7 +195,7 @@ export default class Renderer extends JGConsole.Renderer {
             content: _this.localize("consoleSessionSuspendedMessage"),
             contentClasses: [],
             closeLabel: _this.localize("Resume"),
-            onClose: function(applyChanges: boolean) {
+            onAction: function(applyChanges: boolean) {
                 dialog.unmount();
                 resume();
             }
