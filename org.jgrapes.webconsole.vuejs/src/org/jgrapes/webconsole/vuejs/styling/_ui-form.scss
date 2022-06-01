@@ -16,35 +16,6 @@
 // with this program; if not, see <http://www.gnu.org/licenses/>.
 //
 
-:not(.form--no-markup-styling) form button {
-    display: inline-block;
-    color: var(--background);
-    background-color: var(--primary);
-    border: 1px solid #007bff;
-    border-radius: var(--corner-radius);
-    text-align: center;
-    vertical-align: middle;
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    transition: all 0.3s;
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-    }
-    
-    &:hover {
-        box-shadow: var(--brightening);
-    }
-}
-        
-:not(.form--no-markup-styling) form span[role="button"] {
-    color: var(--primary);
-    
-    &:hover {
-        box-shadow: var(--brightening);
-    }
-}
-
 /* ## Tree grid */
 
 [role="treegrid"] [role="row"] {

@@ -54,7 +54,7 @@ small {
 
 /* ## Button */
 
-button[type="button"] {
+button[type="button"], button[type="submit"] {
     display: inline-block;
     color: var(--background);
     background-color: var(--primary);
