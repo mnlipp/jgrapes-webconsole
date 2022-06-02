@@ -260,13 +260,17 @@ class ConsoleWebSocket {
                 this._beingHandled = null;
                 continue;
             }
-            if (this._beingHandled.hasOwnProperty("params")) {
-                this._handlerLog(() => "Handling: " + this._beingHandled.method
-                    + "[" + this._beingHandled.params + "]");
-                handler(...this._beingHandled.params);
-            } else {
-                this._handlerLog(() => "Handling: " + this._beingHandled.method);
-                handler();
+            try {
+                if (this._beingHandled.hasOwnProperty("params")) {
+                    this._handlerLog(() => "Handling: " + this._beingHandled.method
+                        + "[" + this._beingHandled.params + "]");
+                    handler(...this._beingHandled.params);
+                } else {
+                    this._handlerLog(() => "Handling: " + this._beingHandled.method);
+                    handler();
+                }
+            } catch (e: any) {
+                Log.error(e);
             }
             this._beingHandled = null;
         }
