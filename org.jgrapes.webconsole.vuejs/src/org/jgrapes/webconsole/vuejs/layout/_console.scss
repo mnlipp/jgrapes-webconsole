@@ -90,7 +90,7 @@ body > header > :first-child {
     margin-top: 1rem;
 	margin-left: -45%;
 	margin-right: -45%;
-	z-index: 9999;
+	z-index: var(--z-index-popover);
 }
 
 [role="alert"] {

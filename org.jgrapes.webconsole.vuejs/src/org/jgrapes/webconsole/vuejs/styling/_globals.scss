@@ -17,6 +17,18 @@
 //
 
 :root {
+  // From bootstrap, for the lack of better alternative.
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-offcanvas: 1050;
+  --z-index-modal: 1060;
+  --z-index-popover: 1070;
+  --z-index-tooltip: 1080;
+  --z-index-top-modal-backdrop: 1090;
+  --z-index-top_modal: 1100;
+    
   // Basic colors
   // Cool
   --aqua: #7fdbff;

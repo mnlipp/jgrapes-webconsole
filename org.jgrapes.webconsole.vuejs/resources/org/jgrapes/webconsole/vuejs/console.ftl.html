@@ -36,6 +36,11 @@
 
 <body id="page-top" class="index console-vuejs">
 
+  <!-- Loader -->
+  <div id="loader-overlay">
+    <div></div>
+  </div> 
+
   <#include "console-header.ftl.html">
 
   <main role="main">
@@ -55,17 +60,12 @@
   <!-- Footer -->
   <#include "console-footer.ftl.html">
 
-  <!-- Loader -->
-  <div id="loader-overlay">
-    <div></div>
-  </div> 
-
   <!-- Notification area -->
   <div id="notification-area">
   </div>
 
-  <!-- Modal dialog slot -->
-  <div id="modal-dialog-slot">
+  <!-- Suspended dialog slot -->
+  <div id="suspended-dialog-slot">
   </div>
 
 <script type="module">

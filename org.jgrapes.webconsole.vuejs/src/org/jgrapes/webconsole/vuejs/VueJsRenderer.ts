@@ -200,7 +200,7 @@ export default class Renderer extends JGConsole.Renderer {
                 resume();
             }
         });
-        let node = dialog.mount(document.querySelector("#modal-dialog-slot")!)
+        let node = dialog.mount(document.querySelector("#suspended-dialog-slot")!)
             .$el;
         getApi<AashModalDialog.Api>(node)!.open();
     }

@@ -63,3 +63,14 @@ body > footer {
     text-align: center;
 }
 
+/* Put suspended dialog on top of everything */
+#suspended-dialog-slot {
+    
+    .aash-modal-dialog {
+         z-index: var(--z-index-top-modal-backdrop);
+    }
+
+    .aash-modal-dialog * {
+        z-index: var(--z-index-top-modal);
+    }
+}

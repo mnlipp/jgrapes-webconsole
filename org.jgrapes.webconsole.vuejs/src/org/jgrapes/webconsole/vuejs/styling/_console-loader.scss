@@ -18,6 +18,7 @@
 
 /* Spin while loading. */
 #loader-overlay {
+    z-index: var(--z-index-fixed);
     position: fixed;
     top: 0;
     left: 0;
