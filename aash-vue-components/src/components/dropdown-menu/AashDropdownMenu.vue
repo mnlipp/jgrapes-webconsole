@@ -33,7 +33,7 @@
 .aash-dropdown-menu > ul {
     list-style: none;
     position: absolute;
-    z-index: 1000;
+    z-index: var(--z-index-dropdown, 1000);
     top: 100%;
     left: 0;
     right: auto;    

@@ -32,7 +32,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 10000;
+    z-index: var(--z-index-modal, 1060);
 }
 
 .aash-modal-dialog [role="dialog"] {
