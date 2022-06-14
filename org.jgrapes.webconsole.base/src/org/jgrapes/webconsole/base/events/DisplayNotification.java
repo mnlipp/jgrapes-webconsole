@@ -20,7 +20,6 @@ package org.jgrapes.webconsole.base.events;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +58,7 @@ public class DisplayNotification extends ConsoleCommand {
      * @param content the content (valid HTML)
      */
     public DisplayNotification(String content) {
-        this(content, null);
+        this(content, new HashMap<>());
     }
 
     /**
@@ -70,9 +69,6 @@ public class DisplayNotification extends ConsoleCommand {
      * @return the event for easy chaining
      */
     public DisplayNotification addOption(String name, Object value) {
-        if (options == null) {
-            options = new HashMap<>();
-        }
         options.put(name, value);
         return this;
     }
@@ -92,12 +88,11 @@ public class DisplayNotification extends ConsoleCommand {
      * @return the options
      */
     public Map<String, Object> options() {
-        return options == null ? Collections.emptyMap() : options;
+        return options;
     }
 
     @Override
     public void toJson(Writer writer) throws IOException {
-        Map<String, Object> options = options();
         options.put("destroyOnClose", true);
         toJson(writer, "displayNotification", content(), options);
     }
