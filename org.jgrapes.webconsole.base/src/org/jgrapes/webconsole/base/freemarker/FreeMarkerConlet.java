@@ -237,7 +237,7 @@ public abstract class FreeMarkerConlet<S extends Serializable>
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
         model.put("event", event);
-        model.put("conletId", conletState);
+        model.put("conletId", conletId);
         if (conletState != null) {
             model.put("conlet", conletState);
         }
