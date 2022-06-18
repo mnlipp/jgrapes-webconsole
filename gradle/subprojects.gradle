@@ -5,8 +5,6 @@ apply plugin: 'pl.allegro.tech.build.axion-release'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
-group = 'org.jgrapes'
-
 if (project.name.startsWith("org.jgrapes") 
     || project.name == "WebConsoleDemo") {
 
