@@ -26,6 +26,11 @@ import ModalDialogOptions from "./ModalDialogOptions";
 import ConsoleNotification from "./Notification";
 import { parseHtml } from "./Util";
 
+interface PageComponentSpecification {
+    area: String;
+    properties: any;
+}
+
 /**
  * Provides the console related functions.
  */
@@ -45,6 +50,7 @@ class Console {
         '<div class="conlet conlet-modal-dialog"></div>')[0];
     private _resourceManager: ResourceManager;
     private _dialogIdCounter = 0;
+    private _pageComponentCounter = 0;
 
     constructor() {
         document.querySelector("body")?.append(parseHtml(
@@ -58,14 +64,16 @@ class Console {
             });
         this._webSocket.addMessageHandler('addConletType',
             function(conletType, displayNames: any, cssUris, 
-                scriptResources, renderModes: RenderMode[]) {
+                scriptResources, renderModes: RenderMode[],
+                pageComps: PageComponentSpecification[]) {
                 _this._resourceManager.addPageResources
                     (cssUris, null, scriptResources);
                 let asMap = new Map<string,string>();
                 for (let k of Object.keys(displayNames)) {
                     asMap.set(k, displayNames[k]);
                 }
-                _this._renderer!.addConletType(conletType, asMap, renderModes);
+                _this._renderer!.addConletType
+                    (conletType, asMap, renderModes, pageComps);
             });
         this._webSocket.addMessageHandler('removeConletType',
             function(conletType) {
@@ -103,8 +111,8 @@ class Console {
                 } else if (renderAs.includes(RenderMode.View)) {
                     _this._updateView(conletType, conletId, supported, content,
                     renderAs.includes(RenderMode.Foreground));
-                } else if (renderAs.includes(RenderMode.Component)) {
-                    _this._updateComponent(conletType, conletId, supported, content);
+                } else if (renderAs.includes(RenderMode.Content)) {
+                    _this._updateContent(conletType, conletId, supported, content);
                 }
             });
         this._webSocket.addMessageHandler('deleteConlet',
@@ -325,42 +333,54 @@ class Console {
         let _this = this;
         let components = _this._renderer!.findConletComponents();
         components.forEach((ref: HTMLElement) => {
-            if (!ref.dataset["conlet_state"]) {
-                ref.dataset["conlet_state"] = "resolving"
+            if (!ref.dataset["conletState"]) {
+                // New (unresolved) component
+                ref.dataset["conletState"] = "resolving-" 
+                    + this._pageComponentCounter++;
                 let type = ref.dataset["conletType"];
                 if (type) {
-                    _this.addConlet(type, [RenderMode.Component],
+                    _this.addConlet(type, [RenderMode.Content], 
                         _this.collectConletProperties(ref));
                 }
             }
         });
     }
 
-    private _updateComponent(conletType: string, conletId: string, 
-            modes: RenderMode[], content: string) {
+    private _updateContent(conletType: string, conletId: string, 
+            modes: RenderMode[], contentString: string) {
         let _this = this;
         let components = this._renderer!.findConletComponents();
         let container: HTMLElement | null = null;
+        let content = parseHtml(contentString);
         let isNew = true;
         for (let i = 0; i < components.length; i++) {
             let el = components[i];
+            // Check if update of existing
             if (el.dataset["conletId"] == conletId) {
                 container = el;
                 isNew = false;
                 break;
             }
+            // Check if content for new (resolving)
             if (el.dataset["conletType"] == conletType
-                && el.dataset["conlet_state"] == "resolving") {
+                && el.dataset["conletState"]
+                && (content[0].dataset["conletState"]
+                    // Targeted (repeats state) or first match 
+                    ? content[0].dataset["conletState"] 
+                        === el.dataset["conletState"]
+                    : el.dataset["conletState"].startsWith("resolving"))) {
                 container = el;
+                break;
             }
         }
         if (!container) {
-            this.send("conletsDeleted", [conletId, [RenderMode.Component]]);
+            this.send("conletsDeleted", [conletId, [RenderMode.Content]]);
             return;
         }
         if (isNew) {
             container.dataset["conletId"] = conletId;
-            container.dataset["conlet_state"] = "resolved";
+            container.dataset["conletState"] = "resolved";
+            delete content[0].dataset["conletState"]
         } else {
             this._execOnUnload(container!, true);
         }
@@ -386,7 +406,7 @@ class Console {
             container!.classList.add('conlet-deleteable');
         }
         this._renderer!.updateConletPreview(isNew, container!, modes,
-            content, foreground);
+            parseHtml(content), foreground);
         this._execOnLoad(container!, !isNew);
         this._resolveComponents();
     }
@@ -403,7 +423,7 @@ class Console {
             this._execOnUnload(container!, true);
         }
         this._renderer!.updateConletView(isNew, container!, modes,
-            content, foreground);
+            parseHtml(content), foreground);
         this._execOnLoad(container!, !isNew);
         this._resolveComponents();
     }
@@ -683,7 +703,7 @@ class Console {
             }
         }
         if (element.classList.contains("conlet")
-            && element.classList.contains("conlet-component")) {
+            && element.classList.contains("conlet-content")) {
                 let conletId = element.dataset["conletId"];
                 if (!conletId) {
                     return;
@@ -692,7 +712,7 @@ class Console {
                 let view = this._renderer!.findConletView(conletId);
                 let renderModes: RenderMode[] = [];
                 if (preview || view) {
-                    renderModes = [RenderMode.Component];
+                    renderModes = [RenderMode.Content];
                 }
                 notifications.push([conletId, renderModes, 
                     Object.fromEntries(this.collectConletProperties(element))]);
@@ -735,3 +755,5 @@ class Console {
 }
 
 export default Console;
+export { PageComponentSpecification };
+

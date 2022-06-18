@@ -89,6 +89,7 @@ public class AddConletType extends ConsoleCommand {
     private final List<URI> cssUris = new ArrayList<>();
     private final List<ScriptResource> scriptResources = new ArrayList<>();
     private List<RenderMode> renderModes;
+    private List<PageComponentSpecification> pageComponents = new ArrayList<>();
 
     /**
      * Create a new event for the given web console component type.
@@ -135,7 +136,7 @@ public class AddConletType extends ConsoleCommand {
      * be added. The modes {@link RenderMode#Preview} and 
      * {@link RenderMode#View} usually cause the conlet type to be added 
      * to a menu. If a conlet type's only mode is
-     * {@link RenderMode#Component}, it shouldn't be offered to the user
+     * {@link RenderMode#Content}, it shouldn't be offered to the user
      * at all.  
      *
      * @param mode the mode
@@ -203,6 +204,40 @@ public class AddConletType extends ConsoleCommand {
         return cssUris.toArray(new URI[0]);
     }
 
+    /**
+     * Causes a container with this conlet's type as attribute
+     * "data-conlet-type" and classes "conlet conlet-content"
+     * to be added to the specified page area. The properties
+     * are added to the container as additional "data-conlet-..."
+     * attributes and will be passed to the {@link AddConletRequest} 
+     * issued by the console when requesting the conlet's representation.
+     * 
+     * Currently, the only defined page area is "headerIcons".
+     * When adding conlets in this area, the numeric property
+     * "priority" may be used to determine the order. The default 
+     * value is 0. Conlets with the same priority are ordered
+     * by their type name.  
+     * 
+     * @param area the area into which the component is to be added
+     * @param properties the properties
+     * @return the event for easy chaining
+     * @see RenderMode#Content
+     */
+    public AddConletType addPageContent(String area,
+            Map<String, String> properties) {
+        pageComponents.add(new PageComponentSpecification(area, properties));
+        return this;
+    }
+
+    /**
+     * Return the list of page components.
+     *
+     * @return the list
+     */
+    public List<PageComponentSpecification> pageContent() {
+        return pageComponents;
+    }
+
     @Override
     public void toJson(Writer writer) throws IOException {
         JsonArray strArray = JsonArray.create();
@@ -216,6 +251,47 @@ public class AddConletType extends ConsoleCommand {
             Arrays.stream(cssUris()).map(
                 uri -> uri.toString()).toArray(String[]::new),
             strArray, renderModes().stream().map(RenderMode::name)
-                .toArray(size -> new String[size]));
+                .toArray(size -> new String[size]),
+            pageComponents);
     }
+
+    /**
+     * Specifies an embedded instance to be added.
+     */
+    public static class PageComponentSpecification {
+        private final String area;
+        private final Map<String, String> properties;
+
+        /**
+         * Instantiates a new embed spec.
+         *
+         * @param area the area
+         * @param properties the properties
+         */
+        public PageComponentSpecification(String area,
+                Map<String, String> properties) {
+            super();
+            this.area = area;
+            this.properties = properties;
+        }
+
+        /**
+         * Gets the area.
+         *
+         * @return the area
+         */
+        public String getArea() {
+            return area;
+        }
+
+        /**
+         * Gets the properties.
+         *
+         * @return the properties
+         */
+        public Map<String, String> getProperties() {
+            return properties;
+        }
+    }
+
 }

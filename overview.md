@@ -19,8 +19,10 @@ The content of the frame is provided by web console display components
 or "conlets" for short. These components typically support a summary
 or preview display that can be put on an overview panel in a dashboard
 style and a large view that is supposed to fill the complete frame. 
-(They can also provide a "component display" and thus be embedded in 
-other conlets.)
+(They can also provide a "component content" which can be added to the page 
+or used in other conlets. See 
+{@link org.jgrapes.webconsole.base.Conlet.RenderMode}
+for a complete list of rendering modes.)
 
 Tabs or a menu in a side bar can be used to switch between
 the overview panel(s) and the large views of the different conlets. 

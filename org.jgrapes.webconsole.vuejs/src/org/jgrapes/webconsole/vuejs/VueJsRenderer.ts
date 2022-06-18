@@ -18,8 +18,9 @@
 
 /// <reference path="../../../../../../org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack.d.ts" />
 
-import JGConsole, { Console, RenderMode, Notification, NotificationOptions,
-    NotificationType, ModalDialogOptions, parseHtml } from "@JGConsole"
+import JGConsole, { Console, PageComponentSpecification, RenderMode, 
+    Notification, NotificationOptions, NotificationType, ModalDialogOptions, 
+    parseHtml } from "@JGConsole"
 import { reactive, ref, createApp, onMounted, computed, Ref } from "@Vue";
 import AashPlugin, { provideApi, getApi, AashTablist, 
     AashModalDialogComponent, AashModalDialog } from "@Aash";
@@ -160,18 +161,50 @@ export default class Renderer extends JGConsole.Renderer {
     }
 
     addConletType(conletType: string, displayNames: Map<string,string>,
-            renderModes: RenderMode[]) {
+            renderModes: RenderMode[], 
+            pageComponents: PageComponentSpecification[]) {
         let _this = this;
-        if (!renderModes.includes(RenderMode.Preview)
-            && !renderModes.includes(RenderMode.View)) {
-            return;
+        if (renderModes.includes(RenderMode.Preview)
+            || renderModes.includes(RenderMode.View)) {
+            // Add to menu
+            let label = function() {
+                return <string>JGConsole.forLang(displayNames, _this.locale()) || "Conlet";
+            };
+            _this._conletTypes.push([label, conletType, renderModes]);
         }
-        // Add to menu
-        let label = function() {
-            return <string>JGConsole.forLang(displayNames, _this.locale()) || "Conlet";
-        };
-        _this._conletTypes.push([label, conletType, renderModes]);
+        // Add embedded to area(s)
+        let header = <HTMLElement>document.querySelector("#vuejs-console-header");
+        for (let item of pageComponents) {
+            if (item.area === "headerIcons") {
+                this._embedAsHeaderIcon(header, conletType, item);
+            }
+        }
     }
+    
+    private _embedAsHeaderIcon(header: HTMLElement, conletType: string,
+             spec: PageComponentSpecification) {
+        let conlet = document.createElement("div");
+        conlet.setAttribute("class", "conlet conlet-content");
+        conlet.dataset["conletType"] = conletType;
+        for (let prop in spec.properties) {
+            conlet.dataset["conlet" + prop.substring(0,1).toUpperCase()
+                + prop.substring(1)] = spec.properties[prop];
+        }
+        let conletPrio = spec.properties["priority"] || 0;
+        for (let idx = 0; idx < header.children.length; idx++) {
+            let ref = <HTMLElement>header.children.item(idx);
+            if (!("conletType" in ref.dataset)) {
+                continue;
+            }
+            let refPrio = ref.dataset["conletPriority"] || 0;
+            if (conletPrio < refPrio || conletPrio == refPrio 
+                    && conletType < ref.dataset["conletType"]!) {
+                header.insertBefore(conlet, ref);
+                return;
+            }
+        }
+        header.append(conlet);
+    }        
 
     removeConletType(conletType: string) {
         // Remove from menu
@@ -233,12 +266,11 @@ export default class Renderer extends JGConsole.Renderer {
     }
 
     updateConletPreview(isNew: boolean, container: HTMLElement, 
-        modes: RenderMode[], content: string, foreground: boolean) {
+        modes: RenderMode[], content: HTMLElement[], foreground: boolean) {
         // Container is:
         //     <section class='conlet conlet-preview' data-conlet-id='...' 
         //     data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>"
         let _this = this;
-        let newContent = parseHtml(content)[0];
         if (isNew) {
             container.append(...parseHtml(
                 '<header class="ui-draggable-handle"></header>'
@@ -257,11 +289,11 @@ export default class Renderer extends JGConsole.Renderer {
                 options.autoPosition = true;
                 options.width = 4;
                 options.height = 4;
-                if (newContent.dataset["conletGridColumns"]) {
-                    options.width = +newContent.dataset["conletGridColumns"];
+                if (content[0].dataset["conletGridColumns"]) {
+                    options.width = +content[0].dataset["conletGridColumns"];
                 }
-                if (newContent.dataset["conletGridRows"]) {
-                    options.height = +newContent.dataset["conletGridRows"];
+                if (content[0].dataset["conletGridRows"]) {
+                    options.height = +content[0].dataset["conletGridRows"];
                 }
                 if (window.innerWidth < 1200) {
                     let winWidth = Math.max(320, window.innerWidth);
@@ -288,13 +320,13 @@ export default class Renderer extends JGConsole.Renderer {
                 .querySelector(":scope > header")!, conletId);
         }
         let headerComponent = getApi<any>(container.querySelector(":scope > header"));
-        headerComponent.setTitle(_this._evaluateTitle(container, newContent));
+        headerComponent.setTitle(_this._evaluateTitle(container, content[0]));
         headerComponent.setModes(modes);
         let previewContent = container.querySelector("section")!;
         while (previewContent.firstChild) {
             previewContent.removeChild(previewContent.lastChild!);
         }
-        previewContent.append(newContent);
+        previewContent.append(...content);
         if (foreground) {
             this._consoleTabs().selectPanel("consoleOverviewPanel");
         }
@@ -381,24 +413,23 @@ export default class Renderer extends JGConsole.Renderer {
     }
 
     updateConletView(isNew: boolean, container: HTMLElement, 
-        modes: string[], content: string, foreground: boolean) {
+        modes: string[], content: HTMLElement[], foreground: boolean) {
         // Container is 
         //     <article class="conlet conlet-view 
         //              data-conlet-id='...'"></article>"
         let _this = this;
-        let newContent = parseHtml(content);
         let conletId = container.dataset["conletId"];
         let panelId = "conlet-panel-" + conletId;
         if (isNew) {
             container.setAttribute("id", panelId);
             container.setAttribute("hidden", "");
-            container.append(...newContent);
+            container.append(...content);
             let consolePanels = <HTMLElement>document.querySelector("#consolePanels");
             consolePanels.append(container);
             // Add to tab list
             this._consoleTabs().addPanel({
                 id: panelId, 
-                label: _this._evaluateTitle(container, newContent[0]), 
+                label: _this._evaluateTitle(container, content[0]), 
                 removeCallback: function(): void { _this.console.removeView(conletId!); }
             });
             this._layoutChanged();
@@ -406,10 +437,10 @@ export default class Renderer extends JGConsole.Renderer {
             while (container.firstChild) {
                 container.removeChild(container.lastChild!);
             }
-            container.append(...newContent);
+            container.append(...content);
             for (let panel of this._consoleTabs().panels()) {
                 if (panel.id === panelId) {
-                    panel.label = _this._evaluateTitle(container, newContent[0]);
+                    panel.label = _this._evaluateTitle(container, content[0]);
                 }
             }
         }

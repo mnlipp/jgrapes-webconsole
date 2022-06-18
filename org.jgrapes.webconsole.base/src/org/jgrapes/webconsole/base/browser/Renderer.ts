@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License along 
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-import Console from "./Console";
+import Console, { PageComponentSpecification } from "./Console";
 import Log from "./Log";
 import ConsoleNotification from "./Notification";
 import NotificationOptions from "./NotificationOptions";
@@ -104,9 +104,11 @@ abstract class Renderer {
      * @param conletType the conlet type
      * @param displayNames the display names for the conlet type by lang
      * @param renderModes the render modes
+     * @param pageComponents of components to be added to the page
      */
     addConletType(conletType: string, displayNames: Map<string,string>,
-            renderModes: RenderMode[]) {
+            renderModes: RenderMode[], 
+            pageComponents: PageComponentSpecification[]) {
         Log.warn("Not implemented!");
     }
 
@@ -145,16 +147,15 @@ abstract class Renderer {
      *
      * @param container the container, i.e. a `HTMLElement` returned
      * from {@link Renderer.findConletComponents}
-     * @param content the component content as received from the server,
+     * @param content the component content as DOM received from the server,
      * usually inserted into the container
      */
-    updateConletComponent(container: HTMLElement, content: string) {
+    updateConletComponent(container: HTMLElement, content: HTMLElement[]) {
         let _this = this;
-        let newContent = parseHtml(content)[0];
         while (container.firstChild) {
             container.removeChild(container.lastChild!);
         }
-        container.append(newContent);
+        container.append(...content);
     }
 
     /**
@@ -176,13 +177,13 @@ abstract class Renderer {
      *      data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>
      * ```
      * @param modes the supported conlet modes
-     * @param content the preview content as received from the server,
+     * @param content the preview content as DOM received from the server,
      * usually inserted into the container
      * @param foreground `true` if the preview (i.e. the overview
      * plane) is to be made the active tab
      */
     updateConletPreview(isNew: boolean, container: HTMLElement, 
-        modes: RenderMode[], content: string, foreground: boolean) {
+        modes: RenderMode[], content: HTMLElement[], foreground: boolean) {
         Log.warn("Not implemented!");
     }
 
@@ -208,7 +209,7 @@ abstract class Renderer {
      * is to be made the active tab
      */
     updateConletView(isNew: boolean, container: HTMLElement, 
-        modes: RenderMode[], content: string, foreground: boolean) {
+        modes: RenderMode[], content: HTMLElement[], foreground: boolean) {
         Log.warn("Not implemented!");
     }
 
@@ -308,14 +309,14 @@ abstract class Renderer {
     /**
      * Find the HTML elements that display a conlet component. 
      * The default implementation returns all nodes that match 
-     * `body .conlet.conlet-component`.
+     * `body .conlet.conlet-content`.
      * 
      * @param conletId the conlet id
      * @return the elements found
      */
     findConletComponents(): NodeListOf<HTMLElement> {
         return document.querySelectorAll(
-            ":scope body .conlet.conlet-component") as NodeListOf<HTMLElement>;
+            ":scope body .conlet.conlet-content") as NodeListOf<HTMLElement>;
     }
 
     /**

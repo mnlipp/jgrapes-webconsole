@@ -139,7 +139,15 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         $("body").faLoading('remove');
     }
 
-    addConletType(conletType, displayNames, renderModes) {
+    addConletType(conletType, displayNames, renderModes, pageComponents) {
+        // Add embedded to area(s)
+        let parent = document.querySelector("#jq-console-top-bar");
+        for (let item of pageComponents) {
+            if (item.area === "headerIcons") {
+                this._embedAsHeaderIcon(parent, conletType, item);
+            }
+        }
+        // Other modes        
         if (!renderModes.includes(RenderMode.Preview)
             && !renderModes.includes(RenderMode.View)) {
             return;
@@ -165,6 +173,33 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         }
 
     }
+
+    _embedAsHeaderIcon(parent, conletType, spec) {
+        let conlet = document.createElement("span");
+        conlet.setAttribute("class", "conlet conlet-content");
+        conlet.dataset["conletType"] = conletType;
+        for (let prop in spec.properties) {
+            conlet.dataset["conlet" + prop.substring(0,1).toUpperCase()
+                + prop.substring(1)] = spec.properties[prop];
+        }
+        let conletPrio = spec.properties["priority"] || 0;
+        let beforeRef = null;
+        for (let idx = parent.children.length - 1; idx >= 0; idx--) {
+            let ref = parent.children.item(idx);
+            if (!("conletType" in ref.dataset)) {
+                beforeRef = ref;
+                continue;
+            }
+            let refPrio = ref.dataset["conletPriority"] || 0;
+            if (conletPrio < refPrio || conletPrio == refPrio 
+                    && conletType < ref.dataset["conletType"]) {
+                parent.insertBefore(conlet, beforeRef);
+                return;
+            }
+            beforeRef = ref;
+        }
+        parent.prepend(conlet);
+    }        
 
     removeConletType(conletType) {
         // Remove from menu

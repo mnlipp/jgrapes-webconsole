@@ -41,6 +41,8 @@ allprojects {
         // Experimental, not sure if this is the way tpo go...
         maven { url 'https://jitpack.io' }
     }
+    
+    group = 'org.jgrapes'
 }
 
 subprojects {

@@ -22,6 +22,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.jgrapes.webconsole.base.events.AddConletRequest;
+import org.jgrapes.webconsole.base.events.AddConletType;
+import org.jgrapes.webconsole.base.events.DisplayNotification;
+import org.jgrapes.webconsole.base.events.OpenModalDialog;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 
 /**
  * This interface provides web console component related constants. 
@@ -38,10 +43,60 @@ public interface Conlet {
      */
     @SuppressWarnings("PMD.FieldNamingConventions")
     enum RenderMode {
-        Preview, View, Edit, Help, Component,
-        /** Modifier, indicates that a {@link #Preview} may not be removed. */
+        /**
+         * Provide content to display in a card on the overview tab
+         * (by firing a {@link RenderConlet} event). 
+         */
+        Preview,
+        /**
+         * Provide content to display in a tab of its own
+         * (by firing a {@link RenderConlet} event).
+         */
+        View,
+        /**
+         * Provide a dialog for modifying a conlet instance's
+         * properties, typically by opening a modal dialog
+         * (see {@link OpenModalDialog}).
+         */
+        Edit,
+        /**
+         * Provide help information, typically by opening a modal dialog
+         * (see {@link OpenModalDialog}) or using a notification
+         * (see {@link DisplayNotification}).
+         */
+        Help,
+        /**
+         * Provide content that is to be embedded in an area of the
+         * console page (see 
+         * {@link AddConletType#addPageContent(String, java.util.Map)}) 
+         * or in some other conlet's content (see {@link RenderConlet}).
+         * 
+         * Conlets that want to include another conlet's 
+         * "content" must generate an HTML element as container 
+         * (typically a `div` or `span`) with an attribute 
+         * "data-conlet-type" and classes "conlet conlet-content". 
+         * Additional attributes "data-conlet-..." 
+         * are considered properties of the conlet instance to be added 
+         * and are passed to the server with the {@link AddConletRequest}. 
+         * 
+         * Property "id" may be used if already known, but is usually 
+         * assigned later by the component implementation when the 
+         * component is rendered. Property "state" is reserved. 
+         * Its value is provided by the console. The handler for 
+         * {@link AddConletRequest} should pass the value of "state"
+         * back as attribute `data-conlet-state` of the root 
+         * (or first) element of the content. This allows the console 
+         * to match the content provided with the conlet content container
+         * that caused the request.
+         */
+        Content,
+        /** 
+         * Modifier, indicates that a {@link #Preview} may not be removed.
+         */
         StickyPreview,
-        /** Modifier, forces rendered view to be put in foreground. */
+        /** 
+         * Modifier, forces rendered view to be put in foreground. 
+         */
         Foreground;
 
         /**

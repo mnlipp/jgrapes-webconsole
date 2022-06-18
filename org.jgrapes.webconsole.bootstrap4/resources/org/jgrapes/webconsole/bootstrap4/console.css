@@ -19,6 +19,13 @@ main {
     flex: 1;
 }
 
+/* Remove extra styles from buttons in nav bar. */
+.navbar button {
+    background-color: inherit !important;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
 /* Pop-up notifications. */
 #notification-area {
 	width: 90%;

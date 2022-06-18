@@ -17,7 +17,7 @@
  */
 import { parseHtml, rootQuery, formatMemorySize } from "./Util";
 import Log from "./Log";
-import Console from "./Console";
+import Console, { PageComponentSpecification } from "./Console";
 import Renderer from "./Renderer";
 import RenderMode from "./RenderMode";
 import NotificationOptions, { NotificationType } from "./NotificationOptions";
@@ -29,8 +29,8 @@ import OptionsSet from "./OptionsSet";
 import "./console.css";
 
 // Re-export
-export { Console, parseHtml, rootQuery, formatMemorySize, 
-    Renderer, RenderMode, 
+export { Console, PageComponentSpecification, parseHtml, rootQuery, 
+    formatMemorySize, Renderer, RenderMode, 
     NotificationType, NotificationOptions, Notification, ModalDialogOptions, 
     TableController, OptionsSet };
 

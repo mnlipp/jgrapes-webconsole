@@ -16,6 +16,14 @@
     color: white;
 }
 
+/* Remove extra styles from buttons in nav bar. */
+.top-bar button {
+    color: inherit !important;
+    background-color: inherit !important;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
 [data-jq-dropdown] {
     cursor: pointer;
 }
@@ -48,7 +56,7 @@
     overflow: auto;
 }
 
-.conlet {
+.conlet-preview {
     margin: 0 1em 1em 0;
     padding: 0.3em;
 }
