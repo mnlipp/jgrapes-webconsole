@@ -21,9 +21,7 @@
 [data-aash-role="disclosure-button"] {
     pointer-events: none;
     border: none;
-    padding: 0;
     text-align: inherit;
-    background-color: transparent;
 
     &::before {
         @extend %disclosure-control-icon-common;
