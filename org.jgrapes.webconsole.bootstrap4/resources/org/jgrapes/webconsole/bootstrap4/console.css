@@ -20,10 +20,11 @@ main {
 }
 
 /* Remove extra styles from buttons in nav bar. */
-.navbar button {
-    background-color: inherit !important;
-    border: 0 !important;
-    padding: 0 !important;
+.navbar ul li .conlet-content:not(.conlet--no-markup-styling) 
+    button:not([data-jgwc-role="disclosure-button"]) {
+    background-color: inherit;
+    border: 0;
+    padding: 0;
 }
 
 /* Pop-up notifications. */
