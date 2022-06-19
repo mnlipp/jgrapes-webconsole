@@ -40,10 +40,14 @@ import org.jgrapes.io.events.Output;
 import org.jgrapes.io.util.ManagedBuffer;
 
 /**
- * 
+ * The Class PostProcessor.
  */
+@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 public class PostProcessor extends Component {
 
+    /**
+     * The form context data.
+     */
     protected static class FormContext {
         public HttpRequest request;
         public Session session;
@@ -51,12 +55,20 @@ public class PostProcessor extends Component {
     }
 
     /**
-     * @param componentChannel
+     * Instantiates a new post processor.
+     *
+     * @param componentChannel the component channel
      */
     public PostProcessor(Channel componentChannel) {
         super(componentChannel);
     }
 
+    /**
+     * On post.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
     @RequestHandler(patterns = "/form")
     public void onPost(Request.In.Post event, IOSubchannel channel) {
         FormContext ctx = channel
@@ -66,6 +78,14 @@ public class PostProcessor extends Component {
         event.stop();
     }
 
+    /**
+     * On input.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws InterruptedException the interrupted exception
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
     @Handler
     public void onInput(Input<ByteBuffer> event, IOSubchannel channel)
             throws InterruptedException, UnsupportedEncodingException {

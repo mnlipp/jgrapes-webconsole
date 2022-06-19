@@ -103,9 +103,9 @@ public class WebConsoleDemo extends Component implements BundleActivator {
 
         // Create TLS "converter"
         KeyStore serverStore = KeyStore.getInstance("JKS");
-        try (InputStream kf
+        try (InputStream keyFile
             = Files.newInputStream(Paths.get("demo-resources/localhost.jks"))) {
-            serverStore.load(kf, "nopass".toCharArray());
+            serverStore.load(keyFile, "nopass".toCharArray());
         }
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(
             KeyManagerFactory.getDefaultAlgorithm());
@@ -127,7 +127,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         app.attach(new PreferencesStore(app.channel(), this.getClass()));
         app.attach(new InMemorySessionManager(app.channel()));
         app.attach(new LanguageSelector(app.channel()));
-        app.attach(new FileStorage(app.channel(), 65536));
+        app.attach(new FileStorage(app.channel(), 65_536));
         app.attach(new StaticContentDispatcher(app.channel(),
             "/**", Paths.get("demo-resources/static-content").toUri()));
         app.attach(new StaticContentDispatcher(app.channel(),
@@ -142,6 +142,8 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         Components.start(app);
     }
 
+    @SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
+        "PMD.TooFewBranchesForASwitchStatement" })
     private void createJQueryUiConsole() throws URISyntaxException {
         ConsoleWeblet consoleWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
@@ -149,7 +151,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(300000);
+        consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
         console.attach(new BrowserLocalBackedKVStore(
             console, consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console));
@@ -179,6 +181,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
     }
 
+    @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
     private void createBootstrap4Console() throws URISyntaxException {
         ConsoleWeblet consoleWeblet
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
@@ -187,7 +190,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(300000);
+        consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
         console.attach(new BrowserLocalBackedKVStore(
             console, consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console));
@@ -217,6 +220,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
     }
 
+    @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
     private void createVueJsConsole() throws URISyntaxException {
         ConsoleWeblet consoleWeblet
             = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
@@ -225,7 +229,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(300000);
+        consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
         console.attach(new BrowserLocalBackedKVStore(
             console, consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console));
@@ -254,6 +258,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
     }
 
+    @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
     private void createVueJsConsole2() throws URISyntaxException {
         ConsoleWeblet consoleWeblet
             = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
@@ -306,6 +311,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
      * @throws CertificateException
      * @throws KeyManagementException
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public static void main(String[] args) throws Exception {
         new WebConsoleDemo().start(null);
     }

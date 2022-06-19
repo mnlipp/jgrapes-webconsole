@@ -63,6 +63,16 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
         super(componentChannel);
     }
 
+    /**
+     * On console ready.
+     *
+     * @param event the event
+     * @param consoleSession the console session
+     * @throws TemplateNotFoundException the template not found exception
+     * @throws MalformedTemplateNameException the malformed template name exception
+     * @throws ParseException the parse exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     @Handler
     public void onConsoleReady(ConsoleReady event,
             ConsoleSession consoleSession)
@@ -110,6 +120,7 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
     }
 
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     protected void doRemoveConletType() {
         if (deleteConlets) {
             super.doRemoveConletType();

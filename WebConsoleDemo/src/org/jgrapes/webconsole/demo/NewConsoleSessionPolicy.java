@@ -38,13 +38,6 @@ public class NewConsoleSessionPolicy extends Component {
     private final String renderedFlagName = getClass().getName() + ".rendered";
 
     /**
-     * Creates a new component with its channel set to
-     * itself.
-     */
-    public NewConsoleSessionPolicy() {
-    }
-
-    /**
      * Creates a new component with its channel set to the given channel.
      * 
      * @param componentChannel
@@ -53,18 +46,37 @@ public class NewConsoleSessionPolicy extends Component {
         super(componentChannel);
     }
 
+    /**
+     * On console ready.
+     *
+     * @param event the event
+     * @param consolesession the consolesession
+     */
     @Handler
     public void onConsoleReady(ConsoleReady event,
             ConsoleSession consolesession) {
         consolesession.browserSession().put(renderedFlagName, false);
     }
 
+    /**
+     * On render conlet.
+     *
+     * @param event the event
+     * @param consolesession the consolesession
+     */
     @Handler
     public void onRenderConlet(RenderConlet event,
             ConsoleSession consolesession) {
         consolesession.browserSession().put(renderedFlagName, true);
     }
 
+    /**
+     * On console configured.
+     *
+     * @param event the event
+     * @param consoleSession the console session
+     * @throws InterruptedException the interrupted exception
+     */
     @Handler
     public void onConsoleConfigured(ConsoleConfigured event,
             ConsoleSession consoleSession)

@@ -24,8 +24,16 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.ComponentType;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
 
+/**
+ * A factory for creating RemoveSelfConlet objects.
+ */
 public class RemoveSelfConletFactory implements ConletComponentFactory {
 
+    /**
+     * Component type.
+     *
+     * @return the class<? extends component type>
+     */
     /*
      * (non-Javadoc)
      * 
@@ -36,6 +44,13 @@ public class RemoveSelfConletFactory implements ConletComponentFactory {
         return RemoveSelfConlet.class;
     }
 
+    /**
+     * Creates the.
+     *
+     * @param componentChannel the component channel
+     * @param properties the properties
+     * @return the optional
+     */
     /*
      * (non-Javadoc)
      * 
