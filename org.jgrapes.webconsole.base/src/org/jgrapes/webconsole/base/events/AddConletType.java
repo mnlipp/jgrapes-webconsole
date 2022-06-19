@@ -89,7 +89,8 @@ public class AddConletType extends ConsoleCommand {
     private final List<URI> cssUris = new ArrayList<>();
     private final List<ScriptResource> scriptResources = new ArrayList<>();
     private List<RenderMode> renderModes;
-    private List<PageComponentSpecification> pageComponents = new ArrayList<>();
+    private final List<PageComponentSpecification> pageComponents
+        = new ArrayList<>();
 
     /**
      * Create a new event for the given web console component type.

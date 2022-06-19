@@ -20,7 +20,7 @@
 
 import JGConsole, { Console, PageComponentSpecification, RenderMode, 
     Notification, NotificationOptions, NotificationType, ModalDialogOptions, 
-    parseHtml } from "@JGConsole"
+    parseHtml } from "@JGConsole";
 import { reactive, ref, createApp, onMounted, computed, Ref } from "@Vue";
 import AashPlugin, { provideApi, getApi, AashTablist, 
     AashModalDialogComponent, AashModalDialog } from "@Aash";

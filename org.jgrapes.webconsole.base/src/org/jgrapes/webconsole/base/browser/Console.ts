@@ -380,7 +380,7 @@ class Console {
         if (isNew) {
             container.dataset["conletId"] = conletId;
             container.dataset["conletState"] = "resolved";
-            delete content[0].dataset["conletState"]
+            delete content[0].dataset["conletState"];
         } else {
             this._execOnUnload(container!, true);
         }

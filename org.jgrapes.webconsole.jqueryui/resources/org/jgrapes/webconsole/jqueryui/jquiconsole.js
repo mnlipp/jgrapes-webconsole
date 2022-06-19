@@ -191,7 +191,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
                 continue;
             }
             let refPrio = ref.dataset["conletPriority"] || 0;
-            if (conletPrio < refPrio || conletPrio == refPrio 
+            if (conletPrio < refPrio || conletPrio === refPrio 
                     && conletType < ref.dataset["conletType"]) {
                 parent.insertBefore(conlet, beforeRef);
                 return;
