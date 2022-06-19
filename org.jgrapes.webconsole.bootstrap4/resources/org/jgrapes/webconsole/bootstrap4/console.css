@@ -250,9 +250,9 @@ span[role="button"] {
 
 [data-aash-role="accordion"] > :nth-child(2n) {
     padding: 0.5rem 0.5rem 1rem 0.5rem;
-    border-left: 1px solid rgba(0,0,0,.125);
-    border-right: 1px solid rgba(0,0,0,.125);
-    border-bottom: 1px solid rgba(0,0,0,.125);
+    border-left: 1px solid rgba(0,0,0,0.125);
+    border-right: 1px solid rgba(0,0,0,0.125);
+    border-bottom: 1px solid rgba(0,0,0,0.125);
 }
 
 /* ## Bootstrap4 like forms/input groups. */

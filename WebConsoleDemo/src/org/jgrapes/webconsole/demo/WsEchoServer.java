@@ -47,18 +47,19 @@ public class WsEchoServer extends Component {
         = Collections.newSetFromMap(new WeakHashMap<IOSubchannel, Boolean>());
 
     /**
-     * 
-     */
-    public WsEchoServer() {
-    }
-
-    /**
      * @param componentChannel
      */
     public WsEchoServer(Channel componentChannel) {
         super(componentChannel);
     }
 
+    /**
+     * On get.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @throws InterruptedException the interrupted exception
+     */
     @RequestHandler(patterns = "/ws/echo")
     public void onGet(Request.In.Get event, IOSubchannel channel)
             throws InterruptedException {
@@ -74,6 +75,12 @@ public class WsEchoServer extends Component {
         event.stop();
     }
 
+    /**
+     * On upgraded.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
     @Handler
     public void onUpgraded(Upgraded event, IOSubchannel channel) {
         if (!openChannels.contains(channel)) {
@@ -82,6 +89,12 @@ public class WsEchoServer extends Component {
         channel.respond(Output.from("/Greetings!", true));
     }
 
+    /**
+     * On input.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
     @Handler
     public void onInput(Input<CharBuffer> event, IOSubchannel channel) {
         if (!openChannels.contains(channel)) {
@@ -92,6 +105,12 @@ public class WsEchoServer extends Component {
         channel.respond(Output.fromSource(out, true));
     }
 
+    /**
+     * On closed.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
     @Handler
     public void onClosed(Closed event, IOSubchannel channel) {
         openChannels.remove(channel);
