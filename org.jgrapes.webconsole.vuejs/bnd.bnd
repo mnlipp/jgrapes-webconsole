@@ -8,7 +8,7 @@ Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=vue)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jgwc-vue-components)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=fork-awesome)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=gridstack)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui.touch-punch)"

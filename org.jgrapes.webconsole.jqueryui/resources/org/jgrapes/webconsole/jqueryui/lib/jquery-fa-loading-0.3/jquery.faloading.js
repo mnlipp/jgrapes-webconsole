@@ -12,7 +12,7 @@
 /**
  * Requirements:
  * - jQuery (John Resig - http://www.jquery.com/)
- * - Font Awesome (davegandy - http://fontawesome.io)
+ * - ForkAwesome (davegandy - http://fontawesome.io)
  **/
 
 (function($){

@@ -37,7 +37,7 @@
     org.jgrapes.webconsole.bootstrap4;version='[0.39.0,100)',\
     org.jgrapes.webconsole.jqueryui;version='[0.36.0,100)',\
     org.jgrapes.webconsole.provider.gridstack;version='[0.9.0,100)',\
-    org.jgrapes.webconsole.provider.fontawesome;version='[0,100)',\
+    org.jgrapes.webconsole.provider.forkawesome;version='[0,100)',\
     org.jgrapes.webconsole.provider.chartjs;version='[0.31.0,100)',\
     org.jgrapes.webconsole.provider.datatables;version='[0,100)',\
     org.jgrapes.webconsole.provider.markdownit;version='[0,100)',\

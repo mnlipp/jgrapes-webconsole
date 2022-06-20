@@ -5,7 +5,7 @@ Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 api_version = 1.0.0
 
 Require-Capability: \
-    org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)", \
+    org.jgrapes.webconsole.page.resource;filter:="(name=fork-awesome)", \
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery)", \
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui)", \
     org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui.touch-punch)", \

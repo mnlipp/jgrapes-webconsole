@@ -1,6 +1,6 @@
 dependencies {
     api project(':org.jgrapes.webconsole.base')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.fontawesome')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.forkawesome')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquery')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')

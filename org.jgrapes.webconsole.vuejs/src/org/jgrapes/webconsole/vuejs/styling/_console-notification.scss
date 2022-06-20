@@ -18,7 +18,7 @@
 
 @mixin notification-common($icon) {
     p::before {
-        font-family: "Font Awesome 5 Free";
+        font-family: "ForkAwesome";
         content: $icon;
         display: inline-block;
         font-weight: 900;

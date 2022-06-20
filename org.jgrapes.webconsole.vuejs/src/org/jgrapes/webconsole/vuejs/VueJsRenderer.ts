@@ -338,7 +338,7 @@ export default class Renderer extends JGConsole.Renderer {
             template: `
               <p>{{ evalTitle }}</p>
               <button v-if="hasHelp"
-                type='button' class='fa fa-question-circle' @click="showHelp()"
+                type='button' class='fa fa-question-circle-o' @click="showHelp()"
               ></button><button v-if="isEditable"
                 type='button' class='fa fa-wrench' @click="edit()"
               ></button><button v-if="isRemovable" 
