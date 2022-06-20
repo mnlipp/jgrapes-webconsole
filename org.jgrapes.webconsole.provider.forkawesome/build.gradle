@@ -1,0 +1,37 @@
+dependencies {
+	api project(':org.jgrapes.webconsole.base')
+}
+
+apply plugin: 'com.github.node-gradle.node'
+
+task prepareNpmLibs(type: Copy, dependsOn: 'npmInstall') {
+    description '''
+    Helper task that copies the the libraries from the npm_modules 
+    directory into a package scoped subdirectory. The root is added 
+    to eclipse as resource directory thus making the files available 
+    as package scoped resources when running a process in eclipse.
+    '''
+    from (file("node_modules/fork-awesome/"))
+    into('build/generated/resources/org/jgrapes/webconsole/provider/forkawesome/fork-awesome')
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
+
+processResources {
+    dependsOn 'prepareNpmLibs'
+}
+
+// For unknwown reasons required to prevent deadlock
+jar {
+    dependsOn ':org.jgrapes.webconsole.base:generatePomFileForMavenPublication'
+}
+
+eclipse {
+    synchronizationTasks prepareNpmLibs
+}

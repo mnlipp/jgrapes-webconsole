@@ -10,6 +10,7 @@ include 'org.jgrapes.webconsole.vuejs'
 
 include 'org.jgrapes.webconsole.provider.browserrequire'
 include 'org.jgrapes.webconsole.provider.fontawesome'
+include 'org.jgrapes.webconsole.provider.forkawesome'
 include 'org.jgrapes.webconsole.provider.lodash'
 include 'org.jgrapes.webconsole.provider.luxon'
 include 'org.jgrapes.webconsole.provider.moment'
