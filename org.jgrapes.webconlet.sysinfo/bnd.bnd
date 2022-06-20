@@ -6,7 +6,6 @@ Export-Package: org.jgrapes.webconlet.sysinfo
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=chart.js)"
 
 Provide-Capability: osgi.serviceloader; \
