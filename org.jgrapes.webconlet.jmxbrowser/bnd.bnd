@@ -7,7 +7,7 @@ Export-Package: org.jgrapes.webconlet.jmxbrowser
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=vue)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=fontawesome-free)"
+    org.jgrapes.webconsole.page.resource;filter:="(name=fork-awesome)"
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.ConletComponentFactory; \
