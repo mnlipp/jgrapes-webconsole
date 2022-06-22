@@ -22,33 +22,42 @@
 
 /* ### Panel form styles */
 
-:not(.form--no-markup-styling) form 
-    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) {
-    display: inline-flex;
-    align-items: stretch;
-    flex-direction: column;
-}
+:not(.form--no-markup-styling) form {
 
-:not(.form--no-markup-styling) form 
-    fieldset.form__fieldset--panel legend {
-    display: inline-block;
-}
+    fieldset.form__fieldset--panel {
 
-:not(.form--no-markup-styling) form 
-    fieldset.form__fieldset--panel:not(.form__fieldset--horizontal) > legend {
-    width: 100%;
-}
+        &:not(.form__fieldset--horizontal) {
+            display: inline-flex;
+            align-items: stretch;
+            flex-direction: column;
+        }
+    
+        legend {
+            display: inline-block;
+        }
+    
+        &:not(.form__fieldset--horizontal) > legend {
+            width: 100%;
+        }
+    }
 
-:not(.form--no-markup-styling) form 
-    label.form__label--panel:not(.form__label--full-width):not(.form__label--top-aligned) {
-    display: inline-flex;
-    align-items: stretch;
-}
+    label:not(.form__label--panel) {
+        &:not(.form__label--full-width):not(.form__label--top-aligned) {
+            display: inline-flex;
+            align-items: center;
+        }
+    }
+        
+    label.form__label--panel {
+        &:not(.form__label--full-width):not(.form__label--top-aligned) {
+            display: inline-flex;
+            align-items: stretch;
+        }
 
-:not(.form--no-markup-styling) form 
-    label.form__label--panel.form__label--top-aligned {
-    display: flex;
-    align-items: stretch;
-    flex-direction: column;
+        &.form__label--top-aligned {
+            display: flex;
+            align-items: stretch;
+            flex-direction: column;
+        }
+    }
 }
-

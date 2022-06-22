@@ -78,7 +78,17 @@
         }
     }
     
+    input, textarea, select {
+        &:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+        }
+    }
+    
     label {
+        position: relative;
+        
         input, select, textarea {
             color: #495057;
             line-height: 1.5;
@@ -87,7 +97,22 @@
             padding: .375rem .75rem;
         }
         
+        input.form__input-text--with-remove {
+            padding-right: 2em;
+            
+            + * {
+                position: absolute;
+                padding: .375rem .75rem;
+                right: 0;
+            }
+        }
+        
         &:not(.form__label--panel) {
+            
+            &:not(.form__label--full-width):not(.form__label--top-aligned) {
+                column-gap: 0.375rem;
+            }
+            
             input, select, textarea {
                 border: 1px solid #ced4da;
                 border-radius: var(--corner-radius);
@@ -96,24 +121,19 @@
             
             select {
                 background: rgba(0, 0, 0, 0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='4'%3E%3Cpath d='m 0,1 1,2 1,-2 z'/%3E%3C/svg%3E") no-repeat right .75rem center/.75rem 1rem;
-                padding: .375rem 1.5rem .375rem .75rem;
+                padding: 0.375rem 1.5rem 0.375rem 0.75rem;
                 -webkit-appearance: none;
                 -moz-appearance: none;
                 appearance: none;
             }
         }
         
-        * {
-            @media (prefers-reduced-motion: reduce) {
-                transition: none;
-            }
-        }
-        
-        &.form__label--full-width > :nth-child(1) {
-            margin-right: .25em;
-        }
-        
         &.form__label--panel {
+            * {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+            
             > * {
                 line-height: 1.5;
                 padding: .375rem .75rem;
@@ -121,10 +141,10 @@
                 border-style: solid;
                 border-color: var(--panel-border);
             }
-            
-            * {
-                margin-top: 0;
-                margin-bottom: 0;
+
+            /* Exception: remove element has no (visible) border */
+            input.form__input-text--with-remove + * {
+                border-color: rgba(255, 255, 255, 0);
             }
             
             > :first-child {
@@ -145,61 +165,59 @@
                     border-top-right-radius: var(--corner-radius);  
                     border-bottom-right-radius: var(--corner-radius);  
                 }
+                
+                /* Special: if remove element, round corners of input */
+                input.form__input-text--with-remove {
+                    border-top-right-radius: var(--corner-radius);  
+                    border-bottom-right-radius: var(--corner-radius);  
+                }
+            }
+            
+            &.form__label--top-aligned {
+                > :first-child {
+                    border-top-left-radius: var(--corner-radius);  
+                    border-top-right-radius: var(--corner-radius);  
+                }
+                
+                > :not(:last-child) {
+                    margin-bottom: -1px;
+                }
+                
+                > :last-child {
+                    border-bottom-left-radius: var(--corner-radius);  
+                    border-bottom-right-radius: var(--corner-radius);  
+                }
+            }
+            
+            select {
+                height: 100%;
+                background: rgba(0, 0, 0, 0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='4'%3E%3Cpath d='m 0,1 1,2 1,-2 z'/%3E%3C/svg%3E") no-repeat right .75rem center/.75rem 1rem;
+                background-color: rgba(0, 0, 0, 0);
+                padding: .375rem 1.5rem .375rem .75rem;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
             }
         }
-    }
-    
-    input, textarea, select {
-        &:focus {
-            border-color: #80bdff;
-            outline: 0;
-            box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+        
+        &.form__label--full-width > :nth-child(1) {
+            margin-right: .25em;
+        }
+        
+        * {
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
         }
     }
 }
 
 /* ### Panel form styles */
 
-:not(.form--no-markup-styling) form label.form__label--panel {
-    select {
-        height: 100%;
-        background: rgba(0, 0, 0, 0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='4'%3E%3Cpath d='m 0,1 1,2 1,-2 z'/%3E%3C/svg%3E") no-repeat right .75rem center/.75rem 1rem;
-        background-color: rgba(0, 0, 0, 0);
-        padding: .375rem 1.5rem .375rem .75rem;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-    }
-    
-    &.form__label--top-aligned {
-        > :first-child {
-            border-top-left-radius: var(--corner-radius);  
-            border-top-right-radius: var(--corner-radius);  
-        }
-        
-        > :not(:last-child) {
-            margin-bottom: -1px;
-        }
-        
-        > :last-child {
-            border-bottom-left-radius: var(--corner-radius);  
-            border-bottom-right-radius: var(--corner-radius);  
-        }
-    }
-}
-
 :not(.form--no-markup-styling) form fieldset.form__fieldset--panel {
     * {
         margin-top: 0;
         margin-bottom: 0;
-    }
-
-    &:not(.form__fieldset--horizontal) > * {
-        line-height: 1.5;
-        padding: .375rem .75rem;
-        border-width: 1px;
-        border-style: solid;
-        border-color: var(--panel-border);
     }
 
     legend {
@@ -209,6 +227,14 @@
     }
 
     &:not(.form__fieldset--horizontal) {
+        > * {
+            line-height: 1.5;
+            padding: .375rem .75rem;
+            border-width: 1px;
+            border-style: solid;
+            border-color: var(--panel-border);
+        }
+
         > :not(:last-child) {
             margin-bottom: -1px;
         }
