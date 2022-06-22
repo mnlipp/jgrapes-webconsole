@@ -186,18 +186,20 @@ export default class TableController {
      * A convenience method for clearing an input element
      * that is used to specify a filter. Searches for 
      * an `input` element in the `event.target`'s enclosing
-     * `form` element and sets its value to the empty string.
+     * elements and sets its value to the empty string.
      * 
      * @param event - the event 
      */
     clearFilter(event: Event) {
-        let form = (<Element>(event.currentTarget!)).closest("form");
-        if (form) {
-            let input = <HTMLInputElement>form.querySelector(":scope input");
+        let root = (<Element>(event.currentTarget!)).parentElement;
+        while (root) {
+            let input = <HTMLInputElement>root.querySelector(":scope input");
             if (input) {
                 input.value = '';
                 this._filterKey = '';
+                return;
             }
+            root = root.parentElement;
         }
     }
 
