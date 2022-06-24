@@ -38,6 +38,7 @@ export default class Renderer extends JGConsole.Renderer {
     private _lang: Ref<string>;
     private _conletTypes: Array<[string | (() => string), string, string[]]>;
     private _previewGrid: GridStack | null = null;
+    private _isConfigured = false;
 
     constructor(console: Console, localeMenuitems: [[string, string]], 
             l10nMessages: Map<string, Map<string,string>>) {
@@ -218,6 +219,7 @@ export default class Renderer extends JGConsole.Renderer {
         log.debug("Unlocking screen");
         let loaderOverlay = <HTMLElement>document.querySelector("#loader-overlay");
         loaderOverlay.classList.add("loader-overlay_hidden")
+        this._isConfigured = true;
     }
 
     connectionSuspended(resume: () => void) {
@@ -541,9 +543,17 @@ export default class Renderer extends JGConsole.Renderer {
         let dialogEl = dialog.mount(container).$el;
         let dialogApi = getApi<AashModalDialog.Api>(dialogEl)!;
         dialogApi.open();
+        if (!this._isConfigured) {
+            let loaderOverlay = <HTMLElement>document.querySelector("#loader-overlay");
+            loaderOverlay.classList.add("loader-overlay_hidden")
+        }
     }
     
     closeModalDialog(container: HTMLElement) {
+        if (!this._isConfigured) {
+            let loaderOverlay = <HTMLElement>document.querySelector("#loader-overlay");
+            loaderOverlay.classList.remove("loader-overlay_hidden")
+        }
         let dialogApi = getApi<AashModalDialog.Api>
             (<HTMLElement>container.firstChild!)!;
         dialogApi.cancel();
