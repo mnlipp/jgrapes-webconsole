@@ -53,6 +53,7 @@ import org.jgrapes.webconsole.base.AbstractConlet;
 import org.jgrapes.webconsole.base.ConsoleSession;
 import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.ResourceByGenerator;
+import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
@@ -223,7 +224,8 @@ public abstract class FreeMarkerConlet<S extends Serializable>
      *  * The function `_Id(String base)` that creates a unique
      *    id for an HTML element by appending the web console component 
      *    id to the provided base.
-     *    
+     *  * The `conletProperties` which are the properties from 
+     *    an {@link AddConletRequest}, or an empty map.
      *
      * @param event the event
      * @param channel the channel
@@ -254,12 +256,18 @@ public abstract class FreeMarkerConlet<S extends Serializable>
                     + "-" + conletId;
             }
         });
+        if (event instanceof AddConletRequest) {
+            model.put("conletProperties",
+                ((AddConletRequest) event).properties());
+        } else {
+            model.put("conletProperties", Collections.emptyMap());
+        }
         return model;
     }
 
     /**
      * Build a freemarker model that combines {@link #fmTypeModel},
-     * {@link #fmSessionModel} and {@link #fmConletModel}.
+     * {@link #fmSessionModel} and {@link #fmConletModel}. 
      *
      * @param event the event
      * @param channel the channel

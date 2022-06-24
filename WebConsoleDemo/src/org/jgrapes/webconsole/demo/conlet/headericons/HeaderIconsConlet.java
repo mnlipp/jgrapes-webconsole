@@ -24,7 +24,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +33,6 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
-import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.RenderConlet;
@@ -92,17 +90,11 @@ public class HeaderIconsConlet extends FreeMarkerConlet<Serializable> {
         if (event.renderAs().contains(RenderMode.Content)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HeaderIcons.ftl.html");
-            var model = fmModel(event, channel, conletId, conletState);
-            if (event instanceof AddConletRequest) {
-                model.put("conletProperties",
-                    ((AddConletRequest) event).properties());
-            } else {
-                model.put("conletProperties", Collections.emptyMap());
-            }
             channel.respond(new RenderConlet(type(), conletId,
-                processTemplate(event, tpl, model))
-                    .setRenderAs(RenderMode.Content)
-                    .setSupportedModes(MODES));
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, conletState)))
+                        .setRenderAs(RenderMode.Content)
+                        .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Content);
         }
         return renderedAs;
