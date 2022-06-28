@@ -540,6 +540,13 @@ class Console {
     }
 
     /**
+     * Delegates to {@link Renderer.findConletComponents}.
+     */
+    findConletComponents(conletId?: string) {
+        return this._renderer!.findConletComponents(conletId);
+    }
+
+    /**
      * Delegates to {@link Renderer.findConletView}.
      */
     findConletView(conletId: string) {
