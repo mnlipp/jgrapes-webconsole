@@ -191,13 +191,13 @@ export default class Renderer extends JGConsole.Renderer {
             conlet.dataset["conlet" + prop.substring(0,1).toUpperCase()
                 + prop.substring(1)] = spec.properties[prop];
         }
-        let conletPrio = spec.properties["priority"] || 0;
+        let conletPrio = parseInt(spec.properties["priority"] || "0");
         for (let idx = 0; idx < header.children.length; idx++) {
             let ref = <HTMLElement>header.children.item(idx);
             if (!("conletType" in ref.dataset)) {
                 continue;
             }
-            let refPrio = ref.dataset["conletPriority"] || 0;
+            let refPrio = parseInt(ref.dataset["conletPriority"] || "0");
             if (conletPrio < refPrio || conletPrio == refPrio 
                     && conletType < ref.dataset["conletType"]!) {
                 header.insertBefore(conlet, ref);
