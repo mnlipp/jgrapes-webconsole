@@ -33,6 +33,7 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.RenderConlet;
@@ -90,11 +91,16 @@ public class HeaderIconsConlet extends FreeMarkerConlet<Serializable> {
         if (event.renderAs().contains(RenderMode.Content)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HeaderIcons.ftl.html");
+            var model = fmModel(event, channel, conletId, conletState);
+            if (event instanceof AddConletRequest) {
+                model.put("icon", (char) (9311
+                    + Integer.parseInt((String) ((AddConletRequest) event)
+                        .properties().get("priority"))));
+            }
             channel.respond(new RenderConlet(type(), conletId,
-                processTemplate(event, tpl,
-                    fmModel(event, channel, conletId, conletState)))
-                        .setRenderAs(RenderMode.Content)
-                        .setSupportedModes(MODES));
+                processTemplate(event, tpl, model))
+                    .setRenderAs(RenderMode.Content)
+                    .setSupportedModes(MODES));
             renderedAs.add(RenderMode.Content);
         }
         return renderedAs;
