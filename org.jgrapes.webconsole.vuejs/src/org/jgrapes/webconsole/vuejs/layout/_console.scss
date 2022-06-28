@@ -37,6 +37,10 @@ body > header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    > :first-child {
+        flex-grow: 1;
+    }
     
     button, [role="button"] {
         color: inherit;
@@ -48,20 +52,11 @@ body > header {
     
         @include button-shape-hover;
     }
-}
-
-body > header > :first-child {
-    flex-grow: 1;
-}
-
-#language-selector > ul {
-    right: 0;
-    left: auto;
-}
-
-#conlet-menu > ul {
-    right: 0;
-    left: auto;
+    
+    .dropdown-menu ul[role="menu"] {
+        right: 0;
+        left: auto;
+    }
 }
 
 /* 
