@@ -309,12 +309,18 @@ abstract class Renderer {
     /**
      * Find the HTML elements that display a conlet component. 
      * The default implementation returns all nodes that match 
-     * `body .conlet.conlet-content`.
+     * `body .conlet.conlet-content`. If a `conletId` is specified,
+     * the the result set is restricted to conlets with this id.
      * 
      * @param conletId the conlet id
      * @return the elements found
      */
-    findConletComponents(): NodeListOf<HTMLElement> {
+    findConletComponents(conletId?: string): NodeListOf<HTMLElement> {
+        if (conletId) {
+            return <NodeListOf<HTMLElement>>document.querySelectorAll(
+                ":scope body .conlet.conlet-content[data-conlet-id='" 
+                + conletId + "']");
+        }
         return document.querySelectorAll(
             ":scope body .conlet.conlet-content") as NodeListOf<HTMLElement>;
     }
