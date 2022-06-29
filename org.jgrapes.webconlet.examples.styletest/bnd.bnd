@@ -6,7 +6,8 @@ Export-Package: org.jgrapes.webconlet.examples.formtest
 
 Require-Capability: \
     osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=vue)"
+    org.jgrapes.webconsole.page.resource;filter:="(name=vue)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=jgwc-vue-components)"
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.ConletComponentFactory; \
