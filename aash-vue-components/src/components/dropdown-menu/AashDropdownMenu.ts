@@ -1,8 +1,7 @@
 /**
  * @module AashDropdownMenu
  */
-import { defineComponent, PropType, ref, computed,
-    onMounted, onBeforeUnmount } from 'vue'
+import { defineComponent, PropType, ref, computed, onBeforeUnmount } from 'vue'
 
 type MenuItem = [ string | (() => string), any ];
 
@@ -115,3 +114,5 @@ export default defineComponent({
             toggle, translate, sortedItems };        
     }
 });
+
+export { MenuItem };

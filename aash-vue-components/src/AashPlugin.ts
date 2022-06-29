@@ -23,6 +23,8 @@ import AashTreeViewComponent from "./components/tree-view/AashTreeView.vue";
 import * as AashTreeView from "./components/tree-view/AashTreeView";
 
 export { provideApi, getApi,
+    AashAccordionComponent, AashAccordion,
+    AashAccordionSectionComponent, AashAccordionSection,
     AashDisclosureButtonComponent, AashDisclosureButton,
     AashDropdownMenuComponent, AashDropdownMenu, 
     AashTablistComponent, AashTablist, 
