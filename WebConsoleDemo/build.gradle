@@ -29,7 +29,6 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconlet.examples.formtest')
     runtimeOnly project(':org.jgrapes.webconlet.examples.styletest')
     runtimeOnly project(':org.jgrapes.webconlet.examples.login')
-    runtimeOnly project(':org.jgrapes.webconlet.messagebox')
     runtimeOnly project(':org.jgrapes.webconlet.sysinfo')
     runtimeOnly project(':org.jgrapes.webconlet.jmxbrowser')
 }
