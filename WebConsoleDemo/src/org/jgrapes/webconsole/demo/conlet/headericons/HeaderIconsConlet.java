@@ -71,6 +71,7 @@ public class HeaderIconsConlet extends FreeMarkerConlet<Serializable> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     public void onConsoleReady(ConsoleReady event,
             ConsoleSession consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
