@@ -87,14 +87,16 @@ JGConsole.registerConletFunction(
             // Preview
     if (params[1] === "preview" || params[1] === "*") {
         let preview = JGConsole.findConletPreview(conletId);
-        let tree = <HTMLElement>preview?.querySelector(":scope [role='tree']");
+        let tree = <HTMLElement>preview?.element()
+            .querySelector(":scope [role='tree']");
         let treeApi = <AashTreeView.Api | null>getApi(tree);
         treeApi?.setRoots(params[0]);
     }
 
     if (params[1] === "view" || params[1] === "*") {
         let view = JGConsole.findConletView(conletId);
-        let tree = <HTMLElement>view?.querySelector(":scope [role='tree']");
+        let tree = <HTMLElement>view?.element()
+            .querySelector(":scope [role='tree']");
         let treeApi = <AashTreeView.Api | null>getApi(tree);
         treeApi?.setRoots(params[0]);
     }
@@ -105,7 +107,7 @@ JGConsole.registerConletFunction(
     "org.jgrapes.webconlet.jmxbrowser.JmxBrowserConlet",
     "mbeanDetails", function(conletId, attributes) {
     let view = JGConsole.findConletView(conletId);
-    let app = <HTMLElement>view?.querySelector
+    let app = <HTMLElement>view?.element().querySelector
         (":scope .jgrapes-osgi-jmxbrowser-view");
     (<any>getApi(app)).setDetails(attributes);
 });

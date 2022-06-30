@@ -40,13 +40,15 @@ var orgJGrapesConletsMarkdownDisplay = {
                 let conlet = JGConsole.instance.findConletPreview(conletId);
                 if (conlet) {
                     JGConsole.instance.updateConletModes(conletId, modes);
-                    let content = $(conlet).find(".jgrapes-markdownconlet-content");
+                    let content = $(conlet.element())
+                        .find(".jgrapes-markdownconlet-content");
                     content.empty();
                     content.append(mdProc.render(previewContent));
                 }
                 conlet = JGConsole.instance.findConletView(conletId);
                 if (conlet) {
-                    let content = $(conlet).find(".jgrapes-markdownconlet-content");
+                    let content = $(conlet.element())
+                        .find(".jgrapes-markdownconlet-content");
                     content.empty();
                     content.append(mdProc.render(viewContent));
                 }

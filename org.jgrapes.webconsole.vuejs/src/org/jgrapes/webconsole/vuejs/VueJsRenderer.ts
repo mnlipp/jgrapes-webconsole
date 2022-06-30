@@ -20,7 +20,7 @@
 
 import JGConsole, { Console, PageComponentSpecification, RenderMode, 
     Notification, NotificationOptions, NotificationType, ModalDialogOptions, 
-    parseHtml } from "@JGConsole";
+    parseHtml, Conlet } from "@JGConsole";
 import { reactive, ref, createApp, onMounted, computed, Ref } from "@Vue";
 import AashPlugin, { provideApi, getApi, AashTablist, 
     AashModalDialogComponent, AashModalDialog } from "@Aash";
@@ -267,19 +267,20 @@ export default class Renderer extends JGConsole.Renderer {
         this._lastXtraInfo = xtraInfo;
     }
 
-    updateConletPreview(isNew: boolean, container: HTMLElement, 
+    updateConletPreview(isNew: boolean, conlet: Conlet, 
         modes: RenderMode[], content: HTMLElement[], foreground: boolean) {
         // Container is:
         //     <section class='conlet conlet-preview' data-conlet-id='...' 
         //     data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>"
         let _this = this;
+        let container = conlet.element();
         if (isNew) {
             container.append(...parseHtml(
                 '<header class="ui-draggable-handle"></header>'
                 + '<section class="conlet-content"></section>'));
 
             // Get grid info
-            let conletId = container.dataset["conletId"]!;
+            let conletId = conlet.id();
             let options: GridstackWidget = {};
             if (conletId in this._lastXtraInfo) {
                 options.autoPosition = false;
@@ -318,7 +319,7 @@ export default class Renderer extends JGConsole.Renderer {
             this._layoutChanged();
 
             // Generate header
-            this._mountHeader(<HTMLElement>container
+            this._mountHeader(<HTMLElement>conlet.element()
                 .querySelector(":scope > header")!, conletId);
         }
         let headerComponent = getApi<any>(container.querySelector(":scope > header"));
@@ -414,14 +415,15 @@ export default class Renderer extends JGConsole.Renderer {
         }).mount(header);
     }
 
-    updateConletView(isNew: boolean, container: HTMLElement, 
+    updateConletView(isNew: boolean, conlet: Conlet, 
         modes: string[], content: HTMLElement[], foreground: boolean) {
         // Container is 
         //     <article class="conlet conlet-view 
         //              data-conlet-id='...'"></article>"
         let _this = this;
-        let conletId = container.dataset["conletId"];
+        let conletId = conlet.id();
         let panelId = "conlet-panel-" + conletId;
+        let container = conlet.element();
         if (isNew) {
             container.setAttribute("id", panelId);
             container.setAttribute("hidden", "");
@@ -465,17 +467,17 @@ export default class Renderer extends JGConsole.Renderer {
         return title || "(Untitled)";
     }
     
-    removeConletDisplays(containers: HTMLElement[]) {
+    removeConletDisplays(conlets: Conlet[]) {
         let _this = this;
-        containers.forEach(function(container) {
-            if (container.classList.contains('conlet-preview')) {
-                let gridItem = container.closest(".grid-stack-item");
+        conlets.forEach(function(conlet) {
+            if (conlet.isPreview()) {
+                let gridItem = conlet.element().closest(".grid-stack-item");
                 _this._previewGrid!.removeWidget(<GridStackElement>gridItem);
             }
-            if (container.classList.contains('conlet-view')) {
-                let panelId = container.getAttribute("id")!;
+            if (conlet.isView()) {
+                let panelId = conlet.element().getAttribute("id")!;
                 _this._consoleTabs().removePanel(panelId);
-                container.remove();
+                conlet.element().remove();
                 _this._layoutChanged();
             }
         });
@@ -492,7 +494,7 @@ export default class Renderer extends JGConsole.Renderer {
     updateConletTitle(conletId: string, title: string) {
         let preview = this.findConletPreview(conletId);
         if (preview) {
-            let conletHeader = <HTMLElement>preview
+            let conletHeader = <HTMLElement>preview.element()
                 .querySelector("section:first-child > header")!;
             let headerComponent = getApi<any>(conletHeader);
             headerComponent.setTitle(title);
@@ -515,7 +517,8 @@ export default class Renderer extends JGConsole.Renderer {
         if (!conlet) {
             return;
         }
-        let headerComponent = getApi<any>(conlet.querySelector(":scope > header"));
+        let headerComponent = getApi<any>(conlet.element()
+            .querySelector(":scope > header"));
         headerComponent.setModes(modes);
     }
 

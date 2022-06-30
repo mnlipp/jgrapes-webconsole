@@ -210,12 +210,12 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         this._lastXtraInfo = xtraInfo;
     }
 
-    updateConletPreview(isNew, container, modes, content, foreground) {
+    updateConletPreview(isNew, conlet, modes, content, foreground) {
         // Container is:
         //     <section class='conlet conlet-preview' data-conlet-id='...' 
         //     data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>"
         let _this = this;
-        container = $(container);
+        let container = $(conlet.element());
         let newContent = $(content);
         if (isNew) {
             container.addClass('card');
@@ -310,7 +310,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
                 let conletId = icon.closest(".conlet").attr("data-conlet-id");
                 let conletView = _this.findConletView(conletId);
                 if (conletView) {
-                    _this._activateConletView($(conletView));
+                    _this._activateConletView($(conletView.element()));
                 } else {
                     _this.console.renderConlet(conletId, ["View", "Foreground"]);
                 }
@@ -323,11 +323,11 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         $("#" + tabId).tab('show');
     }
 
-    updateConletView(isNew, container, modes, content, foreground) {
+    updateConletView(isNew, conlet, modes, content, foreground) {
         // Container is 
         //     <article class="conlet conlet-view 
         //              data-conlet-id='...'"></article>"
-        container = $(container);
+        let container = $(conlet.element());
         let newContent = $(content);
         this._styleSemantics(newContent);
         if (!isNew) {
@@ -392,10 +392,10 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         */
     }
 
-    removeConletDisplays(containers) {
+    removeConletDisplays(conlets) {
         let _this = this;
-        containers.forEach(function(container) {
-            container = $(container);
+        conlets.forEach(function(conlet) {
+            let container = $(conlet.element());
             if (container.hasClass('conlet-preview')) {
                 let gridItem = container.closest(".grid-stack-item");
                 _this._previewGrid.removeWidget(gridItem);
@@ -517,7 +517,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         if (!conlet) {
             return;
         }
-        this._setModeIcons($(conlet), modes);
+        this._setModeIcons($(conlet.element()), modes);
     }
 
     openModalDialog(container, options, content) {

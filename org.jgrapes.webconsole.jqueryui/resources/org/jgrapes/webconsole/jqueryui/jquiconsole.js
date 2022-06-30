@@ -214,12 +214,12 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         this._lastXtraInfo = xtraInfo;
     }
 
-    updateConletPreview(isNew, container, modes, content, foreground) {
+    updateConletPreview(isNew, conlet, modes, content, foreground) {
         // Container is:
         //     <section class='conlet conlet-preview' data-conlet-id='...' 
         //     data-conlet-grid-columns='...' data-conlet-grid-rows='   '></section>"
         let _this = this;
-        container = $(container);
+        let container = $(conlet.element());
         if (isNew) {
             container.addClass('ui-widget ui-widget-content ui-helper-clearfix ui-corner-all');
             container.append('<div class="conlet-header ui-widget-header"><span class="conlet-header-text"></span></div>'
@@ -305,7 +305,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
                 let conletId = icon.closest(".conlet").attr("data-conlet-id");
                 let conletView = _this.findConletView(conletId);
                 if (conletView) {
-                    _this._activateConletView($(conletView));
+                    _this._activateConletView($(conletView.element()));
                 } else {
                     _this.console.renderConlet(conletId, ["View", "Foreground"]);
                 }
@@ -321,11 +321,11 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         }
     }
 
-    updateConletView(isNew, container, modes, content, foreground) {
+    updateConletView(isNew, conlet, modes, content, foreground) {
         // Container is 
         //     <article class="conlet conlet-view 
         //              data-conlet-id='...'"></article>"
-        container = $(container);
+        let container = $(conlet.element());
         let newContent = $(content);
         if (!isNew) {
             container.children().detach();
@@ -359,9 +359,9 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         return title;
     }
 
-    removeConletDisplays(containers) {
-        containers.forEach(function(container) {
-            container = $(container);
+    removeConletDisplays(conlets) {
+        conlets.forEach(function(conlet) {
+            let container = $(conlet.element());
             if (container.hasClass('conlet-view')) {
                 let panelId = container.closest(".ui-tabs-panel").remove().attr("id");
                 let tabs = $("#conlet-tabs").tabs();
@@ -423,7 +423,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         }
         let conletPreview = this.findConletPreview(conletId);
         if (conletPreview) {
-            let headerText = $(conletPreview).find(".conlet-header-text");
+            let headerText = $(conletPreview.element()).find(".conlet-header-text");
             headerText.empty();
             headerText.append(title);
         }
@@ -440,7 +440,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         if (!conlet) {
             return;
         }
-        this._setModeIcons($(conlet), modes);
+        this._setModeIcons($(conlet.element()), modes);
     }
 
     openModalDialog(container, options, content) {

@@ -53,29 +53,29 @@ JGConsole.registerConletFunction(
             let conlet = JGConsole.findConletPreview(conletId);
             let lang = 'en';
             if (conlet) {
-                conlet = $(conlet);
-                lang = conlet.closest('[lang]').attr('lang') || 'en'
+                let content = $(conlet.element());
+                lang = content.closest('[lang]').attr('lang') || 'en'
                 maxFormatted = JGConsole.formatMemorySize(maxMemory, 1, lang);
                 totalFormatted = JGConsole.formatMemorySize(totalMemory, 1, lang);
                 usedFormatted = JGConsole.formatMemorySize(usedMemory, 1, lang);
-                let col = conlet.find(".maxMemory");
+                let col = content.find(".maxMemory");
                 col.html(maxFormatted);
-                col = conlet.find(".totalMemory");
+                col = content.find(".totalMemory");
                 col.html(totalFormatted);
-                col = conlet.find(".usedMemory");
+                col = content.find(".usedMemory");
                 col.html(usedFormatted);
             }
             conlet = JGConsole.findConletView(conletId);
             if (conlet) {
-                conlet = $(conlet);
-                let col = conlet.find(".maxMemory");
+                let content = $(conlet.element());
+                let col = content.find(".maxMemory");
                 col.html(maxFormatted);
-                col = conlet.find(".totalMemory");
+                col = content.find(".totalMemory");
                 col.html(totalFormatted);
-                col = conlet.find(".usedMemory");
+                col = content.find(".usedMemory");
                 col.html(usedFormatted);
-                let chartCanvas = conlet.find(".memoryChart");
-                if (conlet.find(".memoryChart").parent(":hidden").length === 0) {
+                let chartCanvas = content.find(".memoryChart");
+                if (content.find(".memoryChart").parent(":hidden").length === 0) {
                     let chart = chartCanvas.data('chartjs-chart');
                     if (chart) {
                         chart.update(0);

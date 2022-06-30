@@ -24,6 +24,85 @@ import RenderMode from "./RenderMode";
 import { parseHtml } from "./Util";
 
 /**
+ * Represents a conlet in the DOM tree. Often, this is backed by
+ * a `div` that serves as a container for the conlet representation.
+ * Especially when providing content, however, there may not be such
+ * a wrapper element.
+ *
+ * Note: it would have been more precise to call this class 
+ * `ConletRepresentation`. But as representations of conlets are all we 
+ * have in this context, the shorter name was chosen for the sake of
+ * brevity.
+ * 
+ */
+abstract class Conlet {
+    /**
+     * The conlet id.
+     * @return the conlet id
+     */
+    abstract id(): string;
+
+    /**
+     * The root element of the conlet representation.
+     * @return the element from the DOM
+     */    
+    abstract element(): HTMLElement;
+    
+    /**
+     * True, if this represents a preview.
+     */
+    abstract isPreview(): boolean;
+    
+    /**
+     * True, if this represents a view.
+     */
+    abstract isView(): boolean;
+    
+    /**
+     * True, if this represents content.
+     */
+    abstract isContent(): boolean;
+}
+
+/**
+ * A default implementation ov {@link Conlet} that assumes that
+ * the conlet representation in the DOM is an element with class
+ * `conlet` and a dataset attribute `conlet-id`. Different kinds
+ * of conlet representationa are distinguished by additional classes
+ * `conlet-preview`, `conlet-view` and `conlet-content`. 
+ */
+class DefaultConlet extends Conlet {
+    
+    private _element: HTMLElement;
+    
+    constructor(element: HTMLElement) {
+        super();
+        this._element = element;
+    }
+    
+    id() {
+        return this._element.dataset["conletId"]!;
+    }
+    
+    element() {
+        return this._element;
+    }
+    
+    isPreview() {
+        return this._element.classList.contains("conlet-preview");
+    }
+    
+    isView() {
+        return this._element.classList.contains("conlet-view");
+    }
+    
+    isContent() {
+        return this._element.classList.contains("conlet-content");
+    }
+}
+
+
+/**
  * A base class for implementing a web console renderer. The renderer
  * creates the DOM for the SPA, usually based on some initial DOM from 
  * the console page. It also provides methods for the management of the 
@@ -53,6 +132,26 @@ abstract class Renderer {
      */
     protected get console() {
         return this._console;
+    }
+
+    /**
+     * Wraps a node (HTMLElement) in a {@link Conlet}s.
+     * If the argumnet is `null`, returns `null`.
+     */
+    protected wrapConletNode(node: HTMLElement | null): Conlet | null {
+        if (!node) {
+            return null;
+        }
+        return new DefaultConlet(node);
+    }
+
+    /**
+     * Wraps a node list of HTMLElements in {@link Conlet}s.
+     */
+    protected wrapConletNodes(nodes: NodeListOf<HTMLElement>): Conlet[] {
+        let result: Conlet[] = [];
+        nodes.forEach(node => result.push(new DefaultConlet(node)));
+        return result;
     }
 
     /**
@@ -142,20 +241,20 @@ abstract class Renderer {
 
     /**
      * Called from the {@link Console} to update a conlet that is used
-     * as component. The default implementation removes all children
+     * to provide content. The default implementation removes all children
      * from the container and inserts the new content.
      *
-     * @param container the container, i.e. a `HTMLElement` returned
-     * from {@link Renderer.findConletComponents}
+     * @param conlet the conlet as returned
+     * from e.g. {@link Renderer.findConletContents}
      * @param content the component content as DOM received from the server,
      * usually inserted into the container
      */
-    updateConletComponent(container: HTMLElement, content: HTMLElement[]) {
+    updateConletContent(conlet: Conlet, content: HTMLElement[]) {
         let _this = this;
-        while (container.firstChild) {
-            container.removeChild(container.lastChild!);
+        while (conlet.element().firstChild) {
+            conlet.element().removeChild(conlet.element().lastChild!);
         }
-        container.append(...content);
+        conlet.element().append(...content);
     }
 
     /**
@@ -167,8 +266,8 @@ abstract class Renderer {
      * and provide their own markup for a new container. 
      *
      * @param isNew `true` if it is a new (not yet existing) conlet preview
-     * @param container the container for the preview. Either the result
-     * from {@link Renderer.findConletPreview}, if an existing preview
+     * @param conlet the container for the preview representation. Either the 
+     * result from {@link Renderer.findConletPreview}, if an existing preview
      * is updated, or a prepared container for the preview,
      * provided as:
      * ```
@@ -182,13 +281,13 @@ abstract class Renderer {
      * @param foreground `true` if the preview (i.e. the overview
      * plane) is to be made the active tab
      */
-    updateConletPreview(isNew: boolean, container: HTMLElement, 
+    updateConletPreview(isNew: boolean, conlet: Conlet, 
         modes: RenderMode[], content: HTMLElement[], foreground: boolean) {
         Log.warn("Not implemented!");
     }
 
     /**
-     * Called from the {@link Console} to pdate the view of the given conlet.
+     * Called from the {@link Console} to update the view of the given conlet.
      * If the view is new (no view with the
      * given conlet id exists), the console provides DOM for the
      * container as a convenience. Implementations of this method
@@ -196,8 +295,8 @@ abstract class Renderer {
      * provide their own markup for a new container
      *
      * @param isNew `true` if it is a new conlet view
-     * @param container a prepared container for the view. Either the result
-     * from {@link Renderer.findConletView}, if an existing preview
+     * @param conlet the container for the view representation. Either the 
+     * result from {@link Renderer.findConletView}, if an existing preview
      * is updated, or a new container provided as:
      * ```
      * <article class="conlet conlet-view conlet-content 
@@ -208,7 +307,7 @@ abstract class Renderer {
      * @param foreground `true` if the view 
      * is to be made the active tab
      */
-    updateConletView(isNew: boolean, container: HTMLElement, 
+    updateConletView(isNew: boolean, conlet: Conlet, 
         modes: RenderMode[], content: HTMLElement[], foreground: boolean) {
         Log.warn("Not implemented!");
     }
@@ -221,7 +320,7 @@ abstract class Renderer {
      * @param containers the existing containers for
      * the preview or views 
      */
-    removeConletDisplays(containers: HTMLElement[]) {
+    removeConletDisplays(conlets: Conlet[]) {
         Log.warn("Not implemented!");
     }
 
@@ -293,49 +392,88 @@ abstract class Renderer {
     // Utility methods.
 
     /**
-     * Find the HTML elements that display the preview or view of the
-     * conlet with the given id. The default implementation returns
-     * all nodes with `.conlet[data-conlet-id='<conletId>'`.
+     * Find the conlets that display the preview, view or content of 
+     * the conlet with the given id. The default implementation wraps
+     * all nodes with `.conlet[data-conlet-id='<conletId>'` in
+     * {@link DefaultConlet}s.
      * 
      * @param conletId the conlet id
-     * @return the elements found
+     * @return the conlets found
      */
-    findConlets(conletId: string): NodeListOf<HTMLElement> {
-        return document.querySelectorAll(
+    findConlets(conletId: string): Conlet[] {
+        return this.wrapConletNodes(document.querySelectorAll(
             ".conlet[data-conlet-id='" + conletId + "']"
-            ) as NodeListOf<HTMLElement>;
+            ) as NodeListOf<HTMLElement>);
     }
 
     /**
-     * Find the HTML elements that display a conlet component. 
-     * The default implementation returns all nodes that match 
+     * Find the conlet representations that display content. 
+     * The default implementation wraps all nodes that match 
      * `body .conlet.conlet-content`. If a `conletId` is specified,
      * the the result set is restricted to conlets with this id.
      * 
      * @param conletId the conlet id
-     * @return the elements found
+     * @return the conlets found
      */
-    findConletComponents(conletId?: string): NodeListOf<HTMLElement> {
+    findConletContents(conletId?: string): Conlet[] {
         if (conletId) {
-            return <NodeListOf<HTMLElement>>document.querySelectorAll(
+            return this.wrapConletNodes(<NodeListOf<HTMLElement>>
+                document.querySelectorAll(
                 ":scope body .conlet.conlet-content[data-conlet-id='" 
-                + conletId + "']");
+                + conletId + "']"));
         }
-        return document.querySelectorAll(
-            ":scope body .conlet.conlet-content") as NodeListOf<HTMLElement>;
+        return this.wrapConletNodes(document.querySelectorAll(
+            ":scope body .conlet.conlet-content") as NodeListOf<HTMLElement>);
     }
 
     /**
-     * Find the HTML element that displays the preview of the
-     * conlet with the given id. The default implementation returns
-     * all nodes with `.conlet-preview[data-conlet-id='<conletId>'`.
+     * Find conlet representations that display content and
+     * are embedded in the given conlet (which is most likely a view
+     * or preview, but may also be a content representation).
+     * The default implementation wraps all nodes (with the exception
+     * of the argument's element) that match 
+     * `.conlet.conlet-content` and returns them in a depth first order.
+     * 
+     * @param conlet the containing conlet
+     * @return the conlets found
+     */
+    findEmbeddedConlets(conlet: Conlet): Conlet[] {
+        let result: Conlet[] = [];
+        for (let i = 0; i < conlet.element().children.length; i++) {
+            let child = conlet.element().children[i];
+            if (!(child instanceof HTMLElement)) {
+                continue;
+            }
+            this._findEmbeddedConlets(result, child);
+        }
+        return result;
+    }
+
+    private _findEmbeddedConlets(conlets: Conlet[], element: HTMLElement) {
+        for (let i = 0; i < element.children.length; i++) {
+            if (element.children[i] instanceof HTMLElement) {
+                this._findEmbeddedConlets(conlets,
+                    <HTMLElement>element.children[i]);
+            }
+        }
+        if (element.classList.contains("conlet")
+            && element.classList.contains("conlet-content")
+            && element.dataset["conletId"]) {
+                conlets.push(new DefaultConlet(element));
+        }
+    }
+
+    /**
+     * Find the conlet representation that displays the preview of the
+     * conlet with the given id. The default implementation wraps
+     * the node with `.conlet-preview[data-conlet-id='<conletId>'`.
      * 
      * @param conletId the conlet id
-     * @return the HTML element or null
+     * @return the conlet or null
      */
-    findConletPreview(conletId: string): HTMLElement | null {
-        return document.querySelector(
-            ".conlet-preview[data-conlet-id='" + conletId + "']");
+    findConletPreview(conletId: string): Conlet | null {
+        return this.wrapConletNode(document.querySelector(
+            ".conlet-preview[data-conlet-id='" + conletId + "']"));
     }
 
     /**
@@ -352,41 +490,39 @@ abstract class Renderer {
     }
 
     /**
-     * Return the ids of all conlets displayed as preview. The default
-     * implementation returns the values of `data-conlet-id` from
-     * all elements with `.conlet-preview[data-conlet-id]`.
+     * Return all conlet preview representations. The default
+     * implementation wraps all elements with 
+     * `.conlet-preview[data-conlet-id]`.
      */
-    findPreviewIds(): string[] {
-        return Array.from(
-            document.querySelectorAll(".conlet-preview[data-conlet-id]"),
-            node => node.getAttribute("data-conlet-id")!);
+    findPreviews(): Conlet[] {
+        return this.wrapConletNodes(
+            document.querySelectorAll(".conlet-preview[data-conlet-id]"));
     }
 
     /**
-     * Find the HTML element that displays the view of the
+     * Find the conlet representation that displays the view of the
      * conlet with the given id. The default implementation returns
      * all nodes with `.conlet-view[data-conlet-id='<conletId>'`.
      * 
      * @param conletId the conlet id
-     * @return the HTML element
+     * @return the conlet
      */
-    findConletView(conletId: string): HTMLElement | null {
-        return document.querySelector(
-            ".conlet-view[data-conlet-id='" + conletId + "']");
+    findConletView(conletId: string): Conlet | null {
+        return this.wrapConletNode(document.querySelector(
+            ".conlet-view[data-conlet-id='" + conletId + "']"));
     }
 
     /**
-     * Return the ids of all conlets displayed as view. The default 
-     * implementation returns the values of `data-conlet-id` from all
-     * nodes with `.conlet-view[data-conlet-id]`.
+     * Return all conlet view representations. The default 
+     * implementation wraps all nodes with `.conlet-view[data-conlet-id]`.
      *
      * @return
      */
-    findViewIds() {
-        return Array.from(
-            document.querySelectorAll(".conlet-view[data-conlet-id]"),
-            node => node.getAttribute("data-conlet-id"));
+    findViews() {
+        return this.wrapConletNodes(
+            document.querySelectorAll(".conlet-view[data-conlet-id]"));
     }
 }
 
 export default Renderer;
+export { Conlet, DefaultConlet };

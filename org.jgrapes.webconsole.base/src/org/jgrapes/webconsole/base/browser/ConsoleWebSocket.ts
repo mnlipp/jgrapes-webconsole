@@ -89,11 +89,11 @@ class ConsoleWebSocket {
                 _this._initialConnect = false;
             } else {
                 // Make sure to get any lost updates
-                _this._console.findPreviewIds().forEach(function(id) {
-                    _this._console.renderConlet(id, [RenderMode.Preview]);
+                _this._console.findPreviews().forEach(function(conlet) {
+                    _this._console.renderConlet(conlet.id(), [RenderMode.Preview]);
                 });
-                _this._console.findViewIds().forEach(function(id) {
-                    _this._console.renderConlet(id!, [RenderMode.View]);
+                _this._console.findViews().forEach(function(conlet) {
+                    _this._console.renderConlet(conlet.id(), [RenderMode.View]);
                 });
             }
             _this._refreshTimer = setInterval(function() {

@@ -18,7 +18,7 @@
 import { parseHtml, rootQuery, formatMemorySize } from "./Util";
 import Log from "./Log";
 import Console, { PageComponentSpecification } from "./Console";
-import Renderer from "./Renderer";
+import Renderer, { Conlet, DefaultConlet } from "./Renderer";
 import RenderMode from "./RenderMode";
 import NotificationOptions, { NotificationType } from "./NotificationOptions";
 import Notification from "./Notification";
@@ -30,7 +30,7 @@ import "./console.css";
 
 // Re-export
 export { Console, PageComponentSpecification, parseHtml, rootQuery, 
-    formatMemorySize, Renderer, RenderMode, 
+    formatMemorySize, Renderer, Conlet, DefaultConlet, RenderMode,
     NotificationType, NotificationOptions, Notification, ModalDialogOptions, 
     TableController, OptionsSet };
 

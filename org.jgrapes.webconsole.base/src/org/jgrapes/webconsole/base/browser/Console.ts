@@ -20,6 +20,7 @@ import Log from "./Log";
 import ResourceManager from "./ResourceManager";
 import RenderMode from "./RenderMode";
 import Renderer from "./Renderer";
+import { Conlet, DefaultConlet } from "./Renderer";
 import ConsoleWebSocket from "./ConsoleWebSocket";
 import NotificationOptions from "./NotificationOptions";
 import ModalDialogOptions from "./ModalDialogOptions";
@@ -311,13 +312,13 @@ class Console {
         } 
     }
 
-    public collectConletProperties(container: HTMLElement): Map<string,string> {
+    public collectConletProperties(conlet: Conlet): Map<string,string> {
         let result = new Map<string,string>();
-        this._addConletProperties(result, container);
-        for (let i = 0; i < container.children.length; i++) {
-            if (container.children[i] instanceof HTMLElement) {
+        this._addConletProperties(result, conlet.element());
+        for (let i = 0; i < conlet.element().children.length; i++) {
+            if (conlet.element().children[i] instanceof HTMLElement) {
                 this._addConletProperties(result, 
-                    <HTMLElement>container.children[i]);
+                    <HTMLElement>conlet.element().children[i]);
             }
         }
         return result;
@@ -331,16 +332,16 @@ class Console {
      */
     private _resolveComponents() {
         let _this = this;
-        let components = _this._renderer!.findConletComponents();
-        components.forEach((ref: HTMLElement) => {
-            if (!ref.dataset["conletState"]) {
+        let contents = _this._renderer!.findConletContents();
+        contents.forEach((conlet: Conlet) => {
+            if (!conlet.element().dataset["conletState"]) {
                 // New (unresolved) component
-                ref.dataset["conletState"] = "resolving-" 
+                conlet.element().dataset["conletState"] = "resolving-" 
                     + this._pageComponentCounter++;
-                let type = ref.dataset["conletType"];
+                let type = conlet.element().dataset["conletType"];
                 if (type) {
                     _this.addConlet(type, [RenderMode.Content], 
-                        _this.collectConletProperties(ref));
+                        _this.collectConletProperties(conlet));
                 }
             }
         });
@@ -349,82 +350,84 @@ class Console {
     private _updateContent(conletType: string, conletId: string, 
             modes: RenderMode[], contentString: string) {
         let _this = this;
-        let components = this._renderer!.findConletComponents();
-        let container: HTMLElement | null = null;
+        let conlets = this._renderer!.findConletContents();
         let content = parseHtml(contentString);
+        let conlet: Conlet | null = null;
         let isNew = true;
-        for (let i = 0; i < components.length; i++) {
-            let el = components[i];
+        for (let i = 0; i < conlets.length; i++) {
             // Check if update of existing
-            if (el.dataset["conletId"] == conletId) {
-                container = el;
+            if (conlets[i].id() === conletId) {
+                conlet = conlets[i];
                 isNew = false;
                 break;
             }
             // Check if content for new (resolving)
-            if (el.dataset["conletType"] == conletType
-                && el.dataset["conletState"]
+            if (conlets[i].element().dataset["conletType"] == conletType
+                && conlets[i].element().dataset["conletState"]
                 && (content[0].dataset["conletState"]
                     // Targeted (repeats state) or first match 
                     ? content[0].dataset["conletState"] 
-                        === el.dataset["conletState"]
-                    : el.dataset["conletState"].startsWith("resolving"))) {
-                container = el;
+                        === conlets[i].element().dataset["conletState"]
+                    : conlets[i].element().dataset["conletState"]!
+                        .startsWith("resolving"))) {
+                conlet = conlets[i];
                 break;
             }
         }
-        if (!container) {
+        if (!conlet) {
             this.send("conletsDeleted", [conletId, [RenderMode.Content]]);
             return;
         }
         if (isNew) {
-            container.dataset["conletId"] = conletId;
-            container.dataset["conletState"] = "resolved";
+            conlet.element().dataset["conletId"] = conletId;
+            conlet.element().dataset["conletState"] = "resolved";
             delete content[0].dataset["conletState"];
         } else {
-            this._execOnUnload(container!, true);
+            this._execOnUnload(conlet.element(), true);
         }
-        this._renderer!.updateConletComponent(container, content);
-        this._execOnLoad(container!, !isNew);
+        this._renderer!.updateConletContent(conlet, content);
+        this._execOnLoad(conlet.element(), !isNew);
         this._resolveComponents();
     }
 
     private _updatePreview(conletType: string, conletId: string, 
         modes: RenderMode[], content: string, sticky: boolean, foreground: boolean) {
-        let container = this._renderer!.findConletPreview(conletId);
-        let isNew = !container;
+        let conlet = this._renderer!.findConletPreview(conletId);
+        let isNew = !conlet;
         if (isNew) {
-            container = <HTMLElement>this._previewTemplate.cloneNode(true);
-            container.dataset["conletType"] = conletType;
-            container.dataset["conletId"] = conletId;
+            conlet = new DefaultConlet(<HTMLElement>this._previewTemplate
+                .cloneNode(true));
+            conlet.element().dataset["conletType"] = conletType;
+            conlet.element().dataset["conletId"] = conletId;
         } else {
-            this._execOnUnload(container!, true);
+            this._execOnUnload(conlet!.element(), true);
         }
         if (sticky) {
-            container!.classList.remove('conlet-deleteable');
+            conlet!.element().classList.remove('conlet-deleteable');
         } else {
-            container!.classList.add('conlet-deleteable');
+            conlet!.element().classList.add('conlet-deleteable');
         }
-        this._renderer!.updateConletPreview(isNew, container!, modes,
+        this._renderer!.updateConletPreview(isNew, conlet!, modes,
             parseHtml(content), foreground);
-        this._execOnLoad(container!, !isNew);
+        this._execOnLoad(conlet!.element(), !isNew);
         this._resolveComponents();
     }
 
     private _updateView(conletType: string, conletId: string, modes: RenderMode[], 
         content: string, foreground: boolean) {
-        let container = this._renderer!.findConletView(conletId);
-        let isNew = !container;
+        let conlet = this._renderer!.findConletView(conletId);
+        let isNew = !conlet;
         if (isNew) {
-            container = <HTMLElement>this._viewTemplate.cloneNode(true);
-            container.dataset["conletType"] = conletType;
-            container.dataset["conletId"] = conletId;
+            conlet = new DefaultConlet(<HTMLElement>this._viewTemplate
+                .cloneNode(true));
+            conlet.element().dataset["conletType"] = conletType;
+            conlet.element().dataset["conletId"] = conletId;
         } else {
-            this._execOnUnload(container!, true);
+            this._execOnUnload(conlet!.element(), true);
         }
-        this._renderer!.updateConletView(isNew, container!, modes,
+        this._renderer!.updateConletView(isNew, conlet!, modes,
             parseHtml(content), foreground);
-        this._execOnLoad(container!, !isNew);
+        this._execOnLoad(conlet!.element(), !isNew);
         this._resolveComponents();
     }
 
@@ -519,10 +522,10 @@ class Console {
     }
 
     /**
-     * Delegates to {@link Renderer.findPreviewIds}.
+     * Delegates to {@link Renderer.findPreviews}.
      */
-    findPreviewIds() {
-        return this._renderer!.findPreviewIds();
+    findPreviews() {
+        return this._renderer!.findPreviews();
     }
 
     /**
@@ -533,17 +536,17 @@ class Console {
     }
 
     /**
-     * Delegates to {@link Renderer.findViewIds}.
+     * Delegates to {@link Renderer.findViews}.
      */
-    findViewIds() {
-        return this._renderer!.findViewIds();
+    findViews() {
+        return this._renderer!.findViews();
     }
 
     /**
-     * Delegates to {@link Renderer.findConletComponents}.
+     * Delegates to {@link Renderer.findConletContents}.
      */
-    findConletComponents(conletId?: string) {
-        return this._renderer!.findConletComponents(conletId);
+    findConletContents(conletId?: string) {
+        return this._renderer!.findConletContents(conletId);
     }
 
     /**
@@ -657,14 +660,14 @@ class Console {
         let notifications = new Array<Object>();
         if (view) {
             this._renderer!.removeConletDisplays([view]);
-            this._execOnUnload(view, false);
-            this._removeComponents(notifications, view);
+            this._execOnUnload(view.element(), false);
+            this._removeEmbedded(notifications, view);
         }
         let preview = this._renderer!.findConletPreview(conletId);
         if (preview) {
             this._renderer!.removeConletDisplays([preview]);
-            this._execOnUnload(preview, false);
-            this._removeComponents(notifications, preview);
+            this._execOnUnload(preview.element(), false);
+            this._removeEmbedded(notifications, preview);
         }
         notifications.push([conletId, []]);
         this.send("conletsDeleted", notifications);
@@ -691,8 +694,8 @@ class Console {
         }
         let notifications = new Array<Object>();
         this._renderer!.removeConletDisplays([view]);
-        this._execOnUnload(view, false);
-        this._removeComponents(notifications, view);
+        this._execOnUnload(view.element(), false);
+        this._removeEmbedded(notifications, view);
         if (this._renderer!.findConletPreview(conletId)) {
             notifications.push([conletId, [RenderMode.View]]);
         } else {
@@ -701,29 +704,11 @@ class Console {
         this.send("conletsDeleted", notifications);
     }
 
-    private _removeComponents(notifications: Array<Object>,
-            element: HTMLElement) {
-        for (let i = 0; i < element.children.length; i++) {
-            if (element.children[i] instanceof HTMLElement) {
-                this._removeComponents(notifications, 
-                    <HTMLElement>element.children[i]);
-            }
+    private _removeEmbedded(notifications: Array<Object>, conlet: Conlet) {
+        for (let embedded of this._renderer!.findEmbeddedConlets(conlet)) {
+            notifications.push([embedded.id(), [RenderMode.Content], 
+                Object.fromEntries(this.collectConletProperties(embedded))]);
         }
-        if (element.classList.contains("conlet")
-            && element.classList.contains("conlet-content")) {
-                let conletId = element.dataset["conletId"];
-                if (!conletId) {
-                    return;
-                }
-                let preview = this._renderer!.findConletPreview(conletId);
-                let view = this._renderer!.findConletView(conletId);
-                let renderModes: RenderMode[] = [];
-                if (preview || view) {
-                    renderModes = [RenderMode.Content];
-                }
-                notifications.push([conletId, renderModes, 
-                    Object.fromEntries(this.collectConletProperties(element))]);
-            }
     }
 
     /**
