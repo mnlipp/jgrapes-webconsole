@@ -658,18 +658,21 @@ class Console {
     removePreview(conletId: string) {
         let view = this._renderer!.findConletView(conletId);
         let notifications = new Array<Object>();
+        let modes: RenderMode[] = [];
         if (view) {
+            modes.push(RenderMode.View);
             this._renderer!.removeConletDisplays([view]);
             this._execOnUnload(view.element(), false);
             this._removeEmbedded(notifications, view);
         }
         let preview = this._renderer!.findConletPreview(conletId);
         if (preview) {
+            modes.push(RenderMode.Preview);
             this._renderer!.removeConletDisplays([preview]);
             this._execOnUnload(preview.element(), false);
             this._removeEmbedded(notifications, preview);
         }
-        notifications.push([conletId, []]);
+        notifications.push([conletId, modes]);
         this.send("conletsDeleted", notifications);
     }
 
@@ -696,16 +699,16 @@ class Console {
         this._renderer!.removeConletDisplays([view]);
         this._execOnUnload(view.element(), false);
         this._removeEmbedded(notifications, view);
-        if (this._renderer!.findConletPreview(conletId)) {
-            notifications.push([conletId, [RenderMode.View]]);
-        } else {
-            notifications.push([conletId, []]);
-        }
+        notifications.push([conletId, [RenderMode.View]]);
         this.send("conletsDeleted", notifications);
     }
 
     private _removeEmbedded(notifications: Array<Object>, conlet: Conlet) {
         for (let embedded of this._renderer!.findEmbeddedConlets(conlet)) {
+            // Content may be rendered sveral times for the same conlet
+            if (this._renderer!.findConletContents(embedded.id())) {
+                continue;
+            }
             notifications.push([embedded.id(), [RenderMode.Content], 
                 Object.fromEntries(this.collectConletProperties(embedded))]);
         }

@@ -837,7 +837,10 @@ public abstract class AbstractConlet<S extends Serializable>
         String conletId = event.conletId();
         Optional<S> model = stateFromSession(
             consoleSession.browserSession(), conletId);
-        if (event.renderModes().isEmpty()) {
+        var trackingInfo = trackConlet(consoleSession, conletId, null)
+            .removeModes(event.renderModes());
+        if (trackingInfo.renderedAs().isEmpty()
+            || event.renderModes().isEmpty()) {
             removeState(consoleSession.browserSession(), conletId);
             for (Iterator<Entry<ConsoleSession, Map<String,
                     ConletTrackingInfo>>> csi = conletInfosByConsoleSession
