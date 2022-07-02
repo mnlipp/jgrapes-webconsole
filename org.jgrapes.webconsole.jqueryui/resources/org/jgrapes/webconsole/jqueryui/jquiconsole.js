@@ -458,6 +458,11 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
             }
         });
     }
+    
+    closeModalDialog(container) {
+        log.error("closeModalDialog not implemented");
+    }
+    
 }
 
 JQUIConsole.tooltip = function(nodeSet) {

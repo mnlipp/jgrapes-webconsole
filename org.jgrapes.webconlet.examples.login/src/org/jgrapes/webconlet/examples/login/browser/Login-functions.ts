@@ -99,6 +99,9 @@ window.orgJGrapesExampleLogin.openDialog
 
 window.orgJGrapesExampleLogin.apply = function(dialogDom: HTMLElement,
     apply: boolean, close: boolean) {
+    if (!apply) {
+        return;
+    }
     const conletId = (<HTMLElement>dialogDom.closest("[data-conlet-id]")!)
         .dataset["conletId"]!;
     const accountData = getApi<AccountData>

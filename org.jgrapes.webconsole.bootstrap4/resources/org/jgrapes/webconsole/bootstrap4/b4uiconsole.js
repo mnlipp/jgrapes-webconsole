@@ -549,4 +549,9 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         container.append(dialog);
         dialog.modal();
     }
+    
+    closeModalDialog(container) {
+        log.error("closeModalDialog not implemented");
+    }
+    
 }

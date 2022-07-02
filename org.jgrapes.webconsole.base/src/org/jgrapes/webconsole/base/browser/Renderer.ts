@@ -361,19 +361,16 @@ abstract class Renderer {
      * @param options the options
      * @param content the content as HTML
      */
-    openModalDialog(container: HTMLElement, options: ModalDialogOptions, 
-        content: string) {
-        Log.warn("Not implemented!");
-    }
+    abstract openModalDialog(container: HTMLElement, 
+        options: ModalDialogOptions, content: string): void;
 
     /**
-     * Called by the {@link Console} to close a modal dialog.
+     * Called by the {@link Console} to close a modal dialog
+     * when a corrsponding request is received from the server.
      * 
      * @param container the container for the dialog
      */
-    closeModalDialog(container: HTMLElement) {
-        Log.warn("Not implemented!");
-    }
+    abstract closeModalDialog(container: HTMLElement): void;
 
     /**
      * Called by the {@link Console} to displays a notification.

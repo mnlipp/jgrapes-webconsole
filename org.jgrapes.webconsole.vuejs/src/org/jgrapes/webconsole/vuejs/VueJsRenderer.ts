@@ -534,9 +534,7 @@ export default class Renderer extends JGConsole.Renderer {
             okayLabel: options.okayLabel || "",
             submitForm: options.useSubmit ? formId : null,
             onAction: function(apply: boolean, close: boolean) {
-                if (apply) {
-                    _this.console.execOnAction(container, apply, close);
-                }
+                _this.console.execOnAction(container, apply, close);
                 if (close) {
                     dialog.unmount();
                 }

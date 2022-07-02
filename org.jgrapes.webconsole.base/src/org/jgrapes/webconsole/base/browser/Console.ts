@@ -158,8 +158,8 @@ class Console {
             (conletType, conletId) => {
                 let container = this._renderer!.findModalDialog(conletId);
                 if (container) {
+                    _this._execOnUnload(container, false);
                     _this._renderer!.closeModalDialog(container);
-                    _this._execOnLoad(container, false);
                 }
         });
         this._webSocket.addMessageHandler('retrieveLocalData',
@@ -475,8 +475,9 @@ class Console {
 
     /**
      * Invokes the functions defined in `data-jgwc-on-action`
-     * attributes of the tree with root `container`. Must be 
-     * invoked by edit or modal dialogs when they are closed.
+     * attributes of the tree with root `container`. If `close` 
+     * is `true` also executes the "on unload" functions. Must 
+     * be invoked by edit or modal dialogs when they are closed.
      * 
      * @param container the container of the edit dialog
      * @return `true` if the dialog should be closed
