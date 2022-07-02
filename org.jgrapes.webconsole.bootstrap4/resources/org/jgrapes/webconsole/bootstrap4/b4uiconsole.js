@@ -221,7 +221,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             container.addClass('card');
             container.append('<h6 class="card-header conlet-preview-header '
                 + 'd-flex flex-row"></h6>'
-                + '<div class="card-body conlet-content conlet-preview-content">'
+                + '<div class="card-body conlet-body conlet-preview-content">'
                 + '</div>');
             this._setModeIcons(container, modes);
 

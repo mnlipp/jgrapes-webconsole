@@ -299,7 +299,7 @@ abstract class Renderer {
      * result from {@link Renderer.findConletView}, if an existing preview
      * is updated, or a new container provided as:
      * ```
-     * <article class="conlet conlet-view conlet-content 
+     * <article class="conlet conlet-view conlet-body
      *      data-conlet-type='...' data-conlet-id='...'"></article>"
      * ```
      * @param modes the supported conlet modes

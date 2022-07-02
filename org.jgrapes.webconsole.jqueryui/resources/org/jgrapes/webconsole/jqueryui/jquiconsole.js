@@ -223,7 +223,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         if (isNew) {
             container.addClass('ui-widget ui-widget-content ui-helper-clearfix ui-corner-all');
             container.append('<div class="conlet-header ui-widget-header"><span class="conlet-header-text"></span></div>'
-                + '<div class="conlet-content ui-widget-content"></div>');
+                + '<div class="conlet-body ui-widget-content"></div>');
 
             let conletHeader = container.find(".conlet-header");
             conletHeader.addClass("ui-widget-header ui-corner-all");
@@ -258,7 +258,7 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         let newContent = $(content);
         let conletHeaderText = container.find(".conlet-header-text");
         conletHeaderText.text(this._evaluateTitle(container, newContent));
-        let conletContent = container.find(".conlet-content");
+        let conletContent = container.find(".conlet-body");
         conletContent.children().detach();
         conletContent.append(newContent);
         if (foreground) {

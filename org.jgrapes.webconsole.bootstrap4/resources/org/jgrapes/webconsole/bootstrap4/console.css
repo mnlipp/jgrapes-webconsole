@@ -98,7 +98,7 @@ span[role="button"] {
 
 /* ## Button styling. */
 
-.conlet-content:not(.conlet--no-markup-styling) 
+.conlet-body:not(.conlet--no-markup-styling) 
     button[type="button"]:not([data-jgwc-role="disclosure-button"]) {
     display: inline-block;
     font-weight: 400;
@@ -119,7 +119,7 @@ span[role="button"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .conlet-content:not(.conlet--no-markup-styling) 
+    .conlet-body:not(.conlet--no-markup-styling) 
         button[type="button"]:not([aria-expanded]) {
         transition: none;
     }

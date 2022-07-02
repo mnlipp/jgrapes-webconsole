@@ -77,11 +77,11 @@
     cursor: pointer;
 }
 
-.conlet-content {
+.conlet-body {
     padding: 0.4em;
 }
 
-.conlet .conlet-content {
+.conlet .conlet-body {
     position: relative;
     border: 0;
     padding: .5em 1em;
