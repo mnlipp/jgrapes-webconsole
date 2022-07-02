@@ -196,29 +196,29 @@
 
 /* ## Accordion */
 
-[data-aash-role="accordion"] > :nth-child(2n+1) {
+[data-aash-role="accordion"] > div > :nth-child(2n+1) {
     margin-bottom: 0;
 }
 
-[data-aash-role="accordion"] > :nth-child(2n+1) button {
-    width: 100%;
-    text-align: left;
-    padding: 0.5rem;
-    border-style: none;
-    background-color: rgba(0,0,0,.03);
-}
-
-[data-aash-role="accordion"] > :nth-child(2n+1) [role=button] {
-    width: 100%;
-    text-align: left;
-    padding: 0.5rem;
-    border-style: none;
-    background-color: rgba(0,0,0,.03);
-}
-
-[data-aash-role="accordion"] > :nth-child(2n) {
+[data-aash-role="accordion"] > div > :nth-child(2n) {
     padding: 0.5rem 0.5rem 1rem 0.5rem;
     border-left: 1px solid rgba(0,0,0,.125);
     border-right: 1px solid rgba(0,0,0,.125);
     border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+[data-aash-role="accordion"] > div > :nth-child(2n+1) button {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem;
+    border-style: none;
+    background-color: rgba(0,0,0,.03);
+}
+
+[data-aash-role="accordion"] > div > :nth-child(2n+1) [role=button] {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem;
+    border-style: none;
+    background-color: rgba(0,0,0,.03);
 }

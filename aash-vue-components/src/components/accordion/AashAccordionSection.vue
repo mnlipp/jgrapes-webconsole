@@ -12,7 +12,7 @@
     </component>
     <component :is="panelType" :id="sectionId + '-panel'" ref="panel" 
       role="region" :class="panelClass" 
-      :style="{ padding: 0, height: height }"
+      :style="{ height: height }"
       :aria-labelledby="sectionId + '-control'"
       :hidden="isExpanded ? null : ''"
       :data-transitioning="isTransitioning ? '' : null">
