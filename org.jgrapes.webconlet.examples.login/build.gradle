@@ -1,5 +1,7 @@
 dependencies {
 	api project(':org.jgrapes.webconsole.base')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.jgwcvuecomponents')
 }
 apply plugin: 'com.github.node-gradle.node'
 

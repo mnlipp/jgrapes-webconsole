@@ -5,7 +5,9 @@ Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
 Export-Package: org.jgrapes.webconlet.examples.login
 
 Require-Capability: \
-    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=vue)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=jgwc-vue-components)"
 
 Provide-Capability: osgi.serviceloader; \
     osgi.serviceloader=org.jgrapes.webconsole.base.ConletComponentFactory; \

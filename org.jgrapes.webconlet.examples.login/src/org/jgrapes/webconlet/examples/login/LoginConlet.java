@@ -26,7 +26,7 @@ import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -47,15 +47,21 @@ import org.jgrapes.webconsole.base.events.CloseModalDialog;
 import org.jgrapes.webconsole.base.events.ConsolePrepared;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
+import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.OpenModalDialog;
+import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.SetLocale;
+import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
 /**
  * A conlet for poll administration.
  */
 public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
+
+    private static final String PENDING_CONSOLE_PREPARED
+        = "pendingCosolePrepared";
 
     /**
      * Creates a new component with its channel set to the given channel.
@@ -66,6 +72,12 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
      */
     public LoginConlet(Channel componentChannel) {
         super(componentChannel);
+    }
+
+    @Override
+    protected String generateInstanceId(AddConletRequest event,
+            ConsoleSession session) {
+        return "Singleton";
     }
 
     /**
@@ -89,14 +101,22 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
                     type(), "Login-functions.js"))
                 .setScriptType("module"))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
-                "Login-style.css")));
+                "Login-style.css"))
+            .addPageContent("headerIcons", Map.of("priority", "1000"))
+            .addRenderMode(RenderMode.Content));
     }
 
+    /**
+     * As a model has already been created in {@link #doUpdateConletState},
+     * the "new" model may already exist in the session.
+     */
     @Override
     protected Optional<AccountModel> createNewState(AddConletRequest event,
             ConsoleSession session, String conletId) throws Exception {
-        if (stateFromSession(session.browserSession(), conletId).isPresent()) {
-            return Optional.empty();
+        Optional<AccountModel> model
+            = stateFromSession(session.browserSession(), conletId);
+        if (model.isPresent()) {
+            return model;
         }
         return super.createNewState(event, session, conletId);
     }
@@ -122,8 +142,9 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     public void onConsolePrepared(ConsolePrepared event, ConsoleSession channel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
+        // Suspend handling and save event "in" channel.
         event.suspendHandling();
-        channel.setAssociated(this, event);
+        channel.setAssociated(PENDING_CONSOLE_PREPARED, event);
 
         // Create model and save in session.
         String conletId = type() + TYPE_INSTANCE_SEPARATOR + "Singleton";
@@ -133,13 +154,11 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
         // Render login dialog
         Template tpl = freemarkerConfig().getTemplate("Login-dialog.ftl.html");
-        final Map<String, Object> renderModel
-            = fmSessionModel(channel.browserSession());
-        renderModel.put("locale", channel.locale());
         var bundle = resourceBundle(channel.locale());
         channel.respond(new OpenModalDialog(type(), conletId,
             processTemplate(event, tpl,
-                renderModel)).addOption("title", bundle.getString("title"))
+                fmSessionModel(channel.browserSession())))
+                    .addOption("title", bundle.getString("title"))
                     .addOption("cancelable", false).addOption("okayLabel", "")
                     .addOption("applyLabel", bundle.getString("Submit"))
                     .addOption("useSubmit", true));
@@ -164,16 +183,39 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
             ConsoleSession channel, String conletId,
-            AccountModel conletState) throws Exception {
-        return Collections.emptySet();
+            AccountModel model) throws Exception {
+        Set<RenderMode> renderedAs = new HashSet<>();
+        if (event.renderAs().contains(RenderMode.Content)) {
+            Template tpl
+                = freemarkerConfig().getTemplate("Login-status.ftl.html");
+            channel.respond(new RenderConlet(type(), conletId,
+                processTemplate(event, tpl,
+                    fmModel(event, channel, conletId, model)))
+                        .setRenderAs(RenderMode.Content));
+            channel.respond(new NotifyConletView(type(), conletId,
+                "updateUser", new String(model.getUserName())));
+            renderedAs.add(RenderMode.Content);
+        }
+        return renderedAs;
     }
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
             ConsoleSession channel, AccountModel model) throws Exception {
-        channel.respond(new CloseModalDialog(type(), event.conletId()));
-        channel.associated(this, ConsolePrepared.class)
-            .ifPresent(ConsolePrepared::resumeHandling);
+        if ("loginData".equals(event.method())) {
+            model.setDialogOpen(false);
+            model.setUserName(event.params().asString(0));
+            model.setPassword(event.params().asString(1).toCharArray());
+            channel.respond(new CloseModalDialog(type(), event.conletId()));
+            channel.associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
+                .ifPresent(ConsolePrepared::resumeHandling);
+            return;
+        }
+        if ("logout".equals(event.method())) {
+            model.setUserName(null);
+            model.setPassword(null);
+            channel.respond(new SimpleConsoleCommand("reload"));
+        }
     }
 
     @Override
@@ -191,6 +233,8 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     public static class AccountModel extends ConletBaseModel {
 
         private boolean dialogOpen;
+        private String userName;
+        private transient char[] password;
 
         /**
          * Creates a new model with the given type and id.
@@ -218,6 +262,44 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
          */
         public void setDialogOpen(boolean dialogOpen) {
             this.dialogOpen = dialogOpen;
+        }
+
+        /**
+         * Gets the user name.
+         *
+         * @return the user name
+         */
+        public String getUserName() {
+            return userName;
+        }
+
+        /**
+         * Sets the user name.
+         *
+         * @param userName the new user name
+         */
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        /**
+         * Gets the password.
+         *
+         * @return the password
+         */
+        @SuppressWarnings("PMD.MethodReturnsInternalArray")
+        public char[] getPassword() {
+            return password;
+        }
+
+        /**
+         * Sets the password.
+         *
+         * @param password the new password
+         */
+        @SuppressWarnings({ "PMD.UseVarargs", "PMD.ArrayIsStoredDirectly" })
+        public void setPassword(char[] password) {
+            this.password = password;
         }
 
     }
