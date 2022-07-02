@@ -19,7 +19,7 @@
 import { reactive, ref, createApp, computed, onMounted } from "vue";
 import JGConsole from "jgconsole"
 import JgwcPlugin, { JGWC } from "jgwc";
-import { provideApi, getApi } from "aash-plugin";
+import { provideApi, getApi, AashDropdownMenu } from "aash-plugin";
 import l10nBundles from "l10nBundles";
 
 // For global access
@@ -58,7 +58,7 @@ window.orgJGrapesExampleLogin.openDialog
 
             const formDom = ref(null);
 
-            provideApi(formDom, accountData );
+            provideApi(formDom, accountData);
                         
             return { formDom, formId, localize, accountData };
         },
@@ -106,4 +106,35 @@ window.orgJGrapesExampleLogin.apply = function(dialogDom: HTMLElement,
     JGConsole.notifyConletModel(conletId, "loginData", 
         accountData.username, accountData.password);
     return;
+}
+
+window.orgJGrapesExampleLogin.initStatus 
+    = function(container: HTMLElement, isUpdate: boolean) {
+    if (isUpdate) {
+        return;
+    }
+    const conletId = (<HTMLElement>container.closest("*[data-conlet-id]")!)
+        .dataset["conletId"]!;
+    let app = createApp({
+        setup() {
+            const name = ref<string | null>(null);
+            
+            JGConsole.registerConletFunction(
+                "org.jgrapes.webconlet.examples.login.LoginConlet",
+                "updateUser", function(conletId: string, newName: string) {
+                    name.value = newName;
+                });
+            
+            const localize = (key: string) =>
+                JGConsole.localize(l10nBundles, JGWC.lang()!, key)
+
+            const action = (arg: AashDropdownMenu.MenuItem) => {
+                JGConsole.notifyConletModel(conletId, "logout");
+            }
+            
+            return { localize, name, action };
+        }
+    });
+    app.use(JgwcPlugin);
+    app.mount(container);
 }
