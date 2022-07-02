@@ -328,6 +328,8 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         let container = $(conlet.element());
         let newContent = $(content);
         if (!isNew) {
+            // "conlet-body" is also used for styling
+            container.classList.add("conlet-body")
             container.children().detach();
             container.append(newContent);
         } else {

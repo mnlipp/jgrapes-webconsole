@@ -46,7 +46,7 @@ class Console {
     private _previewTemplate = parseHtml(
         '<section class="conlet conlet-preview"></section>')[0];
     private _viewTemplate = parseHtml(
-        '<article class="conlet conlet-view conlet-body"></article>')[0];
+        '<article class="conlet conlet-view"></article>')[0];
     private _modalDialogTemplate = parseHtml(
         '<div class="conlet conlet-modal-dialog"></div>')[0];
     private _resourceManager: ResourceManager;

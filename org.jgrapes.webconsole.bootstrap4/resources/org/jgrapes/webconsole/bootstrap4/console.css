@@ -1,5 +1,5 @@
 /* Scroll conlet content (card body) not conlet */
- .conlet-preview-content {
+ .conlet-preview-body {
     overflow: auto;
  }
 

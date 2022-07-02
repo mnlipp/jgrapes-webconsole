@@ -221,7 +221,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             container.addClass('card');
             container.append('<h6 class="card-header conlet-preview-header '
                 + 'd-flex flex-row"></h6>'
-                + '<div class="card-body conlet-body conlet-preview-content">'
+                + '<div class="card-body conlet-body conlet-preview-body">'
                 + '</div>');
             this._setModeIcons(container, modes);
 
@@ -268,7 +268,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         conletHeader.find(".conlet-preview-title").remove();
         conletHeader.prepend("<span class='conlet-preview-title flex-fill'>"
             + this._evaluateTitle(container, newContent) + "</span>");
-        let previewContent = container.find(".conlet-preview-content");
+        let previewContent = container.find(".conlet-preview-body");
         this._styleSemantics(newContent);
         previewContent.empty();
         previewContent.append(newContent);
@@ -331,6 +331,8 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         let newContent = $(content);
         this._styleSemantics(newContent);
         if (!isNew) {
+            // "conlet-body" is also used for styling
+            container.classList.add("conlet-body")
             container.children().detach();
             container.append(newContent);
         } else {

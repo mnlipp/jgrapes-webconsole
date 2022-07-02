@@ -277,7 +277,7 @@ export default class Renderer extends JGConsole.Renderer {
         if (isNew) {
             container.append(...parseHtml(
                 '<header class="ui-draggable-handle"></header>'
-                + '<section class="conlet-body"></section>'));
+                + '<section></section>'));
 
             // Get grid info
             let conletId = conlet.id();
