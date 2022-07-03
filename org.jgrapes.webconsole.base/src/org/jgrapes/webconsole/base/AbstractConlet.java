@@ -589,7 +589,8 @@ public abstract class AbstractConlet<S extends Serializable>
      * Called by {@link #onAddConletRequest}
      * when a new conlet instance is created in the browser. The default
      * implementation simply invokes {@link 
-     * #createStateRepresentation} and returns its result.
+     * #createStateRepresentation} and returns its result. If state
+     * is provided, it is put in the browser session by the invoker.
      *
      * @param event the event 
      * @param session the console session
@@ -608,9 +609,12 @@ public abstract class AbstractConlet<S extends Serializable>
 
     /**
      * Called by {@link #onRenderConletRequest} when a previously 
-     * created conlet is rendered in a new browser session
-     * for the first time. The default implementation simply invokes {@link 
-     * #createStateRepresentation} and returns its result.
+     * created conlet (with associated state) is rendered in a new 
+     * browser session for the first time. The default implementation 
+     * simply invokes {@link #createStateRepresentation} and returns 
+     * its result. Conlets with long-term state should retrieve 
+     * their state from some storage. If state is returned, it is
+     * put in the browser session by the invoker.
      *
      * @param event the event 
      * @param session the console session
@@ -907,6 +911,8 @@ public abstract class AbstractConlet<S extends Serializable>
             consoleSession.browserSession(), event.conletId());
         if (state.isEmpty()) {
             state = recreateState(event, consoleSession, event.conletId());
+            state.ifPresent(s -> putInSession(consoleSession.browserSession(),
+                event.conletId(), s));
         }
         event.setResult(true);
         event.stop();
