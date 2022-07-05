@@ -115,7 +115,6 @@ export default {
   }
 }
 
-
 /*
 Vue.component('jgwc-id-scope', {
   data: function() {
