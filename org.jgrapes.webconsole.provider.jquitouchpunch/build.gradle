@@ -2,3 +2,7 @@ dependencies {
 	api project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')	
 }
+
+generatePomFileForMavenPublication {
+    mustRunAfter ':org.jgrapes.webconsole.provider.jqueryui:jar'
+}
