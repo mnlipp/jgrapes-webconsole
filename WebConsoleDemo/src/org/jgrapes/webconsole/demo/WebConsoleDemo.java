@@ -158,7 +158,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, console,
+            PageResourceProviderFactory.class, console.channel(),
             type -> {
                 switch (type) {
                 case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
@@ -171,7 +171,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console, type -> {
+            ConletComponentFactory.class, console.channel(), type -> {
                 switch (type) {
                 case "org.jgrapes.webconlet.examples.login.LoginConlet":
                     return Collections.emptyList();
@@ -197,7 +197,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, console,
+            PageResourceProviderFactory.class, console.channel(),
             type -> {
                 switch (type) {
                 case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
@@ -210,7 +210,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console, type -> {
+            ConletComponentFactory.class, console.channel(), type -> {
                 switch (type) {
                 case "org.jgrapes.webconlet.examples.login.LoginConlet":
                     return Collections.emptyList();
@@ -236,7 +236,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, console, type -> {
+            PageResourceProviderFactory.class, console.channel(), type -> {
                 switch (type) {
                 case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
                     return Arrays.asList(
@@ -248,7 +248,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console, type -> {
+            ConletComponentFactory.class, console.channel(), type -> {
                 switch (type) {
                 case "org.jgrapes.webconlet.examples.login.LoginConlet":
                     return Collections.emptyList();
@@ -273,7 +273,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         console.attach(new NewConsoleSessionPolicy(console));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, console,
+            PageResourceProviderFactory.class, console.channel(),
             type -> {
                 switch (type) {
                 case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
@@ -286,7 +286,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console));
+            ConletComponentFactory.class, console.channel()));
     }
 
     /*
