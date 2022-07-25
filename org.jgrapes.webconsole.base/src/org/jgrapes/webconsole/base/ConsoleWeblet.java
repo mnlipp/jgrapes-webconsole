@@ -88,7 +88,10 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * (relative to the configured prefix). 
  * 
  * The class also provides handlers for some console related events
- * that affect the console representation in the browser.
+ * (i.e. fired on the attached {@link WebConsole}'s channel) that 
+ * affect the console representation in the browser. These handlers
+ * are declared with class channel {@link ConsoleSession} which
+ * is replaced using the {@link ChannelReplacements} mechanism.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods", "PMD.GodClass" })

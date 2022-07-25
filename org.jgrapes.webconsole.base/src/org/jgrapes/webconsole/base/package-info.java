@@ -47,7 +47,7 @@
  * The {@link org.jgrapes.webconsole.base.WebConsole} component 
  * is conceptually the main component of a web console. It exchanges events 
  * with the display components and helper components, 
- * using a channel that is independent of the channel used for the 
+ * using channels that are independent of the channel used for the 
  * communication with the browser.
  *
  * The {@link org.jgrapes.webconsole.base.WebConsole} component is 
@@ -136,6 +136,37 @@
  * across reloads and another component that ensures that the web console 
  * is not empty when a new session is initially created. The demo 
  * includes such a component.
+ * 
+ * ### Web Console Channel Usage
+ * 
+ * ![Web Console Channels](ConsoleChannels.svg)
+ * 
+ * The {@link org.jgrapes.webconsole.base.ConsoleWeblet} component channel
+ * (the channel used by default by its handlers) is passed to the constructor
+ * as first argument. This is the channel used by the components that build
+ * the server, i.e. the {@link org.jgrapes.http.HttpServer} and helper
+ * components such as a {@link org.jgrapes.http.SessionManager}. A second
+ * channel passed to the {@link org.jgrapes.webconsole.base.ConsoleWeblet}'s
+ * constructor (usually simply {@link Channel#SELF}) is forwarded to the
+ * {@link org.jgrapes.webconsole.base.WebConsole} as its component channel
+ * and used to exchange events with the display components and helper 
+ * components that together constitute the web console.
+ * 
+ * Some handlers that should conceptually be provided by the
+ * {@link org.jgrapes.webconsole.base.WebConsole} are actually
+ * implemented as methods of the 
+ * {@link org.jgrapes.webconsole.base.ConsoleWeblet} because they 
+ * result in events being sent to the browser and communication
+ * with the browser is the
+ * {@link org.jgrapes.webconsole.base.ConsoleWeblet}'s main concern.
+ * 
+ * In order to separate the events from and to different clients,
+ * the actual channel used by the web console components is a 
+ * {@link org.jgrapes.io.IOSubchannel} (to be precise 
+ * an instance of {@link org.jgrapes.webconsole.base.ConsoleSession})
+ * that is created by the 
+ * {@link org.jgrapes.webconsole.base.ConsoleWeblet} for each browser
+ * connection.
  * 
  * Web Console Session Startup
  * ---------------------------
@@ -278,7 +309,7 @@
  *    class WebConsole
  * 	  class ConsoleWeblet
  * 
- *    WebConsole "1" -left- "1" ConsoleWeblet
+ *    WebConsole "1" -left-* "1" ConsoleWeblet
  * }
  * 
  * ConsoleWeblet "*" -left- "*" Browser
@@ -306,6 +337,47 @@
  * 
  * WebConsole "1" -down- "*" PageResourceProvider
  * WebConsole "1" -down- "*" ConsolePolicy
+ * 
+ * @enduml
+ * 
+ * @startuml ConsoleChannels.svg
+ * skinparam packageStyle rectangle
+ * allow_mixing
+ * 
+ * object webletChannel
+ * object consoleChannel
+ * 
+ * object httpServer
+ * httpServer -- webletChannel
+ * 
+ * object sessionManager
+ * sessionManager -- webletChannel
+ * 
+ * package "Conceptual WebConsole\n(WebConsole Gateway)" {
+ *    object webConsole
+ *    object consoleWeblet
+ * 
+ *    webConsole "1" -left-* "1" consoleWeblet
+ * }
+ *  
+ * consoleWeblet -- webletChannel : "onGet,\nonInput,\nonClosed,\n..."
+ * consoleWeblet -- consoleChannel : "onConsoleRead,\nonConsoleCommand,\n..."
+ * 
+ * webConsole -- consoleChannel : "(all handlers)"
+ * 
+ * object conletA
+ * conletA -- consoleChannel
+ * 
+ * object conletB
+ * conletB -- consoleChannel
+ * 
+ * object "consoleSession: ConsoleSession" as consoleSession
+ * consoleChannel <-left- consoleSession : "main channel"
+ * consoleWeblet *-- consoleSession 
+ * 
+ * webConsole -right[hidden]- conletA
+ * conletA -right[hidden]- conletB
+ * webletChannel -right[hidden]- consoleSession
  * 
  * @enduml
  * 
@@ -435,3 +507,5 @@
  * @enduml
  */
 package org.jgrapes.webconsole.base;
+
+import org.jgrapes.core.Channel;
