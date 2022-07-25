@@ -84,6 +84,15 @@ public class WebConsole extends Component {
     }
 
     /**
+     * Provides access to the weblet's channel.
+     *
+     * @return the channel
+     */
+    public Channel webletChannel() {
+        return view.channel();
+    }
+
+    /**
      * Handle JSON input.
      *
      * @param event the event

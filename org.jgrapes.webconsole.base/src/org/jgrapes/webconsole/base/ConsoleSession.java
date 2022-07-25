@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.EventPipeline;
@@ -131,7 +132,7 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     private IOSubchannel upstreamChannel;
 
     /**
-     * Weak refrence to session.
+     * Weak reference to session.
      */
     private static class SessionReference
             extends WeakReference<ConsoleSession> {
@@ -300,6 +301,15 @@ public final class ConsoleSession extends DefaultIOSubchannel {
      */
     public boolean isConnected() {
         return connected;
+    }
+
+    /**
+     * Provides access to the weblet's channel.
+     *
+     * @return the channel
+     */
+    public Channel webletChannel() {
+        return console.webletChannel();
     }
 
     /**
