@@ -36,6 +36,7 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.http.events.DiscardSession;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
@@ -142,12 +143,18 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     public void onConsolePrepared(ConsolePrepared event, ConsoleSession channel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
+        // If we are logged in, proceed
+        String conletId = type() + TYPE_INSTANCE_SEPARATOR + "Singleton";
+        if (stateFromSession(channel.browserSession(), conletId)
+            .map(model -> model.getUserName() != null).orElse(false)) {
+            return;
+        }
+
         // Suspend handling and save event "in" channel.
         event.suspendHandling();
         channel.setAssociated(PENDING_CONSOLE_PREPARED, event);
 
         // Create model and save in session.
-        String conletId = type() + TYPE_INSTANCE_SEPARATOR + "Singleton";
         AccountModel accountModel = new AccountModel(conletId);
         accountModel.setDialogOpen(true);
         putInSession(channel.browserSession(), conletId, accountModel);
@@ -193,7 +200,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
                     fmModel(event, channel, conletId, model)))
                         .setRenderAs(RenderMode.Content));
             channel.respond(new NotifyConletView(type(), conletId,
-                "updateUser", new String(model.getUserName())));
+                "updateUser", model.getUserName()));
             renderedAs.add(RenderMode.Content);
         }
         return renderedAs;
@@ -212,8 +219,8 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             return;
         }
         if ("logout".equals(event.method())) {
-            model.setUserName(null);
-            model.setPassword(null);
+            channel.respond(new DiscardSession(channel.browserSession(),
+                channel.webletChannel()));
             channel.respond(new SimpleConsoleCommand("reload"));
         }
     }
