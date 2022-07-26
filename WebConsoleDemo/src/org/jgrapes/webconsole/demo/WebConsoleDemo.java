@@ -153,9 +153,9 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
         console.attach(new BrowserLocalBackedKVStore(
-            console, consoleWeblet.prefix().getPath()));
-        console.attach(new KVStoreBasedConsolePolicy(console));
-        console.attach(new NewConsoleSessionPolicy(console));
+            console.channel(), consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console.channel()));
+        console.attach(new NewConsoleSessionPolicy(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
@@ -192,9 +192,9 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
         console.attach(new BrowserLocalBackedKVStore(
-            console, consoleWeblet.prefix().getPath()));
-        console.attach(new KVStoreBasedConsolePolicy(console));
-        console.attach(new NewConsoleSessionPolicy(console));
+            console.channel(), consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console.channel()));
+        console.attach(new NewConsoleSessionPolicy(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
@@ -231,9 +231,9 @@ public class WebConsoleDemo extends Component implements BundleActivator {
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
         console.attach(new BrowserLocalBackedKVStore(
-            console, consoleWeblet.prefix().getPath()));
-        console.attach(new KVStoreBasedConsolePolicy(console));
-        console.attach(new NewConsoleSessionPolicy(console));
+            console.channel(), consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console.channel()));
+        console.attach(new NewConsoleSessionPolicy(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(), type -> {
@@ -268,9 +268,9 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
         console.attach(new BrowserLocalBackedKVStore(
-            console, consoleWeblet.prefix().getPath()));
-        console.attach(new KVStoreBasedConsolePolicy(console));
-        console.attach(new NewConsoleSessionPolicy(console));
+            console.channel(), consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console.channel()));
+        console.attach(new NewConsoleSessionPolicy(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
