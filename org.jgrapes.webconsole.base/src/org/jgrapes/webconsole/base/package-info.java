@@ -361,7 +361,7 @@
  * }
  *  
  * consoleWeblet -- webletChannel : "onGet,\nonInput,\nonClosed,\n..."
- * consoleWeblet -- consoleChannel : "onConsoleRead,\nonConsoleCommand,\n..."
+ * consoleWeblet -- consoleChannel : "onConsoleReady,\nonConsoleCommand,\n..."
  * 
  * webConsole -- consoleChannel : "(all handlers)"
  * 
