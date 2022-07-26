@@ -67,9 +67,8 @@ gitPublish {
 	commitMessage = "Updated."
 }
 
-// Until https://github.com/ajoberstar/gradle-git-publish/issues/41 is fixed
-tasks.gitPublishCopy.dependsOn(":org.jgrapes.webconsole.base:buildDoc")
-tasks.gitPublishCopy.dependsOn(":aash-vue-components:buildDoc")
+tasks.gitPublishReset.mustRunAfter ":org.jgrapes.webconsole.base:buildDoc"
+tasks.gitPublishReset.mustRunAfter ":aash-vue-components:buildDoc"
 
 task stage {
     description = 'To be executed by CI, build and update JavaDoc.'
