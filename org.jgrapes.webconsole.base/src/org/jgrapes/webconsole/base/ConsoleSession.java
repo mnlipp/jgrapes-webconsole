@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
@@ -92,10 +93,10 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  *  +setTimeout(timeout: long): ConsoleSession
  *  +refresh(): void
  *  +setUpstreamChannel(IOSubchannel upstreamChannel): ConsoleSession
- *  +setSession(Session browserSession): ConsoleSession
+ *  +setSessionSupplier(Session browserSessionSupplier): ConsoleSession
  *  +upstreamChannel(): Optional<IOSubchannel>
  *  +consoleSessionId(): String
- *  +browserSession(): Session
+ *  +browserSession(): Optional<Session>
  *  +locale(): Locale
  *  +setLocale(Locale locale): void
  * }
@@ -128,7 +129,7 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     private final Timer timeoutTimer;
     private boolean active = true;
     private boolean connected = true;
-    private Session browserSession;
+    private Supplier<Optional<Session>> browserSessionSupplier;
     private IOSubchannel upstreamChannel;
 
     /**
@@ -195,10 +196,10 @@ public final class ConsoleSession extends DefaultIOSubchannel {
     }
 
     /**
-     * Lookup (and create if not found) the console browserSession channel
-     * for the given console browserSession id.
+     * Lookup (and create if not found) the console browserSessionSupplier channel
+     * for the given console browserSessionSupplier id.
      *
-     * @param consoleSessionId the browserSession id
+     * @param consoleSessionId the browserSessionSupplier id
      * @param console the console that this session belongs to
      * class' constructor if a new channel is created, usually 
      * the console
@@ -333,13 +334,14 @@ public final class ConsoleSession extends DefaultIOSubchannel {
      * be invoked by the creator of the {@link ConsoleSession}, by default
      * the {@link ConsoleWeblet}.
      * 
-     * @param browserSession the browser session
+     * @param sessionSupplier the browser session supplier
      * @return the console session for easy chaining
      */
-    public ConsoleSession setSession(Session browserSession) {
-        this.browserSession = browserSession;
+    public ConsoleSession
+            setSessionSupplier(Supplier<Optional<Session>> sessionSupplier) {
+        this.browserSessionSupplier = sessionSupplier;
         if (locale == null) {
-            locale = browserSession.locale();
+            locale = browserSession().locale();
         }
         return this;
     }
@@ -367,7 +369,7 @@ public final class ConsoleSession extends DefaultIOSubchannel {
      * @return the browserSession
      */
     public Session browserSession() {
-        return browserSession;
+        return browserSessionSupplier.get().get();
     }
 
     /**

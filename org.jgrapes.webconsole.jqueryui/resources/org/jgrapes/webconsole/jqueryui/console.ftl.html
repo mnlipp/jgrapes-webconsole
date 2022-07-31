@@ -137,8 +137,8 @@ const renderer = new JQUIConsole.Renderer(JGConsole.instance);
 
 document.addEventListener('readystatechange', event => { JGConsole.init(
   "${consoleSessionId}", 
-    { refreshInterval: parseInt('${consoleSessionRefreshInterval?c}'),
-      inactivityTimeout: parseInt('${consoleSessionInactivityTimeout?c}') });
+    { refreshInterval: parseInt('${consoleSessionRefreshInterval.toMillis()?c}'),
+      inactivityTimeout: parseInt('${consoleSessionInactivityTimeout.toMillis()?c}') });
   });
 </script>  
 

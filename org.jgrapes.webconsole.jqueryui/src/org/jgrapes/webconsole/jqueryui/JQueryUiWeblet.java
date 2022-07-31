@@ -145,14 +145,14 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     private void sendThemeResource(Request.In.Get event, IOSubchannel channel,
             String resource) {
         // Get resource
-        ThemeProvider themeProvider = event.associated(Session.class).flatMap(
-            session -> Optional.ofNullable(session.get("themeProvider"))
-                .flatMap(
-                    themeId -> StreamSupport
-                        .stream(themeLoader().spliterator(), false)
-                        .filter(thi -> thi.themeId().equals(themeId))
-                        .findFirst()))
-            .orElse(baseTheme);
+        ThemeProvider themeProvider
+            = Optional.ofNullable(Session.from(event).get("themeProvider"))
+                .flatMap(themeId -> StreamSupport
+                    .stream(themeLoader().spliterator(), false)
+                    .filter(thi -> thi.themeId().equals(themeId))
+                    .findFirst())
+                .orElse(baseTheme);
+        // Get resource
         URL resourceUrl;
         try {
             resourceUrl = themeProvider.getResource(resource);

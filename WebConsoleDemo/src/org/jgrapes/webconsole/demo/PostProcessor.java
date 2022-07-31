@@ -74,7 +74,7 @@ public class PostProcessor extends Component {
         FormContext ctx = channel
             .associated(this, FormContext::new);
         ctx.request = event.httpRequest();
-        ctx.session = event.associated(Session.class).get();
+        ctx.session = Session.from(event);
         event.stop();
     }
 

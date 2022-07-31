@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
 import java.text.ParseException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
@@ -49,12 +51,14 @@ import org.jgrapes.http.ResourcePattern;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.Session;
 import org.jgrapes.http.annotation.RequestHandler;
+import org.jgrapes.http.events.DiscardSession;
 import org.jgrapes.http.events.ProtocolSwitchAccepted;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Request.In.Get;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.http.events.Upgraded;
 import org.jgrapes.io.IOSubchannel;
+import org.jgrapes.io.events.Close;
 import org.jgrapes.io.events.Closed;
 import org.jgrapes.io.events.Input;
 import org.jgrapes.io.events.Output;
@@ -94,7 +98,7 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * is replaced using the {@link ChannelReplacements} mechanism.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
-    "PMD.TooManyMethods", "PMD.GodClass" })
+    "PMD.TooManyMethods", "PMD.GodClass", "PMD.DataflowAnomalyAnalysis" })
 public abstract class ConsoleWeblet extends Component {
 
     private static final String CONSOLE_SESSION_IDS
@@ -108,8 +112,8 @@ public abstract class ConsoleWeblet extends Component {
     private final RenderSupport renderSupport = new RenderSupportImpl();
     private boolean useMinifiedResources = true;
     private long psNetworkTimeout = 45_000;
-    private long psRefreshInterval = 30_000;
-    private long psInactivityTimeout = -1;
+    private long csRefreshInterval = 30_000;
+    private long csInactivityTimeout = -1;
 
     private List<Class<?>> consoleResourceSearchSeq;
     private final List<Class<?>> resourceClasses = new ArrayList<>();
@@ -247,15 +251,15 @@ public abstract class ConsoleWeblet extends Component {
     /**
      * Sets the console session refresh interval. The console code in the
      * browser will send a keep alive packet if there has been no user
-     * activity for more than the given number of milliseconds. The value 
+     * activity for more than the given period. The value 
      * defaults to 30 seconds.
      * 
-     * @param interval the interval in milliseconds
+     * @param interval the interval
      * @return the console view for easy chaining
      */
     @SuppressWarnings("PMD.LinguisticNaming")
-    public ConsoleWeblet setConsoleSessionRefreshInterval(long interval) {
-        psRefreshInterval = interval;
+    public ConsoleWeblet setConsoleSessionRefreshInterval(Duration interval) {
+        csRefreshInterval = interval.toMillis();
         return this;
     }
 
@@ -264,22 +268,22 @@ public abstract class ConsoleWeblet extends Component {
      *
      * @return the interval
      */
-    public long consoleSessionRefreshInterval() {
-        return psRefreshInterval;
+    public Duration consoleSessionRefreshInterval() {
+        return Duration.ofMillis(csRefreshInterval);
     }
 
     /**
      * Sets the console session inactivity timeout. If there has been no
-     * user activity for more than the given number of milliseconds the
+     * user activity for more than the given duration the
      * console code stops sending keep alive packets and displays a
      * message to the user. The value defaults to -1 (no timeout).
      * 
-     * @param timeout the timeout in milliseconds
+     * @param timeout the timeout
      * @return the console view for easy chaining
      */
     @SuppressWarnings("PMD.LinguisticNaming")
-    public ConsoleWeblet setConsoleSessionInactivityTimeout(long timeout) {
-        psInactivityTimeout = timeout;
+    public ConsoleWeblet setConsoleSessionInactivityTimeout(Duration timeout) {
+        csInactivityTimeout = timeout.toMillis();
         return this;
     }
 
@@ -288,8 +292,8 @@ public abstract class ConsoleWeblet extends Component {
      *
      * @return the timeout
      */
-    public long consoleSessionInactivityTimeout() {
-        return psInactivityTimeout;
+    public Duration consoleSessionInactivityTimeout() {
+        return Duration.ofMillis(csInactivityTimeout);
     }
 
     /**
@@ -436,7 +440,7 @@ public abstract class ConsoleWeblet extends Component {
         URI requestUri = event.requestUri();
         int prefixSegs = requestPattern.matches(requestUri);
         // Request for console? (Only valid with session)
-        if (prefixSegs < 0 || !event.associated(Session.class).isPresent()) {
+        if (prefixSegs < 0) {
             return;
         }
 
@@ -451,9 +455,9 @@ public abstract class ConsoleWeblet extends Component {
             event.associated(Selection.class)
                 .ifPresent(selection -> selection.prefer(selection.get()[0]));
             // This is a console session now (can be connected to)
-            Session session = event.associated(Session.class).get();
+            Session session = Session.from(event);
             UUID consoleSessionId = UUID.randomUUID();
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({ "unchecked", "PMD.AvoidDuplicateLiterals" })
             Map<URI, UUID> knownIds = (Map<URI, UUID>) session.computeIfAbsent(
                 CONSOLE_SESSION_IDS,
                 newKey -> new ConcurrentHashMap<URI, UUID>());
@@ -536,8 +540,7 @@ public abstract class ConsoleWeblet extends Component {
             WebConsoleUtils.uriFromPath(resource),
             event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
                 Converters.DATE_TIME).orElse(null),
-            event.httpRequest(), channel, event.associated(Session.class).get(),
-            renderSupport());
+            event.httpRequest(), channel, Session.from(event), renderSupport());
         event.setResult(true);
         event.stop();
         fire(pageResourceRequest, consoleChannel(channel));
@@ -560,12 +563,12 @@ public abstract class ConsoleWeblet extends Component {
                     event.httpRequest().findValue(HttpField.IF_MODIFIED_SINCE,
                         Converters.DATE_TIME).orElse(null),
                     event.httpRequest(), channel,
-                    event.associated(Session.class).get(), renderSupport());
+                    Session.from(event), renderSupport());
             // Make session available (associate with event, this is not
             // a websocket request).
-            event.associated(Session.class).ifPresent(
-                session -> conletRequest.setAssociated(Session.class,
-                    session));
+            event.associated(Session.class, Supplier.class).ifPresent(
+                supplier -> conletRequest.setAssociated(Session.class,
+                    supplier));
             event.setResult(true);
             event.stop();
             fire(conletRequest, consoleChannel(channel));
@@ -628,7 +631,7 @@ public abstract class ConsoleWeblet extends Component {
         // by loading the console. (Prevents using a newly created
         // browser session from being (re-)connected to after a
         // long disconnect or restart and, of course, CSF).
-        final Session browserSession = event.associated(Session.class).get();
+        final Session browserSession = Session.from(event);
         @SuppressWarnings("unchecked")
         Map<URI, UUID> knownIds
             = (Map<URI, UUID>) browserSession.computeIfAbsent(
@@ -718,8 +721,10 @@ public abstract class ConsoleWeblet extends Component {
         }
 
         // Get console session
-        final Session browserSession
-            = wsChannel.associated(Session.class).get();
+        @SuppressWarnings("unchecked")
+        final Supplier<Optional<Session>> sessionSupplier
+            = (Supplier<Optional<Session>>) wsChannel
+                .associated(Session.class, Supplier.class).get();
         // Reuse old console session if still available
         ConsoleSession consoleSession
             = Optional.ofNullable(consoleSessionIds[1])
@@ -728,7 +733,7 @@ public abstract class ConsoleWeblet extends Component {
                 .orElse(ConsoleSession.lookupOrCreate(consoleSessionIds[0],
                     console, supportedLocales.keySet(), psNetworkTimeout))
                 .setUpstreamChannel(wsChannel)
-                .setSession(browserSession);
+                .setSessionSupplier(sessionSupplier);
         wsChannel.setAssociated(ConsoleSession.class, consoleSession);
         // Channel now used as JSON input
         wsChannel.setAssociated(this, new WebSocketInputReader(
@@ -737,6 +742,21 @@ public abstract class ConsoleWeblet extends Component {
         // upstream channel.
         consoleSession.upstreamChannel().responsePipeline()
             .restrictEventSource(consoleSession.responsePipeline());
+    }
+
+    /**
+     * Discard the session referenced in the event.
+     *
+     * @param event the event
+     */
+    @Handler(channels = Channel.class)
+    public void onDiscardSession(DiscardSession event) {
+        final Session session = event.session();
+        ConsoleSession.byConsole(console).stream()
+            .filter(cs -> cs != null && cs.browserSession().equals(session))
+            .forEach(cs -> {
+                cs.responsePipeline().fire(new Close(), cs.upstreamChannel());
+            });
     }
 
     /**
