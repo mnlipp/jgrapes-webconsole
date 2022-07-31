@@ -43,7 +43,8 @@ public final class WebConsoleUtils {
     /**
      * Convenience method for retrieving the user from
      * a {@link Subject} associated with the session.
-     * 
+     *
+     * @param session the session
      * @return the user principal
      */
     public static Optional<UserPrincipal> userFromSession(Session session) {
