@@ -103,6 +103,7 @@ class ConsoleWebSocket {
                         _this._inactivity >= _this._console.sessionInactivityTimeout) {
                         _this.close();
                         _this._console.connectionSuspended(function() {
+                            _this._inactivity = 0;
                             _this.connect();
                         });
                         return;
