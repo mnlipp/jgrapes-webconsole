@@ -679,7 +679,7 @@ public abstract class ConsoleWeblet extends Component {
 
     /**
      * Sends a reload if the change of locale could not be handled by
-     * all portelts.
+     * all conlets.
      *
      * @param event the event
      * @param channel the channel
