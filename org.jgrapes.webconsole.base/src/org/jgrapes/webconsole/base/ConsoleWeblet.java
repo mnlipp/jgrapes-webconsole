@@ -76,14 +76,15 @@ import org.jgrapes.webconsole.base.events.SetLocaleCompleted;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 
 /**
- * The server side base class for a web console single page 
- * application (SPA). Its two main tasks are to provide resources using 
- * {@link Request}/{@link Response} events (see 
- * {@link #onGet(org.jgrapes.http.events.Request.In.Get, IOSubchannel)}
- * for details about the different kinds of resources) and to convert
- * the JSON RPC messages received from the browser via the web socket
- * to {@link JsonInput} events and fire them on the
- * {@link ConsoleSession} channel.
+ * The server side base class for the web console single page 
+ * application (SPA). Its main tasks are to provide resources using 
+ * {@link Request}/{@link Response} events (see {@link #onGet}
+ * for details about the different kinds of resources), to create
+ * the {@link ConsoleSession}s for new WebSocket connections
+ * (see {@link #onUpgraded}) and to convert the JSON RPC messages 
+ * received from the browser via the web socket to {@link JsonInput} 
+ * events and fire them on the corresponding {@link ConsoleSession}
+ * channel.
  * 
  * The class has a counter part in the browser, the `jgconsole`
  * JavaScript module (see 
@@ -96,6 +97,32 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * affect the console representation in the browser. These handlers
  * are declared with class channel {@link ConsoleSession} which
  * is replaced using the {@link ChannelReplacements} mechanism.
+ * 
+ * # WebSocket Connection handling
+ * 
+ * WebSockets are a great technology for two-way communication
+ * between the browser and the server. But they also require
+ * resources on the server side that can add up considerably as the
+ * number of users increases. The {@link ConsoleWeblet} supports
+ * suspension of idle connections to limit resource usage.
+ * 
+ * While the SPA is idle (e.g. the user does not perform any actions)
+ * the browser sends keep-alive packets at a specified interval
+ * (see {@link #setConsoleSessionRefreshInterval(Duration)}. After
+ * packets have been sent for a specified time
+ * (see {@link #setConsoleSessionInactivityTimeout(Duration)}
+ * the SPA stops sending such packets and displays a "suspended"
+ * dialog to the user. The WebSocket connection is closed, but
+ * the {@link ConsoleSession} is kept in a cache until garbage
+ * collected.
+ * 
+ * When the user chooses to resume, a new WebSocket is opened by the
+ * browser. If the {@link Session} used before the idle timeout is 
+ * still available (hasn't reached its idle timeout or absolute timeout)
+ * and holds the id of the previously used {@link ConsoleSession}
+ * and this {@link ConsoleSession} is still in the cache, the
+ * {@link ConsoleSession} is reused, else a new 
+ * {@link ConsoleSession} is created.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods", "PMD.GodClass", "PMD.DataflowAnomalyAnalysis" })
@@ -633,9 +660,8 @@ public abstract class ConsoleWeblet extends Component {
         // long disconnect or restart and, of course, CSF).
         final Session browserSession = Session.from(event);
         @SuppressWarnings("unchecked")
-        Map<URI, UUID> knownIds
-            = (Map<URI, UUID>) browserSession.computeIfAbsent(
-                CONSOLE_SESSION_IDS,
+        Map<URI, UUID> knownIds = (Map<URI, UUID>) browserSession
+            .computeIfAbsent(CONSOLE_SESSION_IDS,
                 newKey -> new ConcurrentHashMap<URI, UUID>());
         if (!UUID.fromString(consoleSessionId) // NOPMD, note negation
             .equals(knownIds.get(prefix))) {

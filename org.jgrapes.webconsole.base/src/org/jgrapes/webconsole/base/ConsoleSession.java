@@ -44,13 +44,13 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
 /**
  * The server side representation of a window in the browser 
  * that displays a console page (a console session). An instance 
- * is created when a new console window opens the websocket 
+ * is created when a new console window opens the WebSocket 
  * connection to the server for the first time. If the 
  * connection between the browser and the server is lost, 
  * the console code in the browser tries to establish a 
- * new websocket connection to the same, already
+ * new WebSocket connection to the same, already
  * existing {@link ConsoleSession}. The {@link ConsoleSession} 
- * object is thus independent of the websocket connection 
+ * object is thus independent of the WebSocket connection 
  * that handles the actual transfer of notifications.
  * 
  * ![WebConsole Session](ConsoleSession.svg)
@@ -58,7 +58,13 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * Because there is no reliable way to be notified when a
  * window in a browser closes, {@link ConsoleSession}s are
  * discarded automatically unless {@link #refresh()} is called
- * before the timeout occurs.
+ * before the timeout occurs. Refresh messages are generated 
+ * by the SPA automatically if the session is idle, i.e. no
+ * data is sent due to user activity. To avoid having too many 
+ * open WebSockets with idle sessions, the maximum idle time
+ * can be configured with 
+ * {@link ConsoleWeblet#setConsoleSessionInactivityTimeout(Duration)}
+ * (see {@link ConsoleWeblet} for details}).
  * 
  * {@link ConsoleSession} implements the {@link IOSubchannel}
  * interface. This allows the instances to be used as channels

@@ -66,7 +66,7 @@
  * provides the initial HTML document that implements the basic structure of
  * the web console. Aside from additional HTTP requests for static resources
  * like JavaScript libraries, CSS, images etc. all information is
- * then exchanged using JSON messages sent over a web socket 
+ * then exchanged using JSON messages sent over a WebSocket 
  * connection that is established immediately after the initial 
  * HTML has been loaded. The information exchanged includes, 
  * in particular, the registration of web console display components 
@@ -137,20 +137,32 @@
  * is not empty when a new session is initially created. The demo 
  * includes such a component.
  * 
- * ### Web Console Channel Usage
+ * ### Console Sessions 
  * 
  * ![Web Console Channels](ConsoleChannels.svg)
  * 
- * The {@link org.jgrapes.webconsole.base.ConsoleWeblet} component channel
- * (the channel used by default by its handlers) is passed to the constructor
- * as first argument. This is the channel used by the components that build
- * the server, i.e. the {@link org.jgrapes.http.HttpServer} and helper
- * components such as a {@link org.jgrapes.http.SessionManager}. A second
- * channel passed to the {@link org.jgrapes.webconsole.base.ConsoleWeblet}'s
- * constructor (usually simply {@link Channel#SELF}) is forwarded to the
+ * The {@link org.jgrapes.webconsole.base.ConsoleWeblet} receives the
+ * requests from the browser on {@link org.jgrapes.io.IOSubchannel}s
+ * of a channel (the "webletChannel") which is passed to the constructor
+ * in its first parameter. This is the channel used by the components that 
+ * constitute the web server, i.e. the {@link org.jgrapes.http.HttpServer} 
+ * and helper components such as a {@link org.jgrapes.http.SessionManager}. 
+ * 
+ * A second channel passed to the 
+ * {@link org.jgrapes.webconsole.base.ConsoleWeblet}'s constructor 
+ * (usually simply {@link Channel#SELF}) is forwarded to the
  * {@link org.jgrapes.webconsole.base.WebConsole} as its component channel
- * and used to exchange events with the display components and helper 
- * components that together constitute the web console.
+ * (the "consoleChannel"). For each WebSocket connection, the
+ * {@link org.jgrapes.webconsole.base.ConsoleWeblet} creates a 
+ * {@link org.jgrapes.webconsole.base.ConsoleSession} as an
+ * {@link org.jgrapes.io.IOSubchannel} of the "consoleChannel".
+ * This {@link org.jgrapes.webconsole.base.ConsoleSession} is then used 
+ * to exchange the data between the SPA page that opened the WebSocket
+ * connection and the display components and helper 
+ * components that together constitute the web console. Using a WebSocket
+ * for this communication requires some special considerations which are
+ * described in the documentation of the class 
+ * {@link org.jgrapes.webconsole.base.ConsoleSession}.
  * 
  * Some handlers that should conceptually be provided by the
  * {@link org.jgrapes.webconsole.base.WebConsole} are actually
@@ -160,30 +172,22 @@
  * with the browser is the
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet}'s main concern.
  * 
- * In order to separate the events from and to different clients,
- * the actual channel used by the web console components is a 
- * {@link org.jgrapes.io.IOSubchannel} (to be precise 
- * an instance of {@link org.jgrapes.webconsole.base.ConsoleSession})
- * that is created by the 
- * {@link org.jgrapes.webconsole.base.ConsoleWeblet} for each browser
- * connection.
- * 
  * Web Console Session Startup
  * ---------------------------
  * 
  * ### Web Console Page Loading
  * 
  * The following diagram shows the start of a web console session 
- * up to the exchange of the first messages on the web socket connection.
+ * up to the exchange of the first messages on the WebSocket connection.
  * 
  * ![Boot Event Sequence](ConsoleBootSeq.svg)
  * 
- * After the web console page has loaded and the web socket connection has been
+ * After the web console page has loaded and the WebSocket connection has been
  * established, all information is exchanged using 
  * [JSON RPC notifications](http://www.jsonrpc.org/specification#notification). 
  * The {@link org.jgrapes.webconsole.base.ConsoleWeblet} processes 
  * {@link org.jgrapes.io.events.Input} events with serialized JSON RPC 
- * data from the web socket channel until the complete JSON RPC notification 
+ * data from the WebSocket channel until the complete JSON RPC notification 
  * has been received. The notification
  * (a {@link org.jgrapes.webconsole.base.events.JsonInput} from the servers point 
  * of view) is then fired on the associated
@@ -199,7 +203,7 @@
  * {@link org.jgrapes.webconsole.base.ConsoleSession} channel as responses.
  * The {@link org.jgrapes.webconsole.base.events.ConsoleCommand}s are handled 
  * by the {@link org.jgrapes.webconsole.base.ConsoleWeblet} which serializes 
- * the data and sends it to the websocket using 
+ * the data and sends it to the WebSocket using 
  * {@link org.jgrapes.io.events.Output} events.
  * 
  * ### Web Console Session Preparation and Configuration
