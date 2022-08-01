@@ -215,7 +215,8 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             model.setPassword(event.params().asString(1).toCharArray());
             channel.respond(new CloseModalDialog(type(), event.conletId()));
             channel.associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
-                .ifPresent(ConsolePrepared::resumeHandling);
+                .ifPresentOrElse(ConsolePrepared::resumeHandling,
+                    () -> channel.respond(new SimpleConsoleCommand("reload")));
             return;
         }
         if ("logout".equals(event.method())) {
