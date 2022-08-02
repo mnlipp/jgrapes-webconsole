@@ -97,31 +97,6 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * affect the console representation in the browser. These handlers
  * are declared with class channel {@link ConsoleSession} which
  * is replaced using the {@link ChannelReplacements} mechanism.
- * 
- * # WebSocket Connection handling
- * 
- * WebSockets are a great technology for two-way communication
- * between the browser and the server. But they also require
- * resources on the server side that can add up considerably as the
- * number of users increases. The {@link ConsoleWeblet} supports
- * suspension of idle connections to limit resource usage.
- * 
- * While the SPA is idle (e.g. the user does not perform any actions)
- * the browser sends keep-alive packets at a specified interval
- * (see {@link #setConsoleSessionRefreshInterval(Duration)}. After
- * packets have been sent for a specified time
- * (see {@link #setConsoleSessionInactivityTimeout(Duration)}
- * the SPA stops sending such packets and displays a "suspended"
- * dialog to the user. The WebSocket connection is closed, but
- * the {@link ConsoleSession} is kept in a cache until garbage
- * collected.
- * 
- * When the user chooses to resume, a new WebSocket is opened by the
- * browser. If the {@link Session} used before the idle timeout is 
- * still available (hasn't reached its idle timeout or absolute timeout)
- * and refers to a {@link ConsoleSession} still in the cache, then this
- * {@link ConsoleSession} is reused, else a new 
- * {@link ConsoleSession} is created.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
     "PMD.TooManyMethods", "PMD.GodClass", "PMD.DataflowAnomalyAnalysis" })

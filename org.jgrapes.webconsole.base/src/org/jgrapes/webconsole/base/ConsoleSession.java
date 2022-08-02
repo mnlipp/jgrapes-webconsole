@@ -46,25 +46,30 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * that displays a console page (a console session). An instance 
  * is created when a new console window opens the WebSocket 
  * connection to the server for the first time. If the 
- * connection between the browser and the server is lost, 
- * the console code in the browser tries to establish a 
- * new WebSocket connection to the same, already
- * existing {@link ConsoleSession}. The {@link ConsoleSession} 
- * object is thus independent of the WebSocket connection 
- * that handles the actual transfer of notifications.
+ * connection between the browser and the server is lost
+ * (e.g. due to temporary network failure), the console code in 
+ * the browser tries to establish a new WebSocket connection 
+ * to the same, already existing {@link ConsoleSession}. 
+ * The {@link ConsoleSession} object is thus independent 
+ * of the WebSocket connection that handles the actual transfer 
+ * of notifications.
  * 
  * ![WebConsole Session](ConsoleSession.svg)
  * 
- * Because there is no reliable way to be notified when a
- * window in a browser closes, {@link ConsoleSession}s are
- * discarded automatically unless {@link #refresh()} is called
- * before the timeout occurs. Refresh messages are generated 
- * by the SPA automatically if the session is idle, i.e. no
- * data is sent due to user activity. To avoid having too many 
- * open WebSockets with idle sessions, the maximum idle time
- * can be configured with 
- * {@link ConsoleWeblet#setConsoleSessionInactivityTimeout(Duration)}
- * (see {@link ConsoleWeblet} for details}).
+ * To allow reconnection and because there is no reliable way 
+ * to be notified when a window in a browser closes, {@link Closed} 
+ * events from the network are ignored and {@link ConsoleSession}s 
+ * remain in an open state as long as they are in use. Only if no 
+ * data is received (i.e. {@link #refresh()} isn't called) for the 
+ * time span configured with
+ * {@link ConsoleWeblet#setConsoleSessionNetworkTimeout(long)}
+ * a {@link Closed} event is fired on the channel and the console 
+ * session is closed. (Method {@link #isConnected()} can be used 
+ * to check the connection state.)
+ * In order to keep the console connection in an open state while
+ * the session is inactive, i.e. no data is sent due to user activity,
+ * the SPA automatically generates refresh messages as configured
+ * with {@link ConsoleWeblet#setConsoleSessionRefreshInterval(Duration)}. 
  * 
  * {@link ConsoleSession} implements the {@link IOSubchannel}
  * interface. This allows the instances to be used as channels
@@ -73,20 +78,25 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * (see {@link #upstreamChannel()}) is the channel of the
  * WebSocket. It may be unavailable if the connection has
  * been interrupted and not (yet) re-established.
+ * The {@link IOSubchannel}'s response {@link EventPipeline} 
+ * must be used to send events (responses) to the console session 
+ * in the browser. No other event pipeline may be used for 
+ * this purpose, else messages will interleave.
  * 
- * The response {@link EventPipeline} must be used to send
- * events (responses) to the console session in the browser.
- * No other event pipeline may be used for this purpose, else
- * messages will interleave.
+ * To avoid having too many open WebSockets with inactive sessions,
+ * a maximum inactivity time can be configured with 
+ * {@link ConsoleWeblet#setConsoleSessionInactivityTimeout(Duration)}.
+ * The SPA always checks if the time since the last user activity 
+ * has reached or exceeded the configured limit before sending the 
+ * next refresh message. In case it has, the SPA stops sending 
+ * refresh messages and displays a "suspended" dialog to the user.
  * 
- * Because a console session (channel) remains conceptually open
- * even if the connection to the browser is lost (until the
- * timeout occurs) {@link Closed} events from upstream are not
- * forwarded immediately. Rather, a {@link Closed} event is
- * fired on the channel when the timeout occurs. Method
- * {@link #isConnected()} can be used to check the connection 
- * state.
- *  
+ * When the user chooses to resume, a new WebSocket is opened by the
+ * SPA. If the {@link Session} used before the idle timeout is 
+ * still available (hasn't reached its idle timeout or absolute timeout)
+ * and refers to a {@link ConsoleSession} not yet closed, then this
+ * {@link ConsoleSession} is reused, else the SPA is reloaded.
+ * 
  * As a convenience, the {@link ConsoleSession} provides
  * direct access to the browser session, which can 
  * usually only be obtained from the HTTP event or WebSocket
