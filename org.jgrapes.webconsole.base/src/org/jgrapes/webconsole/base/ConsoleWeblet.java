@@ -119,8 +119,7 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * When the user chooses to resume, a new WebSocket is opened by the
  * browser. If the {@link Session} used before the idle timeout is 
  * still available (hasn't reached its idle timeout or absolute timeout)
- * and holds the id of the previously used {@link ConsoleSession}
- * and this {@link ConsoleSession} is still in the cache, the
+ * and refers to a {@link ConsoleSession} still in the cache, then this
  * {@link ConsoleSession} is reused, else a new 
  * {@link ConsoleSession} is created.
  */
