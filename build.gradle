@@ -67,6 +67,7 @@ gitPublish {
 	commitMessage = "Updated."
 }
 
+// Delay reset (checkout)
 tasks.gitPublishReset.mustRunAfter ":org.jgrapes.webconsole.base:buildDoc"
 tasks.gitPublishReset.mustRunAfter ":aash-vue-components:buildDoc"
 
@@ -75,7 +76,9 @@ task stage {
     group = 'build'
 
     // Build everything first
-    subprojects.tasks.each { tc -> tc.findByName("build") }
+    dependsOn ":aash-vue-components:buildDoc"
+    dependsOn ":org.jgrapes.webconsole.base:buildDoc"
+    dependsOn subprojects.tasks.collect { tc -> tc.findByName("build") }.flatten()
 
     if (!isCiBuild || JavaVersion.current() == JavaVersion.VERSION_17) {
         // Publish JavaDoc
