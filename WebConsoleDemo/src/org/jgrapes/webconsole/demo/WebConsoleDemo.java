@@ -32,6 +32,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -151,7 +152,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
+        consoleWeblet.setConsoleSessionInactivityTimeout(Duration.ofMinutes(5));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
@@ -190,7 +191,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
+        consoleWeblet.setConsoleSessionInactivityTimeout(Duration.ofMinutes(5));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
@@ -229,7 +230,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
+        consoleWeblet.setConsoleSessionInactivityTimeout(Duration.ofMinutes(5));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
@@ -267,6 +268,7 @@ public class WebConsoleDemo extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleDemo.class)
                 .prependConsoleResourceProvider(WebConsoleDemo.class);
         WebConsole console = consoleWeblet.console();
+        consoleWeblet.setConsoleSessionInactivityTimeout(Duration.ofMinutes(5));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
