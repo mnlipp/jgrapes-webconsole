@@ -43,7 +43,7 @@ import org.jgrapes.io.util.ManagedBuffer;
  */
 public class WsEchoServer extends Component {
 
-    private Set<IOSubchannel> openChannels
+    private final Set<IOSubchannel> openChannels
         = Collections.newSetFromMap(new WeakHashMap<IOSubchannel, Boolean>());
 
     /**
