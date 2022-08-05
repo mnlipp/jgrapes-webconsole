@@ -112,7 +112,7 @@ public abstract class ConsoleWeblet extends Component {
 
     private final RenderSupport renderSupport = new RenderSupportImpl();
     private boolean useMinifiedResources = true;
-    private long psNetworkTimeout = 45_000;
+    private long csNetworkTimeout = 45_000;
     private long csRefreshInterval = 30_000;
     private long csInactivityTimeout = -1;
 
@@ -229,14 +229,14 @@ public abstract class ConsoleWeblet extends Component {
     /**
      * Sets the console session network timeout. The console session will be
      * removed if no messages have been received from the console session
-     * for the given number of milliseconds. The value defaults to 45 seconds.
+     * for the given duration. The value defaults to 45 seconds.
      * 
      * @param timeout the timeout in milli seconds
      * @return the console view for easy chaining
      */
     @SuppressWarnings("PMD.LinguisticNaming")
-    public ConsoleWeblet setConsoleSessionNetworkTimeout(long timeout) {
-        psNetworkTimeout = timeout;
+    public ConsoleWeblet setConsoleSessionNetworkTimeout(Duration timeout) {
+        csNetworkTimeout = timeout.toMillis();
         return this;
     }
 
@@ -245,8 +245,8 @@ public abstract class ConsoleWeblet extends Component {
      *
      * @return the timeout
      */
-    public long consoleSessionNetworkTimeout() {
-        return psNetworkTimeout;
+    public Duration consoleSessionNetworkTimeout() {
+        return Duration.ofMillis(csNetworkTimeout);
     }
 
     /**
@@ -731,7 +731,7 @@ public abstract class ConsoleWeblet extends Component {
                 .flatMap(opsId -> ConsoleSession.lookup(opsId))
                 .map(session -> session.replaceId(consoleSessionIds[0]))
                 .orElse(ConsoleSession.lookupOrCreate(consoleSessionIds[0],
-                    console, supportedLocales.keySet(), psNetworkTimeout))
+                    console, supportedLocales.keySet(), csNetworkTimeout))
                 .setUpstreamChannel(wsChannel)
                 .setSessionSupplier(sessionSupplier);
         wsChannel.setAssociated(ConsoleSession.class, consoleSession);

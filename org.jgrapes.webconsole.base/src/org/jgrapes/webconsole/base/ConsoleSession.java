@@ -62,7 +62,7 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * remain in an open state as long as they are in use. Only if no 
  * data is received (i.e. {@link #refresh()} isn't called) for the 
  * time span configured with
- * {@link ConsoleWeblet#setConsoleSessionNetworkTimeout(long)}
+ * {@link ConsoleWeblet#setConsoleSessionNetworkTimeout}
  * a {@link Closed} event is fired on the channel and the console 
  * session is closed. (Method {@link #isConnected()} can be used 
  * to check the connection state.)
