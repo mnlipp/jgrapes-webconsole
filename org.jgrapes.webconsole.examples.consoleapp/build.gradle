@@ -1,0 +1,19 @@
+buildscript {
+	
+	repositories {
+		mavenCentral()
+		maven { url 'https://jitpack.io' }
+	}
+  }
+
+repositories {
+	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+dependencies {
+    implementation project(':org.jgrapes.webconsole.vuejs')
+}
+
+generatePomFileForMavenPublication {
+    mustRunAfter ':org.jgrapes.webconsole.vuejs:jar'
+}
