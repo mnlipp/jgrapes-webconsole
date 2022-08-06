@@ -1,0 +1,12 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    runtimeOnly project(':org.jgrapes.webconsole.examples.consoleapp')
+    runtimeOnly project(':org.jgrapes.webconlet.sysinfo')
+}
+
+application {
+    mainClass = 'org.jgrapes.webconsole.examples.consoleapp.ConsoleApp'
+}
