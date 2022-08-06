@@ -88,56 +88,11 @@ jar {
 
 build.mustRunAfter "release"
 
-/* Replaced by release plugin
-task releaseTag {
-    doLast {
-        String name = project.name.startsWith(project.group + ".") ?
-            project.name.substring(project.group.length() + 1) : project.name
-        name = name.replace('.', '-')
-        String tag = name + "-" + project.version
-        grgit.tag.add(name: tag, message: "Released.")
-        grgit.push(refsOrSpecs: [tag])
-    }
-}
-
-build.mustRunAfter "releaseTag"
-
-*/
-
-/* Obsoleted by release plugin
-task needsToBeSnapshot {
-    doLast {
-        if (project.isSnapshot) {
-            return
-        }
-        String name = project.name.startsWith(project.group + ".") ?
-            project.name.substring(project.group.length() + 1) : project.name
-        name = name.replace('.', '-')
-        String tag = name + "-" + project.version
-        def tagForCurrent = grgit.tag.list().any { it.name == tag }
-        if (tagForCurrent) {
-            def diffs = "git diff --name-only HEAD ${tag} ${project.name}"
-                .execute().text.split()
-            if (diffs.size() > 0) {
-                println "Project ${project.name} was modified since release."
-            }
-        } else {
-            println "Project ${project.name} has no tag for current."
-        }
-    }
-}
-*/
-
-release {
-    enabled = false
-}
-
 task listChangedFiles {
     doLast {
         def released = scmVersion.tag.prefix + scmVersion.previousVersion
         "git diff --name-only HEAD ${released} ${project.name}"
-            .execute().text.split().findAll { !it.endsWith('/build.gradle') }
-            .each { println it }
+            .execute().text.split().each { println it }
     }
 }
 
@@ -147,11 +102,32 @@ task listBuildChangedOnly {
         def onlyBuild = !"git diff --name-only HEAD ${released} ${project.name}"
             .execute().text.split()
             .findAll { !it.endsWith('/build.gradle') }.any()
-            if (onlyBuild) {
-                println project.name
-            }
+        if (onlyBuild) {
+            println project.name
         }
     }
+}
+
+task listNeedsPublication {
+    def result = !project.isSnapshot
+    if (result) {
+        def repo = "https://repo.maven.apache.org/maven2/"
+        def url = repo + project.group.replace('.', '/') +
+            "/" + project.name + "/" + version + "/" +
+            project.name + "-" + version + ".pom"
+        def code = new URL(url).openConnection().with {
+            requestMethod = 'HEAD'
+            connect()
+            responseCode
+        }
+        result = (code == 404)
+    }
+    doLast {
+        if (result) {
+            println "${project.name} needs to be published."
+        }
+    }
+}
 
 task stageOnOssrh {
     group = "publishing"
