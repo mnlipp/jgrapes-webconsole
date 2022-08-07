@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.base;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -201,7 +200,7 @@ public class KVStoreBasedConsolePolicy extends Component {
         public ConsoleSessionDataStore(Session session) {
             storagePath = "/"
                 + WebConsoleUtils.userFromSession(session)
-                    .map(Principal::toString).orElse("")
+                    .map(ConsoleUser::getName).orElse("")
                 + "/" + KVStoreBasedConsolePolicy.class.getName();
         }
 

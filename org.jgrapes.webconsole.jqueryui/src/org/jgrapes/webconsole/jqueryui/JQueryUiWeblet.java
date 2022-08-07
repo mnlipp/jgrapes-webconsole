@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.jqueryui;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.security.Principal;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -39,6 +38,7 @@ import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.ResourceNotFoundException;
 import org.jgrapes.webconsole.base.WebConsole;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
@@ -215,7 +215,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
         channel.browserSession().put("themeProvider", themeProvider.themeId());
         channel.respond(new KeyValueStoreUpdate().update(
             "/" + WebConsoleUtils.userFromSession(channel.browserSession())
-                .map(Principal::toString).orElse("")
+                .map(ConsoleUser::getName).orElse("")
                 + "/themeProvider",
             themeProvider.themeId())).get();
         channel.respond(new SimpleConsoleCommand("reload"));

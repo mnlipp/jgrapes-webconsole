@@ -26,13 +26,11 @@ import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
-import javax.management.remote.JMXPrincipal;
 import javax.security.auth.Subject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
@@ -43,6 +41,7 @@ import org.jgrapes.http.events.DiscardSession;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
@@ -204,7 +203,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             channel.respond(new NotifyConletView(type(), conletId,
                 "updateUser",
                 WebConsoleUtils.userFromSession(channel.browserSession())
-                    .map(Principal::getName).orElse(null)));
+                    .map(ConsoleUser::getDisplayName).orElse(null)));
             renderedAs.add(RenderMode.Content);
         }
         return renderedAs;
@@ -216,8 +215,8 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         if ("loginData".equals(event.method())) {
             model.setDialogOpen(false);
             Subject user = new Subject();
-            user.getPrincipals()
-                .add(new JMXPrincipal(event.params().asString(0)));
+            user.getPrincipals().add(new ConsoleUser(event.params().asString(0),
+                event.params().asString(0)));
             channel.browserSession().put(Subject.class, user);
             channel.respond(new CloseModalDialog(type(), event.conletId()));
             channel.associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)

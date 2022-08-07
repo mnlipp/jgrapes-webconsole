@@ -24,7 +24,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -42,6 +41,7 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
@@ -78,7 +78,7 @@ public class HelloWorldConlet
 
     private String storagePath(Session session) {
         return "/" + WebConsoleUtils.userFromSession(session)
-            .map(Principal::toString).orElse("")
+            .map(ConsoleUser::getName).orElse("")
             + "/conlets/" + HelloWorldConlet.class.getName() + "/";
     }
 

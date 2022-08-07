@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,15 +41,16 @@ public final class WebConsoleUtils {
     }
 
     /**
-     * Convenience method for retrieving the user from
+     * Convenience method for retrieving the console user from
      * a {@link Subject} associated with the session.
      *
      * @param session the session
      * @return the user principal
      */
-    public static Optional<Principal> userFromSession(Session session) {
+    public static Optional<ConsoleUser> userFromSession(Session session) {
         return Optional.ofNullable((Subject) session.get(Subject.class))
-            .flatMap(subject -> subject.getPrincipals().stream().findFirst());
+            .flatMap(subject -> subject.getPrincipals(ConsoleUser.class)
+                .stream().findFirst());
     }
 
     /**

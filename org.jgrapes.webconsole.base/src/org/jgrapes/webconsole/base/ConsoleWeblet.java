@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
-import java.security.Principal;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -65,10 +64,8 @@ import org.jgrapes.io.events.Input;
 import org.jgrapes.io.events.Output;
 import org.jgrapes.io.util.CharBufferWriter;
 import org.jgrapes.io.util.LinkedIOSubchannel;
-import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.ConsoleCommand;
-import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.JsonInput;
 import org.jgrapes.webconsole.base.events.PageResourceRequest;
 import org.jgrapes.webconsole.base.events.ResourceRequestCompleted;
@@ -798,23 +795,6 @@ public abstract class ConsoleWeblet extends Component {
             session.responsePipeline().restrictEventSource(null);
             session.disconnected();
         });
-    }
-
-    /**
-     * Handles the {@link ConsoleReady} event.
-     *
-     * @param event the event
-     * @param consoleSession the console session
-     */
-    @Handler(channels = ConsoleChannel.class)
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession) {
-        String principal
-            = WebConsoleUtils.userFromSession(consoleSession.browserSession())
-                .map(Principal::toString).orElse("");
-        KeyValueStoreQuery query = new KeyValueStoreQuery(
-            "/" + principal + "/themeProvider", consoleSession);
-        fire(query, consoleSession);
     }
 
     /**
