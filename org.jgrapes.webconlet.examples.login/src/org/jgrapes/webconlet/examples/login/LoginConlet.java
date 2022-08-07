@@ -26,11 +26,14 @@ import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
+import javax.management.remote.JMXPrincipal;
+import javax.security.auth.Subject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
@@ -144,9 +147,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // If we are logged in, proceed
-        String conletId = type() + TYPE_INSTANCE_SEPARATOR + "Singleton";
-        if (stateFromSession(channel.browserSession(), conletId)
-            .map(model -> model.getUserName() != null).orElse(false)) {
+        if (channel.browserSession().containsKey(Subject.class)) {
             return;
         }
 
@@ -155,6 +156,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         channel.setAssociated(PENDING_CONSOLE_PREPARED, event);
 
         // Create model and save in session.
+        String conletId = type() + TYPE_INSTANCE_SEPARATOR + "Singleton";
         AccountModel accountModel = new AccountModel(conletId);
         accountModel.setDialogOpen(true);
         putInSession(channel.browserSession(), conletId, accountModel);
@@ -200,7 +202,9 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
                     fmModel(event, channel, conletId, model)))
                         .setRenderAs(RenderMode.Content));
             channel.respond(new NotifyConletView(type(), conletId,
-                "updateUser", model.getUserName()));
+                "updateUser",
+                WebConsoleUtils.userFromSession(channel.browserSession())
+                    .map(Principal::getName).orElse(null)));
             renderedAs.add(RenderMode.Content);
         }
         return renderedAs;
@@ -211,8 +215,10 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             ConsoleSession channel, AccountModel model) throws Exception {
         if ("loginData".equals(event.method())) {
             model.setDialogOpen(false);
-            model.setUserName(event.params().asString(0));
-            model.setPassword(event.params().asString(1).toCharArray());
+            Subject user = new Subject();
+            user.getPrincipals()
+                .add(new JMXPrincipal(event.params().asString(0)));
+            channel.browserSession().put(Subject.class, user);
             channel.respond(new CloseModalDialog(type(), event.conletId()));
             channel.associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
                 .ifPresentOrElse(ConsolePrepared::resumeHandling,
@@ -241,8 +247,6 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     public static class AccountModel extends ConletBaseModel {
 
         private boolean dialogOpen;
-        private String userName;
-        private transient char[] password;
 
         /**
          * Creates a new model with the given type and id.
@@ -270,44 +274,6 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
          */
         public void setDialogOpen(boolean dialogOpen) {
             this.dialogOpen = dialogOpen;
-        }
-
-        /**
-         * Gets the user name.
-         *
-         * @return the user name
-         */
-        public String getUserName() {
-            return userName;
-        }
-
-        /**
-         * Sets the user name.
-         *
-         * @param userName the new user name
-         */
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        /**
-         * Gets the password.
-         *
-         * @return the password
-         */
-        @SuppressWarnings("PMD.MethodReturnsInternalArray")
-        public char[] getPassword() {
-            return password;
-        }
-
-        /**
-         * Sets the password.
-         *
-         * @param password the new password
-         */
-        @SuppressWarnings({ "PMD.UseVarargs", "PMD.ArrayIsStoredDirectly" })
-        public void setPassword(char[] password) {
-            this.password = password;
         }
 
     }

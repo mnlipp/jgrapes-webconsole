@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
+import java.security.Principal;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -810,7 +811,7 @@ public abstract class ConsoleWeblet extends Component {
             ConsoleSession consoleSession) {
         String principal
             = WebConsoleUtils.userFromSession(consoleSession.browserSession())
-                .map(UserPrincipal::toString).orElse("");
+                .map(Principal::toString).orElse("");
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             "/" + principal + "/themeProvider", consoleSession);
         fire(query, consoleSession);

@@ -46,7 +46,6 @@ import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleSession;
-import org.jgrapes.webconsole.base.UserPrincipal;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
@@ -99,7 +98,7 @@ public class MarkdownDisplayConlet extends
 
     private String storagePath(Session session) {
         return "/" + WebConsoleUtils.userFromSession(session)
-            .map(UserPrincipal::toString).orElse("")
+            .map(Principal::toString).orElse("")
             + "/conlets/" + MarkdownDisplayConlet.class.getName() + "/";
     }
 
