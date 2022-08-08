@@ -40,7 +40,6 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
@@ -52,6 +51,7 @@ import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConletDeleted;
+import org.jgrapes.webconsole.base.events.ConsolePrepared;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
@@ -137,9 +137,23 @@ public class MarkdownDisplayConlet extends
                     type(), "MarkdownDisplay-functions.ftl.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "MarkdownDisplay-style.css")));
+    }
+
+    /**
+     * Retrieves the user's (or default) configuration information
+     * for all markdown display conlets from the key value store
+     * and save it in the session.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
+    @Handler
+    public void onConsolePrepared(ConsolePrepared event,
+            ConsoleSession channel) {
         KeyValueStoreQuery query = new KeyValueStoreQuery(
-            storagePath(consoleSession.browserSession()), consoleSession);
-        fire(query, consoleSession);
+            storagePath(channel.browserSession()), channel);
+        Event.onCompletion(query, q -> onQueryCompleted(q, channel));
+        fire(query, channel);
     }
 
     /**
@@ -149,18 +163,25 @@ public class MarkdownDisplayConlet extends
      * @param channel the channel
      * @throws JsonDecodeException the json decode exception
      */
-    @Handler
-    public void onKeyValueStoreData(
-            KeyValueStoreData event, ConsoleSession channel)
-            throws JsonDecodeException {
-        if (!event.event().query()
-            .equals(storagePath(channel.browserSession()))) {
-            return;
-        }
-        for (String json : event.data().values()) {
-            MarkdownDisplayModel model = JsonBeanDecoder.create(json)
-                .readObject(MarkdownDisplayModel.class);
-            putInSession(channel.browserSession(), model.getConletId(), model);
+    @SuppressWarnings("PMD.EmptyCatchBlock")
+    public void onQueryCompleted(
+            KeyValueStoreQuery query, ConsoleSession channel) {
+        try {
+            for (var result : query.results()) {
+                for (String json : result.values()) {
+                    try {
+                        MarkdownDisplayModel model
+                            = JsonBeanDecoder.create(json)
+                                .readObject(MarkdownDisplayModel.class);
+                        putInSession(channel.browserSession(),
+                            model.getConletId(), model);
+                    } catch (JsonDecodeException e) {
+                        // Ignore invalid data
+                    }
+                }
+            }
+        } catch (InterruptedException e) {
+            // Ignore no data
         }
     }
 
