@@ -30,16 +30,15 @@ import org.jdrupes.json.JsonDecodeException;
 import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
+import org.jgrapes.core.Event;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.events.ConsoleLayoutChanged;
 import org.jgrapes.webconsole.base.events.ConsolePrepared;
-import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.LastConsoleLayout;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 
@@ -65,19 +64,14 @@ import org.jgrapes.webconsole.base.events.RenderConletRequest;
  * @startuml KVPPBootSeq.svg
  * hide footbox
  * 
- * Browser -> WebConsole: "consoleReady"
- * activate WebConsole
- * WebConsole -> KVStoreBasedConsolePolicy: ConsoleReady
- * deactivate WebConsole
+ * actor System
+ * System -> KVStoreBasedConsolePolicy: ConsolePrepared
  * activate KVStoreBasedConsolePolicy
  * KVStoreBasedConsolePolicy -> "KV Store": KeyValueStoreQuery
+ * deactivate KVStoreBasedConsolePolicy
  * activate "KV Store"
  * "KV Store" -> KVStoreBasedConsolePolicy: KeyValueStoreData
  * deactivate "KV Store"
- * deactivate KVStoreBasedConsolePolicy
- * 
- * actor System
- * System -> KVStoreBasedConsolePolicy: ConsolePrepared
  * activate KVStoreBasedConsolePolicy
  * KVStoreBasedConsolePolicy -> WebConsole: LastConsoleLayout
  * activate WebConsole
@@ -101,6 +95,8 @@ import org.jgrapes.webconsole.base.events.RenderConletRequest;
  * activate KVStoreBasedConsolePolicy
  * KVStoreBasedConsolePolicy -> "KV Store": KeyValueStoreUpdate
  * deactivate KVStoreBasedConsolePolicy
+ * activate "KV Store"
+ * deactivate "KV Store"
  * 
  * @enduml
  */
@@ -124,42 +120,7 @@ public class KVStoreBasedConsolePolicy extends Component {
     }
 
     /**
-     * Intercept the {@link ConsoleReady} event. Request the 
-     * session data from the key/value store and resume.
-     * 
-     * @param event
-     * @param channel
-     * @throws InterruptedException
-     */
-    @Handler
-    public void onConsoleReady(ConsoleReady event, ConsoleSession channel)
-            throws InterruptedException {
-        ConsoleSessionDataStore sessionDs = channel.associated(
-            ConsoleSessionDataStore.class,
-            () -> new ConsoleSessionDataStore(channel.browserSession()));
-        sessionDs.onConsoleReady(event, channel);
-    }
-
-    /**
-     * Handle returned data.
-     *
-     * @param event the event
-     * @param channel the channel
-     * @throws JsonDecodeException the json decode exception
-     */
-    @Handler
-    public void onKeyValueStoreData(
-            KeyValueStoreData event, ConsoleSession channel)
-            throws JsonDecodeException {
-        Optional<ConsoleSessionDataStore> optSessionDs
-            = channel.associated(ConsoleSessionDataStore.class);
-        if (optSessionDs.isPresent()) {
-            optSessionDs.get().onKeyValueStoreData(event, channel);
-        }
-    }
-
-    /**
-     * Handle web console page loaded.
+     * Create browser session scoped storage and forward event to it.
      *
      * @param event the event
      * @param channel the channel
@@ -167,12 +128,14 @@ public class KVStoreBasedConsolePolicy extends Component {
     @Handler
     public void onConsolePrepared(
             ConsolePrepared event, ConsoleSession channel) {
-        channel.associated(ConsoleSessionDataStore.class).ifPresent(
-            psess -> psess.onConsolePrepared(event, channel));
+        ((KVStoredLayoutData) channel.browserSession().transientData()
+            .computeIfAbsent(KVStoredLayoutData.class,
+                key -> new KVStoredLayoutData(channel.browserSession())))
+                    .onConsolePrepared(event, channel);
     }
 
     /**
-     * Handle changed layout.
+     * Forward layout changed event to browser session scoped storage.
      *
      * @param event the event
      * @param channel the channel
@@ -181,8 +144,9 @@ public class KVStoreBasedConsolePolicy extends Component {
     @Handler
     public void onConsoleLayoutChanged(ConsoleLayoutChanged event,
             ConsoleSession channel) throws IOException {
-        Optional<ConsoleSessionDataStore> optDs = channel.associated(
-            ConsoleSessionDataStore.class);
+        Optional<KVStoredLayoutData> optDs = Optional.ofNullable(
+            (KVStoredLayoutData) channel.browserSession().transientData()
+                .get(KVStoredLayoutData.class));
         if (optDs.isPresent()) {
             optDs.get().onConsoleLayoutChanged(event, channel);
         }
@@ -192,82 +156,69 @@ public class KVStoreBasedConsolePolicy extends Component {
      * Stores the data for the web console session.
      */
     @SuppressWarnings("PMD.CommentRequired")
-    private class ConsoleSessionDataStore {
+    private class KVStoredLayoutData {
 
         private final String storagePath;
         private Map<String, Object> persisted;
 
-        public ConsoleSessionDataStore(Session session) {
+        public KVStoredLayoutData(Session session) {
             storagePath = "/"
                 + WebConsoleUtils.userFromSession(session)
                     .map(ConsoleUser::getName).orElse("")
                 + "/" + KVStoreBasedConsolePolicy.class.getName();
         }
 
-        public void onConsoleReady(ConsoleReady event, IOSubchannel channel)
-                throws InterruptedException {
-            if (persisted != null) {
-                return;
-            }
-            KeyValueStoreQuery query = new KeyValueStoreQuery(
-                storagePath, channel);
-            fire(query, channel);
-        }
-
-        public void onKeyValueStoreData(
-                KeyValueStoreData event, IOSubchannel channel)
-                throws JsonDecodeException {
-            if (!event.event().query().equals(storagePath)) {
-                return;
-            }
-            String data = event.data().get(storagePath);
-            if (data != null) {
-                JsonBeanDecoder decoder = JsonBeanDecoder.create(data);
-                @SuppressWarnings({ "unchecked", "PMD.LooseCoupling" })
-                Class<Map<String, Object>> cls
-                    = (Class<Map<String, Object>>) (Class<?>) HashMap.class;
-                persisted = decoder.readObject(cls);
-            }
-        }
-
         @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
             "PMD.AvoidInstantiatingObjectsInLoops" })
         public void onConsolePrepared(
                 ConsolePrepared event, IOSubchannel channel) {
-            if (persisted == null) {
-                // Retrieval was not successful
+            KeyValueStoreQuery query = new KeyValueStoreQuery(
+                storagePath, channel);
+            Event.onCompletion(query, e -> onQueryCompleted(e, channel,
+                event.event().renderSupport()));
+            fire(query, channel);
+        }
+
+        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+        public void onQueryCompleted(KeyValueStoreQuery query,
+                IOSubchannel channel, RenderSupport renderSupport) {
+            try {
+                String data = query.get().get(storagePath);
+                if (data == null) {
+                    persisted = new HashMap<>();
+                } else {
+                    JsonBeanDecoder decoder = JsonBeanDecoder.create(data);
+                    @SuppressWarnings({ "unchecked", "PMD.LooseCoupling" })
+                    Class<Map<String, Object>> cls
+                        = (Class<Map<String, Object>>) (Class<?>) HashMap.class;
+                    persisted = decoder.readObject(cls);
+                }
+            } catch (InterruptedException | JsonDecodeException e) {
                 persisted = new HashMap<>();
             }
+
             // Make sure data is consistent
             @SuppressWarnings("unchecked")
             List<String> previewLayout = (List<String>) persisted
                 .computeIfAbsent("previewLayout",
-                    newKey -> {
-                        return Collections.emptyList();
-                    });
+                    newKey -> Collections.emptyList());
             @SuppressWarnings("unchecked")
             List<String> tabsLayout = (List<String>) persisted.computeIfAbsent(
-                "tabsLayout", newKey -> {
-                    return Collections.emptyList();
-                });
+                "tabsLayout", newKey -> Collections.emptyList());
             JsonObject xtraInfo = (JsonObject) persisted.computeIfAbsent(
-                "xtraInfo", newKey -> {
-                    return JsonObject.create();
-                });
+                "xtraInfo", newKey -> JsonObject.create());
 
-            // Update layout
+            // Update (now consistent) layout
             channel.respond(new LastConsoleLayout(
                 previewLayout, tabsLayout, xtraInfo));
 
             // Restore conlets
             for (String conletId : tabsLayout) {
-                fire(new RenderConletRequest(
-                    event.event().renderSupport(), conletId,
+                fire(new RenderConletRequest(renderSupport, conletId,
                     RenderMode.asSet(RenderMode.View)), channel);
             }
             for (String conletId : previewLayout) {
-                fire(new RenderConletRequest(
-                    event.event().renderSupport(), conletId,
+                fire(new RenderConletRequest(renderSupport, conletId,
                     RenderMode.asSet(RenderMode.Preview,
                         RenderMode.Foreground)),
                     channel);
