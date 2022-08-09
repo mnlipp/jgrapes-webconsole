@@ -33,6 +33,7 @@ sourceSets {
 
 task compileTs(type: NodeTask) {
     dependsOn ':npmInstall'
+    dependsOn ':aash-vue-components:buildLib'
     dependsOn ':org.jgrapes.webconsole.base:buildLib'
     dependsOn ':org.jgrapes.webconsole.provider.vue:prepareNpmLibs'
     dependsOn prepareAashLib
@@ -60,6 +61,7 @@ ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/provi
  * fully resolved. 
  */
 task buildDoc(type: NodeTask, dependsOn: ':npmInstall') {
+    dependsOn compileTs
     inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
     outputs.dir project.file(jsDocDestDir)
