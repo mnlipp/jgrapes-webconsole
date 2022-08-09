@@ -33,6 +33,7 @@ sourceSets {
 
 task compileTs(type: NodeTask) {
     dependsOn ':npmInstall'
+    dependsOn ':org.jgrapes.webconsole.base:buildLib'
     dependsOn ':org.jgrapes.webconsole.provider.vue:prepareNpmLibs'
     dependsOn prepareAashLib
     inputs.dir project.file('src')
