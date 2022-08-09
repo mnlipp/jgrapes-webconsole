@@ -15,7 +15,7 @@ Provide-Capability: osgi.serviceloader; \
 Export-Package: \
 	org.jgrapes.webconsole.test,\
 	org.jgrapes.webconsole.demo.conlet.helloworld,\
-	org.jgrapes.webconsole.demo.conlet.tabledemo,\
+	org.jgrapes.webconsole.test.conlet.tabledemo,\
 	org.jgrapes.webconsole.demo.conlet.formtest
 	
 -fixupmessages.local: \
