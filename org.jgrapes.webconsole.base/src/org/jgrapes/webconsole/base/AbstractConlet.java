@@ -563,9 +563,13 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
-     * Creates an instance of the type that represents the conlet's state.
-     * The default implementation returns {@link Optional#isEmpty()}, 
-     * thus indicating that no state information is needed or available.
+     * Creates an instance of the type that represents the conlet's state,
+     * initialized with default values. The default implementation returns 
+     * {@link Optional#isEmpty()}, thus indicating that no state 
+     * information is needed or available.
+     * 
+     * This method should always be overridden if conlet instances
+     * have associated state.
      *
      * @param event the event, which may contain required information 
      * (see {@link AddConletRequest#properties()})
@@ -591,6 +595,11 @@ public abstract class AbstractConlet<S extends Serializable>
      * implementation simply invokes {@link 
      * #createStateRepresentation} and returns its result. If state
      * is provided, it is put in the browser session by the invoker.
+     * 
+     * This method should only be overridden if the event has associated
+     * information (see {@link AddConletRequest#addProperty}) that
+     * can be used to initialize the state with information that differs
+     * from the defaults used by {@link #createStateRepresentation}.
      *
      * @param event the event 
      * @param session the console session
