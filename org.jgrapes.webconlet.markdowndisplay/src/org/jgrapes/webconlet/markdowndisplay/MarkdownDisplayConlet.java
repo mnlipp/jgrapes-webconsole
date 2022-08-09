@@ -51,12 +51,12 @@ import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConletDeleted;
-import org.jgrapes.webconsole.base.events.ConsolePrepared;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.OpenModalDialog;
 import org.jgrapes.webconsole.base.events.RenderConlet;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.UpdateConletModel;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
@@ -140,52 +140,6 @@ public class MarkdownDisplayConlet extends
     }
 
     /**
-     * Retrieves the user's (or default) configuration information
-     * for all markdown display conlets from the key value store
-     * and save it in the session.
-     *
-     * @param event the event
-     * @param channel the channel
-     */
-    @Handler
-    public void onConsolePrepared(ConsolePrepared event,
-            ConsoleSession channel) {
-        KeyValueStoreQuery query = new KeyValueStoreQuery(
-            storagePath(channel.browserSession()), channel);
-        Event.onCompletion(query, q -> onQueryCompleted(q, channel));
-        fire(query, channel);
-    }
-
-    /**
-     * Restore web console component information, if contained in the event.
-     *
-     * @param event the event
-     * @param channel the channel
-     * @throws JsonDecodeException the json decode exception
-     */
-    @SuppressWarnings("PMD.EmptyCatchBlock")
-    public void onQueryCompleted(
-            KeyValueStoreQuery query, ConsoleSession channel) {
-        try {
-            for (var result : query.results()) {
-                for (String json : result.values()) {
-                    try {
-                        MarkdownDisplayModel model
-                            = JsonBeanDecoder.create(json)
-                                .readObject(MarkdownDisplayModel.class);
-                        putInSession(channel.browserSession(),
-                            model.getConletId(), model);
-                    } catch (JsonDecodeException e) {
-                        // Ignore invalid data
-                    }
-                }
-            }
-        } catch (InterruptedException e) {
-            // Ignore no data
-        }
-    }
-
-    /**
      * Generates a new component instance id or uses the one stored in the
      * event's properties as `CONLET_ID` (see 
      * {@link AddConletRequest#properties()})
@@ -246,6 +200,42 @@ public class MarkdownDisplayConlet extends
             jsonState));
 
         // Return model
+        return Optional.of(model);
+    }
+
+    @Override
+    @SuppressWarnings("PMD.EmptyCatchBlock")
+    protected Optional<MarkdownDisplayModel> recreateState(
+            RenderConletRequest event, ConsoleSession channel,
+            String conletId) throws IOException {
+        KeyValueStoreQuery query = new KeyValueStoreQuery(
+            storagePath(channel.browserSession()) + conletId, channel);
+        newEventPipeline().fire(query, channel);
+        try {
+            if (!query.results().isEmpty()) {
+                var json = query.results().get(0).values().stream().findFirst()
+                    .get();
+                MarkdownDisplayModel model = JsonBeanDecoder.create(json)
+                    .readObject(MarkdownDisplayModel.class);
+                return Optional.of(model);
+            }
+        } catch (InterruptedException | JsonDecodeException e) {
+            // Means we have no result.
+        }
+
+        // Create fallback model
+        ResourceBundle resourceBundle
+            = resourceBundle(channel.browserSession().locale());
+        MarkdownDisplayModel model = new MarkdownDisplayModel(conletId);
+        model.setTitle(resourceBundle.getString("conletName"));
+        model.setPreviewContent("");
+        model.setViewContent("");
+        model.setDeletable(Boolean.TRUE);
+
+        // Save model and return
+        channel.respond(new KeyValueStoreUpdate().update(
+            storagePath(channel.browserSession()) + model.getConletId(),
+            JsonBeanEncoder.create().writeObject(model).toJson()));
         return Optional.of(model);
     }
 
