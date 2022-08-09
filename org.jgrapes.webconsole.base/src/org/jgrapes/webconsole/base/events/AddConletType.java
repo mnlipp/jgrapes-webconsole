@@ -112,7 +112,8 @@ public class AddConletType extends ConsoleCommand {
     }
 
     /**
-     * Sets the display names.
+     * Sets the names (by locale) used to display the type
+     * in the user interface.
      * 
      * @param displayNames the display names
      * @return the event for easy chaining
@@ -133,12 +134,13 @@ public class AddConletType extends ConsoleCommand {
     }
 
     /**
-     * Add a render mode to be offered to the user. Several modes may
-     * be added. The modes {@link RenderMode#Preview} and 
-     * {@link RenderMode#View} usually cause the conlet type to be added 
-     * to a menu. If a conlet type's only mode is
-     * {@link RenderMode#Content}, it shouldn't be offered to the user
-     * at all.  
+     * Add a render mode to be offered to the user for creating
+     * new conlet instances. Several modes may be added.
+     * Usually only the modes {@link RenderMode#Preview} and
+     * {@link RenderMode#View} make sense and are the only ones
+     * supported by webconsoles. They commonly cause the conlet
+     * type to be added to a menu which is made available to the
+     * user.
      *
      * @param mode the mode
      * @return the event for easy chaining
