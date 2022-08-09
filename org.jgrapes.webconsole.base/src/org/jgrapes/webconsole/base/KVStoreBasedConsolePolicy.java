@@ -183,7 +183,8 @@ public class KVStoreBasedConsolePolicy extends Component {
         public void onQueryCompleted(KeyValueStoreQuery query,
                 IOSubchannel channel, RenderSupport renderSupport) {
             try {
-                String data = query.get().get(storagePath);
+                String data = Optional.ofNullable(query.get())
+                    .map(m -> m.get(storagePath)).orElse(null);
                 if (data == null) {
                     persisted = new HashMap<>();
                 } else {
