@@ -36,9 +36,9 @@ import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
-import org.jgrapes.webconsole.base.events.UpdateConletType;
 import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
+import org.jgrapes.webconsole.base.events.UpdateConletType;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
 /**
