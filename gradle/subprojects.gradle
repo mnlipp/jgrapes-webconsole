@@ -6,7 +6,7 @@ apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
 if (project.name.startsWith("org.jgrapes") 
-    || project.name == "WebConsoleDemo") {
+    || project.name == "WebConsoleTest") {
 
     apply plugin: 'java-library'
     apply plugin: 'biz.aQute.bnd.builder'

@@ -1,0 +1,3 @@
+org.jgrapes.webconsole.test.conlet.removeself.RemoveSelfConletFactory
+org.jgrapes.webconsole.test.conlet.tabledemo.TableDemoConletFactory
+org.jgrapes.webconsole.test.conlet.headericons.HeaderIconsConletFactory
