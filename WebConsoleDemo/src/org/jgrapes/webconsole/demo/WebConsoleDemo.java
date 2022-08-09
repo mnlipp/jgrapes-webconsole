@@ -36,6 +36,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import org.jgrapes.core.Channel;
@@ -61,6 +62,7 @@ import org.jgrapes.webconsole.base.ConletComponentFactory;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
 import org.jgrapes.webconsole.base.KVStoreBasedConsolePolicy;
 import org.jgrapes.webconsole.base.PageResourceProviderFactory;
+import org.jgrapes.webconsole.base.UserBasedConletFilter;
 import org.jgrapes.webconsole.base.WebConsole;
 import org.jgrapes.webconsole.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.webconsole.jqueryui.JQueryUiWeblet;
@@ -71,6 +73,7 @@ import org.osgi.framework.BundleContext;
 /**
  *
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class WebConsoleDemo extends Component implements BundleActivator {
 
     private WebConsoleDemo app;
@@ -273,6 +276,9 @@ public class WebConsoleDemo extends Component implements BundleActivator {
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
         console.attach(new NewConsoleSessionPolicy(console.channel()));
+        console.attach(new UserBasedConletFilter(console.channel(),
+            Map.of("conletTypesByUsername", Map.of("admin", Set.of(
+                "org.jgrapes.webconlet.sysinfo.SysInfoConlet")))));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),

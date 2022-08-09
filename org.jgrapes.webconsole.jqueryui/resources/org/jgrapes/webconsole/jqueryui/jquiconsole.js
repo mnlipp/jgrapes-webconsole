@@ -140,38 +140,16 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
     }
 
     addConletType(conletType, displayNames, renderModes, pageComponents) {
+        let _this = this;
         // Add embedded to area(s)
         let parent = document.querySelector("#jq-console-top-bar");
         for (let item of pageComponents) {
             if (item.area === "headerIcons") {
-                this._embedAsHeaderIcon(parent, conletType, item);
+                _this._embedAsHeaderIcon(parent, conletType, item);
             }
         }
-        // Other modes        
-        if (!renderModes.includes(RenderMode.Preview)
-            && !renderModes.includes(RenderMode.View)) {
-            return;
-        }
-        // Add to menu
-        this._conletDisplayNames[conletType] = displayNames;
-        let lang = document.querySelector("html").getAttribute('lang');
-        let displayName = JGConsole.forLang(displayNames, lang);
-        let item = $('<li class="ui-menu-item">'
-            + '<div class="ui-menu-item-wrapper" data-conlet-type="'
-            + conletType + '">' + displayName + '</div></li>');
-        item.find("div").data("render-modes", renderModes);
-        let inserted = false;
-        $("#addon-menu-list").find(".ui-menu-item").each(function(index, el) {
-            if (displayName < $(el).find(".ui-menu-item-wrapper").text()) {
-                $(el).before(item);
-                inserted = true;
-                return false;
-            }
-        });
-        if (!inserted) {
-            $("#addon-menu-list").append(item);
-        }
-
+        _this._conletDisplayNames[conletType] = displayNames;
+        _this._addConletTypeToMenu(conletType, renderModes);
     }
 
     _embedAsHeaderIcon(parent, conletType, spec) {
@@ -201,11 +179,41 @@ JQUIConsole.Renderer = class extends JGConsole.Renderer {
         parent.prepend(conlet);
     }        
 
-    removeConletType(conletType) {
+    _addConletTypeToMenu(conletType, renderModes) {
+        let _this = this;
+        if (!renderModes.includes(RenderMode.Preview)
+            && !renderModes.includes(RenderMode.View)) {
+            return;
+        }
+
+        // Add to menu
+        let lang = document.querySelector("html").getAttribute('lang');
+        let displayNames = _this._conletDisplayNames[conletType];
+        let displayName = JGConsole.forLang(displayNames, lang);
+        let item = $('<li class="ui-menu-item">'
+            + '<div class="ui-menu-item-wrapper" data-conlet-type="'
+            + conletType + '">' + displayName + '</div></li>');
+        item.find("div").data("render-modes", renderModes);
+        let inserted = false;
+        $("#addon-menu-list").find(".ui-menu-item").each(function(index, el) {
+            if (displayName < $(el).find(".ui-menu-item-wrapper").text()) {
+                $(el).before(item);
+                inserted = true;
+                return false;
+            }
+        });
+        if (!inserted) {
+            $("#addon-menu-list").append(item);
+        }
+    }
+
+    updateConletType(conletType, renderModes) {
         // Remove from menu
         let item = $("#addon-menu-list").find(
             'li div[data-conlet-type="' + conletType + '"]');
         item.parent().remove();
+        // Add to menu
+        this._addConletTypeToMenu(conletType, renderModes, displayNames);
     }
 
     lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {

@@ -65,11 +65,11 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.DeleteConlet;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
-import org.jgrapes.webconsole.base.events.RemoveConletType;
 import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.SetLocale;
+import org.jgrapes.webconsole.base.events.UpdateConletType;
 
 /**
  * Provides a base class for implementing web console components.
@@ -1081,8 +1081,8 @@ public abstract class AbstractConlet<S extends Serializable>
 
     /**
      * Iterates over all sessions and fires {@link DeleteConlet}
-     * events for all known conlets and a {@link RemoveConletType} 
-     * event.
+     * events for all known conlets and a {@link UpdateConletType} 
+     * (with no render modes) event.
      */
     protected void doRemoveConletType() {
         conletIdsByConsoleSession().forEach((session, conletIds) -> {
@@ -1090,7 +1090,7 @@ public abstract class AbstractConlet<S extends Serializable>
                 session.respond(
                     new DeleteConlet(conletId, RenderMode.basicModes));
             });
-            session.respond(new RemoveConletType(type()));
+            session.respond(new UpdateConletType(type()));
         });
     }
 

@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2017-2018 Michael N. Lipp
+ * Copyright (C) 2022 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -20,24 +20,21 @@ package org.jgrapes.webconsole.base.events;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
+import java.util.Set;
+import org.jgrapes.webconsole.base.Conlet;
+import org.jgrapes.webconsole.base.Conlet.RenderMode;
 
 /**
- * Removes a web console component type from the console page.
- *
- * Implementations of the front-end are not expected to remove
- * resources from the page that were added by {@link AddConletType}
- * because this is hardly possible to implement.
+ * Inform the front-end about changes of a conlet type.
  * 
- * The only expected action of the front-end is to prevent further
- * usage of the conlet, typically by removing the conlet type from 
- * e.g. a menu that allows adding conlets. The front-end is also
- * not expected to remove existing instances of the conlet. If
- * such a behavior is desired, the required {@link DeleteConlet}
- * events must be generated on the server side.
+ * The only supported change is a modification of the render
+ * modes offered to the user (see {@link AddConletType#addRenderMode}.
  */
-public class RemoveConletType extends ConsoleCommand {
+public class UpdateConletType extends ConsoleCommand {
 
     private final String conletType;
+    private final Set<Conlet.RenderMode> renderModes = new HashSet<>();
 
     /**
      * Create a new event for the given web console component type.
@@ -45,7 +42,7 @@ public class RemoveConletType extends ConsoleCommand {
      * @param conletType a unique id for the web console component type 
      * (usually the class name)
      */
-    public RemoveConletType(String conletType) {
+    public UpdateConletType(String conletType) {
         this.conletType = conletType;
     }
 
@@ -58,8 +55,30 @@ public class RemoveConletType extends ConsoleCommand {
         return conletType;
     }
 
+    /**
+     * Add a render mode.
+     *
+     * @param mode the mode
+     * @return the event for easy chaining
+     */
+    public UpdateConletType addRenderMode(RenderMode mode) {
+        renderModes.add(mode);
+        return this;
+    }
+
+    /**
+     * Return the render modes.
+     * 
+     * @return the result
+     */
+    public Set<RenderMode> renderModes() {
+        return renderModes;
+    }
+
     @Override
     public void toJson(Writer writer) throws IOException {
-        toJson(writer, "removeConletType", conletType());
+        toJson(writer, "updateConletType", conletType(),
+            renderModes().stream().map(RenderMode::name)
+                .toArray(size -> new String[size]));
     }
 }

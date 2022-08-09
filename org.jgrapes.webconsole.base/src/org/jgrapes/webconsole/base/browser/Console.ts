@@ -76,9 +76,9 @@ class Console {
                 _this._renderer!.addConletType
                     (conletType, asMap, renderModes, pageComps);
             });
-        this._webSocket.addMessageHandler('removeConletType',
-            function(conletType) {
-                _this._renderer!.removeConletType(conletType);
+        this._webSocket.addMessageHandler('updateConletType',
+            function(conletType, renderModes: RenderMode[]) {
+                _this._renderer!.updateConletType(conletType, renderModes);
             });
         this._webSocket.addMessageHandler('lastConsoleLayout',
             (previewLayout, tabsLayout, xtraInfo) => {

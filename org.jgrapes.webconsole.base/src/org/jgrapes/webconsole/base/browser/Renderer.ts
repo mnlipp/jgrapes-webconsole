@@ -219,8 +219,9 @@ abstract class Renderer {
      * However, front-ends can also force a reload of the application.
      *
      * @param conletType the conlet type
+     * @param renderModes the render modes
      */
-    removeConletType(conletType: string) {
+    updateConletType(conletType: string, renderModes: RenderMode[]) {
         Log.warn("Not implemented!");
     }
 

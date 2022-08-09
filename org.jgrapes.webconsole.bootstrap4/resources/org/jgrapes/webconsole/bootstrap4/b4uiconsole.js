@@ -136,34 +136,9 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
                 this._embedAsHeaderIcon(parent, conletType, item);
             }
         }
-        // Other modes        
-        if (!renderModes.includes(RenderMode.Preview)
-            && !renderModes.includes(RenderMode.View)) {
-            return;
-        }
-        // Add to menu
+        // Maybe add to menu
         this._conletDisplayNames[conletType] = displayNames;
-        let _this = this;
-        let lang = document.querySelector("html").getAttribute('lang');
-        let displayName = JGConsole.forLang(displayNames, lang);
-        let item = $('<a class="dropdown-item" href="#" data-conlet-type="'
-            + conletType + '">' + displayName + '</a>');
-        item.data("render-modes", renderModes)
-        item.on('click', function(e) {
-            _this.console.addConlet($(this).data("conlet-type"),
-                $(this).data("render-modes"));
-        });
-        let inserted = false;
-        $("#consoleNavbarConletList").find(".dropdown-item").each(function(index, el) {
-            if (displayName < $(el).text()) {
-                $(el).before(item);
-                inserted = true;
-                return false;
-            }
-        });
-        if (!inserted) {
-            $("#consoleNavbarConletList").append(item);
-        }
+        this._addConletTypeToMenu(conletType, renderModes);
     }
 
     _embedAsHeaderIcon(parent, conletType, spec) {
@@ -193,7 +168,36 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
         parent.append(item);
     }        
 
-    removeConletType(conletType) {
+    _addConletTypeToMenu(conletType, renderModes) {
+        if (!renderModes.includes(RenderMode.Preview)
+            && !renderModes.includes(RenderMode.View)) {
+            return;
+        }
+        let _this = this;
+        let lang = document.querySelector("html").getAttribute('lang');
+        let displayNames = this._conletDisplayNames[conletType];
+        let displayName = JGConsole.forLang(displayNames, lang);
+        let item = $('<a class="dropdown-item" href="#" data-conlet-type="'
+            + conletType + '">' + displayName + '</a>');
+        item.data("render-modes", renderModes)
+        item.on('click', function(e) {
+            _this.console.addConlet($(this).data("conlet-type"),
+                $(this).data("render-modes"));
+        });
+        let inserted = false;
+        $("#consoleNavbarConletList").find(".dropdown-item").each(function(index, el) {
+            if (displayName < $(el).text()) {
+                $(el).before(item);
+                inserted = true;
+                return false;
+            }
+        });
+        if (!inserted) {
+            $("#consoleNavbarConletList").append(item);
+        }
+    }
+    
+    updateConletType(conletType, renderModes) {
         // Remove from menu
         let _this = this;
         $("#consoleNavbarConletList").find(".dropdown-item").each(function(index, el) {
@@ -202,6 +206,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
                 return false;
             }
         });
+        this._addConletTypeToMenu(conletType, renderModes);
     }
 
     lastConsoleLayout(previewLayout, tabsLayout, xtraInfo) {

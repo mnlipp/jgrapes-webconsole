@@ -37,6 +37,7 @@ export default class Renderer extends JGConsole.Renderer {
     private _localeMenuItems: [[string, string]];
     private _lang: Ref<string>;
     private _conletTypes: Array<[string | (() => string), string, string[]]>;
+    private _displayNames: Map<string, Map<string,string>>;
     private _previewGrid: GridStack | null = null;
     private _isConfigured = false;
 
@@ -54,6 +55,7 @@ export default class Renderer extends JGConsole.Renderer {
         this._lang = ref(document.querySelector("html")!
             .getAttribute('lang') || 'en');
         this._conletTypes = reactive<Array<[string, string, [string]]>>([]);
+        this._displayNames = new Map<string,Map<string,string>>();
     }
     
     _consoleTabs() {
@@ -165,6 +167,7 @@ export default class Renderer extends JGConsole.Renderer {
             renderModes: RenderMode[], 
             pageComponents: PageComponentSpecification[]) {
         let _this = this;
+        _this._displayNames.set(conletType, displayNames);
         if (renderModes.includes(RenderMode.Preview)
             || renderModes.includes(RenderMode.View)) {
             // Add to menu
@@ -207,11 +210,20 @@ export default class Renderer extends JGConsole.Renderer {
         header.append(conlet);
     }        
 
-    removeConletType(conletType: string) {
+    updateConletType(conletType: string, renderModes: RenderMode[]) {
         // Remove from menu
         let _this = this;
         _this._conletTypes.splice(0, _this._conletTypes.length,
-            ..._this._conletTypes.filter(el => el[1] != conletType));             
+            ..._this._conletTypes.filter(el => el[1] != conletType));
+        let displayNames = _this._displayNames.get(conletType)!;
+        if (renderModes.includes(RenderMode.Preview)
+            || renderModes.includes(RenderMode.View)) {
+            // Add to menu
+            let label = function() {
+                return <string>JGConsole.forLang(displayNames, _this.locale()) || "Conlet";
+            };
+            _this._conletTypes.push([label, conletType, renderModes]);
+        }
     }
     
     consoleConfigured() {
