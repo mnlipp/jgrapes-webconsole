@@ -326,8 +326,8 @@ export default defineComponent({
     
     setup(props) {
         let ctrl = props._controller 
-            || new Controller(props.roots, props.onToggle, props.onFocus,
-                props.onSelected, props.singlePath);
+            || new Controller(props.roots, props.onToggle!, props.onFocus!,
+                props.onSelected!, props.singlePath);
 
         const nodes = computed(() => {
             return (props._path.length == 0 ? ctrl.roots : props._nodes)!
