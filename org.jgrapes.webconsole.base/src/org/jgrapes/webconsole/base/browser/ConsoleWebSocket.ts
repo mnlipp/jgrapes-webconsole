@@ -41,24 +41,24 @@ class ConsoleWebSocket {
     private _reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     private _connectRequested = false;
     private _initialConnect = true;
-    private _consoleSessionId: string | null = null;
+    private _connectionId: string | null = null;
     private _connectionLost = false;
-    private _oldConsoleSessionId: string | null;
+    private _oldConnectionId: string | null;
     private _beingHandled: any;
 
     constructor(console: Console) {
         this._console = console;
-        this._oldConsoleSessionId = sessionStorage.getItem(
-            "org.jgrapes.webconsole.base.sessionId");
+        this._oldConnectionId = sessionStorage.getItem(
+            "org.jgrapes.webconsole.base.connectionId");
     }
 
     /**
-     * Returns the unique session id used to identify the connection.
+     * Returns the unique id used to identify the connection.
      * 
      * @return the id
      */
-    consoleSessionId(): string | null {
-        return this._consoleSessionId;
+    connectionId(): string | null {
+        return this._connectionId;
     }
 
     _connect() {
@@ -67,12 +67,12 @@ class ConsoleWebSocket {
         if (!location.endsWith("/")) {
             location += "/";
         }
-        this._consoleSessionId = sessionStorage.getItem(
-            "org.jgrapes.webconsole.base.sessionId");
-        location += "console-session/" + this._consoleSessionId;
-        if (this._oldConsoleSessionId) {
-            location += "?was=" + this._oldConsoleSessionId;
-            this._oldConsoleSessionId = null;
+        this._connectionId = sessionStorage.getItem(
+            "org.jgrapes.webconsole.base.connectionId");
+        location += "console-connection/" + this._connectionId;
+        if (this._oldConnectionId) {
+            location += "?was=" + this._oldConnectionId;
+            this._oldConnectionId = null;
         }
         Log.debug("Creating WebSocket for " + location);
         this._ws = new WebSocket(location);
@@ -98,9 +98,9 @@ class ConsoleWebSocket {
             }
             _this._refreshTimer = setInterval(function() {
                 if (_this._sendQueue.length == 0) {
-                    _this._inactivity += _this._console.sessionRefreshInterval;
-                    if (_this._console.sessionInactivityTimeout > 0 &&
-                        _this._inactivity >= _this._console.sessionInactivityTimeout) {
+                    _this._inactivity += _this._console.connectionRefreshInterval;
+                    if (_this._console.connectionInactivityTimeout > 0 &&
+                        _this._inactivity >= _this._console.connectionInactivityTimeout) {
                         _this.close();
                         _this._console.connectionSuspended(function() {
                             _this._inactivity = 0;
@@ -113,7 +113,7 @@ class ConsoleWebSocket {
                         "params": []
                     });
                 }
-            }, _this._console.sessionRefreshInterval);
+            }, _this._console.connectionRefreshInterval);
         }
         this._ws.onclose = function(event) {
             Log.debug("OnClose called for WebSocket (reconnect: " +
@@ -171,10 +171,10 @@ class ConsoleWebSocket {
      * Closes the connection.
      */
     close() {
-        if (this._consoleSessionId) {
+        if (this._connectionId) {
             this._send({
                 "jsonrpc": "2.0", "method": "disconnect",
-                "params": [this._consoleSessionId]
+                "params": [this._connectionId]
             });
         }
         this._connectRequested = false;

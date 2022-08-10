@@ -26,10 +26,10 @@ import org.jgrapes.core.Event;
 
 /**
  * Events derived from this class are transformed to JSON messages
- * that are sent to the web console session. They may only be fired
- * on the {@link org.jgrapes.webconsole.base.ConsoleSession#responsePipeline()}
+ * that are sent to the web console page. They may only be fired
+ * on the {@link org.jgrapes.webconsole.base.ConsoleConnection#responsePipeline()}
  * (usually with 
- * {@link org.jgrapes.webconsole.base.ConsoleSession#respond(org.jgrapes.core.Event)}).
+ * {@link org.jgrapes.webconsole.base.ConsoleConnection#respond(org.jgrapes.core.Event)}).
  */
 public abstract class ConsoleCommand extends Event<Void> {
 

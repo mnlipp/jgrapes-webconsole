@@ -103,7 +103,7 @@ public class WebConsole extends Component {
     @Handler
     @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
         "PMD.AvoidInstantiatingObjectsInLoops", "PMD.NcssCount" })
-    public void onJsonInput(JsonInput event, ConsoleSession channel)
+    public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         // Send events to web console components on console's channel
         JsonArray params = event.request().params();
@@ -187,7 +187,7 @@ public class WebConsole extends Component {
      */
     @Handler
     public void onConsoleConfigured(
-            ConsoleConfigured event, ConsoleSession channel)
+            ConsoleConfigured event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         channel.respond(new SimpleConsoleCommand("consoleConfigured"));
     }
@@ -202,7 +202,7 @@ public class WebConsole extends Component {
      */
     @Handler(priority = -1_000_000)
     public void onRenderConlet(
-            RenderConletRequest event, ConsoleSession channel) {
+            RenderConletRequest event, ConsoleConnection channel) {
         if (!event.hasBeenRendered()) {
             channel.respond(
                 new DeleteConlet(event.conletId(), Collections.emptySet()));
@@ -210,13 +210,13 @@ public class WebConsole extends Component {
     }
 
     /**
-     * Discard all console sessions on stop.
+     * Discard all console connections on stop.
      *
      * @param event the event
      */
     @Handler
     public void onStop(Stop event) {
-        for (ConsoleSession ps : ConsoleSession.byConsole(this)) {
+        for (ConsoleConnection ps : ConsoleConnection.byConsole(this)) {
             ps.discard();
         }
     }
@@ -230,9 +230,9 @@ public class WebConsole extends Component {
         @SuppressWarnings("PMD.CommentRequired")
         class ConsoleSessionInfo {
 
-            private final ConsoleSession session;
+            private final ConsoleConnection session;
 
-            public ConsoleSessionInfo(ConsoleSession session) {
+            public ConsoleSessionInfo(ConsoleConnection session) {
                 super();
                 this.session = session;
             }
@@ -336,7 +336,8 @@ public class WebConsole extends Component {
         public SortedMap<String, ConsoleSessionInfo> getConsoleSessions() {
             SortedMap<String, ConsoleSessionInfo> result = new TreeMap<>();
             console().ifPresent(console -> {
-                for (ConsoleSession ps : ConsoleSession.byConsole(console)) {
+                for (ConsoleConnection ps : ConsoleConnection
+                    .byConsole(console)) {
                     result.put(Components.simpleObjectName(ps),
                         new ConsoleSessionInfo(ps));
                 }

@@ -45,7 +45,7 @@ public class SimpleConsoleCommand extends ConsoleCommand {
     }
 
     /**
-     * Instantiates a new web console session command.
+     * Instantiates a new web console page command.
      *
      * @param method the method
      */

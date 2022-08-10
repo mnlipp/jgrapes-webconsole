@@ -41,7 +41,7 @@ import org.jgrapes.webconsole.base.events.JsonInput;
 public class WebSocketInputReader extends Thread {
 
     private final WeakReference<EventPipeline> pipelineRef;
-    private final WeakReference<ConsoleSession> channelRef;
+    private final WeakReference<ConsoleConnection> channelRef;
     private PipedWriter decodeIn;
     private Reader jsonSource;
 
@@ -94,7 +94,7 @@ public class WebSocketInputReader extends Thread {
      * @param consoleChannel the web console channel
      */
     public WebSocketInputReader(EventPipeline wsInPipeline,
-            ConsoleSession consoleChannel) {
+            ConsoleConnection consoleChannel) {
         pipelineRef
             = new WebSocketInputReader.RefWithThread<>(wsInPipeline, this);
         channelRef
@@ -156,24 +156,24 @@ public class WebSocketInputReader extends Thread {
                 break;
             }
             // Fully decoded JSON available.
-            ConsoleSession consoleSession = channelRef.get();
+            ConsoleConnection connection = channelRef.get();
             EventPipeline eventPipeline = pipelineRef.get();
-            if (eventPipeline == null || consoleSession == null) {
+            if (eventPipeline == null || connection == null) {
                 break;
             }
-            // WebConsole session established, check for special disconnect
+            // WebConsole connection established, check for special disconnect
             if ("disconnect".equals(rpc.method())
-                && consoleSession.consoleSessionId().equals(
-                    rpc.params().asString(0))) {
-                consoleSession.discard();
+                && connection.consoleConnectionId()
+                    .equals(rpc.params().asString(0))) {
+                connection.discard();
                 return;
             }
             // Ordinary message from web console (view) to server.
-            consoleSession.refresh();
+            connection.refresh();
             if ("keepAlive".equals(rpc.method())) {
                 continue;
             }
-            eventPipeline.fire(new JsonInput(rpc), consoleSession);
+            eventPipeline.fire(new JsonInput(rpc), connection);
         }
     }
 }

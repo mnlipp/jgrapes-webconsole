@@ -31,7 +31,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
@@ -67,21 +67,20 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
      * On console ready.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add conlet resources to page
-        consoleSession.respond(new AddConletType(type())
+        connection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.Preview).setDisplayNames(
-                localizations(consoleSession.supportedLocales(), "conletName"))
+                localizations(connection.supportedLocales(), "conletName"))
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().conletResource(type(),
                     "RemoveSelf-functions.js")))
@@ -92,7 +91,7 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId,
+            ConsoleConnection channel, String conletId,
             Serializable conletState)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
@@ -113,7 +112,8 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleSession channel, Serializable conletState) throws Exception {
+            ConsoleConnection channel, Serializable conletState)
+            throws Exception {
         event.stop();
         deleteConlets = event.params().asBoolean(1);
         detach();
@@ -126,7 +126,7 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
             super.doRemoveConletType();
             return;
         }
-        for (ConsoleSession session : trackedSessions()) {
+        for (ConsoleConnection session : trackedConnections()) {
             session.respond(new UpdateConletType(type()));
         }
     }

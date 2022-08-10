@@ -49,7 +49,7 @@ import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.webconsole.base.AbstractConlet;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.ResourceByGenerator;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
@@ -274,9 +274,9 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
      * @return the model
      */
     protected Map<String, Object> fmModel(RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId, Object conletState) {
+            ConsoleConnection channel, String conletId, Object conletState) {
         final Map<String, Object> model
-            = fmSessionModel(channel.browserSession());
+            = fmSessionModel(channel.session());
         model.put("locale", channel.locale());
         model.putAll(fmTypeModel(event.renderSupport()));
         model.putAll(fmConletModel(event, channel, conletId, conletState));

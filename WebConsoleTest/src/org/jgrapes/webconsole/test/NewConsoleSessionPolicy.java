@@ -24,7 +24,7 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconlet.markdowndisplay.MarkdownDisplayConlet;
 import org.jgrapes.webconsole.base.Conlet;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.ConsoleConfigured;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
@@ -54,8 +54,8 @@ public class NewConsoleSessionPolicy extends Component {
      */
     @Handler
     public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consolesession) {
-        consolesession.browserSession().put(renderedFlagName, false);
+            ConsoleConnection consolesession) {
+        consolesession.session().put(renderedFlagName, false);
     }
 
     /**
@@ -66,22 +66,21 @@ public class NewConsoleSessionPolicy extends Component {
      */
     @Handler
     public void onRenderConlet(RenderConlet event,
-            ConsoleSession consolesession) {
-        consolesession.browserSession().put(renderedFlagName, true);
+            ConsoleConnection consolesession) {
+        consolesession.session().put(renderedFlagName, true);
     }
 
     /**
      * On console configured.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @throws InterruptedException the interrupted exception
      */
     @Handler
     public void onConsoleConfigured(ConsoleConfigured event,
-            ConsoleSession consoleSession)
-            throws InterruptedException {
-        if ((Boolean) consoleSession.browserSession().getOrDefault(
+            ConsoleConnection connection) throws InterruptedException {
+        if ((Boolean) connection.session().getOrDefault(
             renderedFlagName, false)) {
             return;
         }
@@ -93,7 +92,7 @@ public class NewConsoleSessionPolicy extends Component {
                     "A Demo WebConsole")
                 .addProperty(MarkdownDisplayConlet.EDITABLE_BY,
                     Collections.EMPTY_SET),
-            consoleSession);
+            connection);
     }
 
 }

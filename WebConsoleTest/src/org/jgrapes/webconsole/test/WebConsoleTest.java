@@ -156,7 +156,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleTest.class)
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(Duration.ofMinutes(5));
+        consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
@@ -197,7 +197,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleTest.class)
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(Duration.ofMinutes(5));
+        consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
@@ -238,7 +238,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleTest.class)
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(Duration.ofMinutes(5));
+        consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
@@ -278,7 +278,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
                 .prependResourceBundleProvider(WebConsoleTest.class)
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConsoleSessionInactivityTimeout(Duration.ofMinutes(5));
+        consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));

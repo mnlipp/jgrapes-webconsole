@@ -40,7 +40,7 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.events.DiscardSession;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
@@ -79,7 +79,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     @Override
     protected String generateInstanceId(AddConletRequest event,
-            ConsoleSession session) {
+            ConsoleConnection session) {
         return "Singleton";
     }
 
@@ -94,7 +94,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event, ConsoleSession channel)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection channel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add conlet resources to page
@@ -115,9 +115,9 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
      */
     @Override
     protected Optional<AccountModel> createNewState(AddConletRequest event,
-            ConsoleSession session, String conletId) throws Exception {
+            ConsoleConnection session, String conletId) throws Exception {
         Optional<AccountModel> model
-            = stateFromSession(session.browserSession(), conletId);
+            = stateFromSession(session.session(), conletId);
         if (model.isPresent()) {
             return model;
         }
@@ -127,7 +127,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     @Override
     protected Optional<AccountModel> createStateRepresentation(
             RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId) throws IOException {
+            ConsoleConnection channel, String conletId) throws IOException {
         return Optional.of(new AccountModel(conletId));
     }
 
@@ -142,11 +142,11 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
      * @throws TemplateNotFoundException 
      */
     @Handler(priority = 1000)
-    public void onConsolePrepared(ConsolePrepared event, ConsoleSession channel)
+    public void onConsolePrepared(ConsolePrepared event, ConsoleConnection channel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // If we are logged in, proceed
-        if (channel.browserSession().containsKey(Subject.class)) {
+        if (channel.session().containsKey(Subject.class)) {
             return;
         }
 
@@ -158,14 +158,14 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         String conletId = type() + TYPE_INSTANCE_SEPARATOR + "Singleton";
         AccountModel accountModel = new AccountModel(conletId);
         accountModel.setDialogOpen(true);
-        putInSession(channel.browserSession(), conletId, accountModel);
+        putInSession(channel.session(), conletId, accountModel);
 
         // Render login dialog
         Template tpl = freemarkerConfig().getTemplate("Login-dialog.ftl.html");
         var bundle = resourceBundle(channel.locale());
         channel.respond(new OpenModalDialog(type(), conletId,
             processTemplate(event, tpl,
-                fmSessionModel(channel.browserSession())))
+                fmSessionModel(channel.session())))
                     .addOption("title", bundle.getString("title"))
                     .addOption("cancelable", false).addOption("okayLabel", "")
                     .addOption("applyLabel", bundle.getString("Submit"))
@@ -190,7 +190,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId,
+            ConsoleConnection channel, String conletId,
             AccountModel model) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Content)) {
@@ -202,7 +202,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
                         .setRenderAs(RenderMode.Content));
             channel.respond(new NotifyConletView(type(), conletId,
                 "updateUser",
-                WebConsoleUtils.userFromSession(channel.browserSession())
+                WebConsoleUtils.userFromSession(channel.session())
                     .map(ConsoleUser::getDisplayName).orElse(null)));
             renderedAs.add(RenderMode.Content);
         }
@@ -211,13 +211,13 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleSession channel, AccountModel model) throws Exception {
+            ConsoleConnection channel, AccountModel model) throws Exception {
         if ("loginData".equals(event.method())) {
             model.setDialogOpen(false);
             Subject user = new Subject();
             user.getPrincipals().add(new ConsoleUser(event.params().asString(0),
                 event.params().asString(0)));
-            channel.browserSession().put(Subject.class, user);
+            channel.session().put(Subject.class, user);
             channel.respond(new CloseModalDialog(type(), event.conletId()));
             channel.associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
                 .ifPresentOrElse(ConsolePrepared::resumeHandling,
@@ -225,16 +225,16 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             return;
         }
         if ("logout".equals(event.method())) {
-            channel.respond(new DiscardSession(channel.browserSession(),
+            channel.respond(new DiscardSession(channel.session(),
                 channel.webletChannel()));
             channel.respond(new SimpleConsoleCommand("reload"));
         }
     }
 
     @Override
-    protected boolean doSetLocale(SetLocale event, ConsoleSession channel,
+    protected boolean doSetLocale(SetLocale event, ConsoleConnection channel,
             String conletId) throws Exception {
-        return stateFromSession(channel.browserSession(),
+        return stateFromSession(channel.session(),
             type() + TYPE_INSTANCE_SEPARATOR + "Singleton")
                 .map(model -> !model.isDialogOpen()).orElse(true);
     }

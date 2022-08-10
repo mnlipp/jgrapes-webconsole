@@ -60,8 +60,8 @@ class JGConsole {
     /**
      * Delegates to {@link Console.init}.
      */
-    static init(consoleSessionId: string, options: any) {
-        this.instance.init(consoleSessionId, options);
+    static init(connectionId: string, options: any) {
+        this.instance.init(connectionId, options);
     }
 
     /**

@@ -76,10 +76,10 @@ public class UserBasedConletFilter extends Component {
     @Handler(priority = 999)
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void onConsolePrepared(ConsolePrepared event,
-            ConsoleSession channel) {
+            ConsoleConnection channel) {
         Set<String> toRemove = new HashSet<>(restricted);
         toRemove.removeAll(
-            WebConsoleUtils.userFromSession(channel.browserSession())
+            WebConsoleUtils.userFromSession(channel.session())
                 .map(ConsoleUser::getName).map(user -> acl.get(user))
                 .orElse(Collections.emptySet()));
         for (var type : toRemove) {

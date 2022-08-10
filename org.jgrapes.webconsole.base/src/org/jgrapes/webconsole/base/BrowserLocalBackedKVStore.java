@@ -71,10 +71,10 @@ public class BrowserLocalBackedKVStore extends Component {
      * @throws InterruptedException the interrupted exception
      */
     @Handler(priority = 1000)
-    public void onConsoleReady(ConsoleReady event, ConsoleSession channel)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection channel)
             throws InterruptedException {
         // Put there by onJsonInput if retrieval has been done.
-        if (TypedIdKey.get(channel.browserSession(), Store.class,
+        if (TypedIdKey.get(channel.session(), Store.class,
             consolePrefix).isPresent()) {
             // Already have store, nothing to do
             return;
@@ -88,11 +88,11 @@ public class BrowserLocalBackedKVStore extends Component {
             .respond(new SimpleConsoleCommand("retrieveLocalData", keyStart));
     }
 
-    private Store getStore(ConsoleSession channel) {
+    private Store getStore(ConsoleConnection channel) {
         return TypedIdKey
-            .get(channel.browserSession(), Store.class, consolePrefix)
+            .get(channel.session(), Store.class, consolePrefix)
             .orElseGet(
-                () -> TypedIdKey.put(channel.browserSession(), consolePrefix,
+                () -> TypedIdKey.put(channel.session(), consolePrefix,
                     new Store()));
     }
 
@@ -106,7 +106,7 @@ public class BrowserLocalBackedKVStore extends Component {
      */
     @Handler
     @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
-    public void onJsonInput(JsonInput event, ConsoleSession channel)
+    public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         if (!"retrievedLocalData".equals(event.request().method())) {
             return;
@@ -146,7 +146,7 @@ public class BrowserLocalBackedKVStore extends Component {
     @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
         "PMD.AvoidInstantiatingObjectsInLoops" })
     public void onKeyValueStoreUpdate(
-            KeyValueStoreUpdate event, ConsoleSession channel)
+            KeyValueStoreUpdate event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         Store data = getStore(channel);
         List<String[]> actions = new ArrayList<>();
@@ -179,10 +179,10 @@ public class BrowserLocalBackedKVStore extends Component {
     @Handler
     @SuppressWarnings("PMD.ConfusingTernary")
     public void onKeyValueStoreQuery(
-            KeyValueStoreQuery event, ConsoleSession channel) {
+            KeyValueStoreQuery event, ConsoleConnection channel) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<String, String> result = new HashMap<>();
-        TypedIdKey.get(channel.browserSession(), Store.class, consolePrefix)
+        TypedIdKey.get(channel.session(), Store.class, consolePrefix)
             .ifPresent(data -> {
                 if (!event.query().endsWith("/")) {
                     // Single value

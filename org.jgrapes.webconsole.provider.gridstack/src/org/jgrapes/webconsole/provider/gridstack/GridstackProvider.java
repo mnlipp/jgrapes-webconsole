@@ -29,7 +29,7 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.PageResourceProvider;
 import org.jgrapes.webconsole.base.events.AddPageResources;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
@@ -103,7 +103,7 @@ public class GridstackProvider extends PageResourceProvider {
      * On {@link ConsoleReady}, fire the appropriate {@link AddPageResources}.
      *
      * @param event the event
-     * @param consoleSession the web console session
+     * @param connection the web console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
@@ -111,8 +111,7 @@ public class GridstackProvider extends PageResourceProvider {
      */
     @Handler(priority = 100)
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()
@@ -155,6 +154,6 @@ public class GridstackProvider extends PageResourceProvider {
         default:
             break;
         }
-        consoleSession.respond(addRequest);
+        connection.respond(addRequest);
     }
 }

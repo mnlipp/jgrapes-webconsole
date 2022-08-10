@@ -78,10 +78,10 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * application (SPA). Its main tasks are to provide resources using 
  * {@link Request}/{@link Response} events (see {@link #onGet}
  * for details about the different kinds of resources), to create
- * the {@link ConsoleSession}s for new WebSocket connections
+ * the {@link ConsoleConnection}s for new WebSocket connections
  * (see {@link #onUpgraded}) and to convert the JSON RPC messages 
  * received from the browser via the web socket to {@link JsonInput} 
- * events and fire them on the corresponding {@link ConsoleSession}
+ * events and fire them on the corresponding {@link ConsoleConnection}
  * channel.
  * 
  * The class has a counter part in the browser, the `jgconsole`
@@ -93,7 +93,7 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * The class also provides handlers for some console related events
  * (i.e. fired on the attached {@link WebConsole}'s channel) that 
  * affect the console representation in the browser. These handlers
- * are declared with class channel {@link ConsoleSession} which
+ * are declared with class channel {@link ConsoleConnection} which
  * is replaced using the {@link ChannelReplacements} mechanism.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
@@ -101,7 +101,7 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 public abstract class ConsoleWeblet extends Component {
 
     private static final String CONSOLE_SESSION_IDS
-        = ConsoleWeblet.class.getName() + ".consoleSessionId";
+        = ConsoleWeblet.class.getName() + ".consoleConnectionId";
     private static final String UTF_8 = "utf-8";
 
     private URI prefix;
@@ -225,30 +225,30 @@ public abstract class ConsoleWeblet extends Component {
     }
 
     /**
-     * Sets the console session network timeout. The console session will be
-     * removed if no messages have been received from the console session
-     * for the given duration. The value defaults to 45 seconds.
+     * Sets the console connection network timeout. The console connection
+     * will be removed if no messages have been received from the 
+     * console page for the given duration. The value defaults to 45 seconds.
      * 
      * @param timeout the timeout in milli seconds
      * @return the console view for easy chaining
      */
     @SuppressWarnings("PMD.LinguisticNaming")
-    public ConsoleWeblet setConsoleSessionNetworkTimeout(Duration timeout) {
+    public ConsoleWeblet setConnectionNetworkTimeout(Duration timeout) {
         csNetworkTimeout = timeout.toMillis();
         return this;
     }
 
     /**
-     * Returns the console session network timeout.
+     * Returns the console connection network timeout.
      *
      * @return the timeout
      */
-    public Duration consoleSessionNetworkTimeout() {
+    public Duration connectionNetworkTimeout() {
         return Duration.ofMillis(csNetworkTimeout);
     }
 
     /**
-     * Sets the console session refresh interval. The console code in the
+     * Sets the console connection refresh interval. The console code in the
      * browser will send a keep alive packet if there has been no user
      * activity for more than the given period. The value 
      * defaults to 30 seconds.
@@ -257,22 +257,22 @@ public abstract class ConsoleWeblet extends Component {
      * @return the console view for easy chaining
      */
     @SuppressWarnings("PMD.LinguisticNaming")
-    public ConsoleWeblet setConsoleSessionRefreshInterval(Duration interval) {
+    public ConsoleWeblet setConnectionRefreshInterval(Duration interval) {
         csRefreshInterval = interval.toMillis();
         return this;
     }
 
     /**
-     * Returns the console session refresh interval.
+     * Returns the console connection refresh interval.
      *
      * @return the interval
      */
-    public Duration consoleSessionRefreshInterval() {
+    public Duration connectionRefreshInterval() {
         return Duration.ofMillis(csRefreshInterval);
     }
 
     /**
-     * Sets the console session inactivity timeout. If there has been no
+     * Sets the console connection inactivity timeout. If there has been no
      * user activity for more than the given duration the
      * console code stops sending keep alive packets and displays a
      * message to the user. The value defaults to -1 (no timeout).
@@ -281,17 +281,17 @@ public abstract class ConsoleWeblet extends Component {
      * @return the console view for easy chaining
      */
     @SuppressWarnings("PMD.LinguisticNaming")
-    public ConsoleWeblet setConsoleSessionInactivityTimeout(Duration timeout) {
+    public ConsoleWeblet setConnectionInactivityTimeout(Duration timeout) {
         csInactivityTimeout = timeout.toMillis();
         return this;
     }
 
     /**
-     * Returns the console session inactivity timeout.
+     * Returns the console connection inactivity timeout.
      *
      * @return the timeout
      */
-    public Duration consoleSessionInactivityTimeout() {
+    public Duration connectionInactivityTimeout() {
         return Duration.ofMillis(csInactivityTimeout);
     }
 
@@ -424,7 +424,7 @@ public abstract class ConsoleWeblet extends Component {
      * * `.../conlet-resource`: Invokes {@link #provideConletResource}
      *   with the remainder of the path.
      *   
-     * * `.../console-session`: Handled by this class. Used
+     * * `.../console-connection`: Handled by this class. Used
      *   e.g. for initiating the web socket connection.
      *
      * @param event the event
@@ -453,16 +453,16 @@ public abstract class ConsoleWeblet extends Component {
             // may be out-dated
             event.associated(Selection.class)
                 .ifPresent(selection -> selection.prefer(selection.get()[0]));
-            // This is a console session now (can be connected to)
+            // This is a console connection now (can be connected to)
             Session session = Session.from(event);
-            UUID consoleSessionId = UUID.randomUUID();
+            UUID consoleConnectionId = UUID.randomUUID();
             @SuppressWarnings({ "unchecked", "PMD.AvoidDuplicateLiterals" })
             Map<URI, UUID> knownIds = (Map<URI, UUID>) session.computeIfAbsent(
                 CONSOLE_SESSION_IDS,
                 newKey -> new ConcurrentHashMap<URI, UUID>());
-            knownIds.put(prefix, consoleSessionId);
+            knownIds.put(prefix, consoleConnectionId);
             // Finally render
-            renderConsole(event, channel, consoleSessionId);
+            renderConsole(event, channel, consoleConnectionId);
             return;
         case "console-resource":
             provideConsoleResource(event, ResourcePattern.removeSegments(
@@ -476,7 +476,7 @@ public abstract class ConsoleWeblet extends Component {
         case "page-resource":
             providePageResource(event, channel, requestParts[1]);
             return;
-        case "console-session":
+        case "console-connection":
             handleSessionRequest(event, channel, requestParts[1]);
             return;
         case "conlet-resource":
@@ -496,7 +496,7 @@ public abstract class ConsoleWeblet extends Component {
      * @throws InterruptedException the interrupted exception
      */
     protected abstract void renderConsole(Request.In.Get event,
-            IOSubchannel channel, UUID consoleSessionId)
+            IOSubchannel channel, UUID consoleConnectionId)
             throws IOException, InterruptedException;
 
     /**
@@ -616,7 +616,7 @@ public abstract class ConsoleWeblet extends Component {
     }
 
     private void handleSessionRequest(Request.In.Get event,
-            IOSubchannel channel, String consoleSessionId)
+            IOSubchannel channel, String consoleConnectionId)
             throws InterruptedException, IOException, ParseException {
         // Must be WebSocket request.
         if (!event.httpRequest().findField(
@@ -635,12 +635,12 @@ public abstract class ConsoleWeblet extends Component {
         Map<URI, UUID> knownIds = (Map<URI, UUID>) browserSession
             .computeIfAbsent(CONSOLE_SESSION_IDS,
                 newKey -> new ConcurrentHashMap<URI, UUID>());
-        if (!UUID.fromString(consoleSessionId) // NOPMD, note negation
+        if (!UUID.fromString(consoleConnectionId) // NOPMD, note negation
             .equals(knownIds.get(prefix))) {
             channel.setAssociated(this, new String[2]);
         } else {
             channel.setAssociated(this, new String[] {
-                consoleSessionId,
+                consoleConnectionId,
                 Optional.ofNullable(event.httpRequest().queryData()
                     .get("was")).map(vals -> vals.get(0)).orElse(null)
             });
@@ -658,10 +658,10 @@ public abstract class ConsoleWeblet extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(channels = ConsoleChannel.class, priority = 10_000)
-    public void onSetLocale(SetLocale event, ConsoleSession channel)
+    public void onSetLocale(SetLocale event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         channel.setLocale(event.locale());
-        Session session = channel.browserSession();
+        Session session = channel.session();
         if (session != null) {
             Selection selection = (Selection) session.get(Selection.class);
             if (selection != null) {
@@ -684,7 +684,7 @@ public abstract class ConsoleWeblet extends Component {
      */
     @Handler(channels = ConsoleChannel.class)
     public void onSetLocaleCompleted(SetLocaleCompleted event,
-            ConsoleSession channel) {
+            ConsoleConnection channel) {
         if (event.event().reload()) {
             channel.respond(new SimpleConsoleCommand("reload"));
         }
@@ -707,8 +707,8 @@ public abstract class ConsoleWeblet extends Component {
         }
 
         // Check if reload required
-        String[] consoleSessionIds = passedIn.get();
-        if (consoleSessionIds[0] == null) {
+        String[] connectionIds = passedIn.get();
+        if (connectionIds[0] == null) {
             @SuppressWarnings("resource")
             CharBufferWriter out = new CharBufferWriter(wsChannel,
                 wsChannel.responsePipeline()).suppressClose();
@@ -718,28 +718,28 @@ public abstract class ConsoleWeblet extends Component {
             return;
         }
 
-        // Get console session
+        // Get session
         @SuppressWarnings("unchecked")
         final Supplier<Optional<Session>> sessionSupplier
             = (Supplier<Optional<Session>>) wsChannel
                 .associated(Session.class, Supplier.class).get();
-        // Reuse old console session if still available
-        ConsoleSession consoleSession
-            = Optional.ofNullable(consoleSessionIds[1])
-                .flatMap(opsId -> ConsoleSession.lookup(opsId))
-                .map(session -> session.replaceId(consoleSessionIds[0]))
-                .orElse(ConsoleSession.lookupOrCreate(consoleSessionIds[0],
+        // Reuse old console connection if still available
+        ConsoleConnection connection
+            = Optional.ofNullable(connectionIds[1])
+                .flatMap(oldId -> ConsoleConnection.lookup(oldId))
+                .map(conn -> conn.replaceId(connectionIds[0]))
+                .orElse(ConsoleConnection.lookupOrCreate(connectionIds[0],
                     console, supportedLocales.keySet(), csNetworkTimeout))
                 .setUpstreamChannel(wsChannel)
                 .setSessionSupplier(sessionSupplier);
-        wsChannel.setAssociated(ConsoleSession.class, consoleSession);
+        wsChannel.setAssociated(ConsoleConnection.class, connection);
         // Channel now used as JSON input
         wsChannel.setAssociated(this, new WebSocketInputReader(
-            event.processedBy().get(), consoleSession));
+            event.processedBy().get(), connection));
         // From now on, only consoleSession.respond may be used to send on the
         // upstream channel.
-        consoleSession.upstreamChannel().responsePipeline()
-            .restrictEventSource(consoleSession.responsePipeline());
+        connection.upstreamChannel().responsePipeline()
+            .restrictEventSource(connection.responsePipeline());
     }
 
     /**
@@ -750,8 +750,8 @@ public abstract class ConsoleWeblet extends Component {
     @Handler(channels = Channel.class)
     public void onDiscardSession(DiscardSession event) {
         final Session session = event.session();
-        ConsoleSession.byConsole(console).stream()
-            .filter(cs -> cs != null && cs.browserSession().equals(session))
+        ConsoleConnection.byConsole(console).stream()
+            .filter(cs -> cs != null && cs.session().equals(session))
             .forEach(cs -> {
                 cs.responsePipeline().fire(new Close(), cs.upstreamChannel());
             });
@@ -790,7 +790,7 @@ public abstract class ConsoleWeblet extends Component {
             wsChannel.setAssociated(this, null);
             optWsInputReader.get().close();
         }
-        wsChannel.associated(ConsoleSession.class).ifPresent(session -> {
+        wsChannel.associated(ConsoleConnection.class).ifPresent(session -> {
             // Restore channel to normal mode, see onConsoleReady
             session.responsePipeline().restrictEventSource(null);
             session.disconnected();
@@ -807,7 +807,7 @@ public abstract class ConsoleWeblet extends Component {
      */
     @Handler(channels = ConsoleChannel.class, priority = -1000)
     public void onConsoleCommand(
-            ConsoleCommand event, ConsoleSession channel)
+            ConsoleCommand event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         IOSubchannel upstream = channel.upstreamChannel();
         @SuppressWarnings("resource")

@@ -127,7 +127,7 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  * 
  * Method {@link #doRenderConlet doRenderConlet} renders the preview 
  * or view by firing a {@link RenderConlet} event that provides to 
- * the console session the HTML that represents the web console 
+ * the console page the HTML that represents the web console 
  * component on the page. The HTML may be generated using and thus 
  * depending on the component state.
  * Alternatively, state independent HTML may be provided followed 
@@ -183,9 +183,9 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  * -------------------------------
  * 
  * The class tracks the relationship between the known
- * {@link ConsoleSession}s and the web console components displayed 
- * in these console session. The information is available from
- * {@link #conletInfosByConsoleSession}. It can e.g. be used to send
+ * {@link ConsoleConnection}s and the web console components displayed 
+ * in the console pages. The information is available from
+ * {@link #conletInfosByConsoleConnection}. It can e.g. be used to send
  * events to the web console(s) in response to an event on the server
  * side.
  *
@@ -330,8 +330,8 @@ public abstract class AbstractConlet<S> extends Component {
             Map<Locale, ResourceBundle>> l10nBundles
                 = Collections.synchronizedMap(new WeakHashMap<>());
     @SuppressWarnings("PMD.LongVariable")
-    private Map<ConsoleSession,
-            Map<String, ConletTrackingInfo>> conletInfosByConsoleSession;
+    private Map<ConsoleConnection,
+            Map<String, ConletTrackingInfo>> conletInfosByConsoleConnection;
     private Duration refreshInterval;
     private Supplier<Event<?>> refreshEventSupplier;
     private Timer refreshTimer;
@@ -357,14 +357,14 @@ public abstract class AbstractConlet<S> extends Component {
     public AbstractConlet(Channel channel,
             ChannelReplacements channelReplacements) {
         super(channel, channelReplacements);
-        conletInfosByConsoleSession
+        conletInfosByConsoleConnection
             = Collections.synchronizedMap(new WeakHashMap<>());
     }
 
     /**
      * If set to a value different from `null` causes an event
      * from the given supplier to be fired on all tracked web console
-     * sessions periodically.
+     * connections periodically.
      *
      * @param interval the refresh interval
      * @param supplier the supplier
@@ -384,7 +384,8 @@ public abstract class AbstractConlet<S> extends Component {
     }
 
     private void updateRefresh() {
-        if (refreshInterval == null || conletIdsByConsoleSession().isEmpty()) {
+        if (refreshInterval == null
+            || conletIdsByConsoleConnection().isEmpty()) {
             // At least one of the prerequisites is missing, terminate
             if (refreshTimer != null) {
                 refreshTimer.cancel();
@@ -398,7 +399,7 @@ public abstract class AbstractConlet<S> extends Component {
         }
         refreshTimer = Components.schedule(tmr -> {
             tmr.reschedule(tmr.scheduledFor().plus(refreshInterval));
-            fire(refreshEventSupplier.get(), trackedSessions());
+            fire(refreshEventSupplier.get(), trackedConnections());
         }, Instant.now().plus(refreshInterval));
     }
 
@@ -553,13 +554,13 @@ public abstract class AbstractConlet<S> extends Component {
      * @param event the event that triggered the creation of a new conlet,
      * which may contain required information 
      * (see {@link AddConletRequest#properties()})
-     * @param session the console session; usually not required 
+     * @param connection the console connection; usually not required 
      * but provided as context
      *
      * @return the web console component id
      */
     protected String generateInstanceId(AddConletRequest event,
-            ConsoleSession session) {
+            ConsoleConnection connection) {
         return UUID.randomUUID().toString();
     }
 
@@ -574,7 +575,7 @@ public abstract class AbstractConlet<S> extends Component {
      *
      * @param event the event, which may contain required information 
      * (see {@link AddConletRequest#properties()})
-     * @param session the console session, sometimes required to
+     * @param connection the console connection, sometimes required to
      * send events to components that provide a backing store
      * @param conletId the conlet id calculated as
      * `type() + TYPE_INSTANCE_SEPARATOR + generateInstanceId(...)` 
@@ -585,7 +586,7 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
         "PMD.AvoidDuplicateLiterals" })
     protected Optional<S> createStateRepresentation(
-            RenderConletRequestBase<?> event, ConsoleSession session,
+            RenderConletRequestBase<?> event, ConsoleConnection connection,
             String conletId) throws Exception {
         return Optional.empty();
     }
@@ -603,7 +604,7 @@ public abstract class AbstractConlet<S> extends Component {
      * from the defaults used by {@link #createStateRepresentation}.
      *
      * @param event the event 
-     * @param session the console session
+     * @param connection the console connection
      * @param conletId the conlet id
      * @return the state representation or {@link Optional#empty()} if none is
      * required
@@ -612,9 +613,9 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
         "PMD.AvoidDuplicateLiterals" })
     protected Optional<S> createNewState(
-            AddConletRequest event, ConsoleSession session,
+            AddConletRequest event, ConsoleConnection connection,
             String conletId) throws Exception {
-        return createStateRepresentation(event, session, conletId);
+        return createStateRepresentation(event, connection, conletId);
     }
 
     /**
@@ -627,7 +628,7 @@ public abstract class AbstractConlet<S> extends Component {
      * put in the browser session by the invoker.
      *
      * @param event the event 
-     * @param session the console session
+     * @param connection the console connection
      * @param conletId the conlet id
      * @return the state representation or {@link Optional#empty()} if none is
      * required
@@ -636,88 +637,89 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
         "PMD.AvoidDuplicateLiterals" })
     protected Optional<S> recreateState(
-            RenderConletRequest event, ConsoleSession session,
+            RenderConletRequest event, ConsoleConnection connection,
             String conletId) throws Exception {
-        return createStateRepresentation(event, session, conletId);
+        return createStateRepresentation(event, connection, conletId);
     }
 
     /**
-     * Returns the tracked sessions and conlet ids as map.
+     * Returns the tracked connections and conlet ids as map.
      * 
-     * If you need a particular session's web console component ids, you 
-     * should prefer {@link #conletIds(ConsoleSession)} over calling
-     * this method with `get(consoleSession)` appended.
+     * If you need a particular connection's web console component ids, you 
+     * should prefer {@link #conletIds(ConsoleConnection)} over calling
+     * this method with `get(consoleConnection)` appended.
      * 
      * @return the result
      */
-    protected Map<ConsoleSession, Set<String>> conletIdsByConsoleSession() {
-        return conletInfosByConsoleSession.entrySet().stream()
+    protected Map<ConsoleConnection, Set<String>>
+            conletIdsByConsoleConnection() {
+        return conletInfosByConsoleConnection.entrySet().stream()
             .collect(Collectors.toMap(Entry::getKey,
                 e -> new HashSet<>(e.getValue().keySet())));
     }
 
     /**
-     * Returns the tracked sessions. This is effectively
-     * `conletInfosByConsoleSession().keySet()` converted to
+     * Returns the tracked connections. This is effectively
+     * `conletInfosByConsoleConnection().keySet()` converted to
      * an array. This representation is especially useful 
-     * when the web console sessions are used as argument for 
+     * when the web console connections are used as argument for 
      * {@link #fire(Event, Channel...)}.
      *
-     * @return the web console sessions
+     * @return the web console connections
      */
-    protected ConsoleSession[] trackedSessions() {
-        Set<ConsoleSession> sessions = new HashSet<>(
-            conletInfosByConsoleSession.keySet());
-        return sessions.toArray(new ConsoleSession[0]);
+    protected ConsoleConnection[] trackedConnections() {
+        Set<ConsoleConnection> connections = new HashSet<>(
+            conletInfosByConsoleConnection.keySet());
+        return connections.toArray(new ConsoleConnection[0]);
     }
 
     /**
      * Returns the set of web console component ids associated with the 
-     * console session as a {@link Set}. If no web console components 
+     * console connection as a {@link Set}. If no web console components 
      * have registered yet, an empty set is returned.
      * 
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @return the set
      */
-    protected Set<String> conletIds(ConsoleSession consoleSession) {
-        return new HashSet<>(conletInfosByConsoleSession.getOrDefault(
-            consoleSession, Collections.emptyMap()).keySet());
+    protected Set<String> conletIds(ConsoleConnection connection) {
+        return new HashSet<>(conletInfosByConsoleConnection.getOrDefault(
+            connection, Collections.emptyMap()).keySet());
     }
 
     /**
      * Returns a map of all conlet ids and the modes in which 
      * views are currently rendered. 
      *
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @return the map
      */
     protected Map<String, Set<RenderMode>>
-            conletViews(ConsoleSession consoleSession) {
-        return conletInfosByConsoleSession.getOrDefault(
-            consoleSession, Collections.emptyMap()).entrySet().stream()
+            conletViews(ConsoleConnection connection) {
+        return conletInfosByConsoleConnection.getOrDefault(
+            connection, Collections.emptyMap()).entrySet().stream()
             .collect(Collectors.toMap(e -> e.getKey(),
                 e -> e.getValue().renderedAs));
     }
 
     /**
-     * Track the given web console component from the given session. 
+     * Track the given web console component from the given connection. 
      * This is invoked by 
-     * {@link #onAddConletRequest(AddConletRequest, ConsoleSession)} and
-     * {@link #onRenderConletRequest(RenderConletRequest, ConsoleSession)}.
+     * {@link #onAddConletRequest(AddConletRequest, ConsoleConnection)} and
+     * {@link #onRenderConletRequest(RenderConletRequest, ConsoleConnection)}.
      * It needs only be invoked if either method is overridden.
      *
-     * @param consoleSession the web console session
+     * @param connection the web console connection
      * @param conletId the conlet id
      * @param info the info to be added if currently untracked. If `null`,
      * a new {@link ConletTrackingInfo} is created and added
      * @return the conlet tracking info
      */
-    protected ConletTrackingInfo trackConlet(ConsoleSession consoleSession,
+    protected ConletTrackingInfo trackConlet(ConsoleConnection connection,
             String conletId, ConletTrackingInfo info) {
         ConletTrackingInfo result;
-        synchronized (conletInfosByConsoleSession) {
+        synchronized (conletInfosByConsoleConnection) {
             Map<String, ConletTrackingInfo> infos
-                = conletInfosByConsoleSession.computeIfAbsent(consoleSession,
+                = conletInfosByConsoleConnection.computeIfAbsent(connection,
                     newKey -> new ConcurrentHashMap<>());
             result = infos.computeIfAbsent(conletId,
                 key -> Optional.ofNullable(info)
@@ -757,8 +759,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param conletState the web console component state
      * @return the component state
      */
-    protected S putInSession(Session session, String conletId,
-            S conletState) {
+    protected S putInSession(Session session, String conletId, S conletState) {
         synchronized (session) {
             var storages = typeContexts(session);
             if (!(conletState instanceof Serializable)) {
@@ -788,7 +789,7 @@ public abstract class AbstractConlet<S> extends Component {
      * Returns all conlet ids and conlet states of this web console 
      * component's type from the session.
      *
-     * @param session the console session
+     * @param session the console connection
      * @return the states
      */
     protected Collection<Map.Entry<String, S>>
@@ -824,26 +825,26 @@ public abstract class AbstractConlet<S> extends Component {
      * {@link #trackConlet}.
      *
      * @param event the event
-     * @param consoleSession the channel
+     * @param connection the channel
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
         "PMD.AvoidDuplicateLiterals" })
     public final void onAddConletRequest(AddConletRequest event,
-            ConsoleSession consoleSession) throws Exception {
+            ConsoleConnection connection) throws Exception {
         if (!event.conletType().equals(type())) {
             return;
         }
         event.stop();
         String conletId = type() + TYPE_INSTANCE_SEPARATOR
-            + generateInstanceId(event, consoleSession);
-        Optional<S> state = createNewState(event, consoleSession, conletId);
+            + generateInstanceId(event, connection);
+        Optional<S> state = createNewState(event, connection, conletId);
         state.ifPresent(s -> putInSession(
-            consoleSession.browserSession(), conletId, s));
+            connection.session(), conletId, s));
         event.setResult(conletId);
-        trackConlet(consoleSession, conletId, new ConletTrackingInfo(conletId)
-            .addModes(doRenderConlet(event, consoleSession, conletId,
+        trackConlet(connection, conletId, new ConletTrackingInfo(conletId)
+            .addModes(doRenderConlet(event, connection, conletId,
                 state.orElse(null))));
     }
 
@@ -855,26 +856,25 @@ public abstract class AbstractConlet<S> extends Component {
      * with the state.
      * 
      * @param event the event
-     * @param consoleSession the web console session
+     * @param connection the web console connection
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onConletDeleted(ConletDeleted event,
-            ConsoleSession consoleSession) throws Exception {
+            ConsoleConnection connection) throws Exception {
         if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
             return;
         }
         String conletId = event.conletId();
-        Optional<S> model = stateFromSession(
-            consoleSession.browserSession(), conletId);
-        var trackingInfo = trackConlet(consoleSession, conletId, null)
+        Optional<S> model = stateFromSession(connection.session(), conletId);
+        var trackingInfo = trackConlet(connection, conletId, null)
             .removeModes(event.renderModes());
         if (trackingInfo.renderedAs().isEmpty()
             || event.renderModes().isEmpty()) {
-            removeState(consoleSession.browserSession(), conletId);
-            for (Iterator<Entry<ConsoleSession, Map<String,
-                    ConletTrackingInfo>>> csi = conletInfosByConsoleSession
+            removeState(connection.session(), conletId);
+            for (Iterator<Entry<ConsoleConnection, Map<String,
+                    ConletTrackingInfo>>> csi = conletInfosByConsoleConnection
                         .entrySet().iterator();
                     csi.hasNext();) {
                 Map<String, ConletTrackingInfo> infos = csi.next().getValue();
@@ -885,11 +885,11 @@ public abstract class AbstractConlet<S> extends Component {
             }
             updateRefresh();
         } else {
-            trackConlet(consoleSession, conletId, null)
+            trackConlet(connection, conletId, null)
                 .removeModes(event.renderModes());
         }
         event.stop();
-        doConletDeleted(event, consoleSession, event.conletId(),
+        doConletDeleted(event, connection, event.conletId(),
             model.orElse(null));
     }
 
@@ -905,7 +905,8 @@ public abstract class AbstractConlet<S> extends Component {
      * @throws Exception if a problem occurs
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected void doConletDeleted(ConletDeleted event, ConsoleSession channel,
+    protected void doConletDeleted(ConletDeleted event,
+            ConsoleConnection channel,
             String conletId, S conletState)
             throws Exception {
         // May be defined by derived class.
@@ -924,34 +925,34 @@ public abstract class AbstractConlet<S> extends Component {
      * to the tracking information. 
      *
      * @param event the event
-     * @param consoleSession the web console session
+     * @param conection the web console connection
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onRenderConletRequest(RenderConletRequest event,
-            ConsoleSession consoleSession) throws Exception {
+            ConsoleConnection conection) throws Exception {
         if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
             return;
         }
         Optional<S> state = stateFromSession(
-            consoleSession.browserSession(), event.conletId());
+            conection.session(), event.conletId());
         if (state.isEmpty()) {
-            state = recreateState(event, consoleSession, event.conletId());
-            state.ifPresent(s -> putInSession(consoleSession.browserSession(),
+            state = recreateState(event, conection, event.conletId());
+            state.ifPresent(s -> putInSession(conection.session(),
                 event.conletId(), s));
         }
         event.setResult(true);
         event.stop();
         Set<RenderMode> rendered = doRenderConlet(
-            event, consoleSession, event.conletId(), state.orElse(null));
-        trackConlet(consoleSession, event.conletId(), null).addModes(rendered);
+            event, conection, event.conletId(), state.orElse(null));
+        trackConlet(conection, event.conletId(), null).addModes(rendered);
     }
 
     /**
      * Called by 
-     * {@link #onAddConletRequest(AddConletRequest, ConsoleSession)} and
-     * {@link #onRenderConletRequest(RenderConletRequest, ConsoleSession)} 
+     * {@link #onAddConletRequest(AddConletRequest, ConsoleConnection)} and
+     * {@link #onRenderConletRequest(RenderConletRequest, ConsoleConnection)} 
      * to complete rendering the web console component.
      * 
      * The 
@@ -966,31 +967,31 @@ public abstract class AbstractConlet<S> extends Component {
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     protected abstract Set<RenderMode> doRenderConlet(
-            RenderConletRequestBase<?> event, ConsoleSession channel,
+            RenderConletRequestBase<?> event, ConsoleConnection channel,
             String conletId, S conletState)
             throws Exception;
 
     /**
-     * Invokes {@link #doSetLocale(SetLocale, ConsoleSession, String)}
-     * for each web console component in the console session.
+     * Invokes {@link #doSetLocale(SetLocale, ConsoleConnection, String)}
+     * for each web console component in the console connection.
      * 
      * If the vent has the reload flag set, does nothing.
      * 
      * The default implementation fires a 
      *
      * @param event the event
-     * @param consoleSession the web console session
+     * @param connection the web console connection
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void onSetLocale(SetLocale event, ConsoleSession consoleSession)
+    public void onSetLocale(SetLocale event, ConsoleConnection connection)
             throws Exception {
         if (event.reload()) {
             return;
         }
-        for (String conletId : conletIds(consoleSession)) {
-            if (!doSetLocale(event, consoleSession, conletId)) {
+        for (String conletId : conletIds(connection)) {
+            if (!doSetLocale(event, connection, conletId)) {
                 event.forceReload();
                 break;
             }
@@ -998,8 +999,8 @@ public abstract class AbstractConlet<S> extends Component {
     }
 
     /**
-     * Called by {@link #onSetLocale(SetLocale, ConsoleSession)} for
-     * each web console component in the console session. Derived 
+     * Called by {@link #onSetLocale(SetLocale, ConsoleConnection)} for
+     * each web console component in the console connection. Derived 
      * classes must send events for updating the representation to 
      * match the new locale.
      * 
@@ -1020,7 +1021,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @throws Exception the exception
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    protected boolean doSetLocale(SetLocale event, ConsoleSession channel,
+    protected boolean doSetLocale(SetLocale event, ConsoleConnection channel,
             String conletId) throws Exception {
         fire(new RenderConletRequest(event.renderSupport(), conletId,
             trackConlet(channel, conletId, null).renderedAs()),
@@ -1039,12 +1040,12 @@ public abstract class AbstractConlet<S> extends Component {
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onNotifyConletModel(NotifyConletModel event,
-            ConsoleSession channel) throws Exception {
+            ConsoleConnection channel) throws Exception {
         if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
             return;
         }
         Optional<S> model
-            = stateFromSession(channel.browserSession(), event.conletId());
+            = stateFromSession(channel.session(), event.conletId());
         doUpdateConletState(event, channel, model.orElse(null));
     }
 
@@ -1059,36 +1060,36 @@ public abstract class AbstractConlet<S> extends Component {
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleSession channel, S conletState) throws Exception {
+            ConsoleConnection channel, S conletState) throws Exception {
         // Default is to do nothing.
     }
 
     /**
-     * Removes the {@link ConsoleSession} from the set of tracked sessions.
-     * If derived web console components need to perform extra actions when a
-     * console session is closed, they have to override 
-     * {@link #afterOnClosed(Closed, ConsoleSession)}.
+     * Removes the {@link ConsoleConnection} from the set of tracked 
+     * connections. If derived web console components need to perform 
+     * extra actions when a console connection is closed, they have to 
+     * override {@link #afterOnClosed(Closed, ConsoleConnection)}.
      * 
      * @param event the closed event
-     * @param consoleSession the web console session
+     * @param connection the web console connection
      */
     @Handler
-    public final void onClosed(Closed event, ConsoleSession consoleSession) {
-        conletInfosByConsoleSession.remove(consoleSession);
+    public final void onClosed(Closed event, ConsoleConnection connection) {
+        conletInfosByConsoleConnection.remove(connection);
         updateRefresh();
-        afterOnClosed(event, consoleSession);
+        afterOnClosed(event, connection);
     }
 
     /**
-     * Invoked by {@link #onClosed(Closed, ConsoleSession)} after
-     * the web console session has been removed from the set of
-     * tracked sessions. The default implementation does
+     * Invoked by {@link #onClosed(Closed, ConsoleConnection)} after
+     * the web console connection has been removed from the set of
+     * tracked connections. The default implementation does
      * nothing.
      * 
      * @param event the closed event
-     * @param consoleSession the web console session
+     * @param connection the web console connection
      */
-    protected void afterOnClosed(Closed event, ConsoleSession consoleSession) {
+    protected void afterOnClosed(Closed event, ConsoleConnection connection) {
         // Default is to do nothing.
     }
 
@@ -1107,17 +1108,17 @@ public abstract class AbstractConlet<S> extends Component {
     }
 
     /**
-     * Iterates over all sessions and fires {@link DeleteConlet}
+     * Iterates over all connections and fires {@link DeleteConlet}
      * events for all known conlets and a {@link UpdateConletType} 
      * (with no render modes) event.
      */
     protected void doRemoveConletType() {
-        conletIdsByConsoleSession().forEach((session, conletIds) -> {
+        conletIdsByConsoleConnection().forEach((connection, conletIds) -> {
             conletIds.forEach(conletId -> {
-                session.respond(
+                connection.respond(
                     new DeleteConlet(conletId, RenderMode.basicModes));
             });
-            session.respond(new UpdateConletType(type()));
+            connection.respond(new UpdateConletType(type()));
         });
     }
 

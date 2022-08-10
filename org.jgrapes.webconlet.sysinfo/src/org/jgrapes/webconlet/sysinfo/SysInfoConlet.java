@@ -34,7 +34,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
@@ -76,7 +76,7 @@ public class SysInfoConlet
      * On {@link ConsoleReady}, fire the {@link AddConletType}.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name
      *             exception
@@ -84,14 +84,13 @@ public class SysInfoConlet
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add SysInfoConlet resources to page
-        consoleSession.respond(new AddConletType(type())
+        connection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.Preview).setDisplayNames(
-                localizations(consoleSession.supportedLocales(), "conletName"))
+                localizations(connection.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setScriptType("module")
                 .setScriptUri(event.renderSupport().conletResource(
@@ -102,14 +101,14 @@ public class SysInfoConlet
 
     @Override
     protected Optional<SysInfoModel> createStateRepresentation(
-            RenderConletRequestBase<?> event, ConsoleSession session,
+            RenderConletRequestBase<?> event, ConsoleConnection session,
             String conletId) throws Exception {
         return Optional.of(new SysInfoModel());
     }
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession consoleSession, String conletId,
+            ConsoleConnection consoleSession, String conletId,
             SysInfoModel conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
@@ -140,7 +139,7 @@ public class SysInfoConlet
         return renderedAs;
     }
 
-    private void updateView(ConsoleSession consoleSession, String conletId) {
+    private void updateView(ConsoleConnection consoleSession, String conletId) {
         if (!consoleSession.isConnected()) {
             return;
         }
@@ -157,19 +156,19 @@ public class SysInfoConlet
      * events.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      */
     @Handler
-    public void onUpdate(Update event, ConsoleSession consoleSession) {
-        for (String conletId : conletIds(consoleSession)) {
-            updateView(consoleSession, conletId);
+    public void onUpdate(Update event, ConsoleConnection connection) {
+        for (String conletId : conletIds(connection)) {
+            updateView(connection, conletId);
         }
     }
 
     @Override
     @SuppressWarnings("PMD.DoNotCallGarbageCollectionExplicitly")
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleSession consoleSession, SysInfoModel conletState)
+            ConsoleConnection consoleSession, SysInfoModel conletState)
             throws Exception {
         event.stop();
         System.gc();

@@ -39,7 +39,7 @@ import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletType;
@@ -86,21 +86,20 @@ public class HelloWorldConlet
      * Trigger loading of resources when the console is ready.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
-        consoleSession.respond(new AddConletType(type())
+        connection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.Preview).setDisplayNames(
-                localizations(consoleSession.supportedLocales(), "conletName"))
+                localizations(connection.supportedLocales(), "conletName"))
             .addScript(new ScriptResource().setScriptUri(
                 event.renderSupport().conletResource(type(),
                     "HelloWorld-functions.js")))
@@ -111,12 +110,12 @@ public class HelloWorldConlet
     @Override
     protected Optional<HelloWorldModel> createStateRepresentation(
             RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId) throws IOException {
+            ConsoleConnection channel, String conletId) throws IOException {
         HelloWorldModel conletModel = new HelloWorldModel(conletId);
         String jsonState
             = JsonBeanEncoder.create().writeObject(conletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession(), conletModel.getConletId()),
+            storagePath(channel.session(), conletModel.getConletId()),
             jsonState));
         return Optional.of(conletModel);
     }
@@ -124,10 +123,10 @@ public class HelloWorldConlet
     @Override
     @SuppressWarnings("PMD.EmptyCatchBlock")
     protected Optional<HelloWorldModel> recreateState(
-            RenderConletRequest event, ConsoleSession channel,
+            RenderConletRequest event, ConsoleConnection channel,
             String conletId) throws Exception {
         KeyValueStoreQuery query = new KeyValueStoreQuery(
-            storagePath(channel.browserSession(), conletId), channel);
+            storagePath(channel.session(), conletId), channel);
         newEventPipeline().fire(query, channel);
         try {
             if (!query.results().isEmpty()) {
@@ -147,7 +146,7 @@ public class HelloWorldConlet
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId,
+            ConsoleConnection channel, String conletId,
             HelloWorldModel conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
@@ -189,17 +188,17 @@ public class HelloWorldConlet
 
     @Override
     protected void doConletDeleted(ConletDeleted event,
-            ConsoleSession channel, String conletId,
+            ConsoleConnection channel, String conletId,
             HelloWorldModel conletState) throws Exception {
         if (event.renderModes().isEmpty()) {
             channel.respond(new KeyValueStoreUpdate().delete(
-                storagePath(channel.browserSession(), conletId)));
+                storagePath(channel.session(), conletId)));
         }
     }
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleSession channel, HelloWorldModel conletModel)
+            ConsoleConnection channel, HelloWorldModel conletModel)
             throws Exception {
         event.stop();
         conletModel.setWorldVisible(!conletModel.isWorldVisible());
@@ -207,7 +206,7 @@ public class HelloWorldConlet
         String jsonState = JsonBeanEncoder.create()
             .writeObject(conletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession(), conletModel.getConletId()),
+            storagePath(channel.session(), conletModel.getConletId()),
             jsonState));
         channel.respond(new NotifyConletView(type(),
             conletModel.getConletId(), "setWorldVisible",

@@ -127,10 +127,10 @@ public class KVStoreBasedConsolePolicy extends Component {
      */
     @Handler
     public void onConsolePrepared(
-            ConsolePrepared event, ConsoleSession channel) {
-        ((KVStoredLayoutData) channel.browserSession().transientData()
+            ConsolePrepared event, ConsoleConnection channel) {
+        ((KVStoredLayoutData) channel.session().transientData()
             .computeIfAbsent(KVStoredLayoutData.class,
-                key -> new KVStoredLayoutData(channel.browserSession())))
+                key -> new KVStoredLayoutData(channel.session())))
                     .onConsolePrepared(event, channel);
     }
 
@@ -143,9 +143,9 @@ public class KVStoreBasedConsolePolicy extends Component {
      */
     @Handler
     public void onConsoleLayoutChanged(ConsoleLayoutChanged event,
-            ConsoleSession channel) throws IOException {
+            ConsoleConnection channel) throws IOException {
         Optional<KVStoredLayoutData> optDs = Optional.ofNullable(
-            (KVStoredLayoutData) channel.browserSession().transientData()
+            (KVStoredLayoutData) channel.session().transientData()
                 .get(KVStoredLayoutData.class));
         if (optDs.isPresent()) {
             optDs.get().onConsoleLayoutChanged(event, channel);
@@ -153,7 +153,7 @@ public class KVStoreBasedConsolePolicy extends Component {
     }
 
     /**
-     * Stores the data for the web console session.
+     * Caches the data in the session.
      */
     @SuppressWarnings("PMD.CommentRequired")
     private class KVStoredLayoutData {

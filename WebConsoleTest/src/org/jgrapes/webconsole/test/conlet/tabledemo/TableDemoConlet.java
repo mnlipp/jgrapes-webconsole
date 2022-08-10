@@ -31,7 +31,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.RenderConlet;
@@ -62,27 +62,27 @@ public class TableDemoConlet extends FreeMarkerConlet<Serializable> {
      * On console ready.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @throws TemplateNotFoundException the template not found exception
-     * @throws MalformedTemplateNameException the malformed template name exception
+     * @throws MalformedTemplateNameException the malformed template name 
+     * exception
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
-        consoleSession.respond(new AddConletType(type())
+        connection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.Preview).setDisplayNames(
-                localizations(consoleSession.supportedLocales(), "conletName"))
+                localizations(connection.supportedLocales(), "conletName"))
             .addRenderMode(RenderMode.View));
     }
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId,
+            ConsoleConnection channel, String conletId,
             Serializable conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {

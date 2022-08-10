@@ -137,7 +137,7 @@
  * is not empty when a new session is initially created. The demo 
  * includes such a component.
  * 
- * ### Console Sessions 
+ * ### Console Channels 
  * 
  * ![Web Console Channels](ConsoleChannels.svg)
  * 
@@ -154,15 +154,15 @@
  * {@link org.jgrapes.webconsole.base.WebConsole} as its component channel
  * (the "consoleChannel"). For each WebSocket connection, the
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet} creates a 
- * {@link org.jgrapes.webconsole.base.ConsoleSession} as an
+ * {@link org.jgrapes.webconsole.base.ConsoleConnection} as an
  * {@link org.jgrapes.io.IOSubchannel} of the "consoleChannel".
- * This {@link org.jgrapes.webconsole.base.ConsoleSession} is then used 
+ * This {@link org.jgrapes.webconsole.base.ConsoleConnection} is then used 
  * to exchange the data between the SPA page that opened the WebSocket
  * connection and the display components and helper 
  * components that together constitute the web console. Using a WebSocket
  * for this communication requires some special considerations which are
  * described in the documentation of the class 
- * {@link org.jgrapes.webconsole.base.ConsoleSession}.
+ * {@link org.jgrapes.webconsole.base.ConsoleConnection}.
  * 
  * Some handlers that should conceptually be provided by the
  * {@link org.jgrapes.webconsole.base.WebConsole} are actually
@@ -191,16 +191,16 @@
  * has been received. The notification
  * (a {@link org.jgrapes.webconsole.base.events.JsonInput} from the servers point 
  * of view) is then fired on the associated
- * {@link org.jgrapes.webconsole.base.ConsoleSession} channel, which allows it to 
+ * {@link org.jgrapes.webconsole.base.ConsoleConnection} channel, which allows it to 
  * be intercepted by additional components. Usually, however, it is 
  * handled by the {@link org.jgrapes.webconsole.base.WebConsole} that converts it 
  * to a higher level event that is again fired on the
- * {@link org.jgrapes.webconsole.base.ConsoleSession} channel.
+ * {@link org.jgrapes.webconsole.base.ConsoleConnection} channel.
  * 
  * Components such as web console components or web console policies respond 
  * by sending 
  * {@link org.jgrapes.webconsole.base.events.ConsoleCommand}s on the
- * {@link org.jgrapes.webconsole.base.ConsoleSession} channel as responses.
+ * {@link org.jgrapes.webconsole.base.ConsoleConnection} channel as responses.
  * The {@link org.jgrapes.webconsole.base.events.ConsoleCommand}s are handled 
  * by the {@link org.jgrapes.webconsole.base.ConsoleWeblet} which serializes 
  * the data and sends it to the WebSocket using 
@@ -263,7 +263,7 @@
  * Web Console Session Use
  * -----------------------
  * 
- * After the web console session has been configured, the system usually
+ * After the web console page has been configured, the system usually
  * waits for input from the user. Changes of the layout of the
  * web console page result in events such as 
  * {@link org.jgrapes.webconsole.base.events.AddConletRequest},
@@ -375,7 +375,7 @@
  * object conletB
  * conletB -- consoleChannel
  * 
- * object "consoleSession: ConsoleSession" as consoleSession
+ * object "consoleSession: ConsoleConnection" as consoleSession
  * consoleChannel <-left- consoleSession : "main channel"
  * consoleWeblet *-- consoleSession 
  * 

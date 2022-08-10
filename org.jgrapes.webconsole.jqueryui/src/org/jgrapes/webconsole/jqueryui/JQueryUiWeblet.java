@@ -37,7 +37,7 @@ import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.ResourceNotFoundException;
 import org.jgrapes.webconsole.base.WebConsole;
@@ -121,12 +121,12 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 
     @Override
     protected void renderConsole(Request.In.Get event, IOSubchannel channel,
-            UUID consoleSessionId) throws IOException, InterruptedException {
+            UUID consoleConnectionId) throws IOException, InterruptedException {
         // Reloading themes on every reload allows themes
         // to be added dynamically. Note that we must load again
         // (not reload) in order for this to work in an OSGi environment.
         themeLoader = null;
-        super.renderConsole(event, channel, consoleSessionId);
+        super.renderConsole(event, channel, consoleConnectionId);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @Handler(channels = ConsoleChannel.class)
-    public void onJsonInput(JsonInput event, ConsoleSession channel)
+    public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         // Send events to conlets on web console's channel
         JsonArray params = event.request().params();
@@ -206,15 +206,15 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(channels = ConsoleChannel.class)
-    public void onSetTheme(SetTheme event, ConsoleSession channel)
+    public void onSetTheme(SetTheme event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         ThemeProvider themeProvider = StreamSupport
             .stream(themeLoader().spliterator(), false)
             .filter(thi -> thi.themeId().equals(event.theme())).findFirst()
             .orElse(baseTheme);
-        channel.browserSession().put("themeProvider", themeProvider.themeId());
+        channel.session().put("themeProvider", themeProvider.themeId());
         channel.respond(new KeyValueStoreUpdate().update(
-            "/" + WebConsoleUtils.userFromSession(channel.browserSession())
+            "/" + WebConsoleUtils.userFromSession(channel.session())
                 .map(ConsoleUser::getName).orElse("")
                 + "/themeProvider",
             themeProvider.themeId())).get();

@@ -31,7 +31,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
@@ -65,7 +65,7 @@ public class StyleTestConlet extends FreeMarkerConlet<Serializable> {
      * Trigger loading of resources when the console is ready.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param consoleSession the console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
@@ -73,7 +73,7 @@ public class StyleTestConlet extends FreeMarkerConlet<Serializable> {
      */
     @Handler
     public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+            ConsoleConnection consoleSession)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
@@ -90,7 +90,7 @@ public class StyleTestConlet extends FreeMarkerConlet<Serializable> {
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId,
+            ConsoleConnection channel, String conletId,
             Serializable conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.View)) {
@@ -108,7 +108,7 @@ public class StyleTestConlet extends FreeMarkerConlet<Serializable> {
     }
 
     @Override
-    protected boolean doSetLocale(SetLocale event, ConsoleSession channel,
+    protected boolean doSetLocale(SetLocale event, ConsoleConnection channel,
             String conletId) throws Exception {
         return true;
     }

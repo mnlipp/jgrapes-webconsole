@@ -29,7 +29,7 @@ import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.PageResourceProvider;
 import org.jgrapes.webconsole.base.StylingInfo;
 import org.jgrapes.webconsole.base.events.AddPageResources;
@@ -75,20 +75,19 @@ public class DatatablesProvider extends PageResourceProvider {
      * On {@link ConsoleReady}, fire the appropriate {@link AddPageResources}.
      *
      * @param event the event
-     * @param consoleSession the web console session
+     * @param connection the web console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()
             .useMinifiedResources() ? ".min" : "";
-        ResourceBundle bundle = resourceBundle(consoleSession.locale());
+        ResourceBundle bundle = resourceBundle(connection.locale());
         String script = "$.fn.dataTable.defaults.oLanguage._hungarianMap"
             + "[\"lengthAll\"] = \"sLengthAll\";\n"
             + "$.extend( $.fn.dataTable.defaults.oLanguage, {\n"
@@ -120,7 +119,7 @@ public class DatatablesProvider extends PageResourceProvider {
             addRequest.addCss(event.renderSupport().pageResource(
                 "jqueryui-overrides-1.0.0.css"));
         }
-        consoleSession.respond(addRequest);
+        connection.respond(addRequest);
     }
 
 }

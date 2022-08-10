@@ -32,7 +32,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
@@ -64,7 +64,7 @@ public class HeaderIconsConlet extends FreeMarkerConlet<Serializable> {
      * On console ready.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
@@ -72,12 +72,11 @@ public class HeaderIconsConlet extends FreeMarkerConlet<Serializable> {
      */
     @Handler
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add conlet resources to page
-        consoleSession.respond(new AddConletType(type())
+        connection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.Content)
             .addPageContent("headerIcons", Map.of("priority", "2"))
             .addPageContent("headerIcons", Map.of("priority", "1"))
@@ -86,7 +85,7 @@ public class HeaderIconsConlet extends FreeMarkerConlet<Serializable> {
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId,
+            ConsoleConnection channel, String conletId,
             Serializable conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Content)) {

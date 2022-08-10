@@ -136,9 +136,9 @@ import JQUIConsole from "${renderSupport.consoleResource('jquiconsole.js')}"
 const renderer = new JQUIConsole.Renderer(JGConsole.instance);
 
 document.addEventListener('readystatechange', event => { JGConsole.init(
-  "${consoleSessionId}", 
-    { refreshInterval: parseInt('${consoleSessionRefreshInterval.toMillis()?c}'),
-      inactivityTimeout: parseInt('${consoleSessionInactivityTimeout.toMillis()?c}') });
+  "${consoleConnectionId}", 
+    { refreshInterval: parseInt('${connectionRefreshInterval.toMillis()?c}'),
+      inactivityTimeout: parseInt('${connectionInactivityTimeout.toMillis()?c}') });
   });
 </script>  
 

@@ -10,7 +10,6 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
-    <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.buildship.core.classpathprovider"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.jgrapes.webconsole.test.WebConsoleTest"/>
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="WebConsoleTest"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="WebConsoleTest"/>

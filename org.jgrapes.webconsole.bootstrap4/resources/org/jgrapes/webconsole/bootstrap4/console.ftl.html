@@ -56,9 +56,9 @@
         serverConnectionRestored: '${_("serverConnectionRestoredMessage")}',
       });
   document.addEventListener('readystatechange', event => { JGConsole.init(
-    "${consoleSessionId}",
-    { refreshInterval: parseInt('${consoleSessionRefreshInterval.toMillis()?c}'),
-      inactivityTimeout: parseInt('${consoleSessionInactivityTimeout.toMillis()?c}') });
+    "${consoleConnectionId}",
+    { refreshInterval: parseInt('${connectionRefreshInterval.toMillis()?c}'),
+      inactivityTimeout: parseInt('${connectionInactivityTimeout.toMillis()?c}') });
   });
 </script>
 

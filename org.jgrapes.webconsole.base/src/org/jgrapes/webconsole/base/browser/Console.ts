@@ -37,8 +37,8 @@ interface PageComponentSpecification {
  */
 class Console {
     private _isConfigured = false;
-    private _sessionRefreshInterval = 0;
-    private _sessionInactivityTimeout = 0;
+    private _connectionRefreshInterval = 0;
+    private _connectionInactivityTimeout = 0;
     private _renderer: Renderer | null = null;
     private _webSocket = new ConsoleWebSocket(this);
     private _conletFunctionRegistry = new Map<string, 
@@ -212,22 +212,23 @@ class Console {
      * {@link Renderer.init} and sends the `consoleReady` message
      * to the server.
      *
-     * @param consoleSessionId the session id
+     * @param connectionId the connection id
      * @param options additional options
      */
-    init(consoleSessionId: string, 
+    init(connectionId: string, 
         options: { 
             refreshInterval?: number,
             inactivityTimeout?: number
         }) {
         Log.debug("Initializing console...");
-        sessionStorage.setItem("org.jgrapes.webconsole.base.sessionId", consoleSessionId);
+        sessionStorage.setItem("org.jgrapes.webconsole.base.connectionId", 
+            connectionId);
         this._resourceManager = new ResourceManager(this);
         if (options["refreshInterval"]) {
-            this._sessionRefreshInterval = options.refreshInterval;            
+            this._connectionRefreshInterval = options.refreshInterval;            
         }
         if (options["inactivityTimeout"]) {
-            this._sessionInactivityTimeout = options.inactivityTimeout;
+            this._connectionInactivityTimeout = options.inactivityTimeout;
         }
 
         // Everything set up, can connect web socket now.
@@ -246,12 +247,12 @@ class Console {
         return this._isConfigured;
     }
 
-    get sessionRefreshInterval() {
-        return this._sessionRefreshInterval;
+    get connectionRefreshInterval() {
+        return this._connectionRefreshInterval;
     }
 
-    get sessionInactivityTimeout() {
-        return this._sessionInactivityTimeout;
+    get connectionInactivityTimeout() {
+        return this._connectionInactivityTimeout;
     }
 
     set renderer(renderer: Renderer) {

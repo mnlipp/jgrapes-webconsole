@@ -44,7 +44,7 @@ import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
@@ -107,21 +107,20 @@ public class MarkdownDisplayConlet extends
      * On {@link ConsoleReady}, fire the {@link AddConletType}.
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event,
-            ConsoleSession consoleSession)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add MarkdownDisplayConlet resources to page
-        consoleSession.respond(new AddConletType(type())
+        connection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.Preview).setDisplayNames(
-                localizations(consoleSession.supportedLocales(), "conletName"))
+                localizations(connection.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setRequires(new String[] { "markdown-it.github.io",
                     "github.com/markdown-it/markdown-it-abbr",
@@ -146,18 +145,18 @@ public class MarkdownDisplayConlet extends
      */
     @Override
     protected String generateInstanceId(AddConletRequest event,
-            ConsoleSession session) {
+            ConsoleConnection session) {
         return Optional.ofNullable((String) event.properties().get(CONLET_ID))
             .orElse(super.generateInstanceId(event, session));
     }
 
     @Override
     protected Optional<MarkdownDisplayModel> createStateRepresentation(
-            RenderConletRequestBase<?> event, ConsoleSession channel,
+            RenderConletRequestBase<?> event, ConsoleConnection channel,
             String conletId) throws Exception {
         // Create fallback model
         ResourceBundle resourceBundle
-            = resourceBundle(channel.browserSession().locale());
+            = resourceBundle(channel.session().locale());
         MarkdownDisplayModel model = new MarkdownDisplayModel(conletId);
         model.setTitle(resourceBundle.getString("conletName"));
         model.setPreviewContent("");
@@ -166,7 +165,7 @@ public class MarkdownDisplayConlet extends
 
         // Save model and return
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + model.getConletId(),
+            storagePath(channel.session()) + model.getConletId(),
             JsonBeanEncoder.create().writeObject(model).toJson()));
         return Optional.of(model);
     }
@@ -194,7 +193,7 @@ public class MarkdownDisplayConlet extends
      */
     @Override
     protected Optional<MarkdownDisplayModel> createNewState(
-            AddConletRequest event, ConsoleSession session, String conletId)
+            AddConletRequest event, ConsoleConnection session, String conletId)
             throws Exception {
         ResourceBundle resourceBundle = resourceBundle(session.locale());
 
@@ -216,7 +215,7 @@ public class MarkdownDisplayConlet extends
         String jsonState = JsonBeanEncoder.create()
             .writeObject(model).toJson();
         session.respond(new KeyValueStoreUpdate().update(
-            storagePath(session.browserSession()) + model.getConletId(),
+            storagePath(session.session()) + model.getConletId(),
             jsonState));
 
         // Return model
@@ -226,10 +225,10 @@ public class MarkdownDisplayConlet extends
     @Override
     @SuppressWarnings("PMD.EmptyCatchBlock")
     protected Optional<MarkdownDisplayModel> recreateState(
-            RenderConletRequest event, ConsoleSession channel,
+            RenderConletRequest event, ConsoleConnection channel,
             String conletId) throws Exception {
         KeyValueStoreQuery query = new KeyValueStoreQuery(
-            storagePath(channel.browserSession()) + conletId, channel);
+            storagePath(channel.session()) + conletId, channel);
         newEventPipeline().fire(query, channel);
         try {
             if (!query.results().isEmpty()) {
@@ -248,7 +247,7 @@ public class MarkdownDisplayConlet extends
 
     @Override
     protected Set<RenderMode> doRenderConlet(
-            RenderConletRequestBase<?> event, ConsoleSession consoleSession,
+            RenderConletRequestBase<?> event, ConsoleConnection consoleSession,
             String conletId, MarkdownDisplayModel model)
             throws Exception {
         ResourceBundle resourceBundle = resourceBundle(consoleSession.locale());
@@ -316,17 +315,17 @@ public class MarkdownDisplayConlet extends
 
     @Override
     protected void doConletDeleted(ConletDeleted event,
-            ConsoleSession channel, String conletId,
+            ConsoleConnection channel, String conletId,
             MarkdownDisplayModel retrievedState) throws Exception {
         if (event.renderModes().isEmpty()) {
             channel.respond(new KeyValueStoreUpdate().delete(
-                storagePath(channel.browserSession()) + conletId));
+                storagePath(channel.session()) + conletId));
         }
     }
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleSession consoleSession, MarkdownDisplayModel conletState)
+            ConsoleConnection consoleSession, MarkdownDisplayModel conletState)
             throws Exception {
         event.stop();
         @SuppressWarnings("PMD.UseConcurrentHashMap")
@@ -349,13 +348,13 @@ public class MarkdownDisplayConlet extends
      * event and updates the view with a {@link NotifyConletView}. 
      *
      * @param event the event
-     * @param consoleSession the console session
+     * @param connection the console connection
      */
     @SuppressWarnings("unchecked")
     @Handler
     public void onUpdateConletModel(UpdateConletModel event,
-            ConsoleSession consoleSession) {
-        stateFromSession(consoleSession.browserSession(), event.conletId())
+            ConsoleConnection connection) {
+        stateFromSession(connection.session(), event.conletId())
             .ifPresent(model -> {
                 event.ifPresent(TITLE,
                     (key, value) -> model.setTitle((String) value))
@@ -372,11 +371,11 @@ public class MarkdownDisplayConlet extends
                 try {
                     String jsonState = JsonBeanEncoder.create()
                         .writeObject(model).toJson();
-                    consoleSession.respond(new KeyValueStoreUpdate().update(
-                        storagePath(consoleSession.browserSession())
+                    connection.respond(new KeyValueStoreUpdate().update(
+                        storagePath(connection.session())
                             + model.getConletId(),
                         jsonState));
-                    updateView(consoleSession, model);
+                    updateView(connection, model);
                 } catch (IOException e) { // NOPMD
                     // Won't happen, uses internal writer
                 }

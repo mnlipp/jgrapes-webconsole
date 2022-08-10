@@ -143,11 +143,10 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
         consoleModel.put("useMinifiedResources", useMinifiedResources());
         consoleModel.put("minifiedExtension",
             useMinifiedResources() ? ".min" : "");
-        consoleModel.put(
-            "consoleSessionRefreshInterval", consoleSessionRefreshInterval());
-        consoleModel.put(
-            "consoleSessionInactivityTimeout",
-            consoleSessionInactivityTimeout());
+        consoleModel.put("connectionRefreshInterval",
+            connectionRefreshInterval());
+        consoleModel.put("connectionInactivityTimeout",
+            connectionInactivityTimeout());
         return consoleModel;
     }
 
@@ -158,15 +157,15 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      *
      * @param model the model
      * @param event the event
-     * @param consoleSessionId the console session id
+     * @param consoleConnectionId the console connection id
      * @return the map
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     protected Map<String, Object> expandConsoleModel(
             Map<String, Object> model, Request.In.Get event,
-            UUID consoleSessionId) {
-        // WebConsole Session UUID
-        model.put("consoleSessionId", consoleSessionId.toString());
+            UUID consoleConnectionId) {
+        // WebConsole Connection UUID
+        model.put("consoleConnectionId", consoleConnectionId.toString());
 
         // Add locale
         final Locale locale = event.associated(Selection.class).map(
@@ -250,7 +249,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      */
     @Override
     protected void renderConsole(Request.In.Get event, IOSubchannel channel,
-            UUID consoleSessionId) throws IOException, InterruptedException {
+            UUID consoleConnectionId) throws IOException, InterruptedException {
         event.setResult(true);
         event.stop();
 
@@ -270,7 +269,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
 
             Template tpl = freeMarkerConfig.getTemplate("console.ftl.html");
             Map<String, Object> consoleModel = expandConsoleModel(
-                createConsoleBaseModel(), event, consoleSessionId);
+                createConsoleBaseModel(), event, consoleConnectionId);
             tpl.process(consoleModel, out);
         } catch (TemplateException e) {
             throw new IOException(e);

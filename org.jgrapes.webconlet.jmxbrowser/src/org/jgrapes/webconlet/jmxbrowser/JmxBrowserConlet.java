@@ -53,7 +53,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
-import org.jgrapes.webconsole.base.ConsoleSession;
+import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
@@ -94,7 +94,7 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    public void onConsoleReady(ConsoleReady event, ConsoleSession channel)
+    public void onConsoleReady(ConsoleReady event, ConsoleConnection channel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add conlet resources to page
@@ -109,7 +109,7 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
 
     @Override
     protected Set<RenderMode> doRenderConlet(
-            RenderConletRequestBase<?> event, ConsoleSession channel,
+            RenderConletRequestBase<?> event, ConsoleConnection channel,
             String conletId, Serializable conletState)
             throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
@@ -146,7 +146,7 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleSession channel, Serializable conletModel)
+            ConsoleConnection channel, Serializable conletModel)
             throws Exception {
         event.stop();
         if ("sendMBean".equals(event.method())) {
