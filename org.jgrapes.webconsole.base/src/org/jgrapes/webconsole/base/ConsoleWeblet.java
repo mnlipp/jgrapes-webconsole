@@ -790,10 +790,12 @@ public abstract class ConsoleWeblet extends Component {
             wsChannel.setAssociated(this, null);
             optWsInputReader.get().close();
         }
-        wsChannel.associated(ConsoleConnection.class).ifPresent(session -> {
+        wsChannel.associated(ConsoleConnection.class).ifPresent(connection -> {
+            // Forward to connection
+            fire(new Closed(), connection);
             // Restore channel to normal mode, see onConsoleReady
-            session.responsePipeline().restrictEventSource(null);
-            session.disconnected();
+            connection.responsePipeline().restrictEventSource(null);
+            connection.disconnected();
         });
     }
 
