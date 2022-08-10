@@ -151,6 +151,26 @@ public class MarkdownDisplayConlet extends
             .orElse(super.generateInstanceId(event, session));
     }
 
+    @Override
+    protected Optional<MarkdownDisplayModel> createStateRepresentation(
+            RenderConletRequestBase<?> event, ConsoleSession channel,
+            String conletId) throws Exception {
+        // Create fallback model
+        ResourceBundle resourceBundle
+            = resourceBundle(channel.browserSession().locale());
+        MarkdownDisplayModel model = new MarkdownDisplayModel(conletId);
+        model.setTitle(resourceBundle.getString("conletName"));
+        model.setPreviewContent("");
+        model.setViewContent("");
+        model.setDeletable(Boolean.TRUE);
+
+        // Save model and return
+        channel.respond(new KeyValueStoreUpdate().update(
+            storagePath(channel.browserSession()) + model.getConletId(),
+            JsonBeanEncoder.create().writeObject(model).toJson()));
+        return Optional.of(model);
+    }
+
     /**
      * Creates a new model for the conlet. The following properties
      * are copied from the {@link AddConletRequest} event
@@ -207,7 +227,7 @@ public class MarkdownDisplayConlet extends
     @SuppressWarnings("PMD.EmptyCatchBlock")
     protected Optional<MarkdownDisplayModel> recreateState(
             RenderConletRequest event, ConsoleSession channel,
-            String conletId) throws IOException {
+            String conletId) throws Exception {
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             storagePath(channel.browserSession()) + conletId, channel);
         newEventPipeline().fire(query, channel);
@@ -223,20 +243,7 @@ public class MarkdownDisplayConlet extends
             // Means we have no result.
         }
 
-        // Create fallback model
-        ResourceBundle resourceBundle
-            = resourceBundle(channel.browserSession().locale());
-        MarkdownDisplayModel model = new MarkdownDisplayModel(conletId);
-        model.setTitle(resourceBundle.getString("conletName"));
-        model.setPreviewContent("");
-        model.setViewContent("");
-        model.setDeletable(Boolean.TRUE);
-
-        // Save model and return
-        channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + model.getConletId(),
-            JsonBeanEncoder.create().writeObject(model).toJson()));
-        return Optional.of(model);
+        return createStateRepresentation(event, channel, conletId);
     }
 
     @Override
@@ -379,7 +386,6 @@ public class MarkdownDisplayConlet extends
     /**
      * The web console component's model.
      */
-    @SuppressWarnings("serial")
     public static class MarkdownDisplayModel extends ConletBaseModel {
 
         private String title = "";
