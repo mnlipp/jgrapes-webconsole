@@ -184,7 +184,8 @@ public class KVStoreBasedConsolePolicy extends Component {
                 IOSubchannel channel, RenderSupport renderSupport) {
             try {
                 String data = Optional.ofNullable(query.get())
-                    .map(m -> m.get(storagePath)).orElse(null);
+                    .flatMap(m -> Optional.ofNullable(m.get(storagePath)))
+                    .orElse(null);
                 if (data == null) {
                     persisted = new HashMap<>();
                 } else {
