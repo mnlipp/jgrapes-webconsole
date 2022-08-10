@@ -142,7 +142,8 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
      * @throws TemplateNotFoundException 
      */
     @Handler(priority = 1000)
-    public void onConsolePrepared(ConsolePrepared event, ConsoleConnection channel)
+    public void onConsolePrepared(ConsolePrepared event,
+            ConsoleConnection channel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // If we are logged in, proceed
@@ -242,7 +243,6 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     /**
      * Model with account info.
      */
-    @SuppressWarnings({ "serial", "PMD.DataClass" })
     public static class AccountModel extends ConletBaseModel {
 
         private boolean dialogOpen;
