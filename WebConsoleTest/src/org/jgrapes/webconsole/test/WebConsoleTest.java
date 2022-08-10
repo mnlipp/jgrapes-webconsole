@@ -129,7 +129,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
 
         // Build application layer
         app.attach(new PreferencesStore(app.channel(), this.getClass()));
-        app.attach(new InMemorySessionManager(app.channel()));
         app.attach(new LanguageSelector(app.channel()));
         app.attach(new FileStorage(app.channel(), 65_536));
         app.attach(new StaticContentDispatcher(app.channel(),
@@ -149,6 +148,8 @@ public class WebConsoleTest extends Component implements BundleActivator {
     @SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
         "PMD.TooFewBranchesForASwitchStatement" })
     private void createJQueryUiConsole() throws URISyntaxException {
+        app.attach(new InMemorySessionManager(app.channel(), "/jqconsole")
+            .setIdName("id-jq"));
         ConsoleWeblet consoleWeblet
             = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
                 new URI("/jqconsole/")))
@@ -187,6 +188,8 @@ public class WebConsoleTest extends Component implements BundleActivator {
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
     private void createBootstrap4Console() throws URISyntaxException {
+        app.attach(new InMemorySessionManager(app.channel(), "/b4console")
+            .setIdName("id-b4"));
         ConsoleWeblet consoleWeblet
             = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
                 new URI("/b4console/")))
@@ -226,6 +229,8 @@ public class WebConsoleTest extends Component implements BundleActivator {
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
     private void createVueJsConsole() throws URISyntaxException {
+        app.attach(new InMemorySessionManager(app.channel(), "/vjconsole")
+            .setIdName("id-vj"));
         ConsoleWeblet consoleWeblet
             = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
                 new URI("/vjconsole/")))
@@ -264,6 +269,8 @@ public class WebConsoleTest extends Component implements BundleActivator {
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
     private void createVueJsConsole2() throws URISyntaxException {
+        app.attach(new InMemorySessionManager(app.channel(), "/vjconsole2")
+            .setIdName("idvj2"));
         ConsoleWeblet consoleWeblet
             = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
                 new URI("/vjconsole2/")))
