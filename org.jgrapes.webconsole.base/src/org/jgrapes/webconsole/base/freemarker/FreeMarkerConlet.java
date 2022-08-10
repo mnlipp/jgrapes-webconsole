@@ -29,7 +29,6 @@ import freemarker.template.TemplateModelException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.Collections;
@@ -61,8 +60,7 @@ import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 /**
  * 
  */
-public abstract class FreeMarkerConlet<S extends Serializable>
-        extends AbstractConlet<S> {
+public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
 
     @SuppressWarnings({ "PMD.VariableNamingConventions",
         "PMD.FieldNamingConventions" })
@@ -235,7 +233,7 @@ public abstract class FreeMarkerConlet<S extends Serializable>
      */
     protected Map<String, Object> fmConletModel(
             RenderConletRequestBase<?> event, IOSubchannel channel,
-            String conletId, Serializable conletState) {
+            String conletId, Object conletState) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
         model.put("event", event);
@@ -276,7 +274,7 @@ public abstract class FreeMarkerConlet<S extends Serializable>
      * @return the model
      */
     protected Map<String, Object> fmModel(RenderConletRequestBase<?> event,
-            ConsoleSession channel, String conletId, Serializable conletState) {
+            ConsoleSession channel, String conletId, Object conletState) {
         final Map<String, Object> model
             = fmSessionModel(channel.browserSession());
         model.put("locale", channel.locale());
