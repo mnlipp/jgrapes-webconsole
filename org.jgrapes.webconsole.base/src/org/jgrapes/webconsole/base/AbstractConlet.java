@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,6 +46,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
@@ -312,8 +314,7 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
 @SuppressWarnings({ "PMD.TooManyMethods",
     "PMD.EmptyMethodInAbstractClassShouldBeAbstract", "PMD.GodClass",
     "PMD.ExcessiveImports" })
-public abstract class AbstractConlet<S extends Serializable>
-        extends Component {
+public abstract class AbstractConlet<S> extends Component {
 
     /** Separator used between type and instance when generating the id. */
     public static final String TYPE_INSTANCE_SEPARATOR = "~";
@@ -727,37 +728,45 @@ public abstract class AbstractConlet<S extends Serializable>
     }
 
     /**
-     * Helper that provides access to a storage space for this 
-     * conlet type in the browser session.
+     * Helper that provides the storage spaces for this 
+     * conlet type in the session.
      *
      * @param session the session
-     * @return the map
+     * @return the spaces, non-transient first
      */
-    private Map<String, S> typeContext(Session session) {
+    @SuppressWarnings("unchecked")
+    private Stream<Map<String, S>> typeContexts(Session session) {
         synchronized (session) {
-            @SuppressWarnings({ "unchecked", "PMD.AvoidDuplicateLiterals" })
-            Map<String, Map<String, S>> abstractConletContext
-                = (Map<String, Map<String, S>>) session
-                    .computeIfAbsent(AbstractConlet.class,
-                        k -> new ConcurrentHashMap<>());
-            return abstractConletContext
-                .computeIfAbsent(type(), k -> new ConcurrentHashMap<>());
+            return List.of(session, session.transientData()).stream()
+                .map(context -> ((Map<Class<?>,
+                        Map<String, S>>) (Object) context).computeIfAbsent(
+                            AbstractConlet.class,
+                            k -> new ConcurrentHashMap<>()));
         }
     }
 
     /**
      * Puts the given web console component state in the session using the 
      * {@link #type()} and the given web console component id as keys.
+     * If the state representation implements {@link Serializable},
+     * the information is put in the session, else it is put in the
+     * session's {@link Session#transientData()}.
      * 
      * @param session the session to use
      * @param conletId the web console component id
      * @param conletState the web console component state
      * @return the component state
      */
-    protected Serializable putInSession(Session session, String conletId,
+    protected S putInSession(Session session, String conletId,
             S conletState) {
-        typeContext(session).put(conletId, conletState);
-        return conletState;
+        synchronized (session) {
+            var storages = typeContexts(session);
+            if (!(conletState instanceof Serializable)) {
+                storages = storages.skip(1);
+            }
+            storages.findFirst().get().put(conletId, conletState);
+            return conletState;
+        }
     }
 
     /**
@@ -769,7 +778,10 @@ public abstract class AbstractConlet<S extends Serializable>
      * @return the web console component state
      */
     protected Optional<S> stateFromSession(Session session, String conletId) {
-        return Optional.ofNullable(typeContext(session).get(conletId));
+        synchronized (session) {
+            return typeContexts(session).map(storage -> storage.get(conletId))
+                .filter(data -> data != null).findFirst();
+        }
     }
 
     /**
@@ -780,8 +792,11 @@ public abstract class AbstractConlet<S extends Serializable>
      * @return the states
      */
     protected Collection<Map.Entry<String, S>>
-            statesFromSession(ConsoleSession session) {
-        return typeContext(session.browserSession()).entrySet();
+            statesFromSession(Session session) {
+        synchronized (session) {
+            return typeContexts(session).flatMap(storage -> storage.entrySet()
+                .stream()).collect(Collectors.toList());
+        }
     }
 
     /**
@@ -793,8 +808,11 @@ public abstract class AbstractConlet<S extends Serializable>
      * @return the removed state if state existed
      */
     protected Optional<S> removeState(Session session, String conletId) {
-        S state = typeContext(session).remove(conletId);
-        return Optional.ofNullable(state);
+        synchronized (session) {
+            return typeContexts(session)
+                .map(storage -> storage.remove(conletId))
+                .filter(data -> data != null).findFirst();
+        }
     }
 
     /**

@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.base;
 
 import java.beans.ConstructorProperties;
-import java.io.Serializable;
 
 /**
  * Defines a web console component base model following the 
@@ -33,8 +32,7 @@ import java.io.Serializable;
  * {@link #equals(Object)} using the `conletId` as single 
  * criterion.
  */
-@SuppressWarnings("serial")
-public class ConletBaseModel implements Serializable {
+public class ConletBaseModel {
 
     protected String conletId;
 
