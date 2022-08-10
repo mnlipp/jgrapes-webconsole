@@ -35,7 +35,6 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.Session;
-import org.jgrapes.util.events.KeyValueStoreData;
 import org.jgrapes.util.events.KeyValueStoreQuery;
 import org.jgrapes.util.events.KeyValueStoreUpdate;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
@@ -52,6 +51,7 @@ import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.OpenModalDialog;
 import org.jgrapes.webconsole.base.events.RenderConlet;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
@@ -76,10 +76,10 @@ public class HelloWorldConlet
         super(componentChannel);
     }
 
-    private String storagePath(Session session) {
+    private String storagePath(Session session, String conletId) {
         return "/" + WebConsoleUtils.userFromSession(session)
             .map(ConsoleUser::getName).orElse("")
-            + "/conlets/" + HelloWorldConlet.class.getName() + "/";
+            + "/" + HelloWorldConlet.class.getName() + "/" + conletId;
     }
 
     /**
@@ -106,31 +106,6 @@ public class HelloWorldConlet
                     "HelloWorld-functions.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "HelloWorld-style.css")));
-        KeyValueStoreQuery query = new KeyValueStoreQuery(
-            storagePath(consoleSession.browserSession()), consoleSession);
-        fire(query, consoleSession);
-    }
-
-    /**
-     * Invoked when the key/value store provides data.
-     *
-     * @param event the event
-     * @param channel the channel
-     * @throws JsonDecodeException the json decode exception
-     */
-    @Handler
-    public void onKeyValueStoreData(
-            KeyValueStoreData event, ConsoleSession channel)
-            throws JsonDecodeException {
-        if (!event.event().query()
-            .equals(storagePath(channel.browserSession()))) {
-            return;
-        }
-        for (String json : event.data().values()) {
-            HelloWorldModel model = JsonBeanDecoder.create(json)
-                .readObject(HelloWorldModel.class);
-            putInSession(channel.browserSession(), model.getConletId(), model);
-        }
     }
 
     @Override
@@ -141,9 +116,33 @@ public class HelloWorldConlet
         String jsonState
             = JsonBeanEncoder.create().writeObject(conletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + conletModel.getConletId(),
+            storagePath(channel.browserSession(), conletModel.getConletId()),
             jsonState));
         return Optional.of(conletModel);
+    }
+
+    @Override
+    @SuppressWarnings("PMD.EmptyCatchBlock")
+    protected Optional<HelloWorldModel> recreateState(
+            RenderConletRequest event, ConsoleSession channel,
+            String conletId) throws Exception {
+        KeyValueStoreQuery query = new KeyValueStoreQuery(
+            storagePath(channel.browserSession(), conletId), channel);
+        newEventPipeline().fire(query, channel);
+        try {
+            if (!query.results().isEmpty()) {
+                var json = query.results().get(0).values().stream().findFirst()
+                    .get();
+                HelloWorldModel model = JsonBeanDecoder.create(json)
+                    .readObject(HelloWorldModel.class);
+                return Optional.of(model);
+            }
+        } catch (InterruptedException | JsonDecodeException e) {
+            // Means we have no result.
+        }
+
+        // Fall back to creating default state.
+        return createStateRepresentation(event, channel, conletId);
     }
 
     @Override
@@ -194,7 +193,7 @@ public class HelloWorldConlet
             HelloWorldModel conletState) throws Exception {
         if (event.renderModes().isEmpty()) {
             channel.respond(new KeyValueStoreUpdate().delete(
-                storagePath(channel.browserSession()) + conletId));
+                storagePath(channel.browserSession(), conletId)));
         }
     }
 
@@ -208,7 +207,7 @@ public class HelloWorldConlet
         String jsonState = JsonBeanEncoder.create()
             .writeObject(conletModel).toJson();
         channel.respond(new KeyValueStoreUpdate().update(
-            storagePath(channel.browserSession()) + conletModel.getConletId(),
+            storagePath(channel.browserSession(), conletModel.getConletId()),
             jsonState));
         channel.respond(new NotifyConletView(type(),
             conletModel.getConletId(), "setWorldVisible",
@@ -222,7 +221,6 @@ public class HelloWorldConlet
     /**
      * Model with world's state.
      */
-    @SuppressWarnings("serial")
     public static class HelloWorldModel extends ConletBaseModel {
 
         private boolean worldVisible = true;
