@@ -228,21 +228,21 @@ public class WebConsole extends Component {
     public interface ConsoleMXBean {
 
         @SuppressWarnings("PMD.CommentRequired")
-        class ConsoleSessionInfo {
+        class ConsoleConnectionInfo {
 
-            private final ConsoleConnection session;
+            private final ConsoleConnection connection;
 
-            public ConsoleSessionInfo(ConsoleConnection session) {
+            public ConsoleConnectionInfo(ConsoleConnection connection) {
                 super();
-                this.session = session;
+                this.connection = connection;
             }
 
             public String getChannel() {
-                return session.upstreamChannel().toString();
+                return connection.upstreamChannel().toString();
             }
 
             public String getExpiresAt() {
-                return session.expiresAt().atZone(ZoneId.systemDefault())
+                return connection.expiresAt().atZone(ZoneId.systemDefault())
                     .toString();
             }
         }
@@ -255,7 +255,7 @@ public class WebConsole extends Component {
 
         void setUseMinifiedResources(boolean useMinifiedResources);
 
-        SortedMap<String, ConsoleSessionInfo> getConsoleSessions();
+        SortedMap<String, ConsoleConnectionInfo> getConsoleConnections();
     }
 
     @SuppressWarnings("PMD.CommentRequired")
@@ -333,13 +333,13 @@ public class WebConsole extends Component {
 
         @Override
         @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-        public SortedMap<String, ConsoleSessionInfo> getConsoleSessions() {
-            SortedMap<String, ConsoleSessionInfo> result = new TreeMap<>();
+        public SortedMap<String, ConsoleConnectionInfo> getConsoleConnections() {
+            SortedMap<String, ConsoleConnectionInfo> result = new TreeMap<>();
             console().ifPresent(console -> {
                 for (ConsoleConnection ps : ConsoleConnection
                     .byConsole(console)) {
                     result.put(Components.simpleObjectName(ps),
-                        new ConsoleSessionInfo(ps));
+                        new ConsoleConnectionInfo(ps));
                 }
             });
             return result;
