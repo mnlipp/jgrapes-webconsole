@@ -4,6 +4,7 @@ include 'cnf'
 include 'aash-vue-components'
 
 include 'org.jgrapes.webconsole.base'
+include 'org.jgrapes.webconsole.rbac'
 include 'org.jgrapes.webconsole.jqueryui'
 include 'org.jgrapes.webconsole.bootstrap4'
 include 'org.jgrapes.webconsole.vuejs'

@@ -1,0 +1,8 @@
+dependencies {
+    api project(':org.jgrapes.webconsole.base')
+}
+
+// Prevents deadlock.
+generatePomFileForMavenPublication {
+    mustRunAfter ':org.jgrapes.webconsole.base:jar'
+}

@@ -17,6 +17,7 @@ repositories {
 dependencies {
 
     implementation 'org.osgi:osgi.core:6.0.0'
+    implementation project(':org.jgrapes.webconsole.rbac')
     implementation project(':org.jgrapes.webconsole.vuejs')
     implementation project(':org.jgrapes.webconsole.bootstrap4')
     implementation project(':org.jgrapes.webconsole.jqueryui')
