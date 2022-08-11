@@ -270,7 +270,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
     private void createVueJsConsole2() throws URISyntaxException {
         app.attach(new InMemorySessionManager(app.channel(), "/vjconsole2")
-            .setIdName("idvj2"));
+            .setIdName("id-vj2"));
         ConsoleWeblet consoleWeblet
             = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
                 new URI("/vjconsole2/")))
