@@ -62,10 +62,9 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * remain in an open state as long as they are in use. Only if no 
  * data is received (i.e. {@link #refresh()} isn't called) for the 
  * time span configured with
- * {@link ConsoleWeblet#setConnectionNetworkTimeout}
- * a {@link Closed} event is fired on the channel and the console 
- * connection is closed. (Method {@link #isConnected()} can be used 
- * to check the connection state.)
+ * {@link ConsoleWeblet#setConnectionNetworkTimeout} a timer closes
+ * the connection by calling the {@link #close()} method. (Method 
+ * {@link #isConnected()} can be used to check the connection state.)
  * In order to keep the console connection in an open state while
  * the connection is inactive, i.e. no data is sent due to user activity,
  * the SPA automatically generates refresh messages as configured
@@ -145,7 +144,7 @@ public final class ConsoleConnection extends DefaultIOSubchannel {
     private Locale locale;
     private long timeout;
     private final Timer timeoutTimer;
-    private boolean active = true;
+    private boolean open = true;
     private boolean connected = true;
     private Supplier<Optional<Session>> sessionSupplier;
     private IOSubchannel upstreamChannel;
@@ -258,7 +257,7 @@ public final class ConsoleConnection extends DefaultIOSubchannel {
         this.connectionId = connectionId;
         this.timeout = timeout;
         timeoutTimer = Components.schedule(
-            tmr -> discard(), Duration.ofMillis(timeout));
+            tmr -> close(), Duration.ofMillis(timeout));
     }
 
     /**
@@ -291,22 +290,27 @@ public final class ConsoleConnection extends DefaultIOSubchannel {
     }
 
     /**
-     * Discards this connection.
+     * Close this connection. The connection is removed from the
+     * set of open connections and a {@link Closed} event is fired 
+     * on the connection. 
      */
-    public void discard() {
-        connections.remove(connectionId);
-        connected = false;
-        active = false;
-        console.newEventPipeline().fire(new Closed(), this);
+    public void close() {
+        // Not necessarily invoked by timer.
+        timeoutTimer.cancel();
+        if (connections.remove(connectionId) != null) {
+            connected = false;
+            open = false;
+            console.newEventPipeline().fire(new Closed(), this);
+        }
     }
 
     /**
-     * Checks if the console connection has become stale (inactive).
+     * Checks if the console connection is open.
      *
-     * @return true, if is stale
+     * @return true, if is open
      */
-    public boolean isStale() {
-        return !active;
+    public boolean isOpen() {
+        return open;
     }
 
     /* default */ void disconnected() {

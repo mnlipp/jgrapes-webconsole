@@ -165,7 +165,7 @@ public class WebSocketInputReader extends Thread {
             if ("disconnect".equals(rpc.method())
                 && connection.consoleConnectionId()
                     .equals(rpc.params().asString(0))) {
-                connection.discard();
+                connection.close();
                 return;
             }
             // Ordinary message from web console (view) to server.

@@ -217,7 +217,7 @@ public class WebConsole extends Component {
     @Handler
     public void onStop(Stop event) {
         for (ConsoleConnection ps : ConsoleConnection.byConsole(this)) {
-            ps.discard();
+            ps.close();
         }
     }
 

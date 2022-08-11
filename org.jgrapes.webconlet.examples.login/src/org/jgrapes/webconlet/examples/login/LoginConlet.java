@@ -39,7 +39,6 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.events.DiscardSession;
 import org.jgrapes.io.events.Close;
-import org.jgrapes.io.events.Closed;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleConnection;
@@ -214,25 +213,27 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleConnection channel, AccountModel model) throws Exception {
+            ConsoleConnection connection, AccountModel model) throws Exception {
         if ("loginData".equals(event.method())) {
             model.setDialogOpen(false);
             Subject user = new Subject();
             user.getPrincipals().add(new ConsoleUser(event.params().asString(0),
                 event.params().asString(0)));
-            channel.session().put(Subject.class, user);
-            channel.respond(new CloseModalDialog(type(), event.conletId()));
-            channel.associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
+            connection.session().put(Subject.class, user);
+            connection.respond(new CloseModalDialog(type(), event.conletId()));
+            connection
+                .associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
                 .ifPresentOrElse(ConsolePrepared::resumeHandling,
-                    () -> channel.respond(new SimpleConsoleCommand("reload")));
+                    () -> connection
+                        .respond(new SimpleConsoleCommand("reload")));
             return;
         }
         if ("logout".equals(event.method())) {
-            channel.responsePipeline()
-                .fire(new Close(), channel.upstreamChannel()).get();
-            newEventPipeline().fire(new Closed(), channel).get();
-            channel.respond(new DiscardSession(channel.session(),
-                channel.webletChannel()));
+            connection.responsePipeline()
+                .fire(new Close(), connection.upstreamChannel()).get();
+            connection.close();
+            connection.respond(new DiscardSession(connection.session(),
+                connection.webletChannel()));
             // Alternative to sending Close (see above):
             // channel.respond(new SimpleConsoleCommand("reload"));
         }
