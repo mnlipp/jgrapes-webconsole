@@ -39,6 +39,7 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.events.DiscardSession;
 import org.jgrapes.io.events.Close;
+import org.jgrapes.io.events.Closed;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleConnection;
@@ -227,14 +228,12 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             return;
         }
         if ("logout".equals(event.method())) {
-            // Fire Close, will result in Closed coming back.
-            // Alternative: don't really close, but send Closed downstream
-            // newEventPipeline().fire(new Closed(), channel).get();
             channel.responsePipeline()
                 .fire(new Close(), channel.upstreamChannel()).get();
+            newEventPipeline().fire(new Closed(), channel).get();
             channel.respond(new DiscardSession(channel.session(),
                 channel.webletChannel()));
-            // Required if not sending Close (see above):
+            // Alternative to sending Close (see above):
             // channel.respond(new SimpleConsoleCommand("reload"));
         }
     }

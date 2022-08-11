@@ -791,8 +791,6 @@ public abstract class ConsoleWeblet extends Component {
             optWsInputReader.get().close();
         }
         wsChannel.associated(ConsoleConnection.class).ifPresent(connection -> {
-            // Forward to connection
-            fire(new Closed(), connection);
             // Restore channel to normal mode, see onConsoleReady
             connection.responsePipeline().restrictEventSource(null);
             connection.disconnected();
