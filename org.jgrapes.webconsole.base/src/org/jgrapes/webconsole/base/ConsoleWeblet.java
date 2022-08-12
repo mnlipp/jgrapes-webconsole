@@ -661,15 +661,17 @@ public abstract class ConsoleWeblet extends Component {
     public void onSetLocale(SetLocale event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         channel.setLocale(event.locale());
-        Session session = channel.session();
-        if (session != null) {
-            Selection selection = (Selection) session.get(Selection.class);
-            if (selection != null) {
+        Optional.ofNullable(channel.session()).flatMap(
+            s -> Optional.ofNullable((Selection) s.get(Selection.class)))
+            .ifPresent(selection -> {
                 supportedLocales.keySet().stream()
                     .filter(lang -> lang.equals(event.locale())).findFirst()
                     .ifPresent(lang -> selection.prefer(lang));
-            }
-        }
+                channel.respond(new SimpleConsoleCommand("setLocalesCookie",
+                    Converters.SET_COOKIE_STRING
+                        .get(selection.getCookieSameSite())
+                        .asFieldValue(selection.getCookie())));
+            });
         if (event.reload()) {
             channel.respond(new SimpleConsoleCommand("reload"));
         }

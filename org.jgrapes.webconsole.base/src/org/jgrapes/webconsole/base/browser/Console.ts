@@ -203,6 +203,8 @@ class Console {
                     Log.error(e);
                 }
             });
+        this._webSocket.addMessageHandler('setLocalesCookie',
+            (cookie) => { window.document.cookie = cookie; });
         this._webSocket.addMessageHandler('reload',
             () => { window.location.reload(); });
     }
