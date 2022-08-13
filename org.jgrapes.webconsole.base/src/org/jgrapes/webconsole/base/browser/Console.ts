@@ -301,6 +301,22 @@ class Console {
 
     // Conlet management
 
+    public collectConletProperties(conlet: Conlet): Map<string,string> {
+        let result = new Map<string,string>();
+        this._addConletProperties(result, conlet.element());
+        for (let i = 0; i < conlet.element().children.length; i++) {
+            if (conlet.element().children[i] instanceof HTMLElement) {
+                // Skip nested conlets
+                if (conlet.element().children[i].classList.contains("conlet")) {
+                    continue;
+                }
+                this._addConletProperties(result, 
+                    <HTMLElement>conlet.element().children[i]);
+            }
+        }
+        return result;
+    }
+
     private _addConletProperties(properties: Map<string,string>,
             element: HTMLElement) {
         for (let key in element.dataset) {
@@ -313,18 +329,6 @@ class Console {
                 properties.set(shortened, element.dataset[key]!);
             }
         } 
-    }
-
-    public collectConletProperties(conlet: Conlet): Map<string,string> {
-        let result = new Map<string,string>();
-        this._addConletProperties(result, conlet.element());
-        for (let i = 0; i < conlet.element().children.length; i++) {
-            if (conlet.element().children[i] instanceof HTMLElement) {
-                this._addConletProperties(result, 
-                    <HTMLElement>conlet.element().children[i]);
-            }
-        }
-        return result;
     }
 
     /**
