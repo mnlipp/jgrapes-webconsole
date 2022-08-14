@@ -736,7 +736,7 @@ public abstract class ConsoleWeblet extends Component {
                 .setSessionSupplier(sessionSupplier);
         wsChannel.setAssociated(ConsoleConnection.class, connection);
         // Channel now used as JSON input
-        wsChannel.setAssociated(this, new WebSocketInputReader(
+        wsChannel.setAssociated(this, new WebSocketInputSink(
             event.processedBy().get(), connection));
         // From now on, only consoleSession.respond may be used to send on the
         // upstream channel.
@@ -769,10 +769,10 @@ public abstract class ConsoleWeblet extends Component {
     @Handler
     public void onInput(Input<CharBuffer> event, IOSubchannel wsChannel)
             throws IOException {
-        Optional<WebSocketInputReader> optWsInputReader
-            = wsChannel.associated(this, WebSocketInputReader.class);
+        Optional<WebSocketInputSink> optWsInputReader
+            = wsChannel.associated(this, WebSocketInputSink.class);
         if (optWsInputReader.isPresent()) {
-            optWsInputReader.get().write(event.buffer().backingBuffer());
+            optWsInputReader.get().feed(event.buffer());
         }
     }
 
@@ -786,8 +786,8 @@ public abstract class ConsoleWeblet extends Component {
     @Handler
     public void onClosed(
             Closed event, IOSubchannel wsChannel) throws IOException {
-        Optional<WebSocketInputReader> optWsInputReader
-            = wsChannel.associated(this, WebSocketInputReader.class);
+        Optional<WebSocketInputSink> optWsInputReader
+            = wsChannel.associated(this, WebSocketInputSink.class);
         if (optWsInputReader.isPresent()) {
             wsChannel.setAssociated(this, null);
             optWsInputReader.get().close();

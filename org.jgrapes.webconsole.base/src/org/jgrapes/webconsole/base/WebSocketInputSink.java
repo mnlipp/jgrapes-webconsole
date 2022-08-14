@@ -19,18 +19,19 @@
 package org.jgrapes.webconsole.base;
 
 import java.io.IOException;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.Reader;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.nio.CharBuffer;
+import java.util.Optional;
+import java.util.logging.Logger;
 import org.jdrupes.json.JsonBeanDecoder;
 import org.jdrupes.json.JsonDecodeException;
 import org.jdrupes.json.JsonRpc;
 import org.jdrupes.json.JsonRpc.DefaultJsonRpc;
+import org.jgrapes.core.Components;
 import org.jgrapes.core.EventPipeline;
 import org.jgrapes.io.events.Input;
+import org.jgrapes.io.util.ManagedBuffer;
 import org.jgrapes.webconsole.base.events.JsonInput;
 
 /**
@@ -38,12 +39,15 @@ import org.jgrapes.webconsole.base.events.JsonInput;
  * JSON message has been collected and then fires
  * the message as {@link JsonInput} event.
  */
-public class WebSocketInputReader extends Thread {
+public class WebSocketInputSink extends Thread {
+
+    @SuppressWarnings("PMD.FieldNamingConventions")
+    private static final Logger logger
+        = Logger.getLogger(WebSocketInputSink.class.getName());
 
     private final WeakReference<EventPipeline> pipelineRef;
     private final WeakReference<ConsoleConnection> channelRef;
-    private PipedWriter decodeIn;
-    private Reader jsonSource;
+    private ManagedBufferReader jsonSource;
 
     private static ReferenceQueue<Object> abandoned
         = new ReferenceQueue<>();
@@ -74,8 +78,8 @@ public class WebSocketInputReader extends Thread {
             while (true) {
                 try {
                     @SuppressWarnings("unchecked")
-                    WebSocketInputReader.RefWithThread<Object> ref
-                        = (WebSocketInputReader.RefWithThread<Object>) abandoned
+                    WebSocketInputSink.RefWithThread<Object> ref
+                        = (WebSocketInputSink.RefWithThread<Object>) abandoned
                             .remove();
                     ref.watched.interrupt();
                 } catch (InterruptedException e) {
@@ -93,12 +97,12 @@ public class WebSocketInputReader extends Thread {
      * @param wsInPipeline the ws in pipeline
      * @param consoleChannel the web console channel
      */
-    public WebSocketInputReader(EventPipeline wsInPipeline,
+    public WebSocketInputSink(EventPipeline wsInPipeline,
             ConsoleConnection consoleChannel) {
         pipelineRef
-            = new WebSocketInputReader.RefWithThread<>(wsInPipeline, this);
+            = new WebSocketInputSink.RefWithThread<>(wsInPipeline, this);
         channelRef
-            = new WebSocketInputReader.RefWithThread<>(consoleChannel, this);
+            = new WebSocketInputSink.RefWithThread<>(consoleChannel, this);
         setDaemon(true);
     }
 
@@ -108,15 +112,13 @@ public class WebSocketInputReader extends Thread {
      * @param buffer the buffer
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public void write(CharBuffer buffer) throws IOException {
+    public void feed(ManagedBuffer<CharBuffer> input) throws IOException {
         // Delayed initialization, allows adaption to buffer size.
-        if (decodeIn == null) {
-            decodeIn = new PipedWriter();
-            jsonSource = new PipedReader(decodeIn, buffer.capacity());
+        if (jsonSource == null) {
+            jsonSource = new ManagedBufferReader();
             start();
         }
-        decodeIn.append(buffer);
-        decodeIn.flush();
+        jsonSource.feed(input);
     }
 
     /**
@@ -125,11 +127,11 @@ public class WebSocketInputReader extends Thread {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void close() throws IOException {
-        if (decodeIn == null) {
+        if (jsonSource == null) {
             // Never started
             return;
         }
-        decodeIn.close();
+        jsonSource.close();
         try {
             join(1000);
         } catch (InterruptedException e) {
@@ -139,8 +141,8 @@ public class WebSocketInputReader extends Thread {
     }
 
     @SuppressWarnings({ "PMD.AvoidLiteralsInIfCondition",
-        "PMD.AvoidInstantiatingObjectsInLoops",
-        "PMD.DataflowAnomalyAnalysis" })
+        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.DataflowAnomalyAnalysis",
+        "PMD.GuardLogStatement", "PMD.CognitiveComplexity" })
     @Override
     public void run() {
         while (true) {
@@ -150,6 +152,9 @@ public class WebSocketInputReader extends Thread {
             try {
                 rpc = jsonDecoder.readObject(DefaultJsonRpc.class);
             } catch (JsonDecodeException e) {
+                logger.severe(
+                    () -> toString() + " cannot decode request from console: "
+                        + e.getMessage());
                 break;
             }
             if (rpc == null) {
@@ -176,4 +181,15 @@ public class WebSocketInputReader extends Thread {
             eventPipeline.fire(new JsonInput(rpc), connection);
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder()
+            .append(Components.objectName(this)).append(" [");
+        Optional.ofNullable(channelRef.get()).ifPresentOrElse(
+            c -> res.append(c.toString()),
+            () -> res.append('?'));
+        return res.append(']').toString();
+    }
+
 }
