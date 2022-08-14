@@ -109,8 +109,8 @@ class ConsoleWebSocket {
                         return;
                     }
                     _this._send({
-                        "jsonrpc": "2.0", "method": "keepAlive",
-                        "params": []
+			"jsonrpc": "2.0", "method": "keepAlive",
+			"params": []
                     });
                 }
             }, _this._console.connectionRefreshInterval);
@@ -220,6 +220,25 @@ class ConsoleWebSocket {
         this._inactivity = 0;
         this._send(data);
     }
+
+    /**
+     * Invokes the given method on the server.
+     *
+     * @param the method
+     * @param params the parameters
+     */
+    rpc(method: string, ...params: any[]) {
+        if (params.length > 0) {
+            this.send({
+                "jsonrpc": "2.0", "method": method,
+                "params": params
+            });
+        } else {
+            this.send({ "jsonrpc": "2.0", "method": method
+            });
+        }
+    }
+    
 
     /**
      * When a JSON RPC notification is received, its method property

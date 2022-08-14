@@ -183,10 +183,7 @@ class Console {
                 } catch (e) {
                     Log.error(e);
                 }
-                _this._webSocket.send({
-                    "jsonrpc": "2.0", "method": "retrievedLocalData",
-                    "params": [result]
-                });
+                _this.send("retrievedLocalData", result);
             });
         this._webSocket.addMessageHandler('storeLocalData',
             (actions) => {
@@ -597,14 +594,7 @@ class Console {
      * @param params the parameters
      */
     send(method: string, ...params: any[]) {
-        if (params.length > 0) {
-            this._webSocket.send({
-                "jsonrpc": "2.0", "method": method,
-                "params": params
-            });
-        } else {
-            this._webSocket.send({ "jsonrpc": "2.0", "method": method });
-        }
+        this._webSocket.rpc(method, ...params);
     }
 
     /**
