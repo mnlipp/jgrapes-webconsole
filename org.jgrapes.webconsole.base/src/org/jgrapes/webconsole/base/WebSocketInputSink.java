@@ -32,6 +32,7 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.EventPipeline;
 import org.jgrapes.io.events.Input;
 import org.jgrapes.io.util.ManagedBuffer;
+import org.jgrapes.io.util.ManagedBufferReader;
 import org.jgrapes.webconsole.base.events.JsonInput;
 
 /**

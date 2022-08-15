@@ -790,7 +790,7 @@ public abstract class ConsoleWeblet extends Component {
             = wsChannel.associated(this, WebSocketInputSink.class);
         if (optWsInputReader.isPresent()) {
             wsChannel.setAssociated(this, null);
-            optWsInputReader.get().close();
+            optWsInputReader.get().feed(null);
         }
         wsChannel.associated(ConsoleConnection.class).ifPresent(connection -> {
             // Restore channel to normal mode, see onConsoleReady
