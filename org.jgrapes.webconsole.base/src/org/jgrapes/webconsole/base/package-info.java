@@ -375,13 +375,13 @@
  * object conletB
  * conletB -- consoleChannel
  * 
- * object "consoleSession: ConsoleConnection" as consoleSession
- * consoleChannel <-left- consoleSession : "main channel"
- * consoleWeblet *-- consoleSession 
+ * object "consoleConnection: ConsoleConnection" as consoleConnection
+ * consoleChannel <-left- consoleConnection : "main channel"
+ * consoleWeblet *-- consoleConnection 
  * 
  * webConsole -right[hidden]- conletA
  * conletA -right[hidden]- conletB
- * webletChannel -right[hidden]- consoleSession
+ * webletChannel -right[hidden]- consoleConnection
  * 
  * @enduml
  * 

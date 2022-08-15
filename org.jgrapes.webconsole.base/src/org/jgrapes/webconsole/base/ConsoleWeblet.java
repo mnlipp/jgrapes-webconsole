@@ -738,8 +738,8 @@ public abstract class ConsoleWeblet extends Component {
         // Channel now used as JSON input
         wsChannel.setAssociated(this, new WebSocketInputSink(
             event.processedBy().get(), connection));
-        // From now on, only consoleSession.respond may be used to send on the
-        // upstream channel.
+        // From now on, only consoleConnection.respond may be used to send on
+        // the upstream channel.
         connection.upstreamChannel().responsePipeline()
             .restrictEventSource(connection.responsePipeline());
     }

@@ -108,15 +108,15 @@ public class SysInfoConlet
 
     @Override
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
-            ConsoleConnection consoleSession, String conletId,
+            ConsoleConnection connection, String conletId,
             SysInfoModel conletState) throws Exception {
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-preview.ftl.html");
-            consoleSession.respond(new RenderConlet(type(), conletId,
+            connection.respond(new RenderConlet(type(), conletId,
                 processTemplate(event, tpl,
-                    fmModel(event, consoleSession, conletId, conletState)))
+                    fmModel(event, connection, conletId, conletState)))
                         .setRenderAs(
                             RenderMode.Preview.addModifiers(event.renderAs()))
                         .setSupportedModes(MODES));
@@ -125,26 +125,26 @@ public class SysInfoConlet
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("SysInfo-view.ftl.html");
-            consoleSession.respond(new RenderConlet(type(), conletId,
+            connection.respond(new RenderConlet(type(), conletId,
                 processTemplate(event, tpl,
-                    fmModel(event, consoleSession, conletId, conletState)))
+                    fmModel(event, connection, conletId, conletState)))
                         .setRenderAs(
                             RenderMode.View.addModifiers(event.renderAs()))
                         .setSupportedModes(MODES));
             renderedAs.add(RenderMode.View);
         }
         if (!renderedAs.isEmpty()) {
-            updateView(consoleSession, conletId);
+            updateView(connection, conletId);
         }
         return renderedAs;
     }
 
-    private void updateView(ConsoleConnection consoleSession, String conletId) {
-        if (!consoleSession.isConnected()) {
+    private void updateView(ConsoleConnection connection, String conletId) {
+        if (!connection.isConnected()) {
             return;
         }
         Runtime runtime = Runtime.getRuntime();
-        consoleSession.respond(new NotifyConletView(type(),
+        connection.respond(new NotifyConletView(type(),
             conletId, "updateMemorySizes",
             System.currentTimeMillis(), runtime.maxMemory(),
             runtime.totalMemory(),
@@ -168,12 +168,12 @@ public class SysInfoConlet
     @Override
     @SuppressWarnings("PMD.DoNotCallGarbageCollectionExplicitly")
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleConnection consoleSession, SysInfoModel conletState)
+            ConsoleConnection connection, SysInfoModel conletState)
             throws Exception {
         event.stop();
         System.gc();
-        for (String conletId : conletIds(consoleSession)) {
-            updateView(consoleSession, conletId);
+        for (String conletId : conletIds(connection)) {
+            updateView(connection, conletId);
         }
     }
 

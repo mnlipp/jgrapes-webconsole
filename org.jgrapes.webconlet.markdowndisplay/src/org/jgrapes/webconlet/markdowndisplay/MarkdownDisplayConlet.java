@@ -246,43 +246,46 @@ public class MarkdownDisplayConlet extends
     }
 
     @Override
-    protected Set<RenderMode> doRenderConlet(
-            RenderConletRequestBase<?> event, ConsoleConnection consoleSession,
-            String conletId, MarkdownDisplayModel model)
+    protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
+            ConsoleConnection consoleConnection, String conletId,
+            MarkdownDisplayModel model)
             throws Exception {
-        ResourceBundle resourceBundle = resourceBundle(consoleSession.locale());
+        ResourceBundle resourceBundle
+            = resourceBundle(consoleConnection.locale());
         Set<RenderMode> supported = renderModes(model);
         Set<RenderMode> renderedAs = new HashSet<>();
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
-            consoleSession.respond(new RenderConlet(type(), model.getConletId(),
+            consoleConnection.respond(new RenderConlet(type(),
+                model.getConletId(),
                 processTemplate(event, tpl,
-                    fmModel(event, consoleSession, conletId, model)))
+                    fmModel(event, consoleConnection, conletId, model)))
                         .setRenderAs(
                             RenderMode.Preview.addModifiers(event.renderAs()))
                         .setSupportedModes(supported));
-            updateView(consoleSession, model);
+            updateView(consoleConnection, model);
             renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-view.ftl.html");
-            consoleSession.respond(new RenderConlet(type(), model.getConletId(),
-                processTemplate(event, tpl,
-                    fmModel(event, consoleSession, conletId, model)))
-                        .setRenderAs(
-                            RenderMode.View.addModifiers(event.renderAs()))
-                        .setSupportedModes(supported));
-            updateView(consoleSession, model);
+            consoleConnection
+                .respond(new RenderConlet(type(), model.getConletId(),
+                    processTemplate(event, tpl,
+                        fmModel(event, consoleConnection, conletId, model)))
+                            .setRenderAs(
+                                RenderMode.View.addModifiers(event.renderAs()))
+                            .setSupportedModes(supported));
+            updateView(consoleConnection, model);
             renderedAs.add(RenderMode.Preview);
         }
         if (event.renderAs().contains(RenderMode.Edit)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-edit.ftl.html");
-            consoleSession.respond(new OpenModalDialog(type(), conletId,
+            consoleConnection.respond(new OpenModalDialog(type(), conletId,
                 processTemplate(event, tpl,
-                    fmModel(event, consoleSession, conletId, model)))
+                    fmModel(event, consoleConnection, conletId, model)))
                         .addOption("cancelable", true)
                         .addOption("okayLabel",
                             resourceBundle.getString("okayLabel")));
@@ -325,7 +328,7 @@ public class MarkdownDisplayConlet extends
 
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
-            ConsoleConnection consoleSession, MarkdownDisplayModel conletState)
+            ConsoleConnection connection, MarkdownDisplayModel conletState)
             throws Exception {
         event.stop();
         @SuppressWarnings("PMD.UseConcurrentHashMap")
@@ -339,8 +342,7 @@ public class MarkdownDisplayConlet extends
         if (event.params().get(2) != null) {
             properties.put(VIEW_SOURCE, event.params().asString(2));
         }
-        fire(new UpdateConletModel(event.conletId(), properties),
-            consoleSession);
+        fire(new UpdateConletModel(event.conletId(), properties), connection);
     }
 
     /**

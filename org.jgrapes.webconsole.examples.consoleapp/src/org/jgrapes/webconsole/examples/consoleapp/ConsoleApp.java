@@ -132,7 +132,7 @@ public class ConsoleApp extends Component {
                 .prependResourceBundleProvider(ConsoleApp.class)
                 .prependConsoleResourceProvider(ConsoleApp.class);
         WebConsole console = consoleWeblet.console();
-        // consoleWeblet.setConsoleSessionInactivityTimeout(300_000);
+        // consoleWeblet.setConnectionInactivityTimeout(300_000);
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));

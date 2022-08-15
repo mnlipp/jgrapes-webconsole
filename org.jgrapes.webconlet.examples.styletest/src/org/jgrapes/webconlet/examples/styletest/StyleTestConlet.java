@@ -65,7 +65,7 @@ public class StyleTestConlet extends FreeMarkerConlet<Serializable> {
      * Trigger loading of resources when the console is ready.
      *
      * @param event the event
-     * @param consoleSession the console connection
+     * @param consoleConnection the console connection
      * @throws TemplateNotFoundException the template not found exception
      * @throws MalformedTemplateNameException the malformed template name exception
      * @throws ParseException the parse exception
@@ -73,13 +73,14 @@ public class StyleTestConlet extends FreeMarkerConlet<Serializable> {
      */
     @Handler
     public void onConsoleReady(ConsoleReady event,
-            ConsoleConnection consoleSession)
+            ConsoleConnection consoleConnection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         // Add HelloWorldConlet resources to page
-        consoleSession.respond(new AddConletType(type())
+        consoleConnection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.View).setDisplayNames(
-                localizations(consoleSession.supportedLocales(), "conletName"))
+                localizations(consoleConnection.supportedLocales(),
+                    "conletName"))
             .addScript(new ScriptResource()
                 .setScriptType("module").setScriptUri(
                     event.renderSupport().conletResource(type(),
