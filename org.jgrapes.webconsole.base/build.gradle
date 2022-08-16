@@ -50,7 +50,7 @@ configurations {
 }
  
 dependencies {
-    markdownDoclet "org.jdrupes.mdoclet:doclet:3.0.0"
+    markdownDoclet "org.jdrupes.mdoclet:doclet:3.1.0"
 }
 
 configurations {
