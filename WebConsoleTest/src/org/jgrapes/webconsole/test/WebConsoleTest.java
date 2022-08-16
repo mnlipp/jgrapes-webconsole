@@ -160,7 +160,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
-        console.attach(new NewConsoleSessionPolicy(console.channel()));
+        console.attach(new AvoidEmptyPolicy(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
@@ -201,7 +201,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
-        console.attach(new NewConsoleSessionPolicy(console.channel()));
+        console.attach(new AvoidEmptyPolicy(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
@@ -242,7 +242,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
-        console.attach(new NewConsoleSessionPolicy(console.channel()));
+        console.attach(new AvoidEmptyPolicy(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(), type -> {
@@ -282,7 +282,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
-        console.attach(new NewConsoleSessionPolicy(console.channel()));
+        console.attach(new AvoidEmptyPolicy(console.channel()));
         console.attach(new UserBasedConletFilter(console.channel(),
             Map.of("conletTypesByUsername", Map.of("admin", Set.of(
                 "org.jgrapes.webconlet.sysinfo.SysInfoConlet")))));

@@ -33,7 +33,7 @@ import org.jgrapes.webconsole.base.events.RenderConlet;
 /**
  * 
  */
-public class NewConsoleSessionPolicy extends Component {
+public class AvoidEmptyPolicy extends Component {
 
     private final String renderedFlagName = getClass().getName() + ".rendered";
 
@@ -42,7 +42,7 @@ public class NewConsoleSessionPolicy extends Component {
      * 
      * @param componentChannel
      */
-    public NewConsoleSessionPolicy(Channel componentChannel) {
+    public AvoidEmptyPolicy(Channel componentChannel) {
         super(componentChannel);
     }
 
@@ -50,24 +50,24 @@ public class NewConsoleSessionPolicy extends Component {
      * On console ready.
      *
      * @param event the event
-     * @param consolesession the consolesession
+     * @param connection the connection
      */
     @Handler
     public void onConsoleReady(ConsoleReady event,
-            ConsoleConnection consolesession) {
-        consolesession.session().put(renderedFlagName, false);
+            ConsoleConnection connection) {
+        connection.session().put(renderedFlagName, false);
     }
 
     /**
      * On render conlet.
      *
      * @param event the event
-     * @param consolesession the consolesession
+     * @param connection the connection
      */
     @Handler
     public void onRenderConlet(RenderConlet event,
-            ConsoleConnection consolesession) {
-        consolesession.session().put(renderedFlagName, true);
+            ConsoleConnection connection) {
+        connection.session().put(renderedFlagName, true);
     }
 
     /**
