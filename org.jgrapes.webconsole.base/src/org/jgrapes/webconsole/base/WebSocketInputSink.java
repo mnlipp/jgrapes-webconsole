@@ -110,7 +110,7 @@ public class WebSocketInputSink extends Thread {
     /**
      * Forward the data to the JSON decoder.
      *
-     * @param buffer the buffer
+     * @param input the data to be converted
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void feed(ManagedBuffer<CharBuffer> input) throws IOException {
