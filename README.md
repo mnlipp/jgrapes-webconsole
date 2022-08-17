@@ -1,18 +1,19 @@
 JGrapes-WebConsole
 ==================
 
+This repository holds the sources for jars that provide
+the web console components of the JGrapes framework.
+
 See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 
 [![Build Status](https://github.com/mnlipp/JGrapes-Webconsole/workflows/Java%20CI/badge.svg)](https://github.com/mnlipp/jgrapes-webconsole/actions)
 
  * Web Console Base <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.base%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.base.svg"></a>
 
- * *Consoles*: vuejs <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.vuejs%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.vuejs.svg"></a>, bootstrap4 <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.bootstrap4%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.bootstrap4.svg"></a> (deprecated), 
-jqueryui <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.jqueryui%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.jqueryui.svg"></a> (deprecated)
+ * *Consoles*: vuejs <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.vuejs%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.vuejs.svg"></a>
 
  * *Providers*: chartjs <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.chartjs%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.chartjs.svg"></a>,
 datatables <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.datatables%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.datatables.svg"></a>,
-fontawesome <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.fontawesome%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.fontawesome.svg"></a> (deprecated),
 forkawesome <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.forkawesome%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.forkawesome.svg"></a>,
 gridstack <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.gridstack%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.gridstack.svg"></a>,
 jgwcvuecomponents <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.jgwcvuecomponents%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.jgwcvuecomponents.svg"></a>,
@@ -21,16 +22,24 @@ jqueryui <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.
 jquitouchpunch <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.jquitouchpunch%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.jquitouchpunch.svg"></a>,
 lodash <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.lodash%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.lodash.svg"></a>,
 markdownit <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.markdownit%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.markdownit.svg"></a>,
-moment <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.moment%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.moment.svg"></a> (deprecated),
-vue <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.vue%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.vue.svg"></a>,
-vuejs <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.vuejs%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.vuejs.svg"></a> (deprecated),
-vuex <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.vuex%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.vuex.svg"></a> (deprecated)
+vue <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.vue%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.vue.svg"></a>
 
  * *Conlets*: markdowndisplay <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.markdowndisplay%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.markdowndisplay.svg"></a>,
 sysinfo <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.sysinfo%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.sysinfo.svg"></a>
 
-This repository holds the sources for jars that provide
-the web console components of the JGrapes framework.
+ * *Example (Demo) Conlets*: formtest <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.examples.formtest%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.examples.formtest.svg"></a>,
+helloworld <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.examples.helloworld%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.examples.helloworld.svg"></a>,
+login <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.examples.login%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.examples.login.svg"></a>,
+styletest <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.examples.styletest%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.examples.styletest.svg"></a>,
+
+*Deprecated Modules*
+
+*Consoles*: bootstrap4 <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.bootstrap4%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.bootstrap4.svg"></a>, 
+jqueryui <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.jqueryui%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.jqueryui.svg"></a>, 
+*Providers*: fontawesome <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.fontawesome%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.fontawesome.svg"></a>,
+moment <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.moment%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.moment.svg"></a>,
+vuejs <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.vuejs%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.vuejs.svg"></a>,
+vuex <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.vuex%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.vuex.svg"></a>
 
 
 Short Overview
