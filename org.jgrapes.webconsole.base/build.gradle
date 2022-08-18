@@ -128,6 +128,7 @@ task java11doc(type: JavaExec) {
 
 task buildDoc {
     group 'build'
+    dependsOn 'tsDoc'
     dependsOn 'java11doc'
 }
 
