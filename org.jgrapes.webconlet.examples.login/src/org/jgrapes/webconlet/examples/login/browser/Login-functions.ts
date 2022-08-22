@@ -56,11 +56,21 @@ window.orgJGrapesExampleLogin.openDialog
                     l10nBundles, JGWC.lang()!, key);
             };
 
+            const info = ref<string|null>(null);
+            const warning = ref<string|null>(null);
+            
+            JGConsole.registerConletFunction(
+                "org.jgrapes.webconlet.examples.login.LoginConlet",
+                "setMessages", function(conletId, infoMsg, warnMsg) {
+                info.value = infoMsg;
+                warning.value = warnMsg;
+                });
+
             const formDom = ref(null);
 
             provideApi(formDom, accountData);
                         
-            return { formDom, formId, localize, accountData };
+            return { formDom, formId, localize, accountData, info, warning };
         },
         template: `
           <form :id="formId" ref="formDom" onsubmit="return false;">
@@ -89,6 +99,12 @@ window.orgJGrapesExampleLogin.openDialog
                   <input type="password" name="password" v-model="accountData.password"
                     autocomplete="section-test current-password">
                 </label>
+              </p>
+              <p v-if="info" class="example-conlet-login-form__info">
+                {{ info }}
+              </p>
+              <p v-if="warning" class="example-conlet-login-form__warning">
+                {{ warning }}
               </p>
             </fieldset>
           </form>`

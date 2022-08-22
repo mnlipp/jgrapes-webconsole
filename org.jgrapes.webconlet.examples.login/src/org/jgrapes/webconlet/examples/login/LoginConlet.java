@@ -62,6 +62,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 /**
  * A conlet for poll administration.
  */
+@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     private static final String PENDING_CONSOLE_PREPARED
@@ -214,11 +215,18 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     @Override
     protected void doUpdateConletState(NotifyConletModel event,
             ConsoleConnection connection, AccountModel model) throws Exception {
+        var bundle = resourceBundle(connection.locale());
         if ("loginData".equals(event.method())) {
+            String userName = event.params().asString(0);
+            if (userName == null || userName.isEmpty()) {
+                connection.respond(new NotifyConletView(type(),
+                    model.getConletId(), "setMessages",
+                    null, bundle.getString("emptyUserName")));
+                return;
+            }
             model.setDialogOpen(false);
             Subject user = new Subject();
-            user.getPrincipals().add(new ConsoleUser(event.params().asString(0),
-                event.params().asString(0)));
+            user.getPrincipals().add(new ConsoleUser(userName, userName));
             connection.session().put(Subject.class, user);
             connection.respond(new CloseModalDialog(type(), event.conletId()));
             connection
