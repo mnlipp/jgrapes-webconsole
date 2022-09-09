@@ -22,6 +22,7 @@ dependencies {
     implementation project(':org.jgrapes.webconsole.bootstrap4')
     implementation project(':org.jgrapes.webconsole.jqueryui')
     implementation project(':org.jgrapes.webconlet.markdowndisplay')
+    runtimeOnly 'org.eclipse.angus:angus-activation:[1.0.0,2.0.0)'
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
     runtimeOnly project(':org.jgrapes.webconsole.provider.datatables')
     runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')

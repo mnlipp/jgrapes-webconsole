@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.examples.consoleapp')
+    runtimeOnly 'org.eclipse.angus:angus-activation:[1.0.0,2.0.0)'
     runtimeOnly project(':org.jgrapes.webconlet.sysinfo')
 }
 
