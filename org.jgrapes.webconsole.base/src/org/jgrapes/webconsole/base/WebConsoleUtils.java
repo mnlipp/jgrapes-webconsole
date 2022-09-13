@@ -24,6 +24,8 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +53,19 @@ public final class WebConsoleUtils {
         return Optional.ofNullable((Subject) session.get(Subject.class))
             .flatMap(subject -> subject.getPrincipals(ConsoleUser.class)
                 .stream().findFirst());
+    }
+
+    /**
+     * Convenience method for retrieving the console roles from
+     * a {@link Subject} associated with the session.
+     *
+     * @param session the session
+     * @return the role principals
+     */
+    public static Collection<ConsoleRole> rolesFromSession(Session session) {
+        return Optional.ofNullable((Subject) session.get(Subject.class))
+            .map(subject -> subject.getPrincipals(ConsoleRole.class))
+            .orElse(Collections.emptySet());
     }
 
     /**
