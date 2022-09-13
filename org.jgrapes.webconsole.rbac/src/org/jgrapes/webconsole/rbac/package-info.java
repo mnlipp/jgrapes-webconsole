@@ -15,4 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License along 
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * Provides a simple role based access control using
+ * information from the configuration support provided by JGrapes. 
+ */
 package org.jgrapes.webconsole.rbac;
