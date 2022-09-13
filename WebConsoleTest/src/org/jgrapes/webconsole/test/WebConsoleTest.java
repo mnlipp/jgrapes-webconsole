@@ -18,6 +18,7 @@
 
 package org.jgrapes.webconsole.test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -36,7 +37,6 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import org.jgrapes.core.Channel;
@@ -56,7 +56,7 @@ import org.jgrapes.io.util.PermitsPool;
 import org.jgrapes.net.SslCodec;
 import org.jgrapes.net.TcpServer;
 import org.jgrapes.util.ComponentCollector;
-import org.jgrapes.util.PreferencesStore;
+import org.jgrapes.util.JsonConfigurationStore;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
@@ -65,7 +65,8 @@ import org.jgrapes.webconsole.base.PageResourceProviderFactory;
 import org.jgrapes.webconsole.base.WebConsole;
 import org.jgrapes.webconsole.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.webconsole.jqueryui.JQueryUiWeblet;
-import org.jgrapes.webconsole.rbac.UserBasedConletFilter;
+import org.jgrapes.webconsole.rbac.RoleConfigurator;
+import org.jgrapes.webconsole.rbac.RoleConletFilter;
 import org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -96,6 +97,9 @@ public class WebConsoleTest extends Component implements BundleActivator {
     public void start(BundleContext context) throws Exception {
         // The demo component is the application
         app = new WebConsoleTest();
+        // Support Json configuration
+        app.attach(
+            new JsonConfigurationStore(app, new File("console-config.json")));
         // Attach a general nio dispatcher
         app.attach(new NioDispatcher());
 
@@ -128,7 +132,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
             httpTransport, Request.In.Get.class, Request.In.Post.class));
 
         // Build application layer
-        app.attach(new PreferencesStore(app.channel(), this.getClass()));
         app.attach(new LanguageSelector(app.channel()));
         app.attach(new FileStorage(app.channel(), 65_536));
         app.attach(new StaticContentDispatcher(app.channel(),
@@ -141,7 +144,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
         createJQueryUiConsole();
         createBootstrap4Console();
         createVueJsConsole();
-        createVueJsConsole2();
         Components.start(app);
     }
 
@@ -228,7 +230,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
     }
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createVueJsConsole() throws URISyntaxException {
+    private void createVueJsConsole() throws URISyntaxException, IOException {
         app.attach(new InMemorySessionManager(app.channel(), "/vjconsole")
             .setIdName("id-vj"));
         ConsoleWeblet consoleWeblet
@@ -243,49 +245,8 @@ public class WebConsoleTest extends Component implements BundleActivator {
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
         console.attach(new AvoidEmptyPolicy(console.channel()));
-        // Add all available page resource providers
-        console.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, console.channel(), type -> {
-                switch (type) {
-                case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
-                    return Arrays.asList(
-                        Map.of("requireTouchPunch", true,
-                            "configuration", "CoreWithJQUiPlugin"));
-                default:
-                    return Arrays.asList(Collections.emptyMap());
-                }
-            }));
-        // Add all available conlets
-        console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console.channel(), type -> {
-                switch (type) {
-                case "org.jgrapes.webconlet.examples.login.LoginConlet":
-                    return Collections.emptyList();
-                default:
-                    return Arrays.asList(Collections.emptyMap());
-                }
-            }));
-    }
-
-    @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createVueJsConsole2() throws URISyntaxException {
-        app.attach(new InMemorySessionManager(app.channel(), "/vjconsole2")
-            .setIdName("id-vj2"));
-        ConsoleWeblet consoleWeblet
-            = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
-                new URI("/vjconsole2/")))
-                .prependClassTemplateLoader(this.getClass())
-                .prependResourceBundleProvider(WebConsoleTest.class)
-                .prependConsoleResourceProvider(WebConsoleTest.class);
-        WebConsole console = consoleWeblet.console();
-        consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
-        console.attach(new BrowserLocalBackedKVStore(
-            console.channel(), consoleWeblet.prefix().getPath()));
-        console.attach(new KVStoreBasedConsolePolicy(console.channel()));
-        console.attach(new AvoidEmptyPolicy(console.channel()));
-        console.attach(new UserBasedConletFilter(console.channel(),
-            Map.of("conletTypesByUsername", Map.of("admin", Set.of(
-                "org.jgrapes.webconlet.sysinfo.SysInfoConlet")))));
+        console.attach(new RoleConfigurator(console.channel()));
+        console.attach(new RoleConletFilter(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),

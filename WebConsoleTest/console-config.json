@@ -1,0 +1,29 @@
+{
+    "/WebConsoleTest": {
+        "/VueJsConsoleWeblet": {
+            "/WebConsole": {
+                "/RoleConfigurator": {
+                    "rolesByUser": {
+                        "*": [
+                            "user"
+                        ],
+                        "admin": [
+                            "admin"
+                        ]
+                    },
+                    "replace": false
+                },
+                "/RoleConletFilter": {
+                    "conletTypesByRole": {
+                        "user": [
+                            "!org.jgrapes.webconlet.sysinfo.SysInfoConlet", "*"
+                        ],
+                        "admin": [
+                            "*"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
