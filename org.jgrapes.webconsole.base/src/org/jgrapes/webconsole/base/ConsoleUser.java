@@ -46,6 +46,16 @@ public class ConsoleUser implements Principal {
     }
 
     /**
+     * Instantiates a new console user with the name also being used 
+     * as display name.
+     *
+     * @param name the name
+     */
+    public ConsoleUser(String name) {
+        this(name, name);
+    }
+
+    /**
      * Gets the unique name. Used as key when storing or retrieving
      * user specific information.
      *
@@ -67,7 +77,7 @@ public class ConsoleUser implements Principal {
 
     @Override
     public int hashCode() {
-        return Objects.hash(displayName, name);
+        return Objects.hash(name);
     }
 
     @Override
@@ -82,8 +92,7 @@ public class ConsoleUser implements Principal {
             return false;
         }
         ConsoleUser other = (ConsoleUser) obj;
-        return Objects.equals(displayName, other.displayName)
-            && Objects.equals(name, other.name);
+        return Objects.equals(name, other.name);
     }
 
     /**
