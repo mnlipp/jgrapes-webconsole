@@ -66,7 +66,6 @@ public class RoleConletFilter extends Component {
      *
      * Supported properties are:
      * 
-     *  * *rolesByUser*: see {@link #setRolesByUser(Map)}.
      *  * *conletTypesByRole*: see {@link #setConletTypesByRole(Map)}.
      *
      * @param componentChannel the channel that the component's
