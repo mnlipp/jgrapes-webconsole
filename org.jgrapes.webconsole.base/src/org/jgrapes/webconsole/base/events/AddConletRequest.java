@@ -26,16 +26,25 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 
 /**
- * Sent to the console (server) if a new web console component instance of a given 
- * type should be added to the web console page. The console server usually 
- * responds with a {@link RenderConlet} event that has as payload the
- * HTML that displays the web console component on the console page.
+ * Sent to the console (server) if a new web console component instance 
+ * of a given type should be added to the web console page. The console 
+ * server usually responds with a {@link RenderConlet} event that has as
+ * payload the HTML that displays the web console component on the console
+ * page.
  * 
  * Properties may be passed with the event. The interpretation
- * of the properties is completely dependent on the handling web console 
- * component. It is recommended to use {@link String}s as keys and JDK types
- * as values. This avoids classpath dependencies on the web console component
- * that is to be added. 
+ * of the properties is completely dependent on the web console
+ * component that handles the request. It is recommended to use 
+ * {@link String}s as keys and JDK types as values. This avoids 
+ * classpath dependencies on the web console component that is 
+ * to be added. 
+ * 
+ * {@link AddConletRequest} can also be generated on the server side
+ * to automatically add a conlet in response to some event. Usually,
+ * the origin of the event is not important when handling the event.
+ * Nevertheless, the origin can be determined by calling
+ * {@link #isFrontendRequest()} as it may be important e.g. for 
+ * security related checks.
  * 
  * The event's result is the web console component id of the new 
  * web console component instance.
@@ -63,6 +72,7 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
 
     private final String conletType;
     private Map<? extends Object, ? extends Object> properties;
+    private boolean frontendRequest;
 
     /**
      * Creates a new event.
@@ -91,6 +101,26 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
             Set<RenderMode> renderModes, Map<?, ?> properties) {
         this(renderSupport, conletType, renderModes);
         this.properties = new HashMap<>(properties);
+    }
+
+    /**
+     * Marks this event as originating from the browser.
+     *
+     * @return the adds the conlet request
+     */
+    @SuppressWarnings("PMD.LinguisticNaming")
+    public AddConletRequest setFrontendRequest() {
+        frontendRequest = true;
+        return this;
+    }
+
+    /**
+     * Checks if this request originated from the browser.
+     *
+     * @return true, if is frontend request
+     */
+    public boolean isFrontendRequest() {
+        return frontendRequest;
     }
 
     /**

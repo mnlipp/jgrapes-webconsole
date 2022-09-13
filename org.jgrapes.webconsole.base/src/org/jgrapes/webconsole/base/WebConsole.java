@@ -118,7 +118,8 @@ public class WebConsole extends Component {
                     value -> RenderMode.valueOf((String) value))
                     .collect(Collectors.toSet()),
                 params.size() < 3 ? Collections.emptyMap()
-                    : ((JsonObject) params.get(2)).backing()),
+                    : ((JsonObject) params.get(2)).backing())
+                        .setFrontendRequest(),
                 channel);
             break;
         }
@@ -333,7 +334,8 @@ public class WebConsole extends Component {
 
         @Override
         @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-        public SortedMap<String, ConsoleConnectionInfo> getConsoleConnections() {
+        public SortedMap<String, ConsoleConnectionInfo>
+                getConsoleConnections() {
             SortedMap<String, ConsoleConnectionInfo> result = new TreeMap<>();
             console().ifPresent(console -> {
                 for (ConsoleConnection ps : ConsoleConnection
