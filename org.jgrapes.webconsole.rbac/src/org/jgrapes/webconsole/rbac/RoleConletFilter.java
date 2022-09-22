@@ -18,10 +18,10 @@
 
 package org.jgrapes.webconsole.rbac;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
 public class RoleConletFilter extends Component {
 
     @SuppressWarnings("PMD.UseConcurrentHashMap")
-    private final Map<String, Set<String>> acl = new HashMap<>();
+    private final Map<String, List<String>> acl = new HashMap<>();
     private final Set<String> knownTypes = new HashSet<>();
 
     /**
@@ -77,16 +77,21 @@ public class RoleConletFilter extends Component {
     public RoleConletFilter(Channel componentChannel,
             Map<?, ?> properties) {
         super(componentChannel);
-        setConletTypesByRole((Map<String, Set<String>>) properties
+        setConletTypesByRole((Map<String, List<String>>) properties
             .get("conletTypesByRole"));
     }
 
     /**
      * Sets the permitted conlet types by role. The parameter
-     * is a Map<String, Set<String>> holding the conlet types 
-     * {@link AddConletType#conletType()} to be added for the given role.
-     * Conlets that are not restricted to at least one role are 
-     * implicitly available to all users.
+     * is a Map<String, List<String>> holding the conlet permissions
+     * to be added for the given role. The permissions can be an 
+     * asterisk ("*") to allow usage of all conlet types. It can be
+     * a conlet type as reported by {@link AddConletType#conletType()}
+     * to allow the usage of a particular conlet. The type may be 
+     * prefixed with an exclamation mark to deny the usage (default).
+     *
+     * The first match is used, i.e. the asterisk makes only sense
+     * as the last element in the list.
      *
      * @param acl the acl
      * @return the user role conlet filter
@@ -94,13 +99,13 @@ public class RoleConletFilter extends Component {
     @SuppressWarnings({ "PMD.LinguisticNaming",
         "PMD.AvoidInstantiatingObjectsInLoops" })
     public RoleConletFilter
-            setConletTypesByRole(Map<String, Set<String>> acl) {
+            setConletTypesByRole(Map<String, List<String>> acl) {
         // Deep copy (and cleanup)
         this.acl.clear();
         this.acl.putAll(acl);
         for (var e : this.acl.entrySet()) {
             e.setValue(e.getValue().stream().map(String::trim)
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toList()));
         }
         return this;
     }
@@ -122,12 +127,8 @@ public class RoleConletFilter extends Component {
     @Handler
     public void onConfigUpdate(ConfigurationUpdate event) {
         event.structured(componentPath())
-            .map(c -> (Map<String, Collection<String>>) c
+            .map(c -> (Map<String, List<String>>) c
                 .get("conletTypesByRole"))
-            // Adjust type (Collection -> Set)
-            .map(m -> m.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                    e -> e.getValue().stream().collect(Collectors.toSet()))))
             .ifPresent(this::setConletTypesByRole);
     }
 
@@ -158,7 +159,7 @@ public class RoleConletFilter extends Component {
         WebConsoleUtils.rolesFromSession(channel.session()).forEach(
             role -> {
                 var maybe = new HashSet<>(knownTypes);
-                acl.getOrDefault(role.getName(), Collections.emptySet())
+                acl.getOrDefault(role.getName(), Collections.emptyList())
                     .forEach(p -> {
                         if (p.startsWith("!")) {
                             maybe.remove(p.substring(1).trim());
