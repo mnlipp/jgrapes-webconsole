@@ -844,16 +844,17 @@ public abstract class AbstractConlet<S> extends Component {
         String conletId = type() + TYPE_INSTANCE_SEPARATOR
             + generateInstanceId(event, connection);
 
-        // Check if state already exists (indicates singleton)
-        Optional<S> state = stateFromSession(connection.session(), conletId);
-        if (state.isPresent()) {
+        // Check if state already exists (indicates singleton), may not be
+        // added again. Only "content conlets" can already have state.
+        if (!event.renderAs().contains(RenderMode.Content)
+            && stateFromSession(connection.session(), conletId).isPresent()) {
             logger.finer(() -> String.format("Method generateInstanceId "
                 + "returns existing id %s when adding conlet.", conletId));
             return;
         }
 
         // Create new state and track conlet.
-        state = createNewState(event, connection, conletId);
+        Optional<S> state = createNewState(event, connection, conletId);
         state.ifPresent(s -> putInSession(
             connection.session(), conletId, s));
         event.setResult(conletId);
