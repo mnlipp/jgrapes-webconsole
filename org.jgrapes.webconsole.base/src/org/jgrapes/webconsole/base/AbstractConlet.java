@@ -45,6 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jgrapes.core.Channel;
@@ -315,6 +316,8 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
     "PMD.EmptyMethodInAbstractClassShouldBeAbstract", "PMD.GodClass",
     "PMD.ExcessiveImports" })
 public abstract class AbstractConlet<S> extends Component {
+
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     /** Separator used between type and instance when generating the id. */
     public static final String TYPE_INSTANCE_SEPARATOR = "~";
@@ -817,12 +820,13 @@ public abstract class AbstractConlet<S> extends Component {
     }
 
     /**
-     * Checks if the request applies to this component. If so, stops the event,
-     * creates a new conlet id (see {@link #generateInstanceId}) and 
-     * new state information (see {@link #createNewState}). The state
-     * is saved in the session (see {@link #putInSession}),
-     * {@link #doRenderConlet} is called and its result is passed to
-     * {@link #trackConlet}.
+     * Checks if the request applies to this component. If so, stops the 
+     * event, requests a new conlet id (see {@link #generateInstanceId}). 
+     * Stops processing if state for this id already exists (singleton).
+     * Otherwise requests new state information 
+     * (see {@link #createNewState}) and saves it in the session 
+     * (see {@link #putInSession}). Finally {@link #doRenderConlet} is 
+     * called and its result is passed to {@link #trackConlet}.
      *
      * @param event the event
      * @param connection the channel
@@ -839,7 +843,17 @@ public abstract class AbstractConlet<S> extends Component {
         event.stop();
         String conletId = type() + TYPE_INSTANCE_SEPARATOR
             + generateInstanceId(event, connection);
-        Optional<S> state = createNewState(event, connection, conletId);
+
+        // Check if state already exists (indicates singleton)
+        Optional<S> state = stateFromSession(connection.session(), conletId);
+        if (state.isPresent()) {
+            logger.finer(() -> String.format("Method generateInstanceId "
+                + "returns existing id %s when adding conlet.", conletId));
+            return;
+        }
+
+        // Create new state and track conlet.
+        state = createNewState(event, connection, conletId);
         state.ifPresent(s -> putInSession(
             connection.session(), conletId, s));
         event.setResult(conletId);
