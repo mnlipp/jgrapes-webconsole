@@ -21,7 +21,7 @@
     "url": "https://github.com/mnlipp/jgrapes-webconsole"
   },
   "dependencies": {
-    "vue": "^3.2.38"
+    "vue": "^3.2.41"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.2",
