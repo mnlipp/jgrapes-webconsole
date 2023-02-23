@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ref } from "vue"
+import { ref, App, Plugin } from "vue"
 import AashPlugin, { AashDropdownMenu, AashTablist, AashModalDialog, 
     AashDisclosureButton } from "aash-plugin"
 import JGConsole from "jgconsole"
@@ -103,8 +103,8 @@ export class JGWC {
 // For access from plain JavaScript.
 (<any>JGConsole).jgwc = JGWC;
 
-export default {
-    install: (app: any, options: any) => {
+export const JgwcPlugin: Plugin = {
+    install: (app: App, _: any) => {
         app.config.globalProperties.$jgwc = JGWC;
         app.config.globalProperties.JGConsole = JGConsole;
         app.use(AashPlugin);
@@ -114,6 +114,8 @@ export default {
         app.component('jgwc-disclosure-button', AashDisclosureButton);
   }
 }
+
+export default JgwcPlugin;
 
 /*
 Vue.component('jgwc-id-scope', {

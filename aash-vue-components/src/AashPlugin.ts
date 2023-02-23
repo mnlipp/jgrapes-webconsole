@@ -5,7 +5,7 @@
  * @module AashPlugin
  */
 
-import { App, Ref, ref } from 'vue'
+import { App, Ref, ref, Plugin } from 'vue'
 import { provideApi, getApi } from "./AashUtil";
 import AashAccordionComponent from "./components/accordion/AashAccordion.vue";
 import * as AashAccordion from "./components/accordion/AashAccordion";
@@ -96,8 +96,8 @@ let aash: Aash = {
     }
 }
 
-export default {
-    install: (app: App) => {
+export const AashPlugin: Plugin = {
+    install: (app: App, _: any) => {
         app.config.globalProperties.$aash = aash;
         app.component('aash-disclosure-button', AashDisclosureButtonComponent);
         app.component('aash-dropdown-menu', AashDropdownMenuComponent);
@@ -108,3 +108,5 @@ export default {
         app.component('aash-accordion-section', AashAccordionSectionComponent);
   }
 }
+
+export default AashPlugin;
