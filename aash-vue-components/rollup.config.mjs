@@ -4,7 +4,7 @@ import vue from "rollup-plugin-vue";
 import replace from '@rollup/plugin-replace';
 import postcss from 'rollup-plugin-postcss'
 
-import packageJson from "./package.json";
+import packageJson from "./package.json" assert { type: "json" };
 
 export default {
   external: ['vue'],

@@ -1,5 +1,5 @@
 import typescript from 'rollup-plugin-typescript2';
-import {terser} from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import path from 'path';
 import postcss from 'rollup-plugin-postcss'
 import vue from "rollup-plugin-vue";

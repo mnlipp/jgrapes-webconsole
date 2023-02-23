@@ -15,7 +15,7 @@ task compileTs(type: NodeTask) {
     dependsOn ':org.jgrapes.webconsole.provider.jgwcvuecomponents:compileTs'
     inputs.dir project.file('src')
     inputs.file project.file('tsconfig.json')
-    inputs.file project.file('rollup.config.js')
+    inputs.file project.file('rollup.config.mjs')
     outputs.dir project.file('build/generated/resources')
     script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
     args = ["-c"]
