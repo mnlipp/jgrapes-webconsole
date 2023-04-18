@@ -1,4 +1,6 @@
 if (!project.hasProperty('noBaseline') 
+    && !project.name.startsWith('org.jgrapes.webconsole.examples')
+    && project.name != 'WebConsoleTest'
     && project.name != 'org.jgrapes.webconlet.jmxbrowser'
     && project.name != 'org.jgrapes.webconlet.messagebox'
     && project.name != 'org.jgrapes.webconsole.provider.browserrequire') {
@@ -43,7 +45,6 @@ if (!project.hasProperty('noBaseline')
             dependsOn baseline
         }
     }
-
 }
 
 afterEvaluate {
