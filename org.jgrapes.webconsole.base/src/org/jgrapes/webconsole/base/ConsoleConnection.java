@@ -300,7 +300,7 @@ public final class ConsoleConnection extends DefaultIOSubchannel {
         if (connections.remove(connectionId) != null) {
             connected = false;
             open = false;
-            console.newEventPipeline().fire(new Closed(), this);
+            console.newEventPipeline().fire(new Closed<Void>(), this);
         }
     }
 

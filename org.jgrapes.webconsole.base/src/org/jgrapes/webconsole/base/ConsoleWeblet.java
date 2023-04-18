@@ -711,7 +711,7 @@ public abstract class ConsoleWeblet extends Component {
         // Check if reload required
         String[] connectionIds = passedIn.get();
         if (connectionIds[0] == null) {
-            @SuppressWarnings("resource")
+            @SuppressWarnings({ "resource", "PMD.CloseResource" })
             CharBufferWriter out = new CharBufferWriter(wsChannel,
                 wsChannel.responsePipeline()).suppressClose();
             new SimpleConsoleCommand("reload").toJson(out);
@@ -785,7 +785,7 @@ public abstract class ConsoleWeblet extends Component {
      */
     @Handler
     public void onClosed(
-            Closed event, IOSubchannel wsChannel) throws IOException {
+            Closed<?> event, IOSubchannel wsChannel) throws IOException {
         Optional<WebSocketInputSink> optWsInputReader
             = wsChannel.associated(this, WebSocketInputSink.class);
         if (optWsInputReader.isPresent()) {
@@ -812,7 +812,7 @@ public abstract class ConsoleWeblet extends Component {
             ConsoleCommand event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         IOSubchannel upstream = channel.upstreamChannel();
-        @SuppressWarnings("resource")
+        @SuppressWarnings({ "resource", "PMD.CloseResource" })
         CharBufferWriter out = new CharBufferWriter(upstream,
             upstream.responsePipeline()).suppressClose();
         event.toJson(out);

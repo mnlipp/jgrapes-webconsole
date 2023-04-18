@@ -1089,7 +1089,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param connection the web console connection
      */
     @Handler
-    public final void onClosed(Closed event, ConsoleConnection connection) {
+    public final void onClosed(Closed<?> event, ConsoleConnection connection) {
         conletInfosByConsoleConnection.remove(connection);
         updateRefresh();
         afterOnClosed(event, connection);
@@ -1104,7 +1104,8 @@ public abstract class AbstractConlet<S> extends Component {
      * @param event the closed event
      * @param connection the web console connection
      */
-    protected void afterOnClosed(Closed event, ConsoleConnection connection) {
+    protected void afterOnClosed(Closed<?> event,
+            ConsoleConnection connection) {
         // Default is to do nothing.
     }
 
