@@ -18,8 +18,8 @@ release {
 
 // Nothing to compile, but avoids Eclipse warning.
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 // Not used due to:
