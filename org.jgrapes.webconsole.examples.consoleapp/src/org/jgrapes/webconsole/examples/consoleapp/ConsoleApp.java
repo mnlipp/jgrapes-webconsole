@@ -47,7 +47,7 @@ import org.jgrapes.http.events.Request;
 import org.jgrapes.io.NioDispatcher;
 import org.jgrapes.io.util.PermitsPool;
 import org.jgrapes.net.SslCodec;
-import org.jgrapes.net.TcpServer;
+import org.jgrapes.net.SocketServer;
 import org.jgrapes.util.ComponentCollector;
 import org.jgrapes.util.PreferencesStore;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
@@ -88,7 +88,7 @@ public class ConsoleApp extends Component {
         // Network level unencrypted channel.
         Channel httpTransport = new NamedChannel("httpTransport");
         // Create a TCP server listening on port 8888
-        app.attach(new TcpServer(httpTransport)
+        app.attach(new SocketServer(httpTransport)
             .setServerAddress(new InetSocketAddress(8888)));
 
         // Create TLS "converter"
@@ -104,7 +104,7 @@ public class ConsoleApp extends Component {
         sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
         // Create a TCP server for SSL
         Channel securedNetwork = app.attach(
-            new TcpServer().setServerAddress(new InetSocketAddress(8443))
+            new SocketServer().setServerAddress(new InetSocketAddress(8443))
                 .setBacklog(3000).setConnectionLimiter(new PermitsPool(50)));
         app.attach(new SslCodec(httpTransport, securedNetwork, sslContext));
 
