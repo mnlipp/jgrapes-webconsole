@@ -24,6 +24,4 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
       - name: Build with Gradle
-        run: ./gradlew stage
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: ./gradlew -Prepo.access.token=${{ secrets.REPO_ACCESS_TOKEN }} stage
