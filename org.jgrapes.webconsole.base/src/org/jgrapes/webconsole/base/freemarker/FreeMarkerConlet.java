@@ -27,8 +27,6 @@ import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.Collections;
@@ -48,10 +46,11 @@ import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
+import org.jgrapes.io.util.ByteBufferWriter;
 import org.jgrapes.webconsole.base.AbstractConlet;
 import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.RenderSupport;
-import org.jgrapes.webconsole.base.ResourceByGenerator;
+import org.jgrapes.webconsole.base.ResourceByProducer;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
@@ -309,19 +308,14 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
             model.putAll(fmTypeModel(event.renderSupport()));
 
             // Everything successfully prepared
-            event.setResult(new ResourceByGenerator(event,
-                new ResourceByGenerator.Generator() {
-                    @Override
-                    public void write(OutputStream stream) throws IOException {
-                        try {
-                            tpl.process(model, new OutputStreamWriter(
-                                stream, "utf-8"));
-                        } catch (TemplateException e) {
-                            throw new IOException(e);
-                        }
+            event.setResult(new ResourceByProducer(event,
+                c -> {
+                    try {
+                        tpl.process(model, new ByteBufferWriter(c));
+                    } catch (TemplateException e) {
+                        throw new IOException(e);
                     }
-                },
-                HttpResponse.contentType(event.resourceUri()),
+                }, HttpResponse.contentType(event.resourceUri()),
                 Instant.now(), 0));
             event.stop();
         } catch (IOException e) { // NOPMD

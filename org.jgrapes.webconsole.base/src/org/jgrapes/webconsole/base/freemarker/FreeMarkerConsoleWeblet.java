@@ -30,7 +30,6 @@ import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.text.Collator;
@@ -52,7 +51,7 @@ import org.jgrapes.http.LanguageSelector.Selection;
 import org.jgrapes.http.events.Request;
 import org.jgrapes.http.events.Response;
 import org.jgrapes.io.IOSubchannel;
-import org.jgrapes.io.util.ByteBufferOutputStream;
+import org.jgrapes.io.util.ByteBufferWriter;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
 
 /**
@@ -261,12 +260,8 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
         response.setStatus(HttpStatus.OK);
         response.setHasPayload(true);
         channel.respond(new Response(response));
-        try (ByteBufferOutputStream bbos = new ByteBufferOutputStream(
-            channel, channel.responsePipeline());
-                Writer out = new OutputStreamWriter(bbos.suppressClose(),
-                    UTF_8)) {
-            @SuppressWarnings("PMD.UseConcurrentHashMap")
-
+        try (@SuppressWarnings("resource")
+        Writer out = new ByteBufferWriter(channel).suppressClose()) {
             Template tpl = freeMarkerConfig.getTemplate("console.ftl.html");
             Map<String, Object> consoleModel = expandConsoleModel(
                 createConsoleBaseModel(), event, consoleConnectionId);

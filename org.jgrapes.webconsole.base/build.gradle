@@ -1,9 +1,9 @@
 dependencies {
     // BndPomRepository (3.5.0) cannot handle ranges without upper limit
-    api 'org.jgrapes:org.jgrapes.core:[1.18.0,2)'
-    api 'org.jgrapes:org.jgrapes.io:[2.2.0,3)'
-    api 'org.jgrapes:org.jgrapes.http:[3.0.3,4)'
-    api 'org.jgrapes:org.jgrapes.util:[1.22.0,2)'
+    api 'org.jgrapes:org.jgrapes.core:[1.19.0,2)'
+    api 'org.jgrapes:org.jgrapes.io:[2.5.0,3)'
+    api 'org.jgrapes:org.jgrapes.http:[3.1.0,4)'
+    api 'org.jgrapes:org.jgrapes.util:[1.26.0,2)'
     api 'org.jdrupes.json:json:[2.3.1,2.4.0)'
     api 'org.freemarker:freemarker:[2.3.31,2.4)'
 }
