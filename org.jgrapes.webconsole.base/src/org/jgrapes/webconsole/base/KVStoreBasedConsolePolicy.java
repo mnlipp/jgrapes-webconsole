@@ -234,6 +234,7 @@ public class KVStoreBasedConsolePolicy extends Component {
             persisted.put("xtraInfo", event.xtraInfo());
 
             // Now store.
+            @SuppressWarnings("PMD.CloseResource")
             JsonBeanEncoder encoder = JsonBeanEncoder.create();
             encoder.writeObject(persisted);
             fire(new KeyValueStoreUpdate()
