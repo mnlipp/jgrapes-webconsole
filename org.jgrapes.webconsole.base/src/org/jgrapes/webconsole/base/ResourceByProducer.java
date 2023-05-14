@@ -44,7 +44,7 @@ public class ResourceByProducer extends ResourceResult {
      * Instantiates a result that is provided by a {@link ContentProducer}.
      *
      * @param request the request
-     * @param generator the generator
+     * @param contentProducer the content producer
      * @param mediaType the media type, may be `null`
      * @param lastModifiedAt the last modified at
      * @param maxAge the max age
