@@ -53,10 +53,10 @@ import org.jgrapes.http.events.Request;
 import org.jgrapes.io.FileStorage;
 import org.jgrapes.io.NioDispatcher;
 import org.jgrapes.io.util.PermitsPool;
-import org.jgrapes.net.SslCodec;
 import org.jgrapes.net.SocketServer;
+import org.jgrapes.net.SslCodec;
 import org.jgrapes.util.ComponentCollector;
-import org.jgrapes.util.JsonConfigurationStore;
+import org.jgrapes.util.YamlConfigurationStore;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
@@ -99,7 +99,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         app = new WebConsoleTest();
         // Support Json configuration
         app.attach(
-            new JsonConfigurationStore(app, new File("console-config.json")));
+            new YamlConfigurationStore(app, new File("console-config.yaml")));
         // Attach a general nio dispatcher
         app.attach(new NioDispatcher());
 

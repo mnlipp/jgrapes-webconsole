@@ -1,0 +1,24 @@
+"/WebConsoleTest":
+  "/VueJsConsoleWeblet":
+    "/WebConsole":
+      "/ComponentCollector":
+        "/LoginConlet":
+          users:
+            test:
+              password: "$2b$05$hZaI/jToXf/d3BctZdT38Or7H7h6Pn2W3WiB49p5AyhDHFkkYCvo2"
+            admin:
+              password: "$2b$05$NiBd74ZGdplLC63ePZf1f.UtjMKkbQ23cQoO2OKOFalDBHWAOy21."
+      "/RoleConfigurator":
+        rolesByUser:
+          "*":
+            - user
+          admin:
+          - admin
+        replace: false
+      "/RoleConletFilter":
+        conletTypesByRole:
+          user:
+          - "!org.jgrapes.webconlet.sysinfo.SysInfoConlet"
+          - "*"
+          admin:
+          - "*"
