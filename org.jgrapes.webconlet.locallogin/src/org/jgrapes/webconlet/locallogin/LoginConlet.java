@@ -70,10 +70,14 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  * "...":
  *   "/LoginConlet":
  *     users:
- *       test:
- *         password: "$2b$05$hZaI/jToXf/d3BctZdT38Or7H7h6Pn2W3WiB49p5AyhDHFkkYCvo2"
  *       admin:
+ *         # Full name is optional
+ *         fullName: Administrator
  *         password: "$2b$05$NiBd74ZGdplLC63ePZf1f.UtjMKkbQ23cQoO2OKOFalDBHWAOy21."
+ *       test:
+ *         fullName: Test Account
+ *         password: "$2b$05$hZaI/jToXf/d3BctZdT38Or7H7h6Pn2W3WiB49p5AyhDHFkkYCvo2"
+ *         
  * ```
  * 
  * Passwords are hashed using bcrypt.
@@ -279,7 +283,9 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             }
             model.setDialogOpen(false);
             Subject user = new Subject();
-            user.getPrincipals().add(new ConsoleUser(userName, userName));
+            user.getPrincipals().add(new ConsoleUser(userName,
+                Optional.ofNullable(userData.get("fullName"))
+                    .orElse(userName)));
             connection.session().put(Subject.class, user);
             connection.respond(new CloseModalDialog(type(), event.conletId()));
             connection
