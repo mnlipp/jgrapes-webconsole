@@ -86,7 +86,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     private static final String PENDING_CONSOLE_PREPARED
-        = "pendingCosolePrepared";
+        = "pendingConsolePrepared";
     private final Map<String, Map<String, String>> users
         = new ConcurrentHashMap<>();
 
