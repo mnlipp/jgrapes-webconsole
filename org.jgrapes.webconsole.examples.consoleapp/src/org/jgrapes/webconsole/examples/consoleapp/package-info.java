@@ -17,36 +17,39 @@
  */
 
 /**
- * This package provides a very basic, sample web console configuration
+ * This package provides a sample web console configuration
  * which can be used for testing and demonstration purposes. It provides
- * the web console with HTTP (port 8888) and HTTPS (port 8443) access.
+ * a web console with HTTP (port 8888) and HTTPS (port 8443) access.
  * 
  * ## Component tree
  * 
- * At the root of the component tree is the instance of the
- * {@link org.jgrapes.webconsole.examples.consoleapp.ConsoleApp}.
+ * An instance of the
+ * {@link org.jgrapes.webconsole.examples.consoleapp.ConsoleApp} serves
+ * as root of the component tree.
  * 
  * ![Application hierarchy](app-hierarchy.svg)
  * 
- * The child components of the ConsoleApp are the components related
- * to the network connection, a {@link org.jgrapes.net.SocketServer}
+ * The child components of the ConsoleApp instance are the components
+ * related to the network connection, a {@link org.jgrapes.net.SocketServer}
  * for the plain text connection and an {@link org.jgrapes.net.SslCodec}
  * with another SocketServer as its child for the encrypted connection. 
- * Another child is the {@link org.jgrapes.http.HttpServer} that
+ * In addition there is an {@link org.jgrapes.http.HttpServer} that
  * handles the I/O events and converts them to HTTP level events.
  * 
  * The HttpServer has as children all components that handle HTTP
- * request (and generate responses). Most notably the
+ * requests (and generate the responses). Most notably the
  * {@link org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet} that
- * handles the main page related resource requests and generates the 
- * provider and conlet related events.
+ * handles the resource requests related to the main page and generates
+ * the provider and conlet related events.
  * 
- * Attached to the WebConsole, we finally have the helper components
+ * Attached to the {@link org.jgrapes.webconsole.base.WebConsole}, we
+ * finally have the components
  * {@link org.jgrapes.webconsole.base.BrowserLocalBackedKVStore}
  * and {@link org.jgrapes.webconsole.base.KVStoreBasedConsolePolicy}
- * and the collector components for page resource providers and conlets.
- * The collectors pick up the page providers and web conlets in the 
- * classpath and attach them to themselves.
+ * and the {@link org.jgrapes.util.ComponentCollector}s for page 
+ * resource providers and conlets. The collectors pick up the 
+ * page providers and web conlets in the  classpath and attach
+ * them to themselves.
  * 
  * ## Channel usage
  * 
