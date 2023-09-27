@@ -58,7 +58,7 @@ configurations {
 }
  
 dependencies {
-    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:2.0.1"
+    javadocTaglets "org.jdrupes.taglets:plantuml-taglet:3.1.0"
 }
 
 task javadocResources(type: Copy) {
