@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -80,18 +81,56 @@ public class ConsoleApp extends Component {
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void start() throws Exception {
-        // The demo component is the application
+        // This class represents the application and its instance is
+        // therefore the root of the component tree.
         app = new ConsoleApp();
         // Attach a general nio dispatcher
         app.attach(new NioDispatcher());
 
-        // Network level unencrypted channel.
+        // Create a channel for the network level I/O.
         Channel httpTransport = new NamedChannel("httpTransport");
-        // Create a TCP server listening on port 8888
+
+        // Create a TCP server listening on port 8888 that
+        // uses (i.e. receives events from and sends events to)
+        // the network channel.
         app.attach(new SocketServer(httpTransport)
             .setServerAddress(new InetSocketAddress(8888)));
 
-        // Create TLS "converter"
+        // The third component that uses (i.e. receives events from
+        // and sends events to) the httpTransport channel is
+        // an SslCodec. This actually uses two channels. The second
+        // channel is used for the encrypted I/O which is exchanged
+        // with another SocketServer.
+        SSLContext sslContext = createSslContext();
+        Channel securedNetwork = app.attach(
+            new SocketServer().setServerAddress(new InetSocketAddress(8443))
+                .setBacklog(3000).setConnectionLimiter(new PermitsPool(50)));
+        app.attach(new SslCodec(httpTransport, securedNetwork, sslContext));
+
+        // Create an HTTP server as converter between transport and
+        // application layer. It connects to the httpTransport channel
+        // and the application channel which is provided by the
+        // ConsoleApp instance. The HTTP related events are send on/
+        // received from the http channel.
+        Channel httpApplication = new NamedChannel("http");
+        var httpServer = app.attach(new HttpServer(httpApplication,
+            httpTransport, Request.In.Get.class, Request.In.Post.class));
+
+        // Build application layer. The application layer events are
+        // exchanged over the application channel.
+        httpServer.attach(
+            new PreferencesStore(httpApplication, this.getClass()));
+        httpServer.attach(new InMemorySessionManager(httpApplication));
+        httpServer.attach(new LanguageSelector(httpApplication));
+
+        // Assemble console components
+        createVueJsConsole(httpServer);
+        Components.start(app);
+    }
+
+    private SSLContext createSslContext() throws KeyStoreException, IOException,
+            NoSuchAlgorithmException, CertificateException,
+            UnrecoverableKeyException, KeyManagementException {
         KeyStore serverStore = KeyStore.getInstance("JKS");
         try (InputStream keyFile
             = ConsoleApp.class.getResourceAsStream("localhost.jks")) {
@@ -102,32 +141,15 @@ public class ConsoleApp extends Component {
         kmf.init(serverStore, "nopass".toCharArray());
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
-        // Create a TCP server for SSL
-        Channel securedNetwork = app.attach(
-            new SocketServer().setServerAddress(new InetSocketAddress(8443))
-                .setBacklog(3000).setConnectionLimiter(new PermitsPool(50)));
-        app.attach(new SslCodec(httpTransport, securedNetwork, sslContext));
-
-        // Create an HTTP server as converter between transport and application
-        // layer.
-        app.attach(new HttpServer(app.channel(),
-            httpTransport, Request.In.Get.class, Request.In.Post.class));
-
-        // Build application layer
-        app.attach(new PreferencesStore(app.channel(), this.getClass()));
-        app.attach(new InMemorySessionManager(app.channel()));
-        app.attach(new LanguageSelector(app.channel()));
-
-        // Assemble console components
-        createVueJsConsole();
-        Components.start(app);
+        return sslContext;
     }
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createVueJsConsole() throws URISyntaxException {
+    private void createVueJsConsole(HttpServer httpServer)
+            throws URISyntaxException {
         ConsoleWeblet consoleWeblet
-            = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
-                new URI("/")))
+            = httpServer.attach(new VueJsConsoleWeblet(httpServer.channel(),
+                Channel.SELF, new URI("/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(ConsoleApp.class)
                 .prependConsoleResourceProvider(ConsoleApp.class);
