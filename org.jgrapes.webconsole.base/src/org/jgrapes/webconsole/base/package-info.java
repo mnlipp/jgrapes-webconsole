@@ -35,9 +35,13 @@
  * or "conlets" for short. These components typically provide a summary
  * or preview display that can be put on an overview panel in a dashboard
  * style and a large view that is supposed to fill the complete frame.
- * 
  * Tabs or a menu in a side bar can be used to switch between
  * the overview panel(s) and the large views of the different conlets. 
+ *
+ * The following sections provide a step by step introduction to the
+ * components and their interactions. How to combine the components to
+ * a complete web console is shown in the 
+ * [example console application](../examples/consoleapp/package-summary.html).
  *
  * Web Console Components
  * ----------------------
@@ -478,6 +482,7 @@
  * @startuml package-hierarchy.svg
  * skinparam svgLinkTarget _parent
  * 
+ * set separator none
  * package org.jgrapes {
  *     package "JGrapes Core Components" {
  *     }
