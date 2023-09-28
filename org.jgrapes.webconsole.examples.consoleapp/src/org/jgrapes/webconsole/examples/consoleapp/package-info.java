@@ -80,6 +80,8 @@
  * component as channel for all events related to the portal application.
  * 
  * @startuml app-hierarchy.svg
+ * skinparam packageStyle rectangle
+ * 
  * [ConsoleApp] *-- [SocketServer:8888]
  * note bottom of [SocketServer:8888]
  *   Connects 
@@ -119,6 +121,8 @@
  * @enduml
  * 
  * @startuml app-channels.svg
+ * skinparam packageStyle rectangle
+ * 
  * () "httpTransport" as hT
  * hT .up. [SocketServer:8888]
  * note right of [SocketServer:8888]
