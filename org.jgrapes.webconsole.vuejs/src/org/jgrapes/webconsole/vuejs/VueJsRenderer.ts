@@ -69,7 +69,7 @@ export default class Renderer extends JGConsole.Renderer {
         
         // Start Vue
         let headerApp = createApp({});
-        headerApp.use(AashPlugin);
+        headerApp.use(AashPlugin, []);
         headerApp.config.globalProperties.window = window;
         headerApp.config.globalProperties.$consoleRenderer = this;
         headerApp.mount('header');

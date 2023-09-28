@@ -96,8 +96,8 @@ let aash: Aash = {
     }
 }
 
-export const AashPlugin: Plugin = {
-    install: (app: App, _: any) => {
+export const AashPlugin: Plugin<any[]> = {
+    install: (app: App, _: any[]) => {
         app.config.globalProperties.$aash = aash;
         app.component('aash-disclosure-button', AashDisclosureButtonComponent);
         app.component('aash-dropdown-menu', AashDropdownMenuComponent);

@@ -35,7 +35,7 @@ window.orgJGrapesWebconletJmxBrowser = {};
 window.orgJGrapesWebconletJmxBrowser.initPreview 
         = (preview: HTMLElement, isUpdate: boolean) => {
     const app = createApp({});
-    app.use(AashPlugin);
+    app.use(AashPlugin, []);
     app.config.globalProperties.window = window;
     app.mount(preview);
 };
