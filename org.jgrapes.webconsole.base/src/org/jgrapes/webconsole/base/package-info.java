@@ -147,7 +147,7 @@
  * 
  * The {@link org.jgrapes.webconsole.base.ConsoleWeblet} receives the
  * requests from the browser on {@link org.jgrapes.io.IOSubchannel}s
- * of a channel (the "webletChannel") which is passed to the constructor
+ * of a channel (the "httpChannel") which is passed to the constructor
  * in its first parameter. This is the channel used by the components that 
  * constitute the web server, i.e. the {@link org.jgrapes.http.HttpServer} 
  * and helper components such as a {@link org.jgrapes.http.SessionManager}. 
@@ -168,7 +168,9 @@
  * described in the documentation of the class 
  * {@link org.jgrapes.webconsole.base.ConsoleConnection}.
  * 
- * Some handlers that should conceptually be provided by the
+ * Some handlers (e.g. 
+ * {@link org.jgrapes.webconsole.base.ConsoleWeblet#onConsoleCommand}) 
+ * that should conceptually be provided by the
  * {@link org.jgrapes.webconsole.base.WebConsole} are actually
  * implemented as methods of the 
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet} because they 
@@ -309,83 +311,90 @@
  * 
  * @startuml ConsoleStructure.svg
  * skinparam packageStyle rectangle
+ * skinparam package<<Layout>> {
+ *   borderColor Transparent
+ *   backgroundColor Transparent
+ *   fontColor Transparent
+ *   stereotypeFontColor Transparent
+ * }
  * allow_mixing
  * 
  * component Browser
  * 
  * package "Conceptual WebConsole\n(WebConsole Gateway)" {
- *    class WebConsole
- * 	  class ConsoleWeblet
- * 
- *    WebConsole "1" -left-* "1" ConsoleWeblet
+ *   component WebConsole
+ *   component ConsoleWeblet
+ *   
+ *   WebConsole "1" -left-* "1" ConsoleWeblet
  * }
- * 
+ *
  * ConsoleWeblet "*" -left- "*" Browser
  * 
- * together {
- * 
+ * package together <<Layout>> {
+ *
+ *   component ConletB
  *   WebConsole "1" -right- "1" ConletB
+ *   component ConletA
  *   WebConsole "1" -right- "1" ConletA
  * 
  *   class ConletAData {
  *     -conletId: String
  *   }
- * 
  *   ConletAData "*" -up- "1" ConletA
  * 
  *   class ConletBData {
  *     -conletId: String
  *   }
- * 
  *   ConletBData "*" -up- "1" ConletB
  *   
  *   ConletAData "*" -up-* "1" Session
  *   ConletBData "*" -up-* "1" Session
  * }
  * 
+ * component PageResourceProvider
  * WebConsole "1" -down- "*" PageResourceProvider
+ * component ConsolePolicy
  * WebConsole "1" -down- "*" ConsolePolicy
- * 
  * @enduml
  * 
  * @startuml ConsoleChannels.svg
  * skinparam packageStyle rectangle
  * allow_mixing
  * 
- * object webletChannel
- * object consoleChannel
+ * () httpChannel
+ * () consoleChannel
  * 
- * object httpServer
- * httpServer -- webletChannel
+ * component "HttpServer" as httpServer
+ * httpServer .right. httpChannel
  * 
- * object sessionManager
- * sessionManager -- webletChannel
+ * component "SessionManager" as sessionManager
+ * sessionManager .up. httpChannel
  * 
  * package "Conceptual WebConsole\n(WebConsole Gateway)" {
- *    object webConsole
- *    object consoleWeblet
+ *    component "WebConsole" as webConsole
+ *    component "ConsoleWeblet" as consoleWeblet
  * 
  *    webConsole "1" -left-* "1" consoleWeblet
  * }
  *  
- * consoleWeblet -- webletChannel : "onGet,\nonInput,\nonClosed,\n..."
- * consoleWeblet -- consoleChannel : "onConsoleReady,\nonConsoleCommand,\n..."
+ * consoleWeblet .left. httpChannel : "onGet,\nonInput,\nonClosed,\n..."
+ * consoleWeblet .. consoleChannel : "onConsoleCommand,\n..."
  * 
  * webConsole -- consoleChannel : "(all handlers)"
  * 
- * object conletA
- * conletA -- consoleChannel
+ * component conletA
+ * conletA .. consoleChannel
  * 
- * object conletB
- * conletB -- consoleChannel
+ * component conletB
+ * conletB .left. consoleChannel
  * 
- * object "consoleConnection: ConsoleConnection" as consoleConnection
- * consoleChannel <-left- consoleConnection : "main channel"
+ * object "consoleConnection:\nConsoleConnection" as consoleConnection
+ * consoleChannel <-left- consoleConnection : < "subchannel of"
  * consoleWeblet *-- consoleConnection 
  * 
  * webConsole -right[hidden]- conletA
  * conletA -right[hidden]- conletB
- * webletChannel -right[hidden]- consoleConnection
+ * httpChannel -right[hidden]- consoleConnection
  * 
  * @enduml
  * 
