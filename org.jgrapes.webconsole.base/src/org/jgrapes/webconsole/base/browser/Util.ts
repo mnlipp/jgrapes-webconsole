@@ -46,7 +46,7 @@ export function rootQuery(root: Element, selector: string): Node | null {
  * @param lang the language (BCP 47 code, 
  * used to determine the delimiter)
  */
-export function formatMemorySize(size: number, digits: number | string, 
+export function formatMemorySize(size: number, digits: number, 
     lang: string | number | undefined) {
     if (lang === undefined) {
         lang = digits;
