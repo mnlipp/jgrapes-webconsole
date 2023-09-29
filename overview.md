@@ -39,7 +39,22 @@ the constructor](src-html/org/jgrapes/webconsole/vuejs/VueJsConsoleWeblet.html#l
 and provide the required 
 [templates](https://github.com/mnlipp/jgrapes-webconsole/tree/master/org.jgrapes.webconsole.vuejs/resources/org/jgrapes/webconsole/vuejs).
 
-The project currently includes three sample SPA providers:
+The project currently provides one SPA providers:
+
+ * The {@link org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet}
+   implements the pursued approach for providing a JGrapes web 
+   console. It's a bit of a misnomer because while it makes use of
+   [Vue.js](https://vuejs.org/) as a library in order to generate the 
+   DOM for the SPA frame, it does in no way imply that Vue.js must or 
+   should be used by the conlets. It includes a stylesheet that follows the 
+   rules outlined in the section "Styling Conlets" below. 
+   This stylesheet can easily be replaced by some other stylesheet to 
+   get a completely different appearance. (Actually, it's possible
+   to derive a class from `VueJsConsoleWeblet` that only "overrides"
+   the style sheet.)
+
+There are two deprecated SPA providers in the project which are no longer
+maintained. They are kept as examples of how things can be done differently:
 
  * The {@link org.jgrapes.webconsole.jqueryui.JQueryUiWeblet}
    provides the SPA frame using the [jQuerUi](https://jqueryui.com/) widgets
@@ -53,18 +68,6 @@ The project currently includes three sample SPA providers:
    deprecated as well, because it doesn't follow the principles outlined
    below in the section "Styling Conlets".
    
- * The {@link org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet}
-   implements the currently pursued approach for providing a JGrapes web 
-   console. It's a bit of a misnomer because while it makes use of
-   [Vue.js](https://vuejs.org/) as a library in order to generate the 
-   DOM for the SPA frame, it does in no way imply that Vue.js must or 
-   should be used by the conlets. It includes a stylesheet that follows the 
-   rules outlined in the section "Styling Conlets" below. 
-   This stylesheet can easily be replaced by some other stylesheet to 
-   get a completely different appearance. (Actually, it's possible
-   to derive a class from `VueJsConsoleWeblet` that only "overrides"
-   the style sheet.)
-
 The SPA frame consist of the HTML for the basic page layout and JavaScript 
 code for communicating with the server and managing the content. To 
 simplify the implementation, package {@link org.jgrapes.webconsole.base} 
