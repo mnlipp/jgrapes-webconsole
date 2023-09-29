@@ -4,13 +4,14 @@ import postcss from 'rollup-plugin-postcss'
 let module = "build/generated/resources/org/jgrapes/webconsole/vuejs/vuejsrenderer.js"
 
 let pathsMap = {
+    "@GridStack": "../page-resource/gridstack/gridstack.js",
     "@Vue": "../page-resource/vue/vue.esm-browser.js",
     "@JGConsole": "../console-base-resource/jgconsole.js",
     "@Aash": "../page-resource/aash-vue-components/lib/aash-vue-components.js"
 }
 
 export default {
-  external: ['@Vue', '@Aash', '@JGConsole'],
+  external: ['@GridStack', '@Vue', '@Aash', '@JGConsole'],
   input: "src/org/jgrapes/webconsole/vuejs/VueJsRenderer.ts",
   output: [
     {

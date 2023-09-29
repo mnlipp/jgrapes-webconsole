@@ -19,6 +19,7 @@
 'use strict';
 
 import JGConsole, { RenderMode } from "../console-base-resource/jgconsole.js"
+import { GridStack } from "../page-resource/gridstack/gridstack.js";
 
 /**
  * @module b4uiconsole
@@ -237,24 +238,24 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
                 options.autoPosition = false;
                 options.x = this._lastXtraInfo[conletId][0];
                 options.y = this._lastXtraInfo[conletId][1];
-                options.width = this._lastXtraInfo[conletId][2];
-                options.height = this._lastXtraInfo[conletId][3];
+                options.w = this._lastXtraInfo[conletId][2];
+                options.h = this._lastXtraInfo[conletId][3];
             } else {
                 options.autoPosition = true;
-                options.width = 4;
-                options.height = 4;
+                options.w = 4;
+                options.h = 4;
                 if (newContent.attr("data-conlet-grid-columns")) {
-                    options.width = newContent.attr("data-conlet-grid-columns");
+                    options.w = newContent.attr("data-conlet-grid-columns");
                 }
                 if (newContent.attr("data-conlet-grid-rows")) {
-                    options.height = newContent.attr("data-conlet-grid-rows");
+                    options.h = newContent.attr("data-conlet-grid-rows");
                 }
                 if ($(window).width() < 1200) {
                     let winWidth = Math.max(320, $(window).width());
-                    let width = options.width;
+                    let width = options.w;
                     width = Math.round(width + (12 - width) 
                         * (1 - (winWidth - 320) / (1200 - 320)));
-                    options.width = width;
+                    options.w = width;
                 }
             }
 
@@ -265,7 +266,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             gridItem.append(container);
 
             // Finally add to grid
-            _this._previewGrid.addWidget(gridItem, options);
+            _this._previewGrid.addWidget(gridItem[0], options);
 
             this._layoutChanged();
         }
@@ -405,7 +406,7 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             let container = $(conlet.element());
             if (container.hasClass('conlet-preview')) {
                 let gridItem = container.closest(".grid-stack-item");
-                _this._previewGrid.removeWidget(gridItem);
+                _this._previewGrid.removeWidget(gridItem[0]);
             }
             if (container.hasClass('conlet-view')) {
                 $("#consoleOverviewTab").tab('show');
@@ -462,10 +463,10 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             gridItems.push($(this));
         });
         gridItems.sort(function(a, b) {
-            if (a.attr("data-gs-y") != b.attr("data-gs-y")) {
-                return b.attr("data-gs-y") - a.attr("data-gs-y");
+            if (a.attr("gs-y") != b.attr("gs-y")) {
+                return b.attr("gs-y") - a.attr("gs-y");
             }
-            return b.attr("data-gs-x") - a.attr("data-gs-x");
+            return b.attr("gs-x") - a.attr("gs-x");
         });
 
         let previewLayout = [];
@@ -474,9 +475,8 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             let conletId = item.find(".conlet-preview[data-conlet-id]")
                 .attr("data-conlet-id");
             previewLayout.push(conletId);
-            xtraInfo[conletId] = [item.attr("data-gs-x"),
-            item.attr("data-gs-y"), item.attr("data-gs-width"),
-            item.attr("data-gs-height")]
+            xtraInfo[conletId] = [item.attr("gs-x"), item.attr("gs-y"), 
+            item.attr("gs-w"), item.attr("gs-h")]
         });
 
         let tabsLayout = [];

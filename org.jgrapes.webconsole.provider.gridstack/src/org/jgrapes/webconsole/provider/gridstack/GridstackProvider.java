@@ -38,7 +38,7 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 /**
  * Provider for the [Gridstack.js](http://gridstackjs.com/) library.
  */
-@SuppressWarnings("PMD.GuardLogStatement")
+@SuppressWarnings({ "PMD.GuardLogStatement", "PMD.DataflowAnomalyAnalysis" })
 public class GridstackProvider extends PageResourceProvider {
 
     @SuppressWarnings({ "PMD.FieldNamingConventions",
@@ -119,41 +119,9 @@ public class GridstackProvider extends PageResourceProvider {
         AddPageResources addRequest = new AddPageResources()
             .addCss(event.renderSupport().pageResource(
                 "gridstack/gridstack" + minExt + ".css"));
-        switch (configuration) {
-        case CoreOnly:
-            addRequest
-                .addScriptResource(new ScriptResource()
-                    .setRequires(requireTouchPunch
-                        ? "jquery-ui.touch-punch"
-                        : "jquery")
-                    .setProvides("gridstack")
-                    .setScriptUri(event.renderSupport().pageResource(
-                        "gridstack/gridstack" + minExt + ".js")));
-            break;
-        case CoreWithJQUiPlugin:
-            addRequest.addScriptResource(new ScriptResource()
-                .setRequires(requireTouchPunch
-                    ? "jquery-ui.touch-punch"
-                    : "jquery")
-                .setProvides("gridstack")
-                .setScriptUri(event.renderSupport().pageResource(
-                    "gridstack/gridstack" + minExt + ".js")));
-            addRequest.addScriptResource(new ScriptResource()
-                .setRequires("gridstack")
-                .setProvides("gridstack.jQueryUI")
-                .setScriptUri(event.renderSupport().pageResource(
-                    "gridstack/gridstack.jQueryUI" + minExt + ".js")));
-            break;
-        case All:
-            addRequest.addScriptResource(new ScriptResource()
-                .setProvides("jquery", "jquery-ui",
-                    "gridstack", "gridstack.all")
-                .setScriptUri(event.renderSupport().pageResource(
-                    "gridstack/gridstack.all.js")));
-            break;
-        default:
-            break;
-        }
+        connection.respond(new AddPageResources()
+            .addScriptResource(new ScriptResource()
+                .setProvides(new String[] { "gridstack" })));
         connection.respond(addRequest);
     }
 }

@@ -16,8 +16,13 @@ task prepareNpmLibs(type: Copy) {
     from ("node_modules/gridstack/dist/") {
         include '**/*'
         exclude 'src/**'
-        exclude 'jquery.*'
-        exclude 'jquery-ui.*'
+        exclude '**/*.js'
+    }
+    from ("node_modules/gridstack/dist/") {
+        include '**/*.js'
+        exclude 'src/**'
+        // See https://github.com/gridstack/gridstack.js/issues/2476
+        filter { line -> line.replaceAll(' from \'(.*)\'', ' from \'$1.js\'') }
     }
 }
 

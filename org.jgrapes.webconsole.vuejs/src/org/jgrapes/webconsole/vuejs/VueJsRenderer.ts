@@ -16,11 +16,10 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/// <reference path="../../../../../../org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack.d.ts" />
-
 import JGConsole, { Console, PageComponentSpecification, RenderMode, 
     Notification, NotificationOptions, NotificationType, ModalDialogOptions, 
     parseHtml, Conlet } from "@JGConsole";
+import { GridStack, GridStackWidget, GridStackElement } from "@GridStack";
 import { reactive, ref, createApp, onMounted, computed, Ref } from "@Vue";
 import AashPlugin, { provideApi, getApi, AashTablist, 
     AashModalDialogComponent, AashModalDialog } from "@Aash";
@@ -93,7 +92,7 @@ export default class Renderer extends JGConsole.Renderer {
             alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
             disableOneColumnMode: true,
         };
-        _this._previewGrid = window.GridStack.init(options, '#consolePreviews');
+        _this._previewGrid = GridStack.init(options, '#consolePreviews');
         if (!_this._previewGrid) {
             log.error("VueJsConsole: Creating preview grid failed.")
         }
@@ -132,10 +131,10 @@ export default class Renderer extends JGConsole.Renderer {
                 gridItems.push(<HTMLElement>element);
         });
         gridItems.sort(function(a: HTMLElement, b: HTMLElement) {
-            if (a.dataset["gsY"] != b.dataset["gsY"]) {
-                return +b.dataset["gsY"]! - +a.dataset["gsY"]!;
+            if (a.getAttribute("gs-y") != b.getAttribute("gs-y")) {
+                return +b.getAttribute("gs-y")! - +a.getAttribute("gs-y")!;
             }
-            return +b.dataset["gsX"]! - +a.dataset["gsX"]!;
+            return +b.getAttribute("gs-x")! - +a.getAttribute("gs-x")!;
         });
 
         let previewLayout:string[] = [];
@@ -144,9 +143,9 @@ export default class Renderer extends JGConsole.Renderer {
             let conletId = (<HTMLElement>item.querySelector
                 (".conlet-preview[data-conlet-id]")!).dataset["conletId"]!;
             previewLayout.push(conletId);
-            xtraInfo[conletId] = [item.dataset["gsX"],
-            item.dataset["gsY"], item.dataset["gsWidth"],
-            item.dataset["gsHeight"]]
+            xtraInfo[conletId] = [item.getAttribute("gs-x"), 
+                item.getAttribute("gs-y"), item.getAttribute("gs-w"),
+                item.getAttribute("gs-h")];
         });
 
         let tabsLayout: string[] = [];
@@ -293,29 +292,29 @@ export default class Renderer extends JGConsole.Renderer {
 
             // Get grid info
             let conletId = conlet.id();
-            let options: GridstackWidget = {};
+            let options: GridStackWidget = {};
             if (conletId in this._lastXtraInfo) {
                 options.autoPosition = false;
                 options.x = this._lastXtraInfo[conletId][0];
                 options.y = this._lastXtraInfo[conletId][1];
-                options.width = this._lastXtraInfo[conletId][2];
-                options.height = this._lastXtraInfo[conletId][3];
+                options.w = this._lastXtraInfo[conletId][2];
+                options.h = this._lastXtraInfo[conletId][3];
             } else {
                 options.autoPosition = true;
-                options.width = 4;
-                options.height = 4;
+                options.w = 4;
+                options.h = 4;
                 if (content[0].dataset["conletGridColumns"]) {
-                    options.width = +content[0].dataset["conletGridColumns"];
+                    options.w = +content[0].dataset["conletGridColumns"];
                 }
                 if (content[0].dataset["conletGridRows"]) {
-                    options.height = +content[0].dataset["conletGridRows"];
+                    options.h = +content[0].dataset["conletGridRows"];
                 }
                 if (window.innerWidth < 1200) {
                     let winWidth = Math.max(320, window.innerWidth);
-                    let width = options.width;
+                    let width = options.w;
                     width = Math.round(width + (12 - width) 
                         * (1 - (winWidth - 320) / (1200 - 320)));
-                    options.width = width;
+                    options.w = width;
                 }
             }
 
