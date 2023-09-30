@@ -169,8 +169,8 @@
  * {@link org.jgrapes.webconsole.base.ConsoleConnection}.
  * 
  * Some handlers (e.g. 
- * {@link org.jgrapes.webconsole.base.ConsoleWeblet#onConsoleCommand}) 
- * that should conceptually be provided by the
+ * {@link org.jgrapes.webconsole.base.ConsoleWeblet#onConsoleCommand 
+ * onConsoleCommand}) that should conceptually be provided by the
  * {@link org.jgrapes.webconsole.base.WebConsole} are actually
  * implemented as methods of the 
  * {@link org.jgrapes.webconsole.base.ConsoleWeblet} because they 
