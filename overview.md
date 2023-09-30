@@ -39,7 +39,7 @@ the constructor](src-html/org/jgrapes/webconsole/vuejs/VueJsConsoleWeblet.html#l
 and provide the required 
 [templates](https://github.com/mnlipp/jgrapes-webconsole/tree/master/org.jgrapes.webconsole.vuejs/resources/org/jgrapes/webconsole/vuejs).
 
-The project currently provides one SPA providers:
+The project currently provides one SPA provider:
 
  * The {@link org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet}
    implements the pursued approach for providing a JGrapes web 
