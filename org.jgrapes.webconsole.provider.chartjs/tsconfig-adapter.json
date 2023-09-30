@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "es2015",
+    "sourceMap": true,
+    "inlineSources": true,
+    "declaration": true,
+    "importHelpers": true,
+    "strict": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "lib": ["DOM", "ES2020"],
+    "baseUrl": "..",
+    "paths": {
+      "chart.js": ["org.jgrapes.webconsole.provider.chartjs/node_modules/chart.js/dist/chart"],
+      "chart.js/types/basic": ["org.jgrapes.webconsole.provider.chartjs/node_modules/chart.js/dist/types/basic"],
+      "chart.js/types/utils": ["org.jgrapes.webconsole.provider.chartjs/node_modules/chart.js/dist/types/utils"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "build/generated/resources/**/*.ts"]
+}

@@ -17,7 +17,7 @@
  */
 
 import JGConsole from "../../console-base-resource/jgconsole.js"
-import { Chart } from "../../page-resource/chart.js/dist/chart.esm.js";
+import { Chart } from "../../page-resource/chart.js/auto/auto-date-std.js";
 
 let orgJGrapesConletsSysInfo = {};
 window.orgJGrapesConletsSysInfo = orgJGrapesConletsSysInfo;
