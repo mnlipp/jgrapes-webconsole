@@ -92,6 +92,7 @@ public class SysInfoConlet
             .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(connection.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
+                .setRequires("jquery")
                 .setScriptType("module")
                 .setScriptUri(event.renderSupport().conletResource(
                     type(), "SysInfo-functions.ftl.js")))

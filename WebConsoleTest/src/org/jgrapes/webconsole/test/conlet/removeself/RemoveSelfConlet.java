@@ -81,9 +81,10 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
         connection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(connection.supportedLocales(), "conletName"))
-            .addScript(new ScriptResource().setScriptUri(
-                event.renderSupport().conletResource(type(),
-                    "RemoveSelf-functions.js")))
+            .addScript(new ScriptResource()
+                .setRequires("jquery").setScriptUri(
+                    event.renderSupport().conletResource(type(),
+                        "RemoveSelf-functions.js")))
             .addScript(new ScriptResource().setScriptId("testsource")
                 .setScriptType("text/x-test")
                 .setScriptSource("Just a test.")));
