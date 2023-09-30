@@ -105,6 +105,7 @@ public class DatatablesProvider extends PageResourceProvider {
                 .pageResource(baseDir + "/" + styling + "/datatables"
                     + minExt + ".css"))
             .addScriptResource(new ScriptResource()
+                .setRequires("jquery")
                 .setProvides(new String[] { "datatables.net" })
                 .setScriptUri(event.renderSupport().pageResource(
                     baseDir + "/" + styling + "/datatables" + minExt + ".js")))

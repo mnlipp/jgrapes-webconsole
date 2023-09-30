@@ -100,9 +100,10 @@ public class HelloWorldConlet
         connection.respond(new AddConletType(type())
             .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(connection.supportedLocales(), "conletName"))
-            .addScript(new ScriptResource().setScriptUri(
-                event.renderSupport().conletResource(type(),
-                    "HelloWorld-functions.js")))
+            .addScript(new ScriptResource()
+                .setRequires("jquery").setScriptUri(
+                    event.renderSupport().conletResource(type(),
+                        "HelloWorld-functions.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "HelloWorld-style.css")));
     }

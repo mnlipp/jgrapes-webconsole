@@ -24,6 +24,8 @@ dependencies {
     implementation project(':org.jgrapes.webconlet.markdowndisplay')
     runtimeOnly 'com.electronwill.night-config:yaml:[3.6.7,3.7)'    
     runtimeOnly 'org.eclipse.angus:angus-activation:[1.0.0,2.0.0)'
+    runtimeOnly project(':org.jgrapes.webconsole.provider.jquery')
+    // Used by the examples...
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
     runtimeOnly project(':org.jgrapes.webconsole.provider.datatables')
     runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')
