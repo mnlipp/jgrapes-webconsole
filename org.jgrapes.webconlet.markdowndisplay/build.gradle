@@ -1,5 +1,6 @@
 dependencies {
 	api project(':org.jgrapes.webconsole.base')
+    runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')
 }
 
 // For unknwown reasons required to prevent deadlock
