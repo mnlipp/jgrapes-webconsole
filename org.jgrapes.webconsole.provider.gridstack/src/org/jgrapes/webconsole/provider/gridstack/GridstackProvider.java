@@ -22,9 +22,8 @@ import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
-import java.util.logging.Logger;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
@@ -41,62 +40,43 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 @SuppressWarnings({ "PMD.GuardLogStatement", "PMD.DataflowAnomalyAnalysis" })
 public class GridstackProvider extends PageResourceProvider {
 
-    @SuppressWarnings({ "PMD.FieldNamingConventions",
-        "PMD.VariableNamingConventions" })
-    private static Logger LOG
-        = Logger.getLogger(GridstackProvider.class.getName());
-
     /**
      * The Configuration.
+     * 
+     * @deprecated No longer needed because gridstack provides its own
+     * touch library now.
      */
     @SuppressWarnings("PMD.FieldNamingConventions")
+    @Deprecated
     public enum Configuration {
         CoreOnly, CoreWithJQUiPlugin, All
     }
-
-    private Configuration configuration = Configuration.CoreOnly;
-    private final boolean requireTouchPunch;
 
     /**
      * Creates a new component with its channel set to the given 
      * channel.
      *
-     * Supported properties are:
-     * 
-     *  * *configuration*: the string representation of one of the
-     *    {@link Configuration} values. Determines the gridstack 
-     *    configuration to provide. defaults to "All".
-     *    
-     *  * *requireTouchPunch*: a boolean indicating whether
-     *    "jquery-ui.touch-punch" should be required to ensure that
-     *    it is loaded before gridstack (see {@link AddPageResources}).
-     *    Defaults to `false`. If set to `true`, forces configuration
-     *    `All` to be replaced by `CoreWithJQUiPlugin` because the 
-     *    touch punch provider requires "jquery" and thus the full 
-     *    JQuery library is available anyway.
+     * @param componentChannel the channel that the component's
+     * handlers listen on by default and that 
+     * {@link Manager#fire(Event, Channel...)} sends the event to
+     */
+    @SuppressWarnings("PMD.UnusedFormalParameter")
+    public GridstackProvider(Channel componentChannel) {
+        this(componentChannel, Collections.emptyMap());
+    }
+
+    /**
+     * Creates a new component with its channel set to the given 
+     * channel.
      *
      * @param componentChannel the channel that the component's
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to
      * @param properties the properties used to configure the component
      */
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     public GridstackProvider(Channel componentChannel, Map<?, ?> properties) {
         super(componentChannel);
-        requireTouchPunch
-            = Optional.ofNullable((Boolean) properties.get("requireTouchPunch"))
-                .orElse(Boolean.FALSE);
-        if (properties.containsKey("configuration")) {
-            String config = (String) properties.get("configuration");
-            try {
-                configuration = Configuration.valueOf(config);
-            } catch (IllegalArgumentException e) {
-                LOG.severe(
-                    "Illegal value for \"configuration\": " + config);
-            }
-        }
-        if (requireTouchPunch && configuration == Configuration.All) {
-            configuration = Configuration.CoreWithJQUiPlugin;
-        }
     }
 
     /**
