@@ -17,7 +17,7 @@
  */
 
 import JGConsole from "../../console-base-resource/jgconsole.js"
-import { Chart } from "../../page-resource/chart.js/dist/chart.esm.js";
+import { Chart } from "../../page-resource/chart.js/auto.js";
 
 let orgJGrapesConletsSysInfo = {};
 window.orgJGrapesConletsSysInfo = orgJGrapesConletsSysInfo;
@@ -127,7 +127,7 @@ orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
             animation: false,
             maintainAspectRatio: false,
             scales: {
-                xAxes: {
+                x: {
                     distribution: 'linear',
                     type: 'time',
                     adapters: {
@@ -136,7 +136,7 @@ orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
                         }
                     }
                 },
-                yAxes: {
+                y: {
                     ticks: {
                         callback: function(value, index, values) {
                             return JGConsole.formatMemorySize(value, 0, lang);
