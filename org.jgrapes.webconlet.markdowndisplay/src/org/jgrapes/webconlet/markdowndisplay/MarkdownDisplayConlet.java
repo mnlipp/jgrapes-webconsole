@@ -122,16 +122,7 @@ public class MarkdownDisplayConlet extends
             .addRenderMode(RenderMode.Preview).setDisplayNames(
                 localizations(connection.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io",
-                    "github.com/markdown-it/markdown-it-abbr",
-                    "github.com/markdown-it/markdown-it-container",
-                    "github.com/markdown-it/markdown-it-deflist",
-                    "github.com/markdown-it/markdown-it-emoji",
-                    "github.com/markdown-it/markdown-it-footnote",
-                    "github.com/markdown-it/markdown-it-ins",
-                    "github.com/markdown-it/markdown-it-mark",
-                    "github.com/markdown-it/markdown-it-sub",
-                    "github.com/markdown-it/markdown-it-sup" })
+                .setRequires("markdown-it")
                 .setScriptUri(event.renderSupport().conletResource(
                     type(), "MarkdownDisplay-functions.ftl.js")))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(

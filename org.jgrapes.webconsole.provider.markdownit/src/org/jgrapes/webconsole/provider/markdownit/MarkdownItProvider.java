@@ -22,6 +22,7 @@ import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
@@ -61,71 +62,26 @@ public class MarkdownItProvider extends PageResourceProvider {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
+    @SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
+        "PMD.AvoidInstantiatingObjectsInLoops" })
     public void onConsoleReady(ConsoleReady event,
             ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()
             .useMinifiedResources() ? ".min" : "";
-        connection.respond(new AddPageResources()
+        var pageResources = new AddPageResources()
             .addScriptResource(new ScriptResource()
-                .setProvides(new String[] { "markdown-it.github.io" })
+                .setProvides(new String[] { "markdown-it" })
                 .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-8.0.4" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(
-                    new String[] { "github.com/markdown-it/markdown-it-abbr" })
+                    "markdown-it/markdown-it" + minExt + ".js")));
+        for (var pkg : List.of("abbr", "container", "deflist", "emoji",
+            "footnote", "ins", "mark", "sub", "sup")) {
+            pageResources.addScriptResource(new ScriptResource()
+                .setProvides(new String[] { "markdown-it-" + pkg })
                 .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-abbr-1.0.4" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(new String[] {
-                    "github.com/markdown-it/markdown-it-container" })
-                .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-container-2.0.0" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(new String[] {
-                    "github.com/markdown-it/markdown-it-deflist" })
-                .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-deflist-2.0.3" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(
-                    new String[] { "github.com/markdown-it/markdown-it-emoji" })
-                .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-emoji-1.4.0" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(new String[] {
-                    "github.com/markdown-it/markdown-it-footnote" })
-                .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-footnote-3.0.1" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(
-                    new String[] { "github.com/markdown-it/markdown-it-ins" })
-                .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-ins-2.0.0" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(
-                    new String[] { "github.com/markdown-it/markdown-it-mark" })
-                .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-mark-2.0.0" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(
-                    new String[] { "github.com/markdown-it/markdown-it-sub" })
-                .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-sub-1.0.0" + minExt + ".js")))
-            .addScriptResource(new ScriptResource()
-                .setRequires(new String[] { "markdown-it.github.io" })
-                .setProvides(
-                    new String[] { "github.com/markdown-it/markdown-it-sup" })
-                .setScriptUri(event.renderSupport().pageResource(
-                    "markdown-it-sup-1.0.0" + minExt + ".js"))));
+                    "markdown-it/markdown-it-" + pkg + minExt + ".js")));
+        }
+        connection.respond(pageResources);
     }
 }

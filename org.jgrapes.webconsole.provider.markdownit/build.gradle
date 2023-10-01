@@ -1,3 +1,42 @@
 dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
+
+apply plugin: 'com.github.node-gradle.node'
+
+task prepareNpmLibs(type: Copy) {
+    dependsOn 'npmInstall'
+    description '''
+    Helper task that copies the the libraries from the npm_modules 
+    directory into a package scoped subdirectory. The root is added 
+    to eclipse as resource directory thus making the files available 
+    as package scoped resources when running a process in eclipse.
+    '''
+    into('build/generated/resources/org/jgrapes/webconsole/provider/markdownit/markdown-it')
+    from ('node_modules/markdown-it/dist')
+    from ('node_modules/markdown-it-abbr/dist')
+    from ('node_modules/markdown-it-container/dist')
+    from ('node_modules/markdown-it-deflist/dist')
+    from ('node_modules/markdown-it-emoji/dist')
+    from ('node_modules/markdown-it-footnote/dist')
+    from ('node_modules/markdown-it-ins/dist')
+    from ('node_modules/markdown-it-mark/dist')
+    from ('node_modules/markdown-it-sub/dist')
+    from ('node_modules/markdown-it-sup/dist')
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
+
+processResources {
+    dependsOn 'prepareNpmLibs'
+}
+
+eclipse {
+    synchronizationTasks prepareNpmLibs
+}
