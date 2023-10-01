@@ -5,3 +5,9 @@ dependencies {
 release {
     enabled = false
 }
+
+afterEvaluate {
+    tasks.matching { it.group == "publishing" }.all {
+        enabled = false
+    }
+}

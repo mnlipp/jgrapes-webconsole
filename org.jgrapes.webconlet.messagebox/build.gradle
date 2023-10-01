@@ -33,6 +33,16 @@ processResources {
     dependsOn compileTs
 }
 
+release {
+    enabled = false
+}
+
+afterEvaluate {
+    tasks.matching { it.group == "publishing" }.all {
+        enabled = false
+    }
+}
+
 eclipse {
     autoBuildTasks compileTs
 }
