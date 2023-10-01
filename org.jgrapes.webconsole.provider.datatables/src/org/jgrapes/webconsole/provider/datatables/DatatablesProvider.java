@@ -38,7 +38,10 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 
 /**
  * Provider for the [Datatables](https://datatables.net/) library.
+ * 
+ * @deprected Because of its dependency on JQuery.
  */
+@Deprecated
 public class DatatablesProvider extends PageResourceProvider {
 
     private final StylingInfo stylingInfo;

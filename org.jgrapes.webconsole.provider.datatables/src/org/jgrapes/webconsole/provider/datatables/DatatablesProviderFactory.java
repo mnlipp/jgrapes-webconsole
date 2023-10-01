@@ -26,7 +26,10 @@ import org.jgrapes.webconsole.base.PageResourceProviderFactory;
 
 /**
  * A factory for creating {@link DatatablesProvider}s.
+ * 
+ * @deprected Because of its dependency on JQuery.
  */
+@Deprecated
 public class DatatablesProviderFactory implements PageResourceProviderFactory {
 
     /*
