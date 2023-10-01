@@ -74,3 +74,17 @@ body > footer {
         z-index: var(--z-index-top-modal);
     }
 }
+
+/* Turn off gridstack animation. */
+.console-vuejs {
+    .grid-stack-animate,
+    .grid-stack-animate .grid-stack-item {
+        transition: initial;
+    }
+
+    .grid-stack-animate .grid-stack-item.ui-draggable-dragging,
+    .grid-stack-animate .grid-stack-item.ui-resizable-resizing,
+    .grid-stack-animate .grid-stack-item.grid-stack-placeholder {
+        transition: initial;
+    }
+}
