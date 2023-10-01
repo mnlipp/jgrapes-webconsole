@@ -22,6 +22,8 @@ import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
@@ -35,8 +37,9 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 /**
  * Provider for the [Chart.js](http://www.chartjs.org/) library.
  * 
- * Chart.js is automatically configured to use luxon for time
- * handling.
+ * The package cannot be used as distributed in node_modules
+ * because of imports that aren't browser compliant. It is made
+ * available for import as page resource "chart.js/auto.js".
  */
 public class ChartJsProvider extends PageResourceProvider {
 
@@ -49,6 +52,20 @@ public class ChartJsProvider extends PageResourceProvider {
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
     public ChartJsProvider(Channel componentChannel) {
+        this(componentChannel, Collections.emptyMap());
+    }
+
+    /**
+     * Creates a new component with its channel set to the given 
+     * channel.
+     * 
+     * @param componentChannel the channel that the component's 
+     * handlers listen on by default and that 
+     * {@link Manager#fire(Event, Channel...)} sends the event to 
+     * @param properties the properties used to configure the component
+     */
+    @SuppressWarnings("PMD.UnusedFormalParameter")
+    public ChartJsProvider(Channel componentChannel, Map<?, ?> properties) {
         super(componentChannel);
     }
 
@@ -66,14 +83,11 @@ public class ChartJsProvider extends PageResourceProvider {
     public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
-        connection.respond(new AddPageResources()
-            .addScriptResource(new ScriptResource()
-                .setScriptType("module").setProvides("chart.js")
+        var pageResources = new AddPageResources()
+            .addScriptResource(new ScriptResource().setProvides("chart.js"))
+            .addScriptResource(new ScriptResource().setScriptType("module")
                 .setScriptUri(event.renderSupport().pageResource(
-                    "chart.js/auto/auto.esm.js")))
-            .addScriptResource(new ScriptResource()
-                .setScriptType("module")
-                .setScriptUri(event.renderSupport().pageResource(
-                    "chart.js/adapters/chartjs-adapter-simple.js"))));
+                    "chart.js/adapters/chartjs-adapter-simple.js")));
+        connection.respond(pageResources);
     }
 }

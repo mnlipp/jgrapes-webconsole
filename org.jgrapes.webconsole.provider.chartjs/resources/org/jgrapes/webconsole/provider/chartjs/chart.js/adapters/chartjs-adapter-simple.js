@@ -4,7 +4,7 @@
  * Released under the MIT license
  */
 
-import { _adapters } from "../dist/chart.esm.js";
+import { _adapters } from "../auto.js";
 
 /*
  * Simple time axes adapter for chart.js.

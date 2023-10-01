@@ -4,34 +4,41 @@ dependencies {
 
 apply plugin: 'com.github.node-gradle.node'
 
-task prepareNpmLibs(type: Copy) {
+task copyTypes(type: Copy) {
     dependsOn 'npmInstall'
     description '''
-    Helper task that copies the the libraries from the npm_modules 
-    directory into a package scoped subdirectory. The root is added 
-    to eclipse as resource directory thus making the files available 
-    as package scoped resources when running a process in eclipse.
+    Helper task that copies resources from the npm_modules 
+    directory into a package scoped subdirectory.
     '''
     into('build/generated/resources/org/jgrapes/webconsole/provider/chartjs/chart.js')
     from ("node_modules/chart.js") {
-        include "auto/**/*"
-        exclude "auto/auto.esm.js"
-        include "dist/**/*"
-        include "helpers/**/*"
-        include "types/**/*"
+        include "**/*.d.ts"
     }
+}
+
+task bundleNodePkg(type: NodeTask) {
+    dependsOn copyTypes
+    description '''
+    Helper task that bundles the package as distributed for usage in the
+    browser.
+    '''
+    inputs.dir project.file('src')
+    inputs.file project.file('rollup.config.mjs')
+    outputs.dir project.file('build/generated/resources')
+    script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
+    args = ['-c']
+}
+
+processResources {
+    dependsOn bundleNodePkg
 }
 
 sourceSets {
     main {
         resources {
-            srcDir project.file('build/generated/resources')
+            srcDirs += project.file('build/generated/resources')
         }
     }
-}
-
-processResources {
-    dependsOn prepareNpmLibs
 }
 
 // Prevents deadlock.
@@ -40,5 +47,5 @@ generatePomFileForMavenPublication {
 }
 
 eclipse {
-    synchronizationTasks prepareNpmLibs
+    synchronizationTasks bundleNodePkg
 }
