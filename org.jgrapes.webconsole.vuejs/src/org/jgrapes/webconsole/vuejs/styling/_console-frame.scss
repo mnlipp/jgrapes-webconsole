@@ -75,8 +75,8 @@ body > footer {
     }
 }
 
-/* Turn off gridstack animation. */
-.console-vuejs {
+/* Turn off gridstack animation in overview. */
+#consoleOverviewPanel .console-vuejs {
     .grid-stack-animate,
     .grid-stack-animate .grid-stack-item {
         transition: initial;
@@ -87,4 +87,8 @@ body > footer {
     .grid-stack-animate .grid-stack-item.grid-stack-placeholder {
         transition: initial;
     }
+}
+
+.ui-draggable-handle {
+    cursor: move;
 }

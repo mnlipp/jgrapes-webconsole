@@ -89,7 +89,11 @@ export default class Renderer extends JGConsole.Renderer {
         var options = {
             cellHeight: 80,
             verticalMargin: 10,
-            alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            draggable: {
+                handle: '.ui-draggable-handle' 
+            },
+            // alwaysShowResizeHandle: 'mobile' // now default 
+            // /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
             disableOneColumnMode: true,
         };
         _this._previewGrid = GridStack.init(options, '#consolePreviews');
