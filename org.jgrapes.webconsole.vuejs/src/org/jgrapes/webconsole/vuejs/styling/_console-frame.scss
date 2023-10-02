@@ -76,7 +76,7 @@ body > footer {
 }
 
 /* Turn off gridstack animation in overview. */
-#consoleOverviewPanel .console-vuejs {
+#consoleOverviewPanel {
     .grid-stack-animate,
     .grid-stack-animate .grid-stack-item {
         transition: initial;
