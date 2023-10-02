@@ -20,9 +20,7 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jgwcvuecomponents')
     runtimeOnly project(':org.jgrapes.webconsole.provider.forkawesome')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.jqueryui')
     runtimeOnly project(':org.jgrapes.webconsole.provider.gridstack')
-    runtimeOnly project(':org.jgrapes.webconsole.provider.jquitouchpunch')
 }
 
 task prepareNpmLibs(type: Copy) {
