@@ -9,9 +9,7 @@ Require-Capability: \
     org.jgrapes.webconsole.page.resource;filter:="(name=vue)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=jgwc-vue-components)",\
     org.jgrapes.webconsole.page.resource;filter:="(name=fork-awesome)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=gridstack)",\
-    org.jgrapes.webconsole.page.resource;filter:="(name=jquery-ui.touch-punch)"
+    org.jgrapes.webconsole.page.resource;filter:="(name=gridstack)"
 
 -fixupmessages.local: \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
