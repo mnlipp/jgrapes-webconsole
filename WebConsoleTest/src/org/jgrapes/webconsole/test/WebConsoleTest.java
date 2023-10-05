@@ -165,17 +165,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new AvoidEmptyPolicy(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
-            PageResourceProviderFactory.class, console.channel(),
-            type -> {
-                switch (type) {
-                case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
-                    return Arrays.asList(
-                        Map.of("configuration", "CoreWithJQUiPlugin",
-                            "requireTouchPunch", true));
-                default:
-                    return Arrays.asList(Collections.emptyMap());
-                }
-            }));
+            PageResourceProviderFactory.class, console.channel()));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console.channel(), type -> {
