@@ -37,6 +37,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import org.jgrapes.core.Channel;
@@ -44,6 +45,8 @@ import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.NamedChannel;
+import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.core.events.HandlingError;
 import org.jgrapes.core.events.Stop;
 import org.jgrapes.http.HttpServer;
 import org.jgrapes.http.InMemorySessionManager;
@@ -85,6 +88,20 @@ public class WebConsoleTest extends Component implements BundleActivator {
     public WebConsoleTest() {
         super(new ClassChannel() {
         });
+    }
+
+    /**
+     * Log the exception when a handling error is reported.
+     *
+     * @param event the event
+     */
+    @Handler(channels = Channel.class, priority = -10_000)
+    @SuppressWarnings("PMD.GuardLogStatement")
+    public void onHandlingError(HandlingError event) {
+        logger.log(Level.WARNING, event.throwable(),
+            () -> "Problem invoking handler with " + event.event() + ": "
+                + event.message());
+        event.stop();
     }
 
     /*
