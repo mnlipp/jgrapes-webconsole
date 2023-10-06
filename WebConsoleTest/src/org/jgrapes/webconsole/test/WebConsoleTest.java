@@ -37,6 +37,8 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -112,6 +114,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
      */
     @Override
     public void start(BundleContext context) throws Exception {
+        logger.info(() -> "Starting " + WebConsoleTest.class.getSimpleName());
         // The demo component is the application
         app = new WebConsoleTest();
         // Support Json configuration

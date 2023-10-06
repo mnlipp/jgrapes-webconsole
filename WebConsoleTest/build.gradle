@@ -34,5 +34,6 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconlet.examples.formtest')
     runtimeOnly project(':org.jgrapes.webconlet.examples.styletest')
     runtimeOnly project(':org.jgrapes.webconlet.sysinfo')
+    runtimeOnly project(':org.jgrapes.webconlet.logviewer')
     runtimeOnly project(':org.jgrapes.webconlet.jmxbrowser')
 }
