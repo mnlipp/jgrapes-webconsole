@@ -1,0 +1,64 @@
+/*
+ * Conlet specific styles.
+ */
+
+/* View */
+
+.jgrapes-logviewer-control form {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.jgrapes-logviewer-control form > fieldset:first-child > span > span {
+    display: inline-flex;
+    align-items: center;
+}
+
+.jgrapes-logviewer-control form label:not(:first-child) {
+    margin-left: 1em; 
+}
+
+.jgrapes-logviewer-control form .jgrapes-logviewer-level {
+    margin-left: auto !important;
+}
+
+.jgrapes-logviewer-control form .jgrapes-logviewer-level select {
+    min-width: 10em;
+}
+
+.jgrapes-logviewer-table tr,
+.jgrapes-logviewer-table td {
+	vertical-align: top;
+}
+
+.jgrapes-logviewer-table {
+    width: 100%;
+}
+
+.jgrapes-logviewer-table tr:first-child {
+    border-top: none;
+}
+
+.jgrapes-logviewer-message,
+.jgrapes-logviewer-bundle,
+.jgrapes-logviewer-service,
+.jgrapes-logviewer-source,
+.jgrapes-logviewer-exception {
+    overflow-wrap: anywhere;
+    word-wrap: anywhere;
+}
+
+/* https://stackoverflow.com/questions/26292408/why-does-this-behave-the-way-it-does-with-max-width-0 */
+.jgrapes-logviewer-stacktrace {
+    max-width: 0;
+}
+
+.jgrapes-logviewer-stacktrace div {
+    white-space: pre;
+    overflow-x: auto;
+}
+
+.jgrapes-logviewer-reload {
+    margin-left: 1em;
+	margin-right: 1em;
+}

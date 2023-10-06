@@ -1,0 +1,87 @@
+<div class="jgrapes-logviewer-view"
+  data-jgwc-on-load="orgJGrapesConletLogViewer.initView"
+  data-jgwc-on-unload="orgJGrapesConletLogViewer.onUnload">
+  <div class="jgrapes-logviewer-control">
+	<form class="flow-content--paragraph">
+	  <fieldset class="form__fieldset--horizontal form__fieldset--panel">
+		<span>
+		  <legend>${_("Update")}</legend>
+		    <span>
+			  <label>
+			    <input type="checkbox" v-model="autoUpdate">
+				  <span>${_("auto")}</span>
+			  </label>
+		    <span role="button" class="jgrapes-logviewer-reload fa fa-sync"
+			  v-on:click="resync($event)">
+		   </span>
+		  </span>
+	    </span>
+	  </fieldset>
+
+      <label class="form__label--horizontal jgrapes-logviewer-level">
+        <span>${_("severityAtLeast")}</span>
+        <select v-model="messageThreshold">
+          <option value="SEVERE">${_("SEVERE")}</option>
+          <option value="WARNING">${_("WARNING")}</option>
+          <option value="INFO">${_("INFO")}</option>
+          <option value="CONFIG">${_("CONFIG")}</option>
+          <option value="FINE">${_("FINE")}</option>
+          <option value="FINER">${_("FINER")}</option>
+          <option value="FINEST">${_("FINEST")}</option>
+        </select>
+      </label>
+
+      <label class="form__label--horizontal">
+        <span>${_("Filter")}</span>
+        <input type="text" class="form__input-text--with-remove"
+          v-on:input="controller.updateFilter($event)">
+        <span role="button" tabindex="0" class="fa fa-remove" 
+          v-on:click="controller.clearFilter($event)"></span>
+      </label>
+    </form>
+  </div>
+  <table class="table--basic table--basic--striped jgrapes-logviewer-table">
+    <thead>
+      <tr>
+        <th v-for="key in controller.keys"
+          class="sortable" 
+          v-on:click="controller.sortBy(key === 'time' ? 'sequence' : key)">
+          {{ controller.label(key) }}<span 
+            v-if="controller.sortedByAsc(key === 'time' ? 'sequence' : key)"
+            role="button">&#x25B2;</span><span
+            v-if="controller.sortedByDesc(key === 'time' ? 'sequence' : key)"
+            role="button">&#x25BC;</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <template v-for="(entry, rowIndex) in filteredData">
+        <tr :class="[(rowIndex % 2) ? 'odd' : 'even']">
+          <template v-for="key in controller.keys">
+            <td v-if="key === 'time'" 
+              :class="'jgrapes-logviewer-' + key"
+              v-html="formatTimestamp(entry[key])">
+            </td>
+            <td v-else-if="key === 'exception'" 
+              :class="'jgrapes-logviewer-' + key">
+              <aash-disclosure-button v-if="entry['stacktrace']"
+                v-bind:id-ref="scopedId(rowIndex)">
+                <span v-html="entry[key]"></span>
+              </aash-disclosure-button>
+            </td>
+            <td v-else
+              :class="'jgrapes-logviewer-' + key"
+              v-html="entry[key]">
+            </td>
+          </template>
+        </tr>
+        <tr :id="scopedId(rowIndex)" v-if="$aash.isDisclosed(scopedId(rowIndex))" 
+          :class="[(rowIndex % 2) ? 'odd' : 'even']">
+          <td colspan="6" class="jgrapes-logviewer-stacktrace">
+            <div v-html="entry['stacktrace']"></div>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+</div>
