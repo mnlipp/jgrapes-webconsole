@@ -44,10 +44,11 @@ export default class TableController {
      * @param options.sortKey - the initial sort key
      * @param options.sortOrder - the initial sort order
      */
-    constructor(columns: string[][], options: { sortKey: string, sortOrder: string }) {
+    constructor(columns: unknown[][], options: { sortKey: string, sortOrder: string }) {
         for (let i in columns) {
-            this._keys.push(columns[i][0]);
-            this._labelsByKey.set(columns[i][0], columns[i][1]);
+            this._keys.push(<string>columns[i][0]);
+            this._labelsByKey.set(<string>columns[i][0], 
+            <string | ((key: string) => string)>columns[i][1]);
         }
         for (let key of this._keys) {
             this._sortOrders.set(key, 1);
