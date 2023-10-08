@@ -56,7 +56,6 @@ import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.OpenModalDialog;
 import org.jgrapes.webconsole.base.events.RenderConlet;
-import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.UpdateConletModel;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
@@ -143,8 +142,8 @@ public class MarkdownDisplayConlet extends
 
     @Override
     protected Optional<MarkdownDisplayModel> createStateRepresentation(
-            RenderConletRequestBase<?> event, ConsoleConnection channel,
-            String conletId) throws Exception {
+            Event<?> event, ConsoleConnection channel, String conletId)
+            throws Exception {
         // Create fallback model
         ResourceBundle resourceBundle
             = resourceBundle(channel.session().locale());
@@ -215,9 +214,8 @@ public class MarkdownDisplayConlet extends
 
     @Override
     @SuppressWarnings("PMD.EmptyCatchBlock")
-    protected Optional<MarkdownDisplayModel> recreateState(
-            RenderConletRequest event, ConsoleConnection channel,
-            String conletId) throws Exception {
+    protected Optional<MarkdownDisplayModel> recreateState(Event<?> event,
+            ConsoleConnection channel, String conletId) throws Exception {
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             storagePath(channel.session()) + conletId, channel);
         newEventPipeline().fire(query, channel);

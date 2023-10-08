@@ -51,7 +51,6 @@ import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.OpenModalDialog;
 import org.jgrapes.webconsole.base.events.RenderConlet;
-import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
@@ -110,8 +109,8 @@ public class HelloWorldConlet
 
     @Override
     protected Optional<HelloWorldModel> createStateRepresentation(
-            RenderConletRequestBase<?> event,
-            ConsoleConnection channel, String conletId) throws IOException {
+            Event<?> event, ConsoleConnection channel, String conletId)
+            throws IOException {
         HelloWorldModel conletModel = new HelloWorldModel(conletId);
         String jsonState
             = JsonBeanEncoder.create().writeObject(conletModel).toJson();
@@ -123,9 +122,8 @@ public class HelloWorldConlet
 
     @Override
     @SuppressWarnings("PMD.EmptyCatchBlock")
-    protected Optional<HelloWorldModel> recreateState(
-            RenderConletRequest event, ConsoleConnection channel,
-            String conletId) throws Exception {
+    protected Optional<HelloWorldModel> recreateState(Event<?> event,
+            ConsoleConnection channel, String conletId) throws Exception {
         KeyValueStoreQuery query = new KeyValueStoreQuery(
             storagePath(channel.session(), conletId), channel);
         newEventPipeline().fire(query, channel);

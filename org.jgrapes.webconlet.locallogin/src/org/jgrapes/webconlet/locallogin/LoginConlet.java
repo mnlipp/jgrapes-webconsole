@@ -149,8 +149,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     }
 
     @Override
-    protected Optional<AccountModel> createStateRepresentation(
-            RenderConletRequestBase<?> event,
+    protected Optional<AccountModel> createStateRepresentation(Event<?> event,
             ConsoleConnection channel, String conletId) throws IOException {
         return Optional.of(new AccountModel(conletId));
     }

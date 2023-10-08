@@ -101,9 +101,8 @@ public class SysInfoConlet
     }
 
     @Override
-    protected Optional<SysInfoModel> createStateRepresentation(
-            RenderConletRequestBase<?> event, ConsoleConnection session,
-            String conletId) throws Exception {
+    protected Optional<SysInfoModel> createStateRepresentation(Event<?> event,
+            ConsoleConnection session, String conletId) throws Exception {
         return Optional.of(new SysInfoModel());
     }
 

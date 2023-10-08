@@ -251,6 +251,11 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  *     Conlet -> Conlet: recreateState
  *     activate Conlet
  *     deactivate Conlet
+ *     opt if state
+ *         Conlet -> Conlet: putInSession
+ *         activate Conlet
+ *         deactivate Conlet
+ *     end opt
  * end opt
  * Conlet -> Conlet: doRenderConlet
  * activate Conlet
@@ -276,6 +281,16 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  * Conlet -> Conlet: stateFromSession
  * activate Conlet
  * deactivate Conlet
+ * opt if not found
+ *     Conlet -> Conlet: recreateState
+ *     activate Conlet
+ *     deactivate Conlet
+ *     opt if state
+ *         Conlet -> Conlet: putInSession
+ *         activate Conlet
+ *         deactivate Conlet
+ *     end opt
+ * end opt
  * Conlet -> Conlet: doUpdateConletState
  * activate Conlet
  * opt
@@ -588,9 +603,8 @@ public abstract class AbstractConlet<S> extends Component {
      */
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
         "PMD.AvoidDuplicateLiterals" })
-    protected Optional<S> createStateRepresentation(
-            RenderConletRequestBase<?> event, ConsoleConnection connection,
-            String conletId) throws Exception {
+    protected Optional<S> createStateRepresentation(Event<?> event,
+            ConsoleConnection connection, String conletId) throws Exception {
         return Optional.empty();
     }
 
@@ -640,7 +654,7 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
         "PMD.AvoidDuplicateLiterals" })
     protected Optional<S> recreateState(
-            RenderConletRequest event, ConsoleConnection connection,
+            Event<?> event, ConsoleConnection connection,
             String conletId) throws Exception {
         return createStateRepresentation(event, connection, conletId);
     }
@@ -940,28 +954,28 @@ public abstract class AbstractConlet<S> extends Component {
      * to the tracking information. 
      *
      * @param event the event
-     * @param conection the web console connection
+     * @param connection the web console connection
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onRenderConletRequest(RenderConletRequest event,
-            ConsoleConnection conection) throws Exception {
+            ConsoleConnection connection) throws Exception {
         if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
             return;
         }
         Optional<S> state = stateFromSession(
-            conection.session(), event.conletId());
+            connection.session(), event.conletId());
         if (state.isEmpty()) {
-            state = recreateState(event, conection, event.conletId());
-            state.ifPresent(s -> putInSession(conection.session(),
+            state = recreateState(event, connection, event.conletId());
+            state.ifPresent(s -> putInSession(connection.session(),
                 event.conletId(), s));
         }
         event.setResult(true);
         event.stop();
         Set<RenderMode> rendered = doRenderConlet(
-            event, conection, event.conletId(), state.orElse(null));
-        trackConlet(conection, event.conletId(), null).addModes(rendered);
+            event, connection, event.conletId(), state.orElse(null));
+        trackConlet(connection, event.conletId(), null).addModes(rendered);
     }
 
     /**
@@ -1049,19 +1063,24 @@ public abstract class AbstractConlet<S> extends Component {
      * calls {@link #doUpdateConletState} with the model. 
      *
      * @param event the event
-     * @param channel the channel
+     * @param connection the connection
      * @throws Exception the exception
      */
     @Handler
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onNotifyConletModel(NotifyConletModel event,
-            ConsoleConnection channel) throws Exception {
+            ConsoleConnection connection) throws Exception {
         if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
             return;
         }
-        Optional<S> model
-            = stateFromSession(channel.session(), event.conletId());
-        doUpdateConletState(event, channel, model.orElse(null));
+        Optional<S> state
+            = stateFromSession(connection.session(), event.conletId());
+        if (state.isEmpty()) {
+            state = recreateState(event, connection, event.conletId());
+            state.ifPresent(s -> putInSession(connection.session(),
+                event.conletId(), s));
+        }
+        doUpdateConletState(event, connection, state.orElse(null));
     }
 
     /**
