@@ -134,7 +134,7 @@ JGConsole.registerConletFunction(
             return;
         }
         let view = conlet.element().querySelector(":scope .jgrapes-logviewer-view");
-        if (view === 0) {
+        if (view == null) {
             return;
         }
         let api = getApi(view);
@@ -154,7 +154,7 @@ JGConsole.registerConletFunction(
             return;
         }
         let view = conlet.element().querySelector(":scope .jgrapes-logviewer-view");
-        if (view === 0) {
+        if (view == null) {
             return;
         }
         let api = getApi(view);
