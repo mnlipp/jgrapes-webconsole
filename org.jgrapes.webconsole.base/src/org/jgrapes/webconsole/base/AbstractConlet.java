@@ -119,7 +119,7 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  * instance of a given type should be added to the page. The
  * {@link AbstractConlet} checks the type requested, and if
  * it matches, invokes {@link #generateInstanceId generateInstanceId}
- * and{@link #createNewState createNewState}.
+ * and {@link #createNewState createNewState}.
  * If the conlet has associated state, the information is saved with
  * {@link #putInSession putInSession}. Then 
  * {@link #doRenderConlet doRenderConlet} is invoked, which must 
@@ -153,16 +153,16 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  * a backing store.
  * 
  * Once state information has been obtained, the method 
- * invokes as when adding a new conlet by invoking
+ * continues as when adding a new conlet by invoking
  * {@link #doRenderConlet doRenderConlet}.
  * 
  * ## ConletDeleted
  * 
  * ![Web console component deleted handling](ConletDeletedHandling.svg)
  * 
- * When the {@link AbstractConlet} receives a {@link ConletDeleted},
- * it updates the information about the shown conlet views. If the
- * conlet is no longer used in the browser (no views remain),
+ * When the {@link AbstractConlet} receives a {@link ConletDeleted}
+ * event, it updates the information about the shown conlet views. If
+ * the conlet is no longer used in the browser (no views remain),
  * it deletes the state information from the session. In any case, it
  * invokes {@link #doConletDeleted doConletDeleted} with the 
  * state information.
@@ -174,11 +174,11 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  * If the web console component views include input elements, actions 
  * on these elements may result in {@link NotifyConletModel} events from
  * the web console page to the web console. When the {@link AbstractConlet}
- * receives such events, it retrieves any existing state information. 
- * It then invokes {@link #doUpdateConletState doUpdateConletState} with the
- * retrieved information. The web console component usually responds with
- * a {@link NotifyConletView} event. However, it can also
- * re-render the complete conlet view.
+ * receives such events, it retrieves any existing state information.
+ * It then invokes {@link #doUpdateConletState doUpdateConletState}
+ * with the retrieved information. The web console component usually
+ * responds with a {@link NotifyConletView} event. However, it can
+ * also re-render the complete conlet view.
  * 
  * Support for unsolicited updates
  * -------------------------------
@@ -186,9 +186,9 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  * The class tracks the relationship between the known
  * {@link ConsoleConnection}s and the web console components displayed 
  * in the console pages. The information is available from
- * {@link #conletInfosByConsoleConnection}. It can e.g. be used to send
- * events to the web console(s) in response to an event on the server
- * side.
+ * {@link #conletInfosByConsoleConnection conletInfosByConsoleConnection}.
+ * It can e.g. be used to send events to the web console(s) in response 
+ * to an event on the server side.
  *
  * @param <S> the type of the conlet's state information
  * 
@@ -636,13 +636,13 @@ public abstract class AbstractConlet<S> extends Component {
     }
 
     /**
-     * Called by {@link #onRenderConletRequest} when a previously 
-     * created conlet (with associated state) is rendered in a new 
-     * browser session for the first time. The default implementation 
-     * simply invokes {@link #createStateRepresentation} and returns 
-     * its result. Conlets with long-term state should retrieve 
-     * their state from some storage. If state is returned, it is
-     * put in the browser session by the invoker.
+     * Called when a previously created conlet (with associated state)
+     * is rendered in a new browser session for the first time. The 
+     * default implementation simply invokes 
+     * {@link #createStateRepresentation createStateRepresentation}
+     * and returns its result. Conlets with long-term state should
+     * retrieve their state from some storage. If state is returned,
+     * it is put in the browser session by the invoker.
      *
      * @param event the event 
      * @param connection the console connection
