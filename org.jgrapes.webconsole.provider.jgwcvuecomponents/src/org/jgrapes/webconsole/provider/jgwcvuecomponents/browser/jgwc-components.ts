@@ -47,13 +47,13 @@ class IdScope {
  * Vue observable Vue.prototype.jgwc.observed.
  */
 let htmlRoot = document.querySelector("html")!;
-let langRef = ref(htmlRoot.getAttribute('lang'));
+let langRef = ref<string>(htmlRoot.getAttribute('lang') || "en");
 
 new MutationObserver(function(mutations) {
     mutations.forEach((mutation) => {
         if (mutation.type === 'attributes'
             && mutation.attributeName === 'lang') {
-            langRef.value = htmlRoot.getAttribute('lang');
+            langRef.value = htmlRoot.getAttribute('lang') || "en";
         }
     });    
 }).observe(htmlRoot, {
@@ -87,6 +87,13 @@ export class JGWC {
     /**
      * Selected language as reactive property.
      */
+    static langRef() {
+        return langRef;
+    }
+
+    /**
+     * Selected language from reactive property.
+     */
     static lang() {
         return langRef.value;
     }
@@ -94,7 +101,7 @@ export class JGWC {
     /**
      * Return a new id scope
      * @return {IdScope}
-     */    
+     */
     static createIdScope() {
         return new IdScope();
     }
