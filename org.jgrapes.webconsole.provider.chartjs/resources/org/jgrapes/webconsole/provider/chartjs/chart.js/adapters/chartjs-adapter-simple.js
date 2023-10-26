@@ -42,7 +42,7 @@ const intlFormats = {
   millisecond: { hour: "numeric", minute: "numeric", second: "numeric",
     fractionalSecondDigits: 3 },
   second: { hour: "numeric", minute: "numeric", second: "numeric" },
-  minute: { hour: "numeric", minute: "numeric", second: "numeric" },
+  minute: { hour: "numeric", minute: "numeric" },
   hour: { hour: 'numeric' },
   day: { day: 'numeric', month: 'short'},
   week: { day: 'numeric', month: 'short'},
