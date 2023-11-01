@@ -96,7 +96,6 @@ orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
         data: {
             labels: timeData,
             datasets: [{
-                lineTension: 0,
                 fill: false,
                 borderWidth: 2,
                 pointRadius: 1,
@@ -104,7 +103,6 @@ orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
                 label: '${_("maxMemory")}',
                 data: maxMemoryData,
             },{
-                lineTension: 0,
                 fill: false,
                 borderWidth: 2,
                 pointRadius: 1,
@@ -112,7 +110,6 @@ orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
                 label: '${_("totalMemory")}',
                 data: totalMemoryData,
             },{
-                lineTension: 0,
                 fill: false,
                 borderWidth: 2,
                 pointRadius: 1,
@@ -137,6 +134,8 @@ orgJGrapesConletsSysInfo.initMemoryChart = function(content) {
                     }
                 },
                 y: {
+                    type: 'linear',
+                    beginAtZero: true,
                     ticks: {
                         callback: function(value, index, values) {
                             return JGConsole.formatMemorySize(value, 0, lang);
