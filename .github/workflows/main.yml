@@ -1,4 +1,4 @@
-name: Java CI
+name: Java CI with Gradle
 
 on: [push]
 
@@ -14,14 +14,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Install graphviz
-        run: sudo apt-get install graphviz
-      - name: Set up JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java-version }}
-      - name: Build with Gradle
-        run: ./gradlew -Prepo.access.token=${{ secrets.REPO_ACCESS_TOKEN }} stage
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Install graphviz
+      run: sudo apt-get install graphviz
+    - name: Set up JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
+    - name: Build with Gradle
+      run: ./gradlew -Prepo.access.token=${{ secrets.REPO_ACCESS_TOKEN }} stage
