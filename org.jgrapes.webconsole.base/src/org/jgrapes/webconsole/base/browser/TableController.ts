@@ -29,8 +29,7 @@ export default class TableController {
     private _keys: string[] = [];
     private _labelsByKey = new Map<string, string 
         | ((key: string) => string)>();
-    private _sortKey = '';
-    private _prevSortKey = '';
+    private _sortKeys: string[] = [];
     private _sortOrders = new Map<string, number>();
     private _filterKey: string | null = '';
 
@@ -59,7 +58,7 @@ export default class TableController {
                 this.sortBy(options.sortKey);
             }
             if ("sortOrder" in options) {
-                this.sortBy(this._sortKey, options.sortOrder);
+                this.sortBy(this._sortKeys[0], options.sortOrder);
             }
         }
     }
@@ -101,11 +100,12 @@ export default class TableController {
      *     and 'down' for descending) or `undefined`
      */
     sortBy(key: string, order?: string) {
-        if (this._sortKey != key) {
-            this._prevSortKey = this._sortKey;
-            this._sortKey = key;
-        }
-        else {
+        if (this._sortKeys.length === 0 || this._sortKeys[0] !== key) {
+            this._sortKeys.unshift(key);
+            while (this._sortKeys.length > this._keys.length) {
+              this._sortKeys.pop();
+            }
+        } else {
             this._sortOrders.set(key, this._sortOrders.get(key)! * -1);
         }
         if (typeof order !== 'undefined') {
@@ -125,7 +125,8 @@ export default class TableController {
      * @param key - the column key
      */
     sortedByAsc(key:string) {
-        return this._sortKey == key && this._sortOrders.get(key) == 1;
+        return this._sortKeys.length > 0 && this._sortKeys[0] == key
+            && this._sortOrders.get(key) == 1;
     }
 
     /**
@@ -135,7 +136,8 @@ export default class TableController {
      * @param key - the column key
      */
     sortedByDesc(key: string) {
-        return this._sortKey == key && this._sortOrders.get(key) == -1;
+        return this._sortKeys.length > 0 && this._sortKeys[0] == key
+            && this._sortOrders.get(key) == -1;
     }
 
     /**
@@ -151,22 +153,24 @@ export default class TableController {
                 });
             });
         }
-        if (this._sortKey) {
-            const this_ = this;
-            const sortFunc = (a: any, b: any, sortKey: string) => {
-                const order = this_._sortOrders.get(sortKey)!
-                const valA = a[sortKey];
-                const valB = b[sortKey];
-                return (valA === valB ? 0 : valA > valB ? 1 : -1) * order;
-            }
-            data = data.sort(function(a, b) {
-                let result = sortFunc(a, b, this_._sortKey);
-                if (result === 0 && this_._prevSortKey) {
-                    result = sortFunc(a, b, this_._prevSortKey);
-                }
-                return result;
-            });
+        if (this._sortKeys.length === 0) {
+            return data;
         }
+        const this_ = this;
+        const sortFunc = (a: any, b: any, sortKey: string) => {
+            const order = this_._sortOrders.get(sortKey)!
+            const valA = a[sortKey];
+            const valB = b[sortKey];
+            return (valA === valB ? 0 : valA > valB ? 1 : -1) * order;
+        }
+        data = data.sort(function(a, b) {
+            for (let keyIdx = 0; ; keyIdx += 1) {
+                let result = sortFunc(a, b, this_._sortKeys[keyIdx]);
+                if (result !== 0 || keyIdx === this_._keys.length - 1) {
+                    return result;
+                }
+            }
+        });
         return data;
     }
 
