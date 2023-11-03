@@ -30,6 +30,7 @@ export default class TableController {
     private _labelsByKey = new Map<string, string 
         | ((key: string) => string)>();
     private _sortKey = '';
+    private _prevSortKey = '';
     private _sortOrders = new Map<string, number>();
     private _filterKey: string | null = '';
 
@@ -101,6 +102,7 @@ export default class TableController {
      */
     sortBy(key: string, order?: string) {
         if (this._sortKey != key) {
+            this._prevSortKey = this._sortKey;
             this._sortKey = key;
         }
         else {
@@ -150,12 +152,19 @@ export default class TableController {
             });
         }
         if (this._sortKey) {
-            let sortKey = this._sortKey;
-            let order = this._sortOrders.get(sortKey)!;
+            const this_ = this;
+            const sortFunc = (a: any, b: any, sortKey: string) => {
+                const order = this_._sortOrders.get(sortKey)!
+                const valA = a[sortKey];
+                const valB = b[sortKey];
+                return (valA === valB ? 0 : valA > valB ? 1 : -1) * order;
+            }
             data = data.sort(function(a, b) {
-                a = a[sortKey];
-                b = b[sortKey];
-                return (a === b ? 0 : a > b ? 1 : -1) * order;
+                let result = sortFunc(a, b, this_._sortKey);
+                if (result === 0 && this_._prevSortKey) {
+                    result = sortFunc(a, b, this_._prevSortKey);
+                }
+                return result;
             });
         }
         return data;
