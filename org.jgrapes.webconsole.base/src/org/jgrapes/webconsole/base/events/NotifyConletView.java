@@ -21,6 +21,8 @@ package org.jgrapes.webconsole.base.events;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
+import org.jgrapes.core.Channel;
+import org.jgrapes.core.Components;
 
 /**
  * A notification (as defined by the JSON RPC specification) to be sent to
@@ -93,5 +95,24 @@ public class NotifyConletView extends ConsoleCommand {
     public void toJson(Writer writer) throws IOException {
         toJson(writer, "notifyConletView", conletType(), conletId(),
             method(), params());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(40);
+        builder.append(Components.objectName(this))
+            .append(" [conletId=").append(conletId)
+            .append(", method=").append(method);
+        if (channels() != null) {
+            builder.append(", channels=");
+            builder.append(Channel.toString(channels()));
+        }
+        builder.append(']');
+        return builder.toString();
     }
 }
