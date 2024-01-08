@@ -18,6 +18,7 @@ task copyTypes(type: Copy) {
 
 task bundleNodePkg(type: NodeTask) {
     dependsOn copyTypes
+    dependsOn ':npmInstall'
     description '''
     Helper task that bundles the package as distributed for usage in the
     browser.
