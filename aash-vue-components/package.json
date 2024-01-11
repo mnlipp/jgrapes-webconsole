@@ -30,7 +30,7 @@
     "@rollup/plugin-terser": "^0.4.0",
     "@vue/compiler-sfc": "^3.2.47",
     "better-docs": "^2.7.2",
-    "browser-sync": "^2.27.11",
+    "browser-sync": "^3.0.2",
     "jsdoc": "^4.0.2",
     "postcss": "^8.4.5",
     "rollup": "^4.3.1",
