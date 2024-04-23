@@ -36,8 +36,7 @@ interface AccountData {
     password: string;
 }
 
-window.orgJGrapesOidcLogin.openDialog 
-    = function(dialogDom: HTMLElement, isUpdate: boolean) {
+let openLocalDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
     if (isUpdate) {
         return;
     }
@@ -111,6 +110,108 @@ window.orgJGrapesOidcLogin.openDialog
     });
     app.use(JgwcPlugin);
     app.mount(dialogDom);
+}
+
+let openOidcDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
+    if (isUpdate) {
+        return;
+    }
+    let app = createApp({
+        setup() {
+            const formId = (<HTMLElement>dialogDom
+                .closest("*[data-conlet-id]")!).id + "-form";
+
+            const accountData: AccountData = reactive({
+                username: "",
+                password: ""
+            });
+
+            const localize = (key: string) => {
+                return JGConsole.localize(
+                    l10nBundles, JGWC.lang()!, key);
+            };
+
+            const info = ref<string|null>(null);
+            const warning = ref<string|null>(null);
+            
+            JGConsole.registerConletFunction(
+                "org.jgrapes.webconlet.oidclogin.LoginConlet",
+                "setMessages", function(conletId, infoMsg, warnMsg) {
+                info.value = infoMsg;
+                warning.value = warnMsg;
+                });
+
+            const formDom = ref(null);
+
+            const apply = () => {
+              window.orgJGrapesOidcLogin.apply(dialogDom, true, true);
+            }
+
+            provideApi(formDom, accountData);
+                        
+            return { formDom, formId, localize, accountData, info, warning,
+                apply };
+        },
+        template: `
+            <p>
+              <aash-accordion :header-type="'p'">
+                <aash-accordion-section :title="localize('Local Login')">
+                  <form :id="formId" ref="formDom" onsubmit="return false;">
+                    <fieldset>
+                      <p>
+                        <label class="form__label--full-width">
+                          <span>
+                            {{ localize("User Name") }}
+                            <strong>
+                              <abbr v-bind:title='localize("required")'>*</abbr>
+                            </strong>
+                          </span>
+                          <input type="text" name="username" v-model="accountData.username"
+                            autocomplete="section-test username">
+                        </label>
+                      </p>
+                      <p>
+                        <label class="form__label--full-width">
+                          <span>
+                            {{ localize("Password") }}
+                            <strong>
+                              <abbr v-bind:title='localize("required")'>*</abbr>
+                            </strong>
+                          </span>
+                          <input type="password" name="password" v-model="accountData.password"
+                            autocomplete="section-test current-password">
+                        </label>
+                      </p>
+                      <p v-if="info" class="oidc-login-form__info">
+                        {{ info }}
+                      </p>
+                      <p v-if="warning" class="oidc-login-form__warning">
+                        {{ warning }}
+                      </p>
+                    </fieldset>
+                    <p>
+                      <button :form="formId" type="submit"
+                        v-on:click="apply()">{{ localize('Log in') }}</button>
+                    </p>
+                  </form>
+                </aash-accordion-section>
+              </aash-accordion>
+            </p>
+            <p>
+              <button> test </button>
+            </p`
+    });
+    app.use(JgwcPlugin);
+    app.mount(dialogDom);
+}
+
+window.orgJGrapesOidcLogin.openDialog 
+    = function(dialogDom: HTMLElement, isUpdate: boolean) {
+      if (dialogDom.dataset["hasOidcProvider"] === "yes") {
+          openOidcDialog(dialogDom, isUpdate);
+          return;
+      }
+      openLocalDialog(dialogDom, isUpdate);
 }
 
 window.orgJGrapesOidcLogin.apply = function(dialogDom: HTMLElement,

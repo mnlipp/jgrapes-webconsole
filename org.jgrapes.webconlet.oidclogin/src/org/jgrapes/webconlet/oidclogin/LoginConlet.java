@@ -210,15 +210,18 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         putInSession(channel.session(), conletId, accountModel);
 
         // Render login dialog
+        boolean hasOidcProvider = true;
         Template tpl = freemarkerConfig().getTemplate("Login-dialog.ftl.html");
         var bundle = resourceBundle(channel.locale());
+        var fmModel = fmSessionModel(channel.session());
+        fmModel.put("hasOidcProvider", hasOidcProvider);
         channel.respond(new OpenModalDialog(type(), conletId,
-            processTemplate(event, tpl,
-                fmSessionModel(channel.session())))
-                    .addOption("title", bundle.getString("title"))
-                    .addOption("cancelable", false).addOption("okayLabel", "")
-                    .addOption("applyLabel", bundle.getString("Submit"))
-                    .addOption("useSubmit", true));
+            processTemplate(event, tpl, fmModel))
+                .addOption("title", bundle.getString("title"))
+                .addOption("cancelable", false)
+                .addOption("applyLabel", hasOidcProvider ? ""
+                    : bundle.getString("Log in"))
+                .addOption("useSubmit", true));
     }
 
     private Future<String> processTemplate(

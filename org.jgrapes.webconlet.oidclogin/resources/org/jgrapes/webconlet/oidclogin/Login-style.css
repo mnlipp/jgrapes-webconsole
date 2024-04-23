@@ -1,6 +1,6 @@
 /*
- * Ad Hoc Polling Application
- * Copyright (C) 2018, 2022 Michael N. Lipp
+ * JGrapes WebConsole
+ * Copyright (C) 2024 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by 
@@ -23,10 +23,25 @@
     width: 100%;
 }
 
-.example-conlet-login-form__info {
+.oidcLogin-dialog [role="header"] button {
+    text-align: center !important;
+}
+
+.oidc-login-form__info {
     color: var(--info);
 }
 
-.example-conlet-login-form__warning {
+.oidc-login-form__warning {
     color: var(--warning);
+}
+
+.oidcLogin-dialog form > p {
+  margin-top: 0;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: end;
+}
+
+.oidcLogin-dialog > p > button {
+    width: 100%;
 }
