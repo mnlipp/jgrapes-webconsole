@@ -59,7 +59,9 @@ import org.jgrapes.io.util.PermitsPool;
 import org.jgrapes.net.SocketServer;
 import org.jgrapes.net.SslCodec;
 import org.jgrapes.util.ComponentCollector;
+import org.jgrapes.util.FileSystemWatcher;
 import org.jgrapes.util.YamlConfigurationStore;
+import org.jgrapes.util.events.WatchFile;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
@@ -115,11 +117,14 @@ public class WebConsoleTest extends Component implements BundleActivator {
         logger.info(() -> "Starting " + WebConsoleTest.class.getSimpleName());
         // The demo component is the application
         app = new WebConsoleTest();
-        // Support Json configuration
-        app.attach(
-            new YamlConfigurationStore(app, new File("console-config.yaml")));
-        // Attach a general nio dispatcher
+        // Attach a general nio dispatcher and a file system watcher
         app.attach(new NioDispatcher());
+        app.attach(new FileSystemWatcher(app.channel()));
+
+        // Support YAML configuration (and watch it)
+        var cfgFile = new File("console-config.yaml");
+        app.attach(new YamlConfigurationStore(app.channel(), cfgFile, false));
+        app.fire(new WatchFile(cfgFile.toPath()));
 
         // Network level unencrypted channel.
         Channel httpTransport = new NamedChannel("httpTransport");
