@@ -41,7 +41,6 @@ import java.util.logging.Level;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import org.jgrapes.core.Channel;
-import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.NamedChannel;
@@ -88,8 +87,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
      * Instantiates a new http web console demo.
      */
     public WebConsoleTest() {
-        super(new ClassChannel() {
-        });
+        super(new NamedChannel("app"));
     }
 
     /**
@@ -127,9 +125,9 @@ public class WebConsoleTest extends Component implements BundleActivator {
         app.fire(new WatchFile(cfgFile.toPath()));
 
         // Network level unencrypted channel.
-        Channel httpTransport = new NamedChannel("httpTransport");
+        Channel guiTransportChannel = new NamedChannel("guiTransport");
         // Create a TCP server listening on port 8888
-        app.attach(new SocketServer(httpTransport)
+        app.attach(new SocketServer(guiTransportChannel)
             .setServerAddress(new InetSocketAddress(9888)));
 
         // Create TLS "converter"
@@ -147,36 +145,39 @@ public class WebConsoleTest extends Component implements BundleActivator {
         Channel securedNetwork = app.attach(
             new SocketServer().setServerAddress(new InetSocketAddress(5443))
                 .setBacklog(3000).setConnectionLimiter(new PermitsPool(50)));
-        app.attach(new SslCodec(httpTransport, securedNetwork, sslContext));
+        app.attach(
+            new SslCodec(guiTransportChannel, securedNetwork, sslContext));
 
         // Create an HTTP server as converter between transport and application
         // layer.
-        app.attach(new HttpServer(app.channel(),
-            httpTransport, Request.In.Get.class, Request.In.Post.class));
+        Channel guiHttpChannel = new NamedChannel("guiHttp");
+        app.attach(new HttpServer(guiHttpChannel, guiTransportChannel,
+            Request.In.Get.class, Request.In.Post.class));
 
         // Build application layer
-        app.attach(new LanguageSelector(app.channel()));
-        app.attach(new FileStorage(app.channel(), 65_536));
-        app.attach(new StaticContentDispatcher(app.channel(),
+        app.attach(new LanguageSelector(guiHttpChannel));
+        app.attach(new FileStorage(guiHttpChannel, 65_536));
+        app.attach(new StaticContentDispatcher(guiHttpChannel,
             "/**", Paths.get("demo-resources/static-content").toUri()));
-        app.attach(new StaticContentDispatcher(app.channel(),
+        app.attach(new StaticContentDispatcher(guiHttpChannel,
             "/doc|**", Paths.get("../../jgrapes.gh-pages/javadoc").toUri()));
-        app.attach(new PostProcessor(app.channel()));
-        app.attach(new WsEchoServer(app.channel()));
+        app.attach(new PostProcessor(guiHttpChannel));
+        app.attach(new WsEchoServer(guiHttpChannel));
 
-        createJQueryUiConsole();
-        createBootstrap4Console();
-        createVueJsConsole();
+        createJQueryUiConsole(guiHttpChannel);
+        createBootstrap4Console(guiHttpChannel);
+        createVueJsConsole(guiHttpChannel);
         Components.start(app);
     }
 
     @SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
         "PMD.TooFewBranchesForASwitchStatement" })
-    private void createJQueryUiConsole() throws URISyntaxException {
-        app.attach(new InMemorySessionManager(app.channel(), "/jqconsole")
+    private void createJQueryUiConsole(Channel guiHttpChannel)
+            throws URISyntaxException {
+        app.attach(new InMemorySessionManager(guiHttpChannel, "/jqconsole")
             .setIdName("id-jq"));
         ConsoleWeblet consoleWeblet
-            = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
+            = app.attach(new JQueryUiWeblet(guiHttpChannel, Channel.SELF,
                 new URI("/jqconsole/")))
                 .prependResourceBundleProvider(WebConsoleTest.class)
                 .prependConsoleResourceProvider(WebConsoleTest.class);
@@ -202,11 +203,12 @@ public class WebConsoleTest extends Component implements BundleActivator {
     }
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createBootstrap4Console() throws URISyntaxException {
-        app.attach(new InMemorySessionManager(app.channel(), "/b4console")
+    private void createBootstrap4Console(Channel guiHttpChannel)
+            throws URISyntaxException {
+        app.attach(new InMemorySessionManager(guiHttpChannel, "/b4console")
             .setIdName("id-b4"));
         ConsoleWeblet consoleWeblet
-            = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
+            = app.attach(new Bootstrap4Weblet(guiHttpChannel, Channel.SELF,
                 new URI("/b4console/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleTest.class)
@@ -243,11 +245,12 @@ public class WebConsoleTest extends Component implements BundleActivator {
     }
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createVueJsConsole() throws URISyntaxException, IOException {
-        app.attach(new InMemorySessionManager(app.channel(), "/vjconsole")
+    private void createVueJsConsole(Channel guiHttpChannel)
+            throws URISyntaxException, IOException {
+        app.attach(new InMemorySessionManager(guiHttpChannel, "/vjconsole")
             .setIdName("id-vj"));
         ConsoleWeblet consoleWeblet
-            = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
+            = app.attach(new VueJsConsoleWeblet(guiHttpChannel, Channel.SELF,
                 new URI("/vjconsole/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleTest.class)
