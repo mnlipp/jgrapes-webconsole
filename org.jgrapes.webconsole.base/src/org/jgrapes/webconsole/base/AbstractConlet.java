@@ -45,7 +45,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jgrapes.core.Channel;
@@ -331,8 +330,6 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
     "PMD.EmptyMethodInAbstractClassShouldBeAbstract", "PMD.GodClass",
     "PMD.ExcessiveImports" })
 public abstract class AbstractConlet<S> extends Component {
-
-    private final Logger logger = Logger.getLogger(getClass().getName());
 
     /** Separator used between type and instance when generating the id. */
     public static final String TYPE_INSTANCE_SEPARATOR = "~";
