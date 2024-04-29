@@ -19,7 +19,6 @@
 package org.jgrapes.webconsole.base;
 
 import java.io.IOException;
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.nio.CharBuffer;
 import java.util.Optional;
@@ -33,6 +32,7 @@ import org.jgrapes.core.EventPipeline;
 import org.jgrapes.io.events.Input;
 import org.jgrapes.io.util.ManagedBuffer;
 import org.jgrapes.io.util.ManagedBufferReader;
+import org.jgrapes.io.util.ThreadCleaner;
 import org.jgrapes.webconsole.base.events.JsonInput;
 
 /**
@@ -46,51 +46,9 @@ public class WebSocketInputSink extends Thread {
     private static final Logger logger
         = Logger.getLogger(WebSocketInputSink.class.getName());
 
-    private final WeakReference<EventPipeline> pipelineRef;
-    private final WeakReference<ConsoleConnection> channelRef;
+    private WeakReference<ConsoleConnection> channelRef;
+    private WeakReference<EventPipeline> pipelineRef;
     private ManagedBufferReader jsonSource;
-
-    private static ReferenceQueue<Object> abandoned
-        = new ReferenceQueue<>();
-
-    /**
-     * Weak references to `T` that interrupt the input collecting
-     * thread if the referent has been garbage collected.
-     *
-     * @param <T> the generic type
-     */
-    private static class RefWithThread<T> extends WeakReference<T> {
-        public Thread watched;
-
-        /**
-         * Creates a new instance.
-         *
-         * @param referent the referent
-         * @param thread the thread
-         */
-        public RefWithThread(T referent, Thread thread) {
-            super(referent, abandoned);
-            watched = thread;
-        }
-    }
-
-    static {
-        Thread watchdog = new Thread(() -> {
-            while (true) {
-                try {
-                    @SuppressWarnings("unchecked")
-                    WebSocketInputSink.RefWithThread<Object> ref
-                        = (WebSocketInputSink.RefWithThread<Object>) abandoned
-                            .remove();
-                    ref.watched.interrupt();
-                } catch (InterruptedException e) {
-                    // Nothing to do
-                }
-            }
-        });
-        watchdog.setDaemon(true);
-        watchdog.start();
-    }
 
     /**
      * Instantiates a new web socket input reader.
@@ -100,10 +58,10 @@ public class WebSocketInputSink extends Thread {
      */
     public WebSocketInputSink(EventPipeline wsInPipeline,
             ConsoleConnection consoleChannel) {
-        pipelineRef
-            = new WebSocketInputSink.RefWithThread<>(wsInPipeline, this);
-        channelRef
-            = new WebSocketInputSink.RefWithThread<>(consoleChannel, this);
+        channelRef = new WeakReference<>(consoleChannel);
+        pipelineRef = new WeakReference<>(wsInPipeline);
+        ThreadCleaner.watch(wsInPipeline, this);
+        ThreadCleaner.watch(consoleChannel, this);
         setDaemon(true);
     }
 
