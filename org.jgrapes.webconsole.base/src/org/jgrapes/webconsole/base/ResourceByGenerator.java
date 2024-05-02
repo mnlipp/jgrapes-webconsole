@@ -57,7 +57,8 @@ public class ResourceByGenerator extends ResourceByProducer {
             Generator generator, MediaType mediaType,
             Instant lastModifiedAt, int maxAge) {
         super(request, channel -> {
-            try (OutputStream out
+            try (@SuppressWarnings("resource")
+            OutputStream out
                 = new ByteBufferOutputStream(channel).suppressClose()) {
                 generator.write(out);
             }

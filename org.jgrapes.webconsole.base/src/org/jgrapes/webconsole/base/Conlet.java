@@ -104,9 +104,7 @@ public interface Conlet {
          */
         @SuppressWarnings("PMD.VariableNamingConventions")
         public static final Set<RenderMode> basicModes
-            = Collections.unmodifiableSet(
-                asSet(RenderMode.Preview, RenderMode.View, RenderMode.Edit,
-                    RenderMode.Help));
+            = Collections.unmodifiableSet(asSet(Preview, View, Edit, Help));
 
         /**
          * Utility method that creates a {@link Set} of render modes

@@ -46,8 +46,8 @@ public class WebSocketInputSink extends Thread {
     private static final Logger logger
         = Logger.getLogger(WebSocketInputSink.class.getName());
 
-    private WeakReference<ConsoleConnection> channelRef;
-    private WeakReference<EventPipeline> pipelineRef;
+    private final WeakReference<ConsoleConnection> channelRef;
+    private final WeakReference<EventPipeline> pipelineRef;
     private ManagedBufferReader jsonSource;
 
     /**

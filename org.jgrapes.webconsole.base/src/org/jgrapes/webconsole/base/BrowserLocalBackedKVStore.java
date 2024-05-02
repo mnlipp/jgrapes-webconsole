@@ -39,7 +39,6 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 import org.jgrapes.webconsole.base.events.JsonInput;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BrowserLocalBackedKVStore.
  */
@@ -88,6 +87,7 @@ public class BrowserLocalBackedKVStore extends Component {
             .respond(new SimpleConsoleCommand("retrieveLocalData", keyStart));
     }
 
+    @SuppressWarnings("PMD.LooseCoupling")
     private Store getStore(ConsoleConnection channel) {
         return TypedIdKey
             .get(channel.session(), Store.class, consolePrefix)
@@ -117,7 +117,8 @@ public class BrowserLocalBackedKVStore extends Component {
                 // Having a store now also shows that retrieval has been done.
                 final String keyStart = consolePrefix
                     + BrowserLocalBackedKVStore.class.getName() + "/";
-                @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+                @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
+                    "PMD.LooseCoupling" })
                 Store data = getStore(channel);
                 JsonArray params = (JsonArray) event.request().params();
                 params.asArray(0).arrayStream().forEach(item -> {
@@ -148,6 +149,7 @@ public class BrowserLocalBackedKVStore extends Component {
     public void onKeyValueStoreUpdate(
             KeyValueStoreUpdate event, ConsoleConnection channel)
             throws InterruptedException, IOException {
+        @SuppressWarnings("PMD.LooseCoupling")
         Store data = getStore(channel);
         List<String[]> actions = new ArrayList<>();
         String keyStart = consolePrefix
@@ -204,6 +206,6 @@ public class BrowserLocalBackedKVStore extends Component {
      * The store.
      */
     @SuppressWarnings("serial")
-    private class Store extends HashMap<String, String> {
+    private final class Store extends HashMap<String, String> {
     }
 }

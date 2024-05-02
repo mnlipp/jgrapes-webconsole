@@ -174,7 +174,7 @@ public class AddPageResources extends ConsoleCommand {
             scripts.append(scriptResource.toJsonValue());
         }
         toJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
-            uri -> uri.toString()).toArray(String[]::new),
+            URI::toString).toArray(String[]::new),
             cssSource(), scripts);
     }
 
@@ -280,7 +280,7 @@ public class AddPageResources extends ConsoleCommand {
          * @return this object for easy chaining
          * @throws IOException 
          */
-        @SuppressWarnings("PMD.ShortVariable")
+        @SuppressWarnings({ "PMD.ShortVariable", "PMD.PreserveStackTrace" })
         public ScriptResource loadScriptSource(Reader in) throws IOException {
             try (BufferedReader buffered = new BufferedReader(in)) {
                 this.scriptSource

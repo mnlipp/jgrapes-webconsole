@@ -328,7 +328,7 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  */
 @SuppressWarnings({ "PMD.TooManyMethods",
     "PMD.EmptyMethodInAbstractClassShouldBeAbstract", "PMD.GodClass",
-    "PMD.ExcessiveImports" })
+    "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects" })
 public abstract class AbstractConlet<S> extends Component {
 
     /** Separator used between type and instance when generating the id. */
@@ -369,6 +369,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param channelReplacements the channel replacements (see
      * {@link Component})
      */
+    @SuppressWarnings("PMD.LooseCoupling")
     public AbstractConlet(Channel channel,
             ChannelReplacements channelReplacements) {
         super(channel, channelReplacements);
@@ -542,6 +543,7 @@ public abstract class AbstractConlet<S> extends Component {
      *
      * @return the result
      */
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     protected Map<Locale, ResourceBundle> supportedLocales() {
         return supportedLocales.computeIfAbsent(getClass(), cls -> {
             ResourceBundle.clearCache(cls.getClassLoader());
@@ -711,7 +713,7 @@ public abstract class AbstractConlet<S> extends Component {
             conletViews(ConsoleConnection connection) {
         return conletInfosByConsoleConnection.getOrDefault(
             connection, Collections.emptyMap()).entrySet().stream()
-            .collect(Collectors.toMap(e -> e.getKey(),
+            .collect(Collectors.toMap(Entry::getKey,
                 e -> e.getValue().renderedAs));
     }
 
