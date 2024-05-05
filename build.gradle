@@ -44,6 +44,7 @@ if (System.properties['org.ajoberstar.grgit.auth.username'] == null) {
 allprojects {
     repositories {
         mavenCentral()
+        mavenLocal()
         // Sometimes, synchronization with central is too slow
         maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
         // Snapshots

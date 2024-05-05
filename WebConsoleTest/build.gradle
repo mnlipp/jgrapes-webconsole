@@ -22,6 +22,7 @@ dependencies {
     implementation project(':org.jgrapes.webconsole.bootstrap4')
     implementation project(':org.jgrapes.webconsole.jqueryui')
     implementation project(':org.jgrapes.webconlet.markdowndisplay')
+    implementation project(':org.jgrapes.webconlet.oidclogin')
     runtimeOnly 'com.electronwill.night-config:yaml:[3.6.7,3.7)'    
     runtimeOnly 'org.eclipse.angus:angus-activation:[1.0.0,2.0.0)'
     // Used by the examples...

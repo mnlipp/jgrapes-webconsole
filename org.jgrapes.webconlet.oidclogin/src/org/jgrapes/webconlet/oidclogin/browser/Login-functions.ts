@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2022 Michael N. Lipp
+ * Copyright (C) 2022,2024 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import { reactive, ref, createApp, computed, onMounted } from "vue";
+import { reactive, ref, createApp } from "vue";
 import JGConsole from "jgconsole"
 import JgwcPlugin, { JGWC } from "jgwc";
 import { provideApi, getApi, AashDropdownMenu } from "aash-plugin";
@@ -29,7 +29,7 @@ declare global {
     }
 }
 
-window.orgJGrapesOidcLogin = {}
+window.orgJGrapesOidcLogin = window.orgJGrapesOidcLogin || {};
 
 interface AccountData {
     username: string;
@@ -118,8 +118,12 @@ let openOidcDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
     }
     let app = createApp({
         setup() {
-            const formId = (<HTMLElement>dialogDom
-                .closest("*[data-conlet-id]")!).id + "-form";
+            const conlet = <HTMLElement>dialogDom
+                .closest("*[data-conlet-id]")!
+            const conletId = conlet.dataset.conletId!;
+            const formId = conlet.id + "-form";
+            const hasUser = dialogDom.dataset["hasUser"] === "yes";
+            const providers = window.orgJGrapesOidcLogin.providers;
 
             const accountData: AccountData = reactive({
                 username: "",
@@ -144,16 +148,35 @@ let openOidcDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
             const formDom = ref(null);
 
             const apply = () => {
-              window.orgJGrapesOidcLogin.apply(dialogDom, true, true);
+                window.orgJGrapesOidcLogin.apply(dialogDom, true, true);
+            }
+
+            const chooseProvider = (name: string) => {
+                let provider = providers
+                  .filter((p: Map<string,string>) => p.get("name") === name)[0];
+                let popupFactor = provider.get("popupFactor") || 0.8;
+                let pH = provider.get("popupHeight") 
+                    || Math.round(window.outerHeight * popupFactor);
+                let pW = provider.get("popupWidth")
+                    || Math.round(window.outerWidth * popupFactor);
+                let popupX = Math.round(window.screenX 
+                    + (window.outerWidth - pW) / 2);
+                let popupY = Math.round(window.screenY 
+                    + (window.outerHeight -pH) / 2);
+                window.orgJGrapesOidcLogin 
+                    = window.open("about:blank", "_new", "popup"
+                    + ",width=" + pW + ",height=" + pH
+                    + ",screenX=" + popupX + ",screenY=" + popupY);
+                JGConsole.notifyConletModel(conletId, "useProvider", name);
             }
 
             provideApi(formDom, accountData);
                         
             return { formDom, formId, localize, accountData, info, warning,
-                apply };
+                apply, hasUser, providers, chooseProvider };
         },
         template: `
-            <p>
+            <p v-if="hasUser">
               <aash-accordion :header-type="'p'">
                 <aash-accordion-section :title="localize('Local Login')">
                   <form :id="formId" ref="formDom" onsubmit="return false;">
@@ -197,9 +220,10 @@ let openOidcDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
                 </aash-accordion-section>
               </aash-accordion>
             </p>
-            <p>
-              <button> test </button>
-            </p`
+            <p v-for="p of providers">
+              <button v-on:click="chooseProvider(p.get('name'))"> 
+                {{ p.get('displayName') }} </button>
+            </p>`
     });
     app.use(JgwcPlugin);
     app.mount(dialogDom);
@@ -207,11 +231,11 @@ let openOidcDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
 
 window.orgJGrapesOidcLogin.openDialog 
     = function(dialogDom: HTMLElement, isUpdate: boolean) {
-      if (dialogDom.dataset["hasOidcProvider"] === "yes") {
-          openOidcDialog(dialogDom, isUpdate);
+      if (window.orgJGrapesOidcLogin.providers.size === 0) {
+          openLocalDialog(dialogDom, isUpdate);
           return;
       }
-      openLocalDialog(dialogDom, isUpdate);
+      openOidcDialog(dialogDom, isUpdate);
 }
 
 window.orgJGrapesOidcLogin.apply = function(dialogDom: HTMLElement,
@@ -258,3 +282,10 @@ window.orgJGrapesOidcLogin.initStatus
     app.use(JgwcPlugin);
     app.mount(container);
 }
+
+JGConsole.registerConletFunction(
+    "org.jgrapes.webconlet.oidclogin.LoginConlet",
+    "openLoginWindow", function(conletId: string, url: string) {
+        window.orgJGrapesOidcLogin.location = url;
+//        window.open(url, "_new", "popup");
+    });

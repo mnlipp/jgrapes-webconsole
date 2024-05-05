@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -38,6 +39,7 @@ import javax.security.auth.Subject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
+import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.events.DiscardSession;
@@ -63,30 +65,49 @@ import org.jgrapes.webconsole.base.events.SetLocale;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
- * As simple login conlet for password based logins. The users
- * are configured as property "users" of the conlet:
+ * As login conlet for OIDC based logins with a fallback to password 
+ * based logins.
+ * 
+ * OIDC providers can be configured as property "oidcProviders" of the conlet:
+ * ```yaml
+ * "...":
+ *   "/LoginConlet":
+ *     oidcProviders:
+ *     - name: my-provider
+ *       displayName: My Provider
+ *       configurationUrl: https://test.com/.well-known/openid-configuration
+ * ```
+ * 
+ * As a fallback, local users can be configured as property "users":
  * ```yaml
  * "...":
  *   "/LoginConlet":
  *     users:
- *       admin:
- *         # Full name is optional
- *         fullName: Administrator
- *         password: "$2b$05$NiBd74ZGdplLC63ePZf1f.UtjMKkbQ23cQoO2OKOFalDBHWAOy21."
- *       test:
- *         fullName: Test Account
- *         password: "$2b$05$hZaI/jToXf/d3BctZdT38Or7H7h6Pn2W3WiB49p5AyhDHFkkYCvo2"
- *         
+ *     - name: admin
+ *       # Full name is optional
+ *       fullName: Administrator
+ *       password: "$2b$05$NiBd74ZGdplLC63ePZf1f.UtjMKkbQ23cQoO2OKOFalDBHWAOy21."
+ *     - name: test
+ *       fullName: Test Account
+ *       password: "$2b$05$hZaI/jToXf/d3BctZdT38Or7H7h6Pn2W3WiB49p5AyhDHFkkYCvo2"
  * ```
  * 
  * Passwords are hashed using bcrypt.
+ * 
+ * The local login part of the dialog is only shown if at least one user is
+ * configured.
  */
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+@SuppressWarnings({ "PMD.DataflowAnomalyAnalysis", "PMD.CouplingBetweenObjects",
+    "PMD.ExcessiveImports" })
 public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     private static final String PENDING_CONSOLE_PREPARED
         = "pendingConsolePrepared";
+    private final Map<String, OidcProviderData> providers
+        = new ConcurrentHashMap<>();
     private final Map<String, Map<String, String>> users
         = new ConcurrentHashMap<>();
 
@@ -121,12 +142,39 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     public void onConsoleReady(ConsoleReady event, ConsoleConnection channel)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
+        // Define providers
+        StringBuffer script = new StringBuffer(1000);
+        script.append("window.orgJGrapesOidcLogin"
+            + " = window.orgJGrapesOidcLogin || {};"
+            + "window.orgJGrapesOidcLogin.providers = [];");
+        boolean first = true;
+        for (var e : providers.entrySet()) {
+            if (first) {
+                script.append("let ");
+                first = false;
+            }
+            script.append("provider = new Map();"
+                + "window.orgJGrapesOidcLogin.providers.push(provider);"
+                + "provider.set('name', '").append(e.getKey())
+                .append("');provider.set('displayName', '")
+                .append(e.getValue().displayName()).append("');");
+            if (e.getValue().popup() != null) {
+                for (var d : e.getValue().popup().entrySet()) {
+                    String key = "popup" + d.getKey().substring(0, 1)
+                        .toUpperCase() + d.getKey().substring(1);
+                    script.append("provider.set('").append(key).append("', '")
+                        .append(d.getValue()).append("');");
+                }
+            }
+        }
+        var providerDefs = script.toString();
         // Add conlet resources to page
         channel.respond(new AddConletType(type())
             .addScript(new ScriptResource()
                 .setScriptUri(event.renderSupport().conletResource(
                     type(), "Login-functions.js"))
                 .setScriptType("module"))
+            .addScript(new ScriptResource().setScriptSource(providerDefs))
             .addCss(event.renderSupport(), WebConsoleUtils.uriFromPath(
                 "Login-style.css"))
             .addPageContent("headerIcons", Map.of("priority", "1000"))
@@ -170,12 +218,20 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     @Handler
     public void onConfigUpdate(ConfigurationUpdate event) {
         event.structured(componentPath())
-            .map(c -> (Map<String, Map<String, String>>) c.get("users"))
-            .map(Map::entrySet).orElse(Collections.emptySet()).stream()
+            .map(c -> (List<Map<String, String>>) c.get("users"))
+            .orElseGet(Collections::emptyList).stream()
             .forEach(e -> {
-                var user = users.computeIfAbsent(e.getKey(),
+                var user = users.computeIfAbsent(e.get("name"),
                     k -> new ConcurrentHashMap<>());
-                user.putAll(e.getValue());
+                user.putAll(e);
+            });
+        ObjectMapper mapper = new ObjectMapper();
+        event.structured(componentPath())
+            .map(c -> (List<Map<String, String>>) c.get("oidcProviders"))
+            .orElseGet(Collections::emptyList).stream()
+            .forEach(e -> {
+                var data = mapper.convertValue(e, OidcProviderData.class);
+                providers.put(data.name(), data);
             });
     }
 
@@ -210,24 +266,24 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         putInSession(channel.session(), conletId, accountModel);
 
         // Render login dialog
-        boolean hasOidcProvider = true;
+        var fmModel = fmSessionModel(channel.session());
+        fmModel.put("hasUser", !users.isEmpty());
+        fmModel.put("providers", providers);
         Template tpl = freemarkerConfig().getTemplate("Login-dialog.ftl.html");
         var bundle = resourceBundle(channel.locale());
-        var fmModel = fmSessionModel(channel.session());
-        fmModel.put("hasOidcProvider", hasOidcProvider);
         channel.respond(new OpenModalDialog(type(), conletId,
             processTemplate(event, tpl, fmModel))
                 .addOption("title", bundle.getString("title"))
                 .addOption("cancelable", false)
-                .addOption("applyLabel", hasOidcProvider ? ""
-                    : bundle.getString("Log in"))
+                .addOption("applyLabel",
+                    providers.isEmpty() ? bundle.getString("Log in") : "")
                 .addOption("useSubmit", true));
     }
 
     private Future<String> processTemplate(
             Event<?> request, Template template,
             Object dataModel) {
-        return request.processedBy().map(procBy -> procBy.executorService())
+        return request.processedBy().map(EventPipeline::executorService)
             .orElse(Components.defaultExecutorService()).submit(() -> {
                 StringWriter out = new StringWriter();
                 try {
@@ -262,39 +318,18 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     }
 
     @Override
+    @SuppressWarnings({ "PMD.AvoidLiteralsInIfCondition",
+        "PMD.AvoidLiteralsInIfCondition", "PMD.AvoidLiteralsInIfCondition" })
     protected void doUpdateConletState(NotifyConletModel event,
             ConsoleConnection connection, AccountModel model) throws Exception {
-        var bundle = resourceBundle(connection.locale());
         if ("loginData".equals(event.method())) {
-            String userName = event.params().asString(0);
-            if (userName == null || userName.isEmpty()) {
-                connection.respond(new NotifyConletView(type(),
-                    model.getConletId(), "setMessages",
-                    null, bundle.getString("emptyUserName")));
-                return;
-            }
-            var userData = users.get(userName);
-            String password = event.params().asString(1);
-            if (userData == null
-                || !BCrypt.verifyer().verify(password.getBytes(),
-                    userData.get("password").getBytes()).verified) {
-                connection.respond(new NotifyConletView(type(),
-                    model.getConletId(), "setMessages",
-                    null, bundle.getString("invalidCredentials")));
-                return;
-            }
-            model.setDialogOpen(false);
-            Subject user = new Subject();
-            user.getPrincipals().add(new ConsoleUser(userName,
-                Optional.ofNullable(userData.get("fullName"))
-                    .orElse(userName)));
-            connection.session().put(Subject.class, user);
-            connection.respond(new CloseModalDialog(type(), event.conletId()));
-            connection
-                .associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
-                .ifPresentOrElse(ConsolePrepared::resumeHandling,
-                    () -> connection
-                        .respond(new SimpleConsoleCommand("reload")));
+            attemptLogin(event, connection, model);
+            return;
+        }
+        if ("useProvider".equals(event.method())) {
+            fire(new StartOidcLogin(providers.get(event.params().asString(0)))
+                .setAssociated(this,
+                    new OidcContext(connection, model.getConletId())));
             return;
         }
         if ("logout".equals(event.method())) {
@@ -308,12 +343,90 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         }
     }
 
+    private void attemptLogin(NotifyConletModel event,
+            ConsoleConnection connection, AccountModel model) {
+        var bundle = resourceBundle(connection.locale());
+        String userName = event.params().asString(0);
+        if (userName == null || userName.isEmpty()) {
+            connection.respond(new NotifyConletView(type(),
+                model.getConletId(), "setMessages",
+                null, bundle.getString("emptyUserName")));
+            return;
+        }
+        var userData = users.get(userName);
+        String password = event.params().asString(1);
+        if (userData == null
+            || !BCrypt.verifyer().verify(password.getBytes(),
+                userData.get("password").getBytes()).verified) {
+            connection.respond(new NotifyConletView(type(),
+                model.getConletId(), "setMessages",
+                null, bundle.getString("invalidCredentials")));
+            return;
+        }
+        model.setDialogOpen(false);
+        Subject user = new Subject();
+        user.getPrincipals().add(new ConsoleUser(userName,
+            Optional.ofNullable(userData.get("fullName"))
+                .orElse(userName)));
+        connection.session().put(Subject.class, user);
+        connection.respond(new CloseModalDialog(type(), event.conletId()));
+        connection
+            .associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
+            .ifPresentOrElse(ConsolePrepared::resumeHandling,
+                () -> connection
+                    .respond(new SimpleConsoleCommand("reload")));
+    }
+
+    /**
+     * Invoked when the OIDC client has assembled the required information
+     * for contacting the provider.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
+    @Handler
+    public void onOpenLoginWindow(OpenLoginWindow event, Channel channel) {
+        event.forLogin().associated(this, OidcContext.class)
+            .ifPresent(ctx -> {
+                ctx.connection.respond(new NotifyConletView(type(),
+                    ctx.conletId, "openLoginWindow", event.uri().toString()));
+            });
+    }
+
+    /**
+     * Do set locale.
+     *
+     * @param event the event
+     * @param channel the channel
+     * @param conletId the conlet id
+     * @return true, if successful
+     * @throws Exception the exception
+     */
     @Override
     protected boolean doSetLocale(SetLocale event, ConsoleConnection channel,
             String conletId) throws Exception {
         return stateFromSession(channel.session(),
             type() + TYPE_INSTANCE_SEPARATOR + "Singleton")
                 .map(model -> !model.isDialogOpen()).orElse(true);
+    }
+
+    /**
+     * The context to preserve during the authentication process.
+     */
+    private static class OidcContext {
+        public final ConsoleConnection connection;
+        public final String conletId;
+
+        /**
+         * Instantiates a new oidc context.
+         *
+         * @param connection the connection
+         * @param conletId the conlet id
+         */
+        public OidcContext(ConsoleConnection connection, String conletId) {
+            this.connection = connection;
+            this.conletId = conletId;
+        }
     }
 
     /**
@@ -350,7 +463,6 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         public void setDialogOpen(boolean dialogOpen) {
             this.dialogOpen = dialogOpen;
         }
-
     }
 
 }
