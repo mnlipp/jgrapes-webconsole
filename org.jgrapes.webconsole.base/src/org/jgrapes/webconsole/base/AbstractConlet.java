@@ -352,6 +352,21 @@ public abstract class AbstractConlet<S> extends Component {
     private Timer refreshTimer;
 
     /**
+     * Extract the conlet type from a conlet id.
+     *
+     * @param conletId the conlet id
+     * @return the type or {@code null} the conlet id does not contain
+     * a {@link TYPE_INSTANCE_SEPARATOR}
+     */
+    public static String typeFromId(String conletId) {
+        int sep = conletId.indexOf(TYPE_INSTANCE_SEPARATOR);
+        if (sep < 0) {
+            return null;
+        }
+        return conletId.substring(0, sep);
+    }
+
+    /**
      * Creates a new component that listens for new events
      * on the given channel.
      * 
@@ -891,7 +906,7 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onConletDeleted(ConletDeleted event,
             ConsoleConnection connection) throws Exception {
-        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
+        if (!type().equals(typeFromId(event.conletId()))) {
             return;
         }
         String conletId = event.conletId();
@@ -960,7 +975,7 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onRenderConletRequest(RenderConletRequest event,
             ConsoleConnection connection) throws Exception {
-        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
+        if (!type().equals(typeFromId(event.conletId()))) {
             return;
         }
         Optional<S> state = stateFromSession(
@@ -1069,7 +1084,7 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onNotifyConletModel(NotifyConletModel event,
             ConsoleConnection connection) throws Exception {
-        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
+        if (!type().equals(typeFromId(event.conletId()))) {
             return;
         }
         Optional<S> state
