@@ -31,6 +31,9 @@ public class OidcProviderData {
 
     private final String name;
     private final String displayName;
+    private String clientId;
+    private String secret;
+    private URL issuer;
     private URL configurationEndpoint;
     private URL authorizationEndpoint;
     private URL tokenEndpoint;
@@ -68,6 +71,60 @@ public class OidcProviderData {
      */
     public String displayName() {
         return displayName;
+    }
+
+    /**
+     * Gets the client id.
+     *
+     * @return the client id
+     */
+    public String clientId() {
+        return clientId;
+    }
+
+    /**
+     * Sets the client id.
+     *
+     * @param clientId the new client id
+     */
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    /**
+     * Gets the secret.
+     *
+     * @return the secret
+     */
+    public String secret() {
+        return secret;
+    }
+
+    /**
+     * Sets the secret.
+     *
+     * @param secret the new secret
+     */
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    /**
+     * Gets the issuer.
+     *
+     * @return the issuer
+     */
+    public URL issuer() {
+        return issuer;
+    }
+
+    /**
+     * Sets the issuer.
+     *
+     * @param issuer the new issuer
+     */
+    public void setIssuer(URL issuer) {
+        this.issuer = issuer;
     }
 
     /**

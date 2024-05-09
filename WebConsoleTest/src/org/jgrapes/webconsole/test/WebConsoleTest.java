@@ -197,7 +197,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new HttpConnector(console.channel(), requestChannel,
             secReqChannel));
 
-        console.attach(new HttpConnector(console.channel(), guiHttpChannel));
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));

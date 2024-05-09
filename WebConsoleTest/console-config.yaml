@@ -2,8 +2,6 @@
   "/VueJsConsoleWeblet":
     "/WebConsole":
       "/OidcClient":
-        clientId: "WebConsoleTest"
-        secret: "7wpIuflZarl8kMWrl0u5CPyySilAZ8Mo"
         redirectUri: "https://localhost:5443/vjconsole/oauth/callback"
       "/ComponentCollector":
         "/LoginConlet":
@@ -11,6 +9,8 @@
           - name: tc1-keycloak
             displayName: TC1 Keycloak
             configurationEndpoint: https://keycloak.tc1.mnl.de/realms/tc1/.well-known/openid-configuration
+            clientId: "WebConsoleTest"
+            secret: "7wpIuflZarl8kMWrl0u5CPyySilAZ8Mo"
             popup:
                factor: 0.6
 #              width: 1600

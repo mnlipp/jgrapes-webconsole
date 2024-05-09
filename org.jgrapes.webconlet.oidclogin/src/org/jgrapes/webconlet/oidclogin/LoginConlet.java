@@ -48,6 +48,7 @@ import org.jgrapes.util.events.ConfigurationUpdate;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.ConletBaseModel;
 import org.jgrapes.webconsole.base.ConsoleConnection;
+import org.jgrapes.webconsole.base.ConsoleRole;
 import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
@@ -323,13 +324,12 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     protected void doUpdateConletState(NotifyConletModel event,
             ConsoleConnection connection, AccountModel model) throws Exception {
         if ("loginData".equals(event.method())) {
-            attemptLogin(event, connection, model);
+            attemptLocalLogin(event, connection, model);
             return;
         }
         if ("useProvider".equals(event.method())) {
             fire(new StartOidcLogin(providers.get(event.params().asString(0)))
-                .setAssociated(this,
-                    new OidcContext(connection, model.getConletId())));
+                .setAssociated(this, new OidcContext(connection, model)));
             return;
         }
         if ("logout".equals(event.method())) {
@@ -343,7 +343,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         }
     }
 
-    private void attemptLogin(NotifyConletModel event,
+    private void attemptLocalLogin(NotifyConletModel event,
             ConsoleConnection connection, AccountModel model) {
         var bundle = resourceBundle(connection.locale());
         String userName = event.params().asString(0);
@@ -363,13 +363,22 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
                 null, bundle.getString("invalidCredentials")));
             return;
         }
-        model.setDialogOpen(false);
-        Subject user = new Subject();
-        user.getPrincipals().add(new ConsoleUser(userName,
+        loginUser(new ConsoleUser(userName,
             Optional.ofNullable(userData.get("fullName"))
-                .orElse(userName)));
-        connection.session().put(Subject.class, user);
-        connection.respond(new CloseModalDialog(type(), event.conletId()));
+                .orElse(userName)),
+            Collections.emptySet(), connection, model);
+    }
+
+    private void loginUser(ConsoleUser user, Set<ConsoleRole> roles,
+            ConsoleConnection connection, AccountModel model) {
+        model.setDialogOpen(false);
+        Subject subject = new Subject();
+        subject.getPrincipals().add(user);
+        for (var role : roles) {
+            subject.getPrincipals().add(role);
+        }
+        connection.session().put(Subject.class, subject);
+        connection.respond(new CloseModalDialog(type(), model.getConletId()));
         connection
             .associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
             .ifPresentOrElse(ConsolePrepared::resumeHandling,
@@ -387,10 +396,28 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     @Handler
     public void onOpenLoginWindow(OpenLoginWindow event, Channel channel) {
         event.forLogin().associated(this, OidcContext.class)
-            .ifPresent(ctx -> {
+            .filter(ctx -> ctx.conlet() == this).ifPresent(ctx -> {
                 ctx.connection.respond(new NotifyConletView(type(),
-                    ctx.conletId, "openLoginWindow", event.uri().toString()));
+                    ctx.model.getConletId(), "openLoginWindow",
+                    event.uri().toString()));
             });
+    }
+
+    /**
+     * Invoked when the OIDC client successfully authenticated a user.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
+    @Handler
+    public void onOidcUserAuthenticated(OidcUserAuthenticated event,
+            Channel channel) {
+        var ctx = event.forLogin().associated(this, OidcContext.class)
+            .filter(c -> c.conlet() == this).orElse(null);
+        if (ctx == null) {
+            return;
+        }
+        loginUser(event.user(), event.roles(), ctx.connection, ctx.model);
     }
 
     /**
@@ -398,7 +425,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
      *
      * @param event the event
      * @param channel the channel
-     * @param conletId the conlet id
+     * @param model the conlet id
      * @return true, if successful
      * @throws Exception the exception
      */
@@ -413,19 +440,23 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     /**
      * The context to preserve during the authentication process.
      */
-    private static class OidcContext {
+    private class OidcContext {
         public final ConsoleConnection connection;
-        public final String conletId;
+        public final AccountModel model;
 
         /**
          * Instantiates a new oidc context.
          *
          * @param connection the connection
-         * @param conletId the conlet id
+         * @param model the model
          */
-        public OidcContext(ConsoleConnection connection, String conletId) {
+        public OidcContext(ConsoleConnection connection, AccountModel model) {
             this.connection = connection;
-            this.conletId = conletId;
+            this.model = model;
+        }
+
+        private LoginConlet conlet() {
+            return LoginConlet.this;
         }
     }
 
@@ -439,9 +470,9 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         /**
          * Creates a new model with the given type and id.
          * 
-         * @param conletId the web console component id
+         * @param model the web console component id
          */
-        @ConstructorProperties({ "conletId" })
+        @ConstructorProperties({ "model" })
         public AccountModel(String conletId) {
             super(conletId);
         }

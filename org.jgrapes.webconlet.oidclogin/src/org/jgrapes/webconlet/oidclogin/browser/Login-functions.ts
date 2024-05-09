@@ -31,6 +31,8 @@ declare global {
 
 window.orgJGrapesOidcLogin = window.orgJGrapesOidcLogin || {};
 
+let authenticationWindow: Window | null = null;
+
 interface AccountData {
     username: string;
     password: string;
@@ -163,7 +165,7 @@ let openOidcDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
                     + (window.outerWidth - pW) / 2);
                 let popupY = Math.round(window.screenY 
                     + (window.outerHeight -pH) / 2);
-                window.orgJGrapesOidcLogin 
+                authenticationWindow 
                     = window.open("about:blank", "_new", "popup"
                     + ",width=" + pW + ",height=" + pH
                     + ",screenX=" + popupX + ",screenY=" + popupY);
@@ -222,7 +224,7 @@ let openOidcDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
             </p>
             <p v-for="p of providers">
               <button v-on:click="chooseProvider(p.get('name'))"> 
-                {{ p.get('displayName') }} </button>
+                {{ localize("Login with")}} {{ p.get('displayName') }} </button>
             </p>`
     });
     app.use(JgwcPlugin);
@@ -286,6 +288,7 @@ window.orgJGrapesOidcLogin.initStatus
 JGConsole.registerConletFunction(
     "org.jgrapes.webconlet.oidclogin.LoginConlet",
     "openLoginWindow", function(conletId: string, url: string) {
-        window.orgJGrapesOidcLogin.location = url;
-//        window.open(url, "_new", "popup");
+        if (authenticationWindow) {
+            authenticationWindow.location = url;
+        }
     });
