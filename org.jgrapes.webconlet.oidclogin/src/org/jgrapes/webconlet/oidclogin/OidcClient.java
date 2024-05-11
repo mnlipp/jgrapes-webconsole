@@ -65,6 +65,7 @@ import org.jgrapes.io.events.Input;
 import org.jgrapes.io.util.CharBufferWriter;
 import org.jgrapes.io.util.InputConsumer;
 import org.jgrapes.io.util.JsonReader;
+import org.jgrapes.io.util.OutputSupplier;
 import org.jgrapes.io.util.events.DataInput;
 import org.jgrapes.util.events.ConfigurationUpdate;
 import org.jgrapes.webconsole.base.ConsoleRole;
@@ -317,9 +318,9 @@ public class OidcClient extends Component {
         ResponseCreationSupport.sendStaticContent(event, channel,
             path -> getClass().getResource("CloseWindow.html"), null);
         var query = event.httpRequest().queryData();
-        var ctx = Optional.ofNullable(query.get("state"))
-            .orElse(Collections.emptyList()).stream().findFirst()
-            .map(contexts::get).orElse(null);
+        var state = Optional.ofNullable(query.get("state"))
+            .orElse(Collections.emptyList()).stream().findFirst().orElse(null);
+        var ctx = contexts.remove(state);
         if (ctx == null) {
             return;
         }
