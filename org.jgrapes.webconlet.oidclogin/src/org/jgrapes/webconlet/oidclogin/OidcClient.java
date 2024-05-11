@@ -31,14 +31,17 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
@@ -47,6 +50,7 @@ import org.jdrupes.httpcodec.types.ParameterizedValue;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
+import org.jgrapes.core.Components;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
@@ -70,7 +74,7 @@ import org.jgrapes.webconsole.base.ConsoleUser;
  * Helper component for {@link LoginConlet} that handles the
  * communication with the OIDC provider.
  */
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+@SuppressWarnings({ "PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveImports" })
 public class OidcClient extends Component {
 
     @SuppressWarnings("PMD.FieldNamingConventions")
@@ -88,13 +92,14 @@ public class OidcClient extends Component {
      * @param requesterChannel the requester channel
      * @param webletChannel the weblet channel
      * @param redirectTarget the redirect target
+     * @param priority the handler's priority
      */
     public OidcClient(Channel requesterChannel, Channel webletChannel,
-            URI redirectTarget) {
+            URI redirectTarget, int priority) {
         super(requesterChannel, ChannelReplacements.create()
             .add(WebletChannel.class, webletChannel));
         RequestHandler.Evaluator.add(this, "onAuthCallback",
-            redirectTarget.toString());
+            redirectTarget.toString(), priority);
     }
 
     /**
@@ -176,7 +181,7 @@ public class OidcClient extends Component {
             return;
         }
         var rsp = (HttpResponse) response.response();
-        clientChannel.setAssociated(HttpResponse.class, rsp);
+        clientChannel.setAssociated(Response.class, response);
         var reqUri
             = clientChannel.associated(HttpRequest.class).get().requestUri();
         if (rsp.statusCode() != HttpURLConnection.HTTP_OK) {
@@ -229,10 +234,14 @@ public class OidcClient extends Component {
         if (optCtx.isEmpty()) {
             return;
         }
-        if (clientChannel.associated(HttpResponse.class)
+        if (clientChannel.associated(Response.class)
+            .map(r -> (HttpResponse) r.response())
             .map(r -> r.statusCode() != HttpURLConnection.HTTP_OK)
             .orElse(true)) {
-            // Already handled in onResponse.
+            // Already handled in onResponse, log details
+            Response evt = clientChannel.associated(Response.class).get();
+            logger.finer(() -> "Payload of failed event "
+                + Components.objectName(evt) + ": " + event.data().toString());
             return;
         }
         var provider = optCtx.get().startEvent.provider();
@@ -280,13 +289,18 @@ public class OidcClient extends Component {
         params.put("client_id", ctx.startEvent.provider().clientId());
         params.put("redirect_uri", config.redirectUri);
         params.put("prompt", "login");
+        if (ctx.startEvent.locales().length > 0) {
+            params.put("ui_locales", Arrays.stream(ctx.startEvent.locales())
+                .map(Locale::toLanguageTag).collect(Collectors.joining(" ")));
+        }
         var stateBytes = new byte[16];
         secureRandom.nextBytes(stateBytes);
         var state = Base64.getEncoder().encodeToString(stateBytes);
         params.put("state", state);
-        var request = ctx.startEvent.provider().authorizationEndpoint().toURI();
-        request = HttpRequest.replaceQuery(request,
+        var request = HttpRequest.replaceQuery(
+            ctx.startEvent.provider().authorizationEndpoint().toURI(),
             HttpRequest.simpleWwwFormUrlencode(params));
+        logger.finer(() -> "Getting " + request);
         contexts.put(state, ctx);
         fire(new OpenLoginWindow(ctx.startEvent, request));
     }
@@ -335,6 +349,7 @@ public class OidcClient extends Component {
         };
         fire(post.setAssociated(OutputSupplier.class, body).setAssociated(this,
             ctx));
+        event.setResult(true);
     }
 
     @SuppressWarnings("unchecked")

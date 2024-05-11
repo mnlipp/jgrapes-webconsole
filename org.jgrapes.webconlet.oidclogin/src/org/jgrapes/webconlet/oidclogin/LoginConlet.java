@@ -19,6 +19,7 @@
 package org.jgrapes.webconlet.oidclogin;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
@@ -30,6 +31,7 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -42,6 +44,7 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.http.LanguageSelector.Selection;
 import org.jgrapes.http.events.DiscardSession;
 import org.jgrapes.io.events.Close;
 import org.jgrapes.util.events.ConfigurationUpdate;
@@ -66,10 +69,8 @@ import org.jgrapes.webconsole.base.events.SetLocale;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
- * As login conlet for OIDC based logins with a fallback to password 
+ * A login conlet for OIDC based logins with a fallback to password 
  * based logins.
  * 
  * OIDC providers can be configured as property "oidcProviders" of the conlet:
@@ -79,8 +80,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *     oidcProviders:
  *     - name: my-provider
  *       displayName: My Provider
- *       configurationUrl: https://test.com/.well-known/openid-configuration
+ *       configurationEndpoint: https://test.com/.well-known/openid-configuration
+ *       # If no configurationEndpoint is available, the authorization 
+ *       # endpointEndpoint and the tokenEndpoint may be configured instead
+ *       clientId: "WebConsoleTest"
+ *       secret: "(unknown)"
+ *         # The size of the popup window for the provider's dialog
+ *         popup:
+ *           # Either as size reletive to the browser window or in pixels
+ *           # factor: 0.6
+ *           width: 1600
+ *           height: 600
  * ```
+ * 
+ * The user id of the authenticated user is taken from the ID token's
+ * `preferred_username` claim, the display name from the `name` claim.
+ * Roles are created from the ID token's `roles` claim. The latter
+ * has usually to be added in the provider's configuration. Of course,
+ * roles can also be configured independently based on the user id
+ * by using another component such as the {@link RoleConfigurator}.
  * 
  * As a fallback, local users can be configured as property "users":
  * ```yaml
@@ -328,8 +346,12 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             return;
         }
         if ("useProvider".equals(event.method())) {
-            fire(new StartOidcLogin(providers.get(event.params().asString(0)))
-                .setAssociated(this, new OidcContext(connection, model)));
+            var locales = Optional.ofNullable(
+                (Selection) connection.session().get(Selection.class))
+                .map(Selection::get).orElse(new Locale[0]);
+            fire(new StartOidcLogin(providers.get(event.params().asString(0)),
+                locales).setAssociated(this,
+                    new OidcContext(connection, model)));
             return;
         }
         if ("logout".equals(event.method())) {
@@ -455,7 +477,12 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             this.model = model;
         }
 
-        private LoginConlet conlet() {
+        /**
+         * Returns the conlet (the outer class).
+         *
+         * @return the login conlet
+         */
+        public LoginConlet conlet() {
             return LoginConlet.this;
         }
     }

@@ -18,6 +18,7 @@
 
 package org.jgrapes.webconlet.oidclogin;
 
+import java.util.Locale;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
@@ -28,14 +29,18 @@ import org.jgrapes.core.Event;
 public class StartOidcLogin extends Event<Void> {
 
     private final OidcProviderData provider;
+    private final Locale[] locales;
 
     /**
      * Instantiates a new event.
      *
      * @param provider the provider
+     * @param locales the UI locales by preference
      */
-    public StartOidcLogin(OidcProviderData provider) {
+    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
+    public StartOidcLogin(OidcProviderData provider, Locale... locales) {
         this.provider = provider;
+        this.locales = locales;
     }
 
     /**
@@ -45,6 +50,16 @@ public class StartOidcLogin extends Event<Void> {
      */
     public OidcProviderData provider() {
         return provider;
+    }
+
+    /**
+     * Gets the locales.
+     *
+     * @return the locales
+     */
+    @SuppressWarnings("PMD.MethodReturnsInternalArray")
+    public Locale[] locales() {
+        return locales;
     }
 
     /*

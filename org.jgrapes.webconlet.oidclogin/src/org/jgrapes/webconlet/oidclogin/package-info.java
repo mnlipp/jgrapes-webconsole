@@ -16,4 +16,8 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * This package provides an OIDC login conlet (with fallback to password
+ * login).
+ */
 package org.jgrapes.webconlet.oidclogin;

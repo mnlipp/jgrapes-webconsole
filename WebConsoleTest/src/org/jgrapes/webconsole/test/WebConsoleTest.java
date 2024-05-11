@@ -45,6 +45,7 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.NamedChannel;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.core.events.Error;
 import org.jgrapes.core.events.HandlingError;
 import org.jgrapes.core.events.Stop;
 import org.jgrapes.http.HttpConnector;
@@ -101,10 +102,21 @@ public class WebConsoleTest extends Component implements BundleActivator {
     @Handler(channels = Channel.class, priority = -10_000)
     @SuppressWarnings("PMD.GuardLogStatement")
     public void onHandlingError(HandlingError event) {
-        logger.log(Level.WARNING, event.throwable(),
+        logger.log(Level.SEVERE, event.throwable(),
             () -> "Problem invoking handler with " + event.event() + ": "
                 + event.message());
         event.stop();
+    }
+
+    /**
+     * Log the exception when a handling error is reported.
+     *
+     * @param event the event
+     */
+    @Handler(channels = Channel.class, priority = -11_000)
+    @SuppressWarnings("PMD.GuardLogStatement")
+    public void onError(Error event) {
+        logger.severe(() -> event.toString());
     }
 
     /*
@@ -293,7 +305,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new RoleConfigurator(console.channel()));
         console.attach(new RoleConletFilter(console.channel()));
         console.attach(new OidcClient(console.channel(), guiHttpChannel,
-            new URI("/vjconsole/oauth/callback")));
+            new URI("/vjconsole/oauth/callback"), 100));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),

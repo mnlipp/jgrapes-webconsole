@@ -439,9 +439,14 @@ public abstract class ConsoleWeblet extends Component {
     @RequestHandler(dynamic = true)
     public void onGet(Request.In.Get event, IOSubchannel channel)
             throws InterruptedException, IOException, ParseException {
+        // Already fulfilled?
+        if (event.fulfilled()) {
+            return;
+        }
+
+        // Request for console? (Only valid with session)
         URI requestUri = event.requestUri();
         int prefixSegs = requestPattern.matches(requestUri);
-        // Request for console? (Only valid with session)
         if (prefixSegs < 0) {
             return;
         }
@@ -454,8 +459,8 @@ public abstract class ConsoleWeblet extends Component {
         case "":
             // Because language is changed via websocket, locale cookie
             // may be out-dated
-            event.associated(Selection.class)
-                .ifPresent(selection -> selection.prefer(selection.get()[0]));
+//            event.associated(Selection.class)
+//                .ifPresent(selection -> selection.prefer(selection.get()[0]));
             // This is a console connection now (can be connected to)
             Session session = Session.from(event);
             UUID consoleConnectionId = UUID.randomUUID();
