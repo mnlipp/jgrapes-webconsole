@@ -64,6 +64,7 @@ import org.jgrapes.util.ComponentCollector;
 import org.jgrapes.util.FileSystemWatcher;
 import org.jgrapes.util.YamlConfigurationStore;
 import org.jgrapes.util.events.WatchFile;
+import org.jgrapes.webconlet.oidclogin.LoginConlet;
 import org.jgrapes.webconlet.oidclogin.OidcClient;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
@@ -220,9 +221,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console.channel(), type -> {
                 switch (type) {
-                case "org.jgrapes.webconlet.oidclogin.LoginConlet":
-                case "org.jgrapes.webconlet.examples.login.LoginConlet":
-                    return Collections.emptyList();
                 default:
                     return Arrays.asList(Collections.emptyMap());
                 }
@@ -269,9 +267,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console.channel(), type -> {
                 switch (type) {
-                case "org.jgrapes.webconlet.examples.login.LoginConlet":
-                case "org.jgrapes.webconlet.oidclogin.LoginConlet":
-                    return Collections.emptyList();
                 default:
                     return Arrays.asList(Collections.emptyMap());
                 }
@@ -304,8 +299,9 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new AvoidEmptyPolicy(console.channel()));
         console.attach(new RoleConfigurator(console.channel()));
         console.attach(new RoleConletFilter(console.channel()));
+        console.attach(new LoginConlet(console.channel()));
         console.attach(new OidcClient(console.channel(), guiHttpChannel,
-            new URI("/vjconsole/oauth/callback"), 100));
+            new URI("/vjconsole/oauth/callback"), 1500));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
@@ -323,8 +319,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console.channel(), type -> {
                 switch (type) {
-                case "org.jgrapes.webconlet.examples.login.LoginConlet":
-                    return Collections.emptyList();
                 default:
                     return Arrays.asList(Collections.emptyMap());
                 }

@@ -1,27 +1,27 @@
 "/WebConsoleTest":
   "/VueJsConsoleWeblet":
     "/WebConsole":
+      "/LoginConlet":
+        oidcProviders:
+        - name: tc1-keycloak
+          displayName: TC1 Keycloak
+          configurationEndpoint: https://keycloak.test.com/realms/test/.well-known/openid-configuration
+          clientId: "WebConsoleTest"
+          secret: "(unknown)"
+          popup:
+             factor: 0.6
+#            width: 1600
+#            height: 600
+        users:
+        - name: admin
+          fullName: Administrator
+          password: "$2b$05$NiBd74ZGdplLC63ePZf1f.UtjMKkbQ23cQoO2OKOFalDBHWAOy21."
+        - name: test
+          fullName: Test Account
+          password: "$2b$05$hZaI/jToXf/d3BctZdT38Or7H7h6Pn2W3WiB49p5AyhDHFkkYCvo2"
       "/OidcClient":
         redirectUri: "https://localhost:5443/vjconsole/oauth/callback"
       "/ComponentCollector":
-        "/LoginConlet":
-          oidcProviders:
-          - name: tc1-keycloak
-            displayName: TC1 Keycloak
-            configurationEndpoint: https://keycloak.test.com/realms/test/.well-known/openid-configuration
-            clientId: "WebConsoleTest"
-            secret: "(unknown)"
-            popup:
-               factor: 0.6
-#              width: 1600
-#              height: 600
-          users:
-          - name: admin
-            fullName: Administrator
-            password: "$2b$05$NiBd74ZGdplLC63ePZf1f.UtjMKkbQ23cQoO2OKOFalDBHWAOy21."
-          - name: test
-            fullName: Test Account
-            password: "$2b$05$hZaI/jToXf/d3BctZdT38Or7H7h6Pn2W3WiB49p5AyhDHFkkYCvo2"
       "/RoleConfigurator":
         rolesByUser:
           "*":
