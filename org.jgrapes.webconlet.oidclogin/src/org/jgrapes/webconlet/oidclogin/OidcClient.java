@@ -55,6 +55,7 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.core.events.Error;
+import org.jgrapes.http.HttpServer;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.annotation.RequestHandler;
 import org.jgrapes.http.events.HttpConnected;
@@ -82,23 +83,47 @@ public class OidcClient extends Component {
     private static final SecureRandom secureRandom = new SecureRandom();
     private Configuration config = new Configuration();
     private final Map<String, Context> contexts = new ConcurrentHashMap<>();
+    private final Channel httpClientChannel;
 
     /** For channel replacement. */
-    private final class WebletChannel extends ClassChannel {
+    private final class HttpClientChannel extends ClassChannel {
+    }
+
+    /** For channel replacement. */
+    private final class HttpServerChannel extends ClassChannel {
     }
 
     /**
-     * Instantiates a new OIDC client.
+     * Instantiates a new OIDC client. The OIDC uses three channels.
+     * 
+     *  * It is a helper component for the {@link LoginConlet} and
+     *    therefore uses its "primary" (component) channel to 
+     *    exchange events with the conlet.
+     *    
+     *  * It uses the `httpClientChannel` to accesses the provider
+     *    as client, i.e. when it fires {@link Request.Out}
+     *    events to obtain information from the provider.
+     *    
+     *  * It defines a request handler that listens on the
+     *    `httpServerChannel` for handling the authorization callback
+     *    from the provider. 
      *
-     * @param requesterChannel the requester channel
-     * @param webletChannel the weblet channel
-     * @param redirectTarget the redirect target
-     * @param priority the handler's priority
+     * @param componentChannel the component's channel
+     * @param httpClientChannel the channel used for connecting the provider
+     * @param httpServerChannel the channel used by some {@link HttpServer}
+     * to send the {@link Request.In} events from the provider callback
+     * @param redirectTarget defines the path handled by 
+     * {@link #onAuthCallback}
+     * @param priority the priority of the {@link #onAuthCallback} handler.
+     * Must be higher than the default priority of request handlers if the
+     * callback URL uses a sub-path of the web console's URL.
      */
-    public OidcClient(Channel requesterChannel, Channel webletChannel,
-            URI redirectTarget, int priority) {
-        super(requesterChannel, ChannelReplacements.create()
-            .add(WebletChannel.class, webletChannel));
+    public OidcClient(Channel componentChannel, Channel httpClientChannel,
+            Channel httpServerChannel, URI redirectTarget, int priority) {
+        super(componentChannel, ChannelReplacements.create()
+            .add(HttpClientChannel.class, httpClientChannel)
+            .add(HttpServerChannel.class, httpServerChannel));
+        this.httpClientChannel = httpClientChannel;
         RequestHandler.Evaluator.add(this, "onAuthCallback",
             redirectTarget.toString(), priority);
     }
@@ -144,7 +169,7 @@ public class OidcClient extends Component {
         }
         // Get configuration information first
         fire(new Request.Out.Get(providerData.configurationEndpoint())
-            .setAssociated(this, new Context(event)));
+            .setAssociated(this, new Context(event)), httpClientChannel);
     }
 
     /**
@@ -153,7 +178,7 @@ public class OidcClient extends Component {
      * @param event the event
      * @param clientChannel the client channel
      */
-    @Handler
+    @Handler(channels = HttpClientChannel.class)
     public void onConnected(HttpConnected event, IOSubchannel clientChannel) {
         // Transfer context from the request to the new subchannel.
         event.request().associated(this, Context.class).ifPresent(c -> {
@@ -174,7 +199,7 @@ public class OidcClient extends Component {
      * @param clientChannel the client channel
      * @throws URISyntaxException 
      */
-    @Handler
+    @Handler(channels = HttpClientChannel.class)
     public void onResponse(Response response, IOSubchannel clientChannel)
             throws URISyntaxException {
         var optCtx = clientChannel.associated(this, Context.class);
@@ -206,7 +231,7 @@ public class OidcClient extends Component {
      * @param clientChannel the client channel
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    @Handler
+    @Handler(channels = HttpClientChannel.class)
     public void onInput(Input<ByteBuffer> event, IOSubchannel clientChannel)
             throws IOException {
         if (clientChannel.associated(this, Context.class).isEmpty()) {
@@ -226,7 +251,7 @@ public class OidcClient extends Component {
      * @throws JsonProcessingException 
      * @throws JsonMappingException 
      */
-    @Handler
+    @Handler(channels = HttpClientChannel.class)
     public void onDataInput(DataInput<Map<String, Object>> event,
             IOSubchannel clientChannel)
             throws MalformedURLException, URISyntaxException,
@@ -281,8 +306,7 @@ public class OidcClient extends Component {
         attemptAuthorization(ctx);
     }
 
-    private void attemptAuthorization(Context ctx)
-            throws URISyntaxException {
+    private void attemptAuthorization(Context ctx) throws URISyntaxException {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<String, String> params = new TreeMap<>();
         params.put("scope", "openid");
@@ -313,7 +337,7 @@ public class OidcClient extends Component {
      * @param event the event
      * @param channel the channel
      */
-    @RequestHandler(channels = WebletChannel.class, dynamic = true)
+    @RequestHandler(channels = HttpServerChannel.class, dynamic = true)
     public void onAuthCallback(Request.In.Get event, IOSubchannel channel) {
         ResponseCreationSupport.sendStaticContent(event, channel,
             path -> getClass().getResource("CloseWindow.html"), null);
@@ -349,8 +373,9 @@ public class OidcClient extends Component {
                 .append(HttpRequest.simpleWwwFormUrlencode(params)).close();
         };
         fire(post.setAssociated(OutputSupplier.class, body).setAssociated(this,
-            ctx));
+            ctx), httpClientChannel);
         event.setResult(true);
+        event.stop();
     }
 
     @SuppressWarnings("unchecked")

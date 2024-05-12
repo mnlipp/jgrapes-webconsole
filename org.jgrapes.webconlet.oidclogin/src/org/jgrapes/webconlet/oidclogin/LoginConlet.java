@@ -94,11 +94,15 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  * ```
  * 
  * The user id of the authenticated user is taken from the ID token's
- * `preferred_username` claim, the display name from the `name` claim.
- * Roles are created from the ID token's `roles` claim. The latter
+ * claim `preferred_username`, the display name from the claim `name`.
+ * Roles are created from the ID token's claim `roles`. The latter
  * has usually to be added in the provider's configuration. Of course,
  * roles can also be configured independently based on the user id
  * by using another component such as the {@link RoleConfigurator}.
+ * 
+ * The component requires that an instance of {@link OidcClient}
+ * handles the {@link StartOidcClient} events fired on the component's
+ * channel.
  * 
  * As a fallback, local users can be configured as property "users":
  * ```yaml

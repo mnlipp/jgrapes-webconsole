@@ -184,17 +184,19 @@ public class WebConsoleTest extends Component implements BundleActivator {
         Channel requestChannel = app.attach(new SocketConnector(SELF));
         Channel secReqChannel
             = app.attach(new SslCodec(SELF, requestChannel, true));
+        // Support for making HTTP requests
+        app.attach(new HttpConnector(guiHttpChannel, requestChannel,
+            secReqChannel));
 
-        createJQueryUiConsole(guiHttpChannel, requestChannel, secReqChannel);
-        createBootstrap4Console(guiHttpChannel, requestChannel, secReqChannel);
-        createVueJsConsole(guiHttpChannel, requestChannel, secReqChannel);
+        createJQueryUiConsole(guiHttpChannel);
+        createBootstrap4Console(guiHttpChannel);
+        createVueJsConsole(guiHttpChannel);
         Components.start(app);
     }
 
     @SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
         "PMD.TooFewBranchesForASwitchStatement" })
-    private void createJQueryUiConsole(Channel guiHttpChannel,
-            Channel requestChannel, Channel secReqChannel)
+    private void createJQueryUiConsole(Channel guiHttpChannel)
             throws URISyntaxException {
         app.attach(new InMemorySessionManager(guiHttpChannel, "/jqconsole")
             .setIdName("id-jq"));
@@ -205,10 +207,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
-
-        // Support conlets in making HTTP requests
-        console.attach(new HttpConnector(console.channel(), requestChannel,
-            secReqChannel));
 
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
@@ -228,8 +226,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
     }
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createBootstrap4Console(Channel guiHttpChannel,
-            Channel requestChannel, Channel secReqChannel)
+    private void createBootstrap4Console(Channel guiHttpChannel)
             throws URISyntaxException {
         app.attach(new InMemorySessionManager(guiHttpChannel, "/b4console")
             .setIdName("id-b4"));
@@ -241,10 +238,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
-
-        // Support conlets in making HTTP requests
-        console.attach(new HttpConnector(console.channel(), requestChannel,
-            secReqChannel));
 
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
@@ -274,8 +267,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
     }
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createVueJsConsole(Channel guiHttpChannel,
-            Channel requestChannel, Channel secReqChannel)
+    private void createVueJsConsole(Channel guiHttpChannel)
             throws URISyntaxException, IOException {
         app.attach(new InMemorySessionManager(guiHttpChannel, "/vjconsole")
             .setIdName("id-vj"));
@@ -288,10 +280,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
 
-        // Support conlets in making HTTP requests
-        console.attach(new HttpConnector(console.channel(), requestChannel,
-            secReqChannel));
-
         // More components
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
@@ -301,7 +289,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new RoleConletFilter(console.channel()));
         console.attach(new LoginConlet(console.channel()));
         console.attach(new OidcClient(console.channel(), guiHttpChannel,
-            new URI("/vjconsole/oauth/callback"), 1500));
+            guiHttpChannel, new URI("/vjconsole/oauth/callback"), 1500));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
