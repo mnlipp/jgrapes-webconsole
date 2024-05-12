@@ -34,7 +34,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,6 +41,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import javax.security.auth.Subject;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
 import org.jdrupes.httpcodec.protocols.http.HttpRequest;
 import org.jdrupes.httpcodec.protocols.http.HttpResponse;
@@ -71,12 +71,14 @@ import org.jgrapes.io.util.events.DataInput;
 import org.jgrapes.util.events.ConfigurationUpdate;
 import org.jgrapes.webconsole.base.ConsoleRole;
 import org.jgrapes.webconsole.base.ConsoleUser;
+import org.jgrapes.webconsole.rbac.UserAuthenticated;
 
 /**
  * Helper component for {@link LoginConlet} that handles the
  * communication with the OIDC provider.
  */
-@SuppressWarnings({ "PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveImports" })
+@SuppressWarnings({ "PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveImports",
+    "PMD.CouplingBetweenObjects" })
 public class OidcClient extends Component {
 
     @SuppressWarnings("PMD.FieldNamingConventions")
@@ -378,7 +380,7 @@ public class OidcClient extends Component {
         event.stop();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "PMD.NPathComplexity" })
     private void processTokenResponse(DataInput<Map<String, Object>> event,
             Context ctx, OidcProviderData provider) {
         ctx.idToken = JsonWebToken.parse((String) event.data().get("id_token"));
@@ -408,14 +410,16 @@ public class OidcClient extends Component {
         }
 
         // Success
-        var user = new ConsoleUser((String) idData.get("preferred_username"),
-            Optional.ofNullable((String) idData.get("name"))
-                .orElse((String) idData.get("preferred_username")));
-        var roles = new HashSet<ConsoleRole>();
+        Subject subject = new Subject();
+        subject.getPrincipals()
+            .add(new ConsoleUser((String) idData.get("preferred_username"),
+                Optional.ofNullable((String) idData.get("name"))
+                    .orElse((String) idData.get("preferred_username"))));
         for (var role : (List<String>) idData.get("roles")) {
-            roles.add(new ConsoleRole(role));
+            subject.getPrincipals().add(new ConsoleRole(role));
         }
-        fire(new OidcUserAuthenticated(ctx.startEvent, user, roles));
+        fire(new UserAuthenticated(ctx.startEvent, subject).by(
+            "OIDC Provider " + provider.name()));
     }
 
     /**

@@ -76,6 +76,7 @@ import org.jgrapes.webconsole.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.webconsole.jqueryui.JQueryUiWeblet;
 import org.jgrapes.webconsole.rbac.RoleConfigurator;
 import org.jgrapes.webconsole.rbac.RoleConletFilter;
+import org.jgrapes.webconsole.rbac.UserLogger;
 import org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -243,6 +244,10 @@ public class WebConsoleTest extends Component implements BundleActivator {
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
         console.attach(new AvoidEmptyPolicy(console.channel()));
+        console.attach(new RoleConfigurator(console.channel()));
+        console.attach(new RoleConletFilter(console.channel()));
+        console.attach(new org.jgrapes.webconlet.locallogin.LoginConlet(
+            console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
@@ -290,6 +295,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new LoginConlet(console.channel()));
         console.attach(new OidcClient(console.channel(), guiHttpChannel,
             guiHttpChannel, new URI("/vjconsole/oauth/callback"), 1500));
+        console.attach(new UserLogger(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),

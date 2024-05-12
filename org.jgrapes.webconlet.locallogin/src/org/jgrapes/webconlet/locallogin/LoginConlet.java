@@ -38,6 +38,7 @@ import javax.security.auth.Subject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
+import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.events.DiscardSession;
@@ -62,6 +63,8 @@ import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.SetLocale;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
+import org.jgrapes.webconsole.rbac.UserAuthenticated;
+import org.jgrapes.webconsole.rbac.UserLoggedOut;
 
 /**
  * As simple login conlet for password based logins. The users
@@ -224,7 +227,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     private Future<String> processTemplate(
             Event<?> request, Template template,
             Object dataModel) {
-        return request.processedBy().map(procBy -> procBy.executorService())
+        return request.processedBy().map(EventPipeline::executorService)
             .orElse(Components.defaultExecutorService()).submit(() -> {
                 StringWriter out = new StringWriter();
                 try {
@@ -259,6 +262,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     }
 
     @Override
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     protected void doUpdateConletState(NotifyConletModel event,
             ConsoleConnection connection, AccountModel model) throws Exception {
         var bundle = resourceBundle(connection.locale());
@@ -280,21 +284,18 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
                     null, bundle.getString("invalidCredentials")));
                 return;
             }
-            model.setDialogOpen(false);
-            Subject user = new Subject();
-            user.getPrincipals().add(new ConsoleUser(userName,
+            Subject subject = new Subject();
+            subject.getPrincipals().add(new ConsoleUser(userName,
                 Optional.ofNullable(userData.get("fullName"))
                     .orElse(userName)));
-            connection.session().put(Subject.class, user);
-            connection.respond(new CloseModalDialog(type(), event.conletId()));
-            connection
-                .associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
-                .ifPresentOrElse(ConsolePrepared::resumeHandling,
-                    () -> connection
-                        .respond(new SimpleConsoleCommand("reload")));
+            fire(new UserAuthenticated(event.setAssociated(this,
+                new LoginContext(connection, model)), subject)
+                    .by("Local Login"));
             return;
         }
         if ("logout".equals(event.method())) {
+            Optional.ofNullable((Subject) connection.session()
+                .get(Subject.class)).map(UserLoggedOut::new).map(this::fire);
             connection.responsePipeline()
                 .fire(new Close(), connection.upstreamChannel()).get();
             connection.close();
@@ -305,12 +306,64 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         }
     }
 
+    /**
+     * Invoked when a user has been authenticated.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
+    @Handler
+    public void onUserAuthenticated(UserAuthenticated event, Channel channel) {
+        var ctx = event.forLogin().associated(this, LoginContext.class)
+            .filter(c -> c.conlet() == this).orElse(null);
+        if (ctx == null) {
+            return;
+        }
+        var model = ctx.model;
+        model.setDialogOpen(false);
+        var connection = ctx.connection;
+        connection.session().put(Subject.class, event.subject());
+        connection.respond(new CloseModalDialog(type(), model.getConletId()));
+        connection.associated(PENDING_CONSOLE_PREPARED, ConsolePrepared.class)
+            .ifPresentOrElse(ConsolePrepared::resumeHandling,
+                () -> connection
+                    .respond(new SimpleConsoleCommand("reload")));
+    }
+
     @Override
     protected boolean doSetLocale(SetLocale event, ConsoleConnection channel,
             String conletId) throws Exception {
         return stateFromSession(channel.session(),
             type() + TYPE_INSTANCE_SEPARATOR + "Singleton")
                 .map(model -> !model.isDialogOpen()).orElse(true);
+    }
+
+    /**
+     * The context to preserve during the authentication process.
+     */
+    private class LoginContext {
+        public final ConsoleConnection connection;
+        public final AccountModel model;
+
+        /**
+         * Instantiates a new oidc context.
+         *
+         * @param connection the connection
+         * @param model the model
+         */
+        public LoginContext(ConsoleConnection connection, AccountModel model) {
+            this.connection = connection;
+            this.model = model;
+        }
+
+        /**
+         * Returns the conlet (the outer class).
+         *
+         * @return the login conlet
+         */
+        public LoginConlet conlet() {
+            return LoginConlet.this;
+        }
     }
 
     /**
