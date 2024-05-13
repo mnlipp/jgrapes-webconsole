@@ -66,9 +66,9 @@ import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.SetLocale;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
+import org.jgrapes.webconsole.base.events.UserAuthenticated;
+import org.jgrapes.webconsole.base.events.UserLoggedOut;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
-import org.jgrapes.webconsole.rbac.UserAuthenticated;
-import org.jgrapes.webconsole.rbac.UserLoggedOut;
 
 /**
  * A login conlet for OIDC based logins with a fallback to password 

@@ -1,6 +1,5 @@
 dependencies {
 	api project(':org.jgrapes.webconsole.base')
-	api project(':org.jgrapes.webconsole.rbac')
 	implementation 'at.favre.lib:bcrypt:[0.10.2,0.11)'
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jgwcvuecomponents')

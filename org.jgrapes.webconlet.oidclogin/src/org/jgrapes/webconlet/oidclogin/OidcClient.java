@@ -71,7 +71,7 @@ import org.jgrapes.io.util.events.DataInput;
 import org.jgrapes.util.events.ConfigurationUpdate;
 import org.jgrapes.webconsole.base.ConsoleRole;
 import org.jgrapes.webconsole.base.ConsoleUser;
-import org.jgrapes.webconsole.rbac.UserAuthenticated;
+import org.jgrapes.webconsole.base.events.UserAuthenticated;
 
 /**
  * Helper component for {@link LoginConlet} that handles the

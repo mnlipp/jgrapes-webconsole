@@ -24,6 +24,8 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.webconsole.base.ConsoleRole;
 import org.jgrapes.webconsole.base.ConsoleUser;
+import org.jgrapes.webconsole.base.events.UserAuthenticated;
+import org.jgrapes.webconsole.base.events.UserLoggedOut;
 
 /**
  * A component that writes user authentication and log out events to the log.

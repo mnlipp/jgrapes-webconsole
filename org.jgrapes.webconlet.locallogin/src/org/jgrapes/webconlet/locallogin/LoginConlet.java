@@ -62,9 +62,9 @@ import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.events.SetLocale;
 import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
+import org.jgrapes.webconsole.base.events.UserAuthenticated;
+import org.jgrapes.webconsole.base.events.UserLoggedOut;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
-import org.jgrapes.webconsole.rbac.UserAuthenticated;
-import org.jgrapes.webconsole.rbac.UserLoggedOut;
 
 /**
  * As simple login conlet for password based logins. The users

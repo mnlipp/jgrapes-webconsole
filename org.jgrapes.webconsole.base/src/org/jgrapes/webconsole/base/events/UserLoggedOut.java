@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jgrapes.webconsole.rbac;
+package org.jgrapes.webconsole.base.events;
 
 import javax.security.auth.Subject;
 import org.jgrapes.core.Event;

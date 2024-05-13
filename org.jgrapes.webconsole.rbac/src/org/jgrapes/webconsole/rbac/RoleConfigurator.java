@@ -35,6 +35,7 @@ import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.util.events.ConfigurationUpdate;
 import org.jgrapes.webconsole.base.ConsoleRole;
 import org.jgrapes.webconsole.base.ConsoleUser;
+import org.jgrapes.webconsole.base.events.UserAuthenticated;
 
 /**
  * Configures roles (of type {@link ConsoleRole)} 
