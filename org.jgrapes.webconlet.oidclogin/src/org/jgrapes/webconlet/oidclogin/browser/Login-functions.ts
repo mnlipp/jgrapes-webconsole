@@ -233,7 +233,7 @@ let openOidcDialog = function(dialogDom: HTMLElement, isUpdate: boolean) {
 
 window.orgJGrapesOidcLogin.openDialog 
     = function(dialogDom: HTMLElement, isUpdate: boolean) {
-      if (window.orgJGrapesOidcLogin.providers.size === 0) {
+      if (window.orgJGrapesOidcLogin.providers.length === 0) {
           openLocalDialog(dialogDom, isUpdate);
           return;
       }
