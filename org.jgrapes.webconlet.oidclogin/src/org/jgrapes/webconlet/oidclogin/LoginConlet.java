@@ -99,10 +99,10 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  * Roles are created from the ID token's claim `roles`. The latter
  * has usually to be added in the provider's configuration. Of course,
  * roles can also be configured independently based on the user id
- * by using another component such as the {@link RoleConfigurator}.
+ * by using another component.
  * 
  * The component requires that an instance of {@link OidcClient}
- * handles the {@link StartOidcClient} events fired on the component's
+ * handles the {@link StartOidcLogin} events fired on the component's
  * channel.
  * 
  * As a fallback, local users can be configured as property "users":
@@ -447,7 +447,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
      *
      * @param event the event
      * @param channel the channel
-     * @param model the conlet id
+     * @param conletId the conlet id
      * @return true, if successful
      * @throws Exception the exception
      */
@@ -496,8 +496,8 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
         /**
          * Creates a new model with the given type and id.
-         * 
-         * @param model the web console component id
+         *
+         * @param conletId the conlet id
          */
         @ConstructorProperties({ "model" })
         public AccountModel(String conletId) {

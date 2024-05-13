@@ -46,7 +46,6 @@ public class OidcProviderData {
      *
      * @param name the name
      * @param displayName the display name
-     * @param configurationEndpoint the configuration URL
      */
     public OidcProviderData(@JsonProperty("name") String name,
             @JsonProperty("displayName") String displayName) {
@@ -157,7 +156,7 @@ public class OidcProviderData {
     /**
      * Sets the authorization endpoint.
      *
-     * @param authorizationEndpoint the new authorization endpoint
+     * @param authorizationEp the new authorization endpoint
      */
     public void setAuthorizationEndpoint(URL authorizationEp) {
         this.authorizationEndpoint = authorizationEp;
