@@ -109,8 +109,7 @@ public class NotifyConletView extends ConsoleCommand {
             .append(" [conletId=").append(conletId)
             .append(", method=").append(method);
         if (channels() != null) {
-            builder.append(", channels=");
-            builder.append(Channel.toString(channels()));
+            builder.append(", channels=").append(Channel.toString(channels()));
         }
         builder.append(']');
         return builder.toString();

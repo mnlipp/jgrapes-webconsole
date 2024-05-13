@@ -87,6 +87,7 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
      * @param channelReplacements the channel replacements (see
      * {@link Component})
      */
+    @SuppressWarnings("PMD.LooseCoupling")
     public FreeMarkerConlet(Channel componentChannel,
             ChannelReplacements channelReplacements) {
         super(componentChannel, channelReplacements);

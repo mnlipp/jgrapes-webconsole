@@ -22,6 +22,8 @@ dependencies {
     implementation project(':org.jgrapes.webconsole.bootstrap4')
     implementation project(':org.jgrapes.webconsole.jqueryui')
     implementation project(':org.jgrapes.webconlet.markdowndisplay')
+    implementation project(':org.jgrapes.webconlet.locallogin')
+    implementation project(':org.jgrapes.webconlet.oidclogin')
     runtimeOnly 'com.electronwill.night-config:yaml:[3.6.7,3.7)'    
     runtimeOnly 'org.eclipse.angus:angus-activation:[1.0.0,2.0.0)'
     // Used by the examples...
@@ -29,7 +31,6 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.chartjs')
     runtimeOnly project(':org.jgrapes.webconsole.provider.markdownit')
     runtimeOnly project(':org.jgrapes.webconsole.provider.vue')
-    runtimeOnly project(':org.jgrapes.webconlet.locallogin')
     runtimeOnly project(':org.jgrapes.webconlet.examples.helloworld')
     runtimeOnly project(':org.jgrapes.webconlet.examples.formtest')
     runtimeOnly project(':org.jgrapes.webconlet.examples.styletest')

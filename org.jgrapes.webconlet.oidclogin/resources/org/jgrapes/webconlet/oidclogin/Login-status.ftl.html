@@ -1,0 +1,10 @@
+<div class="oidcLogin-status"
+    data-jgwc-on-load="orgJGrapesOidcLogin.initStatus"
+    data-jgwc-on-unload="JGConsole.jgwc.unmountVueApps"
+    data-conlet-state="${conletProperties.state}">
+    <span v-if="!name">{{ localize("Log in") }}</span>
+    <aash-dropdown-menu v-else
+        :id="'Login-status'" :label="name" :l10n="localize" :action="action"        
+        :items="[['Log out', 'logout']]">
+    </aash-dropdown-menu>
+</div>

@@ -182,13 +182,12 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
                     return cachedResult;
                 }
                 final Collator coll = Collator.getInstance(locale);
-                final Comparator<LanguageInfo> comp
-                    = new Comparator<LanguageInfo>() {
-                        @Override
-                        public int compare(LanguageInfo o1, LanguageInfo o2) { // NOPMD
-                            return coll.compare(o1.getLabel(), o2.getLabel());
-                        }
-                    };
+                final Comparator<LanguageInfo> comp = new Comparator<>() {
+                    @Override
+                    public int compare(LanguageInfo o1, LanguageInfo o2) { // NOPMD
+                        return coll.compare(o1.getLabel(), o2.getLabel());
+                    }
+                };
                 return cachedResult = supportedLocales().entrySet().stream()
                     .map(entry -> new LanguageInfo(entry.getKey(),
                         entry.getValue()))

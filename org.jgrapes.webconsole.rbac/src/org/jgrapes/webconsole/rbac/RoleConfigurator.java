@@ -33,11 +33,9 @@ import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.util.events.ConfigurationUpdate;
-import org.jgrapes.webconsole.base.ConsoleConnection;
 import org.jgrapes.webconsole.base.ConsoleRole;
 import org.jgrapes.webconsole.base.ConsoleUser;
-import org.jgrapes.webconsole.base.WebConsoleUtils;
-import org.jgrapes.webconsole.base.events.ConsolePrepared;
+import org.jgrapes.webconsole.base.events.UserAuthenticated;
 
 /**
  * Configures roles (of type {@link ConsoleRole)} 
@@ -144,21 +142,14 @@ public class RoleConfigurator extends Component {
     }
 
     /**
-     * Sets the roles in the session's subject. The current user is 
-     * obtained from 
-     * {@link WebConsoleUtils#userFromSession(org.jgrapes.http.Session)}.
+     * Sets the roles in the subject with the authenticated user.
      *
      * @param event the event
      * @param channel the channel
      */
     @Handler(priority = 900)
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public void onConsolePrepared(ConsolePrepared event,
-            ConsoleConnection channel) {
-        Subject subject = (Subject) channel.session().get(Subject.class);
-        if (subject == null) {
-            return;
-        }
+    public void onUserAuthenticated(UserAuthenticated event, Channel channel) {
+        Subject subject = event.subject();
         if (replace) {
             for (var itr = subject.getPrincipals().iterator(); itr.hasNext();) {
                 if (itr.next() instanceof ConsoleRole) {
@@ -167,10 +158,11 @@ public class RoleConfigurator extends Component {
             }
         }
         Stream.concat(
-            WebConsoleUtils.userFromSession(channel.session())
-                .map(ConsoleUser::getName).stream(),
+            subject.getPrincipals(ConsoleUser.class).stream()
+                .findFirst().map(ConsoleUser::getName).stream(),
             Stream.of("*")).map(roles::get).filter(Objects::nonNull)
             .flatMap(Set::stream).map(ConsoleRole::new)
             .forEach(p -> subject.getPrincipals().add(p));
+        event.by("Role Configurator");
     }
 }

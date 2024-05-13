@@ -308,7 +308,7 @@ public class WebConsole extends Component {
 
         @Override
         public String getComponentPath() {
-            return console().map(mgr -> mgr.componentPath())
+            return console().map(Component::componentPath)
                 .orElse("<removed>");
         }
 
@@ -366,7 +366,7 @@ public class WebConsole extends Component {
      * Provides an MBean view of the console.
      */
     @SuppressWarnings("PMD.CommentRequired")
-    private static class MBeanView implements WebConsoleSummaryMXBean {
+    private static final class MBeanView implements WebConsoleSummaryMXBean {
 
         private static Set<WebConsoleInfo> consoleInfos = new HashSet<>();
 

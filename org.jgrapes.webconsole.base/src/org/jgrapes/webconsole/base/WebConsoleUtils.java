@@ -126,8 +126,7 @@ public final class WebConsoleUtils {
         String newQuery = oldQuery.entrySet().stream()
             .map(entry -> entry.getValue().stream()
                 .map(
-                    value -> WebConsoleUtils.isoEncode(entry.getKey()) + "="
-                        + WebConsoleUtils.isoEncode(value))
+                    value -> isoEncode(entry.getKey()) + "=" + isoEncode(value))
                 .collect(Collectors.joining("&")))
             .collect(Collectors.joining("&"));
         // When constructing the new URI, we cannot pass the newQuery
