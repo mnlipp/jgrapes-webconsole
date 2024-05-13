@@ -74,9 +74,8 @@ public class SimpleConsoleCommand extends ConsoleCommand {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(Components.objectName(this))
-            .append(" [method=")
+        StringBuilder builder = new StringBuilder(50);
+        builder.append(Components.objectName(this)).append(" [method=")
             .append(method);
         if (channels() != null) {
             builder.append(", channels=")

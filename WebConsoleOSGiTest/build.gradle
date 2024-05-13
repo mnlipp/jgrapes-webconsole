@@ -86,6 +86,6 @@ eclipse {
         containers 'aQute.bnd.classpath.container'
     }
     jdt {
-        javaRuntimeName = "JavaSE-11"
+        javaRuntimeName = "JavaSE-17"
     }
 }

@@ -37,19 +37,18 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
 import java.util.logging.Level;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import org.jgrapes.core.Channel;
-import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.NamedChannel;
 import org.jgrapes.core.annotation.Handler;
+import org.jgrapes.core.events.Error;
 import org.jgrapes.core.events.HandlingError;
 import org.jgrapes.core.events.Stop;
+import org.jgrapes.http.HttpConnector;
 import org.jgrapes.http.HttpServer;
 import org.jgrapes.http.InMemorySessionManager;
 import org.jgrapes.http.LanguageSelector;
@@ -58,10 +57,15 @@ import org.jgrapes.http.events.Request;
 import org.jgrapes.io.FileStorage;
 import org.jgrapes.io.NioDispatcher;
 import org.jgrapes.io.util.PermitsPool;
+import org.jgrapes.net.SocketConnector;
 import org.jgrapes.net.SocketServer;
 import org.jgrapes.net.SslCodec;
 import org.jgrapes.util.ComponentCollector;
+import org.jgrapes.util.FileSystemWatcher;
 import org.jgrapes.util.YamlConfigurationStore;
+import org.jgrapes.util.events.WatchFile;
+import org.jgrapes.webconlet.oidclogin.LoginConlet;
+import org.jgrapes.webconlet.oidclogin.OidcClient;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
@@ -72,6 +76,7 @@ import org.jgrapes.webconsole.bootstrap4.Bootstrap4Weblet;
 import org.jgrapes.webconsole.jqueryui.JQueryUiWeblet;
 import org.jgrapes.webconsole.rbac.RoleConfigurator;
 import org.jgrapes.webconsole.rbac.RoleConletFilter;
+import org.jgrapes.webconsole.rbac.UserLogger;
 import org.jgrapes.webconsole.vuejs.VueJsConsoleWeblet;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -88,8 +93,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
      * Instantiates a new http web console demo.
      */
     public WebConsoleTest() {
-        super(new ClassChannel() {
-        });
+        super(new NamedChannel("app"));
     }
 
     /**
@@ -100,10 +104,21 @@ public class WebConsoleTest extends Component implements BundleActivator {
     @Handler(channels = Channel.class, priority = -10_000)
     @SuppressWarnings("PMD.GuardLogStatement")
     public void onHandlingError(HandlingError event) {
-        logger.log(Level.WARNING, event.throwable(),
+        logger.log(Level.SEVERE, event.throwable(),
             () -> "Problem invoking handler with " + event.event() + ": "
                 + event.message());
         event.stop();
+    }
+
+    /**
+     * Log the exception when a handling error is reported.
+     *
+     * @param event the event
+     */
+    @Handler(channels = Channel.class, priority = -11_000)
+    @SuppressWarnings("PMD.GuardLogStatement")
+    public void onError(Error event) {
+        logger.severe(() -> event.toString());
     }
 
     /*
@@ -117,16 +132,19 @@ public class WebConsoleTest extends Component implements BundleActivator {
         logger.info(() -> "Starting " + WebConsoleTest.class.getSimpleName());
         // The demo component is the application
         app = new WebConsoleTest();
-        // Support Json configuration
-        app.attach(
-            new YamlConfigurationStore(app, new File("console-config.yaml")));
-        // Attach a general nio dispatcher
+        // Attach a general nio dispatcher and a file system watcher
         app.attach(new NioDispatcher());
+        app.attach(new FileSystemWatcher(app.channel()));
+
+        // Support YAML configuration (and watch it)
+        var cfgFile = new File("console-config.yaml");
+        app.attach(new YamlConfigurationStore(app.channel(), cfgFile, false));
+        app.fire(new WatchFile(cfgFile.toPath()));
 
         // Network level unencrypted channel.
-        Channel httpTransport = new NamedChannel("httpTransport");
-        // Create a TCP server listening on port 8888
-        app.attach(new SocketServer(httpTransport)
+        Channel guiTransportChannel = new NamedChannel("guiTransport");
+        // Create a TCP server listening on port 9888
+        app.attach(new SocketServer(guiTransportChannel)
             .setServerAddress(new InetSocketAddress(9888)));
 
         // Create TLS "converter"
@@ -138,47 +156,59 @@ public class WebConsoleTest extends Component implements BundleActivator {
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(
             KeyManagerFactory.getDefaultAlgorithm());
         kmf.init(serverStore, "nopass".toCharArray());
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+        SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
         sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
         // Create a TCP server for SSL
         Channel securedNetwork = app.attach(
             new SocketServer().setServerAddress(new InetSocketAddress(5443))
                 .setBacklog(3000).setConnectionLimiter(new PermitsPool(50)));
-        app.attach(new SslCodec(httpTransport, securedNetwork, sslContext));
+        app.attach(
+            new SslCodec(guiTransportChannel, securedNetwork, sslContext));
 
         // Create an HTTP server as converter between transport and application
         // layer.
-        app.attach(new HttpServer(app.channel(),
-            httpTransport, Request.In.Get.class, Request.In.Post.class));
+        Channel guiHttpChannel = new NamedChannel("guiHttp");
+        app.attach(new HttpServer(guiHttpChannel, guiTransportChannel,
+            Request.In.Get.class, Request.In.Post.class));
 
         // Build application layer
-        app.attach(new LanguageSelector(app.channel()));
-        app.attach(new FileStorage(app.channel(), 65_536));
-        app.attach(new StaticContentDispatcher(app.channel(),
+        app.attach(new LanguageSelector(guiHttpChannel));
+        app.attach(new FileStorage(guiHttpChannel, 65_536));
+        app.attach(new StaticContentDispatcher(guiHttpChannel,
             "/**", Paths.get("demo-resources/static-content").toUri()));
-        app.attach(new StaticContentDispatcher(app.channel(),
+        app.attach(new StaticContentDispatcher(guiHttpChannel,
             "/doc|**", Paths.get("../../jgrapes.gh-pages/javadoc").toUri()));
-        app.attach(new PostProcessor(app.channel()));
-        app.attach(new WsEchoServer(app.channel()));
+        app.attach(new PostProcessor(guiHttpChannel));
+        app.attach(new WsEchoServer(guiHttpChannel));
 
-        createJQueryUiConsole();
-        createBootstrap4Console();
-        createVueJsConsole();
+        // Create network channels for client requests.
+        Channel requestChannel = app.attach(new SocketConnector(SELF));
+        Channel secReqChannel
+            = app.attach(new SslCodec(SELF, requestChannel, true));
+        // Support for making HTTP requests
+        app.attach(new HttpConnector(guiHttpChannel, requestChannel,
+            secReqChannel));
+
+        createJQueryUiConsole(guiHttpChannel);
+        createBootstrap4Console(guiHttpChannel);
+        createVueJsConsole(guiHttpChannel);
         Components.start(app);
     }
 
     @SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
         "PMD.TooFewBranchesForASwitchStatement" })
-    private void createJQueryUiConsole() throws URISyntaxException {
-        app.attach(new InMemorySessionManager(app.channel(), "/jqconsole")
+    private void createJQueryUiConsole(Channel guiHttpChannel)
+            throws URISyntaxException {
+        app.attach(new InMemorySessionManager(guiHttpChannel, "/jqconsole")
             .setIdName("id-jq"));
         ConsoleWeblet consoleWeblet
-            = app.attach(new JQueryUiWeblet(app.channel(), Channel.SELF,
+            = app.attach(new JQueryUiWeblet(guiHttpChannel, Channel.SELF,
                 new URI("/jqconsole/")))
                 .prependResourceBundleProvider(WebConsoleTest.class)
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
+
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
@@ -190,8 +220,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console.channel(), type -> {
                 switch (type) {
-                case "org.jgrapes.webconlet.examples.login.LoginConlet":
-                    return Collections.emptyList();
                 default:
                     return Arrays.asList(Collections.emptyMap());
                 }
@@ -199,21 +227,27 @@ public class WebConsoleTest extends Component implements BundleActivator {
     }
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createBootstrap4Console() throws URISyntaxException {
-        app.attach(new InMemorySessionManager(app.channel(), "/b4console")
+    private void createBootstrap4Console(Channel guiHttpChannel)
+            throws URISyntaxException {
+        app.attach(new InMemorySessionManager(guiHttpChannel, "/b4console")
             .setIdName("id-b4"));
         ConsoleWeblet consoleWeblet
-            = app.attach(new Bootstrap4Weblet(app.channel(), Channel.SELF,
+            = app.attach(new Bootstrap4Weblet(guiHttpChannel, Channel.SELF,
                 new URI("/b4console/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleTest.class)
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
+
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
         console.attach(new AvoidEmptyPolicy(console.channel()));
+        console.attach(new RoleConfigurator(console.channel()));
+        console.attach(new RoleConletFilter(console.channel()));
+        console.attach(new org.jgrapes.webconlet.locallogin.LoginConlet(
+            console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
@@ -231,8 +265,6 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new ComponentCollector<>(
             ConletComponentFactory.class, console.channel(), type -> {
                 switch (type) {
-                case "org.jgrapes.webconlet.examples.login.LoginConlet":
-                    return Collections.emptyList();
                 default:
                     return Arrays.asList(Collections.emptyMap());
                 }
@@ -240,23 +272,30 @@ public class WebConsoleTest extends Component implements BundleActivator {
     }
 
     @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
-    private void createVueJsConsole() throws URISyntaxException, IOException {
-        app.attach(new InMemorySessionManager(app.channel(), "/vjconsole")
+    private void createVueJsConsole(Channel guiHttpChannel)
+            throws URISyntaxException, IOException {
+        app.attach(new InMemorySessionManager(guiHttpChannel, "/vjconsole")
             .setIdName("id-vj"));
         ConsoleWeblet consoleWeblet
-            = app.attach(new VueJsConsoleWeblet(app.channel(), Channel.SELF,
+            = app.attach(new VueJsConsoleWeblet(guiHttpChannel, Channel.SELF,
                 new URI("/vjconsole/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(WebConsoleTest.class)
                 .prependConsoleResourceProvider(WebConsoleTest.class);
         WebConsole console = consoleWeblet.console();
         consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
+
+        // More components
         console.attach(new BrowserLocalBackedKVStore(
             console.channel(), consoleWeblet.prefix().getPath()));
         console.attach(new KVStoreBasedConsolePolicy(console.channel()));
         console.attach(new AvoidEmptyPolicy(console.channel()));
         console.attach(new RoleConfigurator(console.channel()));
         console.attach(new RoleConletFilter(console.channel()));
+        console.attach(new LoginConlet(console.channel()));
+        console.attach(new OidcClient(console.channel(), guiHttpChannel,
+            guiHttpChannel, new URI("/vjconsole/oauth/callback"), 1500));
+        console.attach(new UserLogger(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
             PageResourceProviderFactory.class, console.channel(),
@@ -272,7 +311,12 @@ public class WebConsoleTest extends Component implements BundleActivator {
             }));
         // Add all available conlets
         console.attach(new ComponentCollector<>(
-            ConletComponentFactory.class, console.channel()));
+            ConletComponentFactory.class, console.channel(), type -> {
+                switch (type) {
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
     }
 
     /*

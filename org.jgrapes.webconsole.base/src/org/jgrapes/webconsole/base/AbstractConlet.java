@@ -45,7 +45,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jgrapes.core.Channel;
@@ -329,10 +328,8 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  */
 @SuppressWarnings({ "PMD.TooManyMethods",
     "PMD.EmptyMethodInAbstractClassShouldBeAbstract", "PMD.GodClass",
-    "PMD.ExcessiveImports" })
+    "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects" })
 public abstract class AbstractConlet<S> extends Component {
-
-    private final Logger logger = Logger.getLogger(getClass().getName());
 
     /** Separator used between type and instance when generating the id. */
     public static final String TYPE_INSTANCE_SEPARATOR = "~";
@@ -355,6 +352,21 @@ public abstract class AbstractConlet<S> extends Component {
     private Timer refreshTimer;
 
     /**
+     * Extract the conlet type from a conlet id.
+     *
+     * @param conletId the conlet id
+     * @return the type or {@code null} the conlet id does not contain
+     * a {@link TYPE_INSTANCE_SEPARATOR}
+     */
+    public static String typeFromId(String conletId) {
+        int sep = conletId.indexOf(TYPE_INSTANCE_SEPARATOR);
+        if (sep < 0) {
+            return null;
+        }
+        return conletId.substring(0, sep);
+    }
+
+    /**
      * Creates a new component that listens for new events
      * on the given channel.
      * 
@@ -372,6 +384,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param channelReplacements the channel replacements (see
      * {@link Component})
      */
+    @SuppressWarnings("PMD.LooseCoupling")
     public AbstractConlet(Channel channel,
             ChannelReplacements channelReplacements) {
         super(channel, channelReplacements);
@@ -545,6 +558,7 @@ public abstract class AbstractConlet<S> extends Component {
      *
      * @return the result
      */
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     protected Map<Locale, ResourceBundle> supportedLocales() {
         return supportedLocales.computeIfAbsent(getClass(), cls -> {
             ResourceBundle.clearCache(cls.getClassLoader());
@@ -714,7 +728,7 @@ public abstract class AbstractConlet<S> extends Component {
             conletViews(ConsoleConnection connection) {
         return conletInfosByConsoleConnection.getOrDefault(
             connection, Collections.emptyMap()).entrySet().stream()
-            .collect(Collectors.toMap(e -> e.getKey(),
+            .collect(Collectors.toMap(Entry::getKey,
                 e -> e.getValue().renderedAs));
     }
 
@@ -892,7 +906,7 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onConletDeleted(ConletDeleted event,
             ConsoleConnection connection) throws Exception {
-        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
+        if (!type().equals(typeFromId(event.conletId()))) {
             return;
         }
         String conletId = event.conletId();
@@ -961,7 +975,7 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onRenderConletRequest(RenderConletRequest event,
             ConsoleConnection connection) throws Exception {
-        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
+        if (!type().equals(typeFromId(event.conletId()))) {
             return;
         }
         Optional<S> state = stateFromSession(
@@ -1070,7 +1084,7 @@ public abstract class AbstractConlet<S> extends Component {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public final void onNotifyConletModel(NotifyConletModel event,
             ConsoleConnection connection) throws Exception {
-        if (!event.conletId().startsWith(type() + TYPE_INSTANCE_SEPARATOR)) {
+        if (!type().equals(typeFromId(event.conletId()))) {
             return;
         }
         Optional<S> state

@@ -97,7 +97,8 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * is replaced using the {@link ChannelReplacements} mechanism.
  */
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
-    "PMD.TooManyMethods", "PMD.GodClass", "PMD.DataflowAnomalyAnalysis" })
+    "PMD.TooManyMethods", "PMD.GodClass", "PMD.DataflowAnomalyAnalysis",
+    "PMD.CouplingBetweenObjects" })
 public abstract class ConsoleWeblet extends Component {
 
     private static final String CONSOLE_SESSION_IDS
@@ -170,6 +171,7 @@ public abstract class ConsoleWeblet extends Component {
                 0, prefix.getPath().length() - 1));
     }
 
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     private ConsoleWeblet(Channel webletChannel, WebConsole console) {
         super(webletChannel, ChannelReplacements.create()
             .add(ConsoleChannel.class, console.channel()));
@@ -340,6 +342,7 @@ public abstract class ConsoleWeblet extends Component {
     /**
      * Update the supported locales.
      */
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     protected final void updateSupportedLocales() {
         supportedLocales.clear();
         ResourceBundle.clearCache(ConsoleWeblet.class.getClassLoader());
@@ -436,9 +439,14 @@ public abstract class ConsoleWeblet extends Component {
     @RequestHandler(dynamic = true)
     public void onGet(Request.In.Get event, IOSubchannel channel)
             throws InterruptedException, IOException, ParseException {
+        // Already fulfilled?
+        if (event.fulfilled()) {
+            return;
+        }
+
+        // Request for console? (Only valid with session)
         URI requestUri = event.requestUri();
         int prefixSegs = requestPattern.matches(requestUri);
-        // Request for console? (Only valid with session)
         if (prefixSegs < 0) {
             return;
         }
@@ -451,8 +459,8 @@ public abstract class ConsoleWeblet extends Component {
         case "":
             // Because language is changed via websocket, locale cookie
             // may be out-dated
-            event.associated(Selection.class)
-                .ifPresent(selection -> selection.prefer(selection.get()[0]));
+//            event.associated(Selection.class)
+//                .ifPresent(selection -> selection.prefer(selection.get()[0]));
             // This is a console connection now (can be connected to)
             Session session = Session.from(event);
             UUID consoleConnectionId = UUID.randomUUID();
@@ -666,7 +674,7 @@ public abstract class ConsoleWeblet extends Component {
             .ifPresent(selection -> {
                 supportedLocales.keySet().stream()
                     .filter(lang -> lang.equals(event.locale())).findFirst()
-                    .ifPresent(lang -> selection.prefer(lang));
+                    .ifPresent(selection::prefer);
                 channel.respond(new SimpleConsoleCommand("setLocalesCookie",
                     Converters.SET_COOKIE_STRING
                         .get(selection.getCookieSameSite())
@@ -841,7 +849,7 @@ public abstract class ConsoleWeblet extends Component {
     /**
      * The implementation of {@link RenderSupport} used by this class.
      */
-    private class RenderSupportImpl implements RenderSupport {
+    private final class RenderSupportImpl implements RenderSupport {
 
         @Override
         public URI consoleBaseResource(URI uri) {

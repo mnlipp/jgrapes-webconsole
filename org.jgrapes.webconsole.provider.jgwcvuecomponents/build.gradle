@@ -37,7 +37,7 @@ task compileTs(type: NodeTask) {
     dependsOn ':org.jgrapes.webconsole.base:buildLib'
     dependsOn ':org.jgrapes.webconsole.provider.vue:prepareNpmLibs'
     dependsOn prepareAashLib
-    inputs.dir project.file('src')
+    inputs.files project.fileTree(dir: 'src', include: '**/*.ts')
     inputs.file project.file('tsconfig.json')
     inputs.file project.file('rollup.config.mjs')
     outputs.dir project.file('build/generated/resources')

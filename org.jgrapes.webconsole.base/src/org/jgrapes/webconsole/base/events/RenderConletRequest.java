@@ -19,6 +19,7 @@
 package org.jgrapes.webconsole.base.events;
 
 import java.util.Set;
+import org.jgrapes.webconsole.base.AbstractConlet;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 
@@ -65,6 +66,15 @@ public class RenderConletRequest
             String conletId, Set<RenderMode> renderModes) {
         super(renderSupport, renderModes);
         this.conletId = conletId;
+    }
+
+    /**
+     * Return the web console component type.
+     * 
+     * @return the web console component type
+     */
+    public String conletType() {
+        return AbstractConlet.typeFromId(conletId);
     }
 
     /**

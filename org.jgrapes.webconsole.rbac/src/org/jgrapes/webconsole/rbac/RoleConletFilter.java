@@ -36,6 +36,7 @@ import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsolePrepared;
+import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.UpdateConletType;
 
 /**
@@ -152,7 +153,8 @@ public class RoleConletFilter extends Component {
      * @param channel the channel
      */
     @Handler(priority = 800)
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops",
+        "PMD.AvoidLiteralsInIfCondition" })
     public void onConsolePrepared(ConsolePrepared event,
             ConsoleConnection channel) {
         var allowed = new HashSet<String>();
@@ -198,6 +200,22 @@ public class RoleConletFilter extends Component {
         if (!event.isFrontendRequest()) {
             return;
         }
+        var allowed = channel.associated(this, Set.class);
+        if (allowed.isEmpty() || !allowed.get().contains(event.conletType())) {
+            event.cancel(true);
+        }
+    }
+
+    /**
+     * If a role is withdrawn from a user, there may still be conlets in
+     * his stored layout that he is no longer allowed to use. 
+     *
+     * @param event the event
+     * @param channel the channel
+     */
+    @Handler(priority = 1000)
+    public void onRenderConletRequest(RenderConletRequest event,
+            ConsoleConnection channel) {
         var allowed = channel.associated(this, Set.class);
         if (allowed.isEmpty() || !allowed.get().contains(event.conletType())) {
             event.cancel(true);

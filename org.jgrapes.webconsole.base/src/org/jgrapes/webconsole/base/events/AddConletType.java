@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.jdrupes.json.JsonArray;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
@@ -250,9 +251,8 @@ public class AddConletType extends ConsoleCommand {
         toJson(writer, "addConletType", conletType(),
             displayNames().entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getKey().toLanguageTag(),
-                    e -> e.getValue())),
-            Arrays.stream(cssUris()).map(
-                uri -> uri.toString()).toArray(String[]::new),
+                    Entry::getValue)),
+            Arrays.stream(cssUris()).map(URI::toString).toArray(String[]::new),
             strArray, renderModes().stream().map(RenderMode::name)
                 .toArray(size -> new String[size]),
             pageComponents);
