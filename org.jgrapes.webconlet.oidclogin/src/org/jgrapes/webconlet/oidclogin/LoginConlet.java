@@ -37,6 +37,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.security.auth.Subject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
@@ -130,9 +132,9 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     private static final String PENDING_CONSOLE_PREPARED
         = "pendingConsolePrepared";
-    private final Map<String, OidcProviderData> providers
+    private Map<String, OidcProviderData> providers
         = new ConcurrentHashMap<>();
-    private final Map<String, Map<String, String>> users
+    private Map<String, Map<String, String>> users
         = new ConcurrentHashMap<>();
 
     /**
@@ -241,22 +243,17 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     @SuppressWarnings("unchecked")
     @Handler
     public void onConfigUpdate(ConfigurationUpdate event) {
-        event.structured(componentPath())
+        users = event.structured(componentPath())
             .map(c -> (List<Map<String, String>>) c.get("users"))
             .orElseGet(Collections::emptyList).stream()
-            .forEach(e -> {
-                var user = users.computeIfAbsent(e.get("name"),
-                    k -> new ConcurrentHashMap<>());
-                user.putAll(e);
-            });
+            .collect(Collectors.toMap(e -> e.get("name"), Function.identity()));
         ObjectMapper mapper = new ObjectMapper();
-        event.structured(componentPath())
+        providers = event.structured(componentPath())
             .map(c -> (List<Map<String, String>>) c.get("oidcProviders"))
             .orElseGet(Collections::emptyList).stream()
-            .forEach(e -> {
-                var data = mapper.convertValue(e, OidcProviderData.class);
-                providers.put(data.name(), data);
-            });
+            .map(e -> mapper.convertValue(e, OidcProviderData.class))
+            .collect(
+                Collectors.toMap(OidcProviderData::name, Function.identity()));
     }
 
     /**
