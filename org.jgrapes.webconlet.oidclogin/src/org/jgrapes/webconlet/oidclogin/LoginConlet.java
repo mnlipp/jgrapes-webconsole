@@ -61,6 +61,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.CloseModalDialog;
 import org.jgrapes.webconsole.base.events.ConsolePrepared;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
+import org.jgrapes.webconsole.base.events.DisplayNotification;
 import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.NotifyConletView;
 import org.jgrapes.webconsole.base.events.OpenModalDialog;
@@ -88,20 +89,41 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  *       # endpointEndpoint and the tokenEndpoint may be configured instead
  *       clientId: "WebConsoleTest"
  *       secret: "(unknown)"
- *         # The size of the popup window for the provider's dialog
- *         popup:
- *           # Either as size reletive to the browser window or in pixels
- *           # factor: 0.6
- *           width: 1600
- *           height: 600
+ *       # The size of the popup window for the provider's dialog
+ *       popup:
+ *         # Size of the popup windows for authentication. Either
+ *         # relative to the browser window's size or absolute in pixels
+ *         factor: 0.6
+ *         # width: 1600
+ *         # height: 600
+ *       # Only users with one of the roles listed here are allowed to login.
+ *       # The check is performed against the roles reported by the provider
+ *       # before any role mappings are applied (see below).
+ *       # An empty role name in this list allows users without any role 
+ *       # to login.
+ *       authorizedRoles:
+ *       - "admin"
+ *       - "user"
+ *       - ""
+ *       # Mappings to be applied to the preferred user name reported
+ *       # by the provider. The list is evaluated up to the first match.
+ *       userMappings:
+ *       - from: "(.*)"
+ *         to: "$1@oidc"
+ *       # Mappings to be applied to the role names reported by the 
+ *       # provider. The list is evaluated up to the first match.
+ *       roleMappings:
+ *       - from: "(.*)"
+ *         to: "$1@oidc"
  * ```
  * 
  * The user id of the authenticated user is taken from the ID token's
  * claim `preferred_username`, the display name from the claim `name`.
- * Roles are created from the ID token's claim `roles`. The latter
- * has usually to be added in the provider's configuration. Of course,
- * roles can also be configured independently based on the user id
- * by using another component.
+ * Roles are created from the ID token's claim `roles`. Reporting the
+ * latter has usually to be added in the provider's configuration. 
+ * Of course, roles can also be added independently based on the
+ * user id by using another component, thus separating the authentication
+ * by the OIDC provider from the role management. 
  * 
  * The component requires that an instance of {@link OidcClient}
  * handles the {@link StartOidcLogin} events fired on the component's
@@ -407,11 +429,33 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     @Handler
     public void onOpenLoginWindow(OpenLoginWindow event, Channel channel) {
         event.forLogin().associated(this, LoginContext.class)
-            .filter(ctx -> ctx.conlet() == this).ifPresent(ctx -> {
+            .ifPresent(ctx -> {
                 ctx.connection.respond(new NotifyConletView(type(),
                     ctx.model.getConletId(), "openLoginWindow",
                     event.uri().toString()));
             });
+    }
+
+    /**
+     * On oidc error.
+     *
+     * @param event the event
+     * @param channel the channel
+     */
+    @Handler
+    public void onOidcError(OidcError event, Channel channel) {
+        var ctx
+            = event.event().associated(this, LoginContext.class).orElse(null);
+        if (ctx == null) {
+            return;
+        }
+        var connection = ctx.connection;
+        var msg = event.kind() == OidcError.Kind.ACCESS_DENIED
+            ? resourceBundle(connection.locale()).getString("accessDenied")
+            : resourceBundle(connection.locale()).getString("oidcError");
+        connection.respond(new DisplayNotification("<span>"
+            + msg + "</span>").addOption("type", "Warning")
+                .addOption("autoClose", 5000));
     }
 
     /**
@@ -423,13 +467,13 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     @Handler
     public void onUserAuthenticated(UserAuthenticated event, Channel channel) {
         var ctx = event.forLogin().associated(this, LoginContext.class)
-            .filter(c -> c.conlet() == this).orElse(null);
+            .orElse(null);
         if (ctx == null) {
             return;
         }
+        var connection = ctx.connection;
         var model = ctx.model;
         model.setDialogOpen(false);
-        var connection = ctx.connection;
         connection.session().put(Subject.class, event.subject());
         connection.respond(new CloseModalDialog(type(), model.getConletId()));
         connection
@@ -472,15 +516,6 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
         public LoginContext(ConsoleConnection connection, AccountModel model) {
             this.connection = connection;
             this.model = model;
-        }
-
-        /**
-         * Returns the conlet (the outer class).
-         *
-         * @return the login conlet
-         */
-        public LoginConlet conlet() {
-            return LoginConlet.this;
         }
     }
 

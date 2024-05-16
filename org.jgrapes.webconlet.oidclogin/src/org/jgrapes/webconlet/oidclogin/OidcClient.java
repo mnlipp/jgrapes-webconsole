@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.security.auth.Subject;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
@@ -69,6 +70,7 @@ import org.jgrapes.io.util.JsonReader;
 import org.jgrapes.io.util.OutputSupplier;
 import org.jgrapes.io.util.events.DataInput;
 import org.jgrapes.util.events.ConfigurationUpdate;
+import org.jgrapes.webconlet.oidclogin.OidcError.Kind;
 import org.jgrapes.webconsole.base.ConsoleRole;
 import org.jgrapes.webconsole.base.ConsoleUser;
 import org.jgrapes.webconsole.base.events.UserAuthenticated;
@@ -330,6 +332,15 @@ public class OidcClient extends Component {
         logger.finer(() -> "Getting " + request);
         contexts.put(state, ctx);
         fire(new OpenLoginWindow(ctx.startEvent, request));
+
+        // Simple purging of left overs
+        var ageLimit = Instant.now().minusSeconds(60);
+        for (var itr = contexts.entrySet().iterator(); itr.hasNext();) {
+            var entry = itr.next();
+            if (entry.getValue().createdAt().isBefore(ageLimit)) {
+                itr.remove();
+            }
+        }
     }
 
     /**
@@ -390,36 +401,69 @@ public class OidcClient extends Component {
         // https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
         if (provider.issuer() != null
             && !provider.issuer().toString().equals(idData.get("iss"))) {
-            fire(new OidcError(ctx.startEvent, "ID token has invalid issuer."));
+            fire(new OidcError(ctx.startEvent, Kind.INVALID_ISSUER,
+                "ID token has invalid issuer."));
+            return;
         }
         if (idData.get("aud") instanceof List auds && !auds.contains(
-            provider.clientId())
-            || idData.get("aud") instanceof String aud
+            provider.clientId()) || idData.get("aud") instanceof String aud
                 && !aud.equals(provider.clientId())) {
-            fire(new OidcError(ctx.startEvent,
+            fire(new OidcError(ctx.startEvent, Kind.INVALID_AUDIENCE,
                 "ID token has invalid audience."));
+            return;
         }
-        if (idData.get("exp") instanceof String exp
-            && !Instant.now()
-                .isBefore(Instant.ofEpochSecond(Long.valueOf(exp)))) {
-            fire(new OidcError(ctx.startEvent, "ID token has expired."));
+        if (idData.get("exp") instanceof Integer exp
+            && !Instant.now().isBefore(Instant.ofEpochSecond(exp))) {
+            fire(new OidcError(ctx.startEvent, Kind.ID_TOKEN_EXPIRED,
+                "ID token has expired."));
+            return;
         }
         if (!idData.containsKey("preferred_username")) {
-            fire(new OidcError(ctx.startEvent,
+            fire(new OidcError(ctx.startEvent, Kind.PREFERRED_USERNAME_MISSING,
                 "ID token does not contain preferred_username."));
+            return;
+        }
+
+        // Check if allowed
+        var roles = Optional.ofNullable((List<String>) idData.get("roles"))
+            .orElse(Collections.emptyList());
+        if (!(roles.isEmpty() && provider.authorizedRoles().contains(""))
+            && !roles.stream().filter(r -> provider.authorizedRoles()
+                .contains(r)).findAny().isPresent()) {
+            // Not allowed
+            fire(new OidcError(ctx.startEvent, Kind.PREFERRED_USERNAME_MISSING,
+                "ID token does not contain preferred_username."));
+            event.stop();
         }
 
         // Success
+
         Subject subject = new Subject();
-        subject.getPrincipals()
-            .add(new ConsoleUser((String) idData.get("preferred_username"),
-                Optional.ofNullable((String) idData.get("name"))
-                    .orElse((String) idData.get("preferred_username"))));
-        for (var role : (List<String>) idData.get("roles")) {
-            subject.getPrincipals().add(new ConsoleRole(role));
+        subject.getPrincipals().add(new ConsoleUser(
+            mapName((String) idData.get("preferred_username"),
+                provider.userMappings(), provider.patternCache()),
+            Optional.ofNullable((String) idData.get("name"))
+                .orElse((String) idData.get("preferred_username"))));
+        for (var role : roles) {
+            subject.getPrincipals().add(new ConsoleRole(mapName(role,
+                provider.roleMappings(), provider.patternCache()), role));
         }
         fire(new UserAuthenticated(ctx.startEvent, subject).by(
             "OIDC Provider " + provider.name()));
+    }
+
+    private String mapName(String name, List<Map<String, String>> mappings,
+            Map<String, Pattern> patternCache) {
+        for (var mapping : mappings) {
+            @SuppressWarnings("PMD.LambdaCanBeMethodReference")
+            var pattern = patternCache.computeIfAbsent(mapping.get("from"),
+                k -> Pattern.compile(k));
+            var matcher = pattern.matcher(name);
+            if (matcher.matches()) {
+                return matcher.replaceFirst(mapping.get("to"));
+            }
+        }
+        return name;
     }
 
     /**
@@ -432,7 +476,9 @@ public class OidcClient extends Component {
     /**
      * The context information.
      */
+    @SuppressWarnings("PMD.DataClass")
     private class Context {
+        private final Instant createdAt = Instant.now();
         public final StartOidcLogin startEvent;
         public String code;
         public JsonWebToken idToken;
@@ -445,6 +491,15 @@ public class OidcClient extends Component {
         public Context(StartOidcLogin startEvent) {
             super();
             this.startEvent = startEvent;
+        }
+
+        /**
+         * Created at.
+         *
+         * @return the instant
+         */
+        public Instant createdAt() {
+            return createdAt;
         }
     }
 

@@ -18,6 +18,8 @@
 
 package org.jgrapes.webconlet.oidclogin;
 
+import org.jgrapes.core.Channel;
+import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.events.Error;
 
@@ -28,44 +30,91 @@ import org.jgrapes.core.events.Error;
 public class OidcError extends Error {
 
     /**
+     * The error kind.
+     */
+    @SuppressWarnings("PMD.LongVariable")
+    public enum Kind {
+        INVALID_ISSUER, INVALID_AUDIENCE, ID_TOKEN_EXPIRED,
+        PREFERRED_USERNAME_MISSING, ACCESS_DENIED
+    }
+
+    private final Kind kind;
+
+    /**
      * Instantiates a new oidc authentication failure.
      *
      * @param event the event
+     * @param kind the kind
      */
-    public OidcError(Error event) {
+    public OidcError(Error event, Kind kind) {
         super(event);
+        this.kind = kind;
     }
 
     /**
      * Instantiates a new oidc authentication failure.
      *
      * @param event the event
+     * @param kind the kind
      * @param message the message
      * @param throwable the throwable
      */
-    public OidcError(Event<?> event, String message,
+    public OidcError(Event<?> event, Kind kind, String message,
             Throwable throwable) {
         super(event, message, throwable);
+        this.kind = kind;
     }
 
     /**
      * Instantiates a new oidc authentication failure.
      *
      * @param event the event
+     * @param kind the kind
      * @param message the message
      */
-    public OidcError(Event<?> event, String message) {
+    public OidcError(Event<?> event, Kind kind, String message) {
         super(event, message);
+        this.kind = kind;
     }
 
     /**
      * Instantiates a new oidc authentication failure.
      *
      * @param event the event
+     * @param kind the kind
      * @param throwable the throwable
      */
-    public OidcError(Event<?> event, Throwable throwable) {
+    public OidcError(Event<?> event, Kind kind, Throwable throwable) {
         super(event, throwable);
+        this.kind = kind;
     }
 
+    /**
+     * Gets the kind.
+     *
+     * @return the kind
+     */
+    public Kind kind() {
+        return kind;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(50);
+        builder.append(Components.objectName(this)).append(" [")
+            .append(kind()).append(" (\"").append(message()).append("\")");
+        if (channels().length > 0) {
+            builder.append(", channels=").append(Channel.toString(channels()));
+        }
+        if (event() != null) {
+            builder.append(", caused by: ").append(event().toString());
+        }
+        builder.append(']');
+        return builder.toString();
+    }
 }

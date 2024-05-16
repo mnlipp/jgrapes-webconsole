@@ -20,8 +20,11 @@ package org.jgrapes.webconlet.oidclogin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * The Class OidcProviderData.
@@ -40,6 +43,11 @@ public class OidcProviderData {
     private URL userinfoEndpoint;
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     private Map<String, String> popup = new HashMap<>();
+    private List<String> authorizedRoles = Collections.emptyList();
+    private List<Map<String, String>> userMappings = Collections.emptyList();
+    private List<Map<String, String>> roleMappings = Collections.emptyList();
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    private final Map<String, Pattern> patternCache = new HashMap<>();
 
     /**
      * Instantiates a new oidc provider data.
@@ -222,4 +230,66 @@ public class OidcProviderData {
         this.popup = popup;
     }
 
+    /**
+     * Gets the authorized roles.
+     *
+     * @return the authorized roles
+     */
+    public List<String> authorizedRoles() {
+        return authorizedRoles;
+    }
+
+    /**
+     * Sets the authorized roles.
+     *
+     * @param authorizedRoles the authorized roles
+     */
+    public void setAuthorizedRoles(List<String> authorizedRoles) {
+        this.authorizedRoles = authorizedRoles;
+    }
+
+    /**
+     * Gets the user mappings.
+     *
+     * @return the user mappings
+     */
+    public List<Map<String, String>> userMappings() {
+        return userMappings;
+    }
+
+    /**
+     * Sets the user mappings.
+     *
+     * @param userMappings the user mappings
+     */
+    public void setUserMappings(List<Map<String, String>> userMappings) {
+        this.userMappings = userMappings;
+    }
+
+    /**
+     * Gets the role mappings.
+     *
+     * @return the role mappings
+     */
+    public List<Map<String, String>> roleMappings() {
+        return roleMappings;
+    }
+
+    /**
+     * Sets the role mappings.
+     *
+     * @param roleMappings the role mappings
+     */
+    public void setRoleMappings(List<Map<String, String>> roleMappings) {
+        this.roleMappings = roleMappings;
+    }
+
+    /**
+     * Gets the pattern cache.
+     *
+     * @return the pattern cache
+     */
+    public Map<String, Pattern> patternCache() {
+        return patternCache;
+    }
 }
