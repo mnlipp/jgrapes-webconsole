@@ -2,7 +2,8 @@
 
   <!-- Top navigation -->
   <span><#include "console-brand.ftl.html"></span>
-  <aash-dropdown-menu v-bind:id="'conlet-menu'" 
+  <aash-dropdown-menu v-if=" this.$consoleRenderer.conletMenuItems().length > 0"
+    v-bind:id="'conlet-menu'" 
     v-bind:label="'<span class=\'fa fa-puzzle-piece\'></span>'"
     v-bind:items="this.$consoleRenderer.conletMenuItems()"
     v-bind:action="function(row) { this.$consoleRenderer.console.addConlet(row[1], row[2]) }"></aash-dropdown-menu>
