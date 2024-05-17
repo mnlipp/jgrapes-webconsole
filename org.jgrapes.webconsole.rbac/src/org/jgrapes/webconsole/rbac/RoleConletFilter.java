@@ -32,6 +32,7 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.util.events.ConfigurationUpdate;
 import org.jgrapes.webconsole.base.ConsoleConnection;
+import org.jgrapes.webconsole.base.ConsoleRole;
 import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
@@ -44,6 +45,13 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
  */
 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 public class RoleConletFilter extends Component {
+
+    /**
+     * The possible permissions.
+     */
+    private enum Permission {
+        ADD, RENDER
+    }
 
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final Map<String, List<String>> acl = new HashMap<>();
@@ -74,7 +82,8 @@ public class RoleConletFilter extends Component {
      * {@link Manager#fire(Event, Channel...)} sends the event to
      * @param properties the properties used to configure the component
      */
-    @SuppressWarnings({ "unchecked", "PMD.ConstructorCallsOverridableMethod" })
+    @SuppressWarnings({ "PMD.ConstructorCallsOverridableMethod", "unchecked",
+        "PMD.AvoidDuplicateLiterals" })
     public RoleConletFilter(Channel componentChannel,
             Map<?, ?> properties) {
         super(componentChannel);
@@ -154,32 +163,65 @@ public class RoleConletFilter extends Component {
      */
     @Handler(priority = 800)
     @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops",
-        "PMD.AvoidLiteralsInIfCondition" })
+        "PMD.AvoidLiteralsInIfCondition", "PMD.CognitiveComplexity" })
     public void onConsolePrepared(ConsolePrepared event,
             ConsoleConnection channel) {
-        var allowed = new HashSet<String>();
-        WebConsoleUtils.rolesFromSession(channel.session()).forEach(
-            role -> {
-                var maybe = new HashSet<>(knownTypes);
-                acl.getOrDefault(role.getName(), Collections.emptyList())
-                    .forEach(p -> {
-                        if (p.startsWith("!")) {
-                            maybe.remove(p.substring(1).trim());
-                        } else if ("*".equals(p)) {
-                            allowed.addAll(maybe);
-                        } else {
-                            if (knownTypes.contains(p)) {
-                                allowed.add(p);
-                            }
-                        }
-                    });
-            });
-        channel.setAssociated(this, allowed);
-        Set<String> toRemove = new HashSet<>(knownTypes);
-        toRemove.removeAll(allowed);
-        for (var type : toRemove) {
-            channel.respond(new UpdateConletType(type));
+        var permissions = new HashMap<String, Set<Permission>>();
+        for (var conletType : knownTypes) {
+            var conletPerms = new HashSet<Permission>();
+            for (var role : WebConsoleUtils
+                .rolesFromSession(channel.session())) {
+                conletPerms.addAll(permissionsFromRole(conletType, role));
+            }
+            permissions.put(conletType, conletPerms);
         }
+
+        // Disable non-addable conlet types in GUI
+        for (var e : permissions.entrySet()) {
+            if (!e.getValue().contains(Permission.ADD)) {
+                channel.respond(new UpdateConletType(e.getKey()));
+            }
+        }
+        channel.setAssociated(this, permissions);
+    }
+
+    /**
+     * Evaluate the permissions contributed by the given role for the
+     * given conlet type.
+     *
+     * @param conletType the conlet type
+     * @param role the role
+     * @return the sets the
+     */
+    @SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop")
+    private Set<Permission> permissionsFromRole(String conletType,
+            ConsoleRole role) {
+        // Start with defaults
+        for (var rule : acl.getOrDefault(role.getName(),
+            Collections.emptyList())) {
+            // Extract conlet type
+            int pos = 0;
+            while (rule.charAt(pos) == '!' || rule.charAt(pos) == '-') {
+                pos++;
+            }
+            if (rule.startsWith("*")) {
+                return Set.of(Permission.ADD, Permission.RENDER);
+            }
+            if (!conletType.equals(rule.substring(pos).trim())) {
+                // Rule does not apply to this type
+                continue;
+            }
+            if (rule.startsWith("--")) {
+                return Collections.emptySet();
+            }
+            if (rule.startsWith("!") || rule.startsWith("-")) {
+                return Set.of(Permission.RENDER);
+            }
+            // Rule is type name and thus allows everything
+            return Set.of(Permission.ADD, Permission.RENDER);
+        }
+        // Default permissions
+        return Set.of(Permission.RENDER);
     }
 
     /**
@@ -197,13 +239,16 @@ public class RoleConletFilter extends Component {
      */
     @Handler(priority = 1000)
     public void onAddConlet(AddConletRequest event, ConsoleConnection channel) {
-        if (!event.isFrontendRequest()) {
-            return;
-        }
-        var allowed = channel.associated(this, Set.class);
-        if (allowed.isEmpty() || !allowed.get().contains(event.conletType())) {
-            event.cancel(true);
-        }
+        channel.associated(this, Map.class).ifPresent(aP -> {
+            @SuppressWarnings("unchecked")
+            var allPerms = (Map<String, Set<Permission>>) aP;
+            var perms = allPerms.getOrDefault(event.conletType(),
+                Collections.emptySet());
+            if (event.isFrontendRequest() ? !perms.contains(Permission.ADD)
+                : !perms.contains(Permission.RENDER)) {
+                event.cancel(true);
+            }
+        });
     }
 
     /**
@@ -216,9 +261,14 @@ public class RoleConletFilter extends Component {
     @Handler(priority = 1000)
     public void onRenderConletRequest(RenderConletRequest event,
             ConsoleConnection channel) {
-        var allowed = channel.associated(this, Set.class);
-        if (allowed.isEmpty() || !allowed.get().contains(event.conletType())) {
-            event.cancel(true);
-        }
+        channel.associated(this, Map.class).ifPresent(aP -> {
+            @SuppressWarnings("unchecked")
+            var allPerms = (Map<String, Set<Permission>>) aP;
+            var perms = allPerms.getOrDefault(event.conletType(),
+                Collections.emptySet());
+            if (perms.isEmpty()) {
+                event.cancel(true);
+            }
+        });
     }
 }
