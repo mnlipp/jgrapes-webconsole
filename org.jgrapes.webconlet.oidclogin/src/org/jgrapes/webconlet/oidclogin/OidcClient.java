@@ -403,6 +403,7 @@ public class OidcClient extends Component {
             && !provider.issuer().toString().equals(idData.get("iss"))) {
             fire(new OidcError(ctx.startEvent, Kind.INVALID_ISSUER,
                 "ID token has invalid issuer."));
+            event.stop();
             return;
         }
         if (idData.get("aud") instanceof List auds && !auds.contains(
@@ -410,17 +411,20 @@ public class OidcClient extends Component {
                 && !aud.equals(provider.clientId())) {
             fire(new OidcError(ctx.startEvent, Kind.INVALID_AUDIENCE,
                 "ID token has invalid audience."));
+            event.stop();
             return;
         }
         if (idData.get("exp") instanceof Integer exp
             && !Instant.now().isBefore(Instant.ofEpochSecond(exp))) {
             fire(new OidcError(ctx.startEvent, Kind.ID_TOKEN_EXPIRED,
                 "ID token has expired."));
+            event.stop();
             return;
         }
         if (!idData.containsKey("preferred_username")) {
             fire(new OidcError(ctx.startEvent, Kind.PREFERRED_USERNAME_MISSING,
                 "ID token does not contain preferred_username."));
+            event.stop();
             return;
         }
 
@@ -431,9 +435,10 @@ public class OidcClient extends Component {
             && !roles.stream().filter(r -> provider.authorizedRoles()
                 .contains(r)).findAny().isPresent()) {
             // Not allowed
-            fire(new OidcError(ctx.startEvent, Kind.PREFERRED_USERNAME_MISSING,
-                "ID token does not contain preferred_username."));
+            fire(new OidcError(ctx.startEvent, Kind.ACCESS_DENIED,
+                "Access denied (no allowed role)."));
             event.stop();
+            return;
         }
 
         // Success
