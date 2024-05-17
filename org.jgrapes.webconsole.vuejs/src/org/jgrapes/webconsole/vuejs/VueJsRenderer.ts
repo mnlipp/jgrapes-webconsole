@@ -219,14 +219,17 @@ export default class Renderer extends JGConsole.Renderer {
         _this._conletTypes.splice(0, _this._conletTypes.length,
             ..._this._conletTypes.filter(el => el[1] != conletType));
         let displayNames = _this._displayNames.get(conletType)!;
-        if (renderModes.includes(RenderMode.Preview)
-            || renderModes.includes(RenderMode.View)) {
-            // Add to menu
-            let label = function() {
-                return <string>JGConsole.forLang(displayNames, _this.locale()) || "Conlet";
-            };
-            _this._conletTypes.push([label, conletType, renderModes]);
-        }
+        
+        // Add to menu
+        let label = function() {
+            return <string>JGConsole.forLang(displayNames, _this.locale()) || "Conlet";
+        };
+        _this._conletTypes.push([label, conletType, renderModes]);
+    }
+    
+    conletMenuItems() {
+        return this.conletTypes().filter(el => el[2].includes(RenderMode.Preview) 
+            || el[2].includes(RenderMode.View));
     }
     
     consoleConfigured() {
