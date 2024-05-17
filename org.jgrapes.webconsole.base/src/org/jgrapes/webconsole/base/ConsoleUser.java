@@ -18,6 +18,7 @@
 
 package org.jgrapes.webconsole.base;
 
+import jakarta.mail.Address;
 import java.security.Principal;
 import java.util.Objects;
 
@@ -26,15 +27,16 @@ import java.util.Objects;
  * components. Console users are usually not managed. Rather, the
  * information is derived from some authentication system and provided
  * to console components in a way that is independent from a particular
- * authentication strategy. 
+ * authentication strategy.
  */
 public class ConsoleUser implements Principal {
 
     private final String name;
     private final String displayName;
+    private Address email;
 
     /**
-     * Instantiates a new console user.
+     * Instantiates a new console user. Note that `name` must be unique.
      *
      * @param name the name
      * @param displayName the display name
@@ -73,6 +75,25 @@ public class ConsoleUser implements Principal {
      */
     public String getDisplayName() {
         return displayName;
+    }
+
+    /**
+     * Gets the email address.
+     *
+     * @return the email
+     */
+    public Address email() {
+        return email;
+    }
+
+    /**
+     * Sets the email address.
+     *
+     * @param email the new email
+     */
+    public ConsoleUser setEmail(Address email) {
+        this.email = email;
+        return this;
     }
 
     @Override

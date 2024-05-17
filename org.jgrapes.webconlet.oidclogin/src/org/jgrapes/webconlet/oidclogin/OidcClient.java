@@ -21,6 +21,8 @@ package org.jgrapes.webconlet.oidclogin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -40,6 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.security.auth.Subject;
@@ -80,7 +83,7 @@ import org.jgrapes.webconsole.base.events.UserAuthenticated;
  * communication with the OIDC provider.
  */
 @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveImports",
-    "PMD.CouplingBetweenObjects" })
+    "PMD.CouplingBetweenObjects", "PMD.GodClass" })
 public class OidcClient extends Component {
 
     @SuppressWarnings("PMD.FieldNamingConventions")
@@ -391,7 +394,8 @@ public class OidcClient extends Component {
         event.stop();
     }
 
-    @SuppressWarnings({ "unchecked", "PMD.NPathComplexity" })
+    @SuppressWarnings({ "unchecked", "PMD.NPathComplexity",
+        "PMD.CognitiveComplexity", "PMD.CyclomaticComplexity" })
     private void processTokenResponse(DataInput<Map<String, Object>> event,
             Context ctx, OidcProviderData provider) {
         ctx.idToken = JsonWebToken.parse((String) event.data().get("id_token"));
@@ -444,11 +448,22 @@ public class OidcClient extends Component {
         // Success
 
         Subject subject = new Subject();
-        subject.getPrincipals().add(new ConsoleUser(
+        var user = new ConsoleUser(
             mapName((String) idData.get("preferred_username"),
                 provider.userMappings(), provider.patternCache()),
             Optional.ofNullable((String) idData.get("name"))
-                .orElse((String) idData.get("preferred_username"))));
+                .orElse((String) idData.get("preferred_username")));
+        if (idData.containsKey("email")) {
+            try {
+                user.setEmail(
+                    new InternetAddress((String) idData.get("email")));
+            } catch (AddressException e) {
+                logger.log(Level.WARNING, e,
+                    () -> "Failed to parse email address \""
+                        + idData.get("email") + "\": " + e.getMessage());
+            }
+        }
+        subject.getPrincipals().add(user);
         for (var role : roles) {
             subject.getPrincipals().add(new ConsoleRole(mapName(role,
                 provider.roleMappings(), provider.patternCache()), role));

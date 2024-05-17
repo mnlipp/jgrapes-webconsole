@@ -25,6 +25,8 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -38,6 +40,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.security.auth.Subject;
 import org.jgrapes.core.Channel;
@@ -140,6 +143,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  *       password: "$2b$05$NiBd74ZGdplLC63ePZf1f.UtjMKkbQ23cQoO2OKOFalDBHWAOy21."
  *     - name: test
  *       fullName: Test Account
+ *       email: test@test.com
  *       password: "$2b$05$hZaI/jToXf/d3BctZdT38Or7H7h6Pn2W3WiB49p5AyhDHFkkYCvo2"
  * ```
  * 
@@ -412,9 +416,19 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             return;
         }
         Subject subject = new Subject();
-        subject.getPrincipals().add(new ConsoleUser(userName,
-            Optional.ofNullable(userData.get("fullName"))
-                .orElse(userName)));
+        var user = new ConsoleUser(userName,
+            Optional.ofNullable(userData.get("fullName")).orElse(userName));
+        if (userData.containsKey("email")) {
+            try {
+                user.setEmail(
+                    new InternetAddress(userData.get("email")));
+            } catch (AddressException e) {
+                logger.log(Level.WARNING, e,
+                    () -> "Failed to parse email address \""
+                        + userData.get("email") + "\": " + e.getMessage());
+            }
+        }
+        subject.getPrincipals().add(user);
         fire(new UserAuthenticated(event.setAssociated(this,
             new LoginContext(connection, model)), subject).by("Local Login"));
     }
