@@ -171,7 +171,12 @@ public class RoleConletFilter extends Component {
             var conletPerms = new HashSet<Permission>();
             for (var role : WebConsoleUtils
                 .rolesFromSession(channel.session())) {
-                conletPerms.addAll(permissionsFromRole(conletType, role));
+                var perms = permissionsFromRole(conletType, role);
+                logger.finest(() -> "Role " + role.getName() + " allows user "
+                    + WebConsoleUtils.userFromSession(channel.session()).get()
+                        .getName()
+                    + " to " + perms + " " + conletType);
+                conletPerms.addAll(perms);
             }
             permissions.put(conletType, conletPerms);
         }
