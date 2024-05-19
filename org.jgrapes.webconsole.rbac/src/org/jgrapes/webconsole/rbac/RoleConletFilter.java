@@ -37,6 +37,7 @@ import org.jgrapes.webconsole.base.WebConsoleUtils;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
 import org.jgrapes.webconsole.base.events.ConsolePrepared;
+import org.jgrapes.webconsole.base.events.DeleteConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.UpdateConletType;
 
@@ -92,16 +93,26 @@ public class RoleConletFilter extends Component {
     }
 
     /**
-     * Sets the permitted conlet types by role. The parameter
-     * is a Map<String, List<String>> holding the conlet permissions
-     * to be added for the given role. The permissions can be an 
-     * asterisk ("*") to allow usage of all conlet types. It can be
-     * a conlet type as reported by {@link AddConletType#conletType()}
-     * to allow the usage of a particular conlet. The type may be 
-     * prefixed with an exclamation mark to deny the usage (default).
-     *
-     * The first match is used, i.e. the asterisk makes only sense
-     * as the last element in the list.
+     * Sets the allowed conlet types based on user roles.
+     * 
+     * By default, system components (e.g., policies) can add conlets,
+     * but users cannot. All added conlets are rendered (displayed).
+     * This method allows changing that behavior. The parameter is a 
+     * `Map<String, List<String>>` where each role maps to a list of 
+     * conlet types that authorized users with that role can add.
+     * 
+     * If a conlet type is prefixed with "--", it is excluded from 
+     * rendering, meaning it will never be displayed, even if added
+     * by a system policy. Note that this exclusion must be specified
+     * for all roles a user has, as permissions from different roles
+     * are combined.
+     * 
+     * Instead of listing specific conlet types, users can be allowed
+     * to add any type of conlet by including "*" in the list.
+     * Specific conlet types can be excluded by placing them before
+     * the "*" in the list and prefixing them with a minus ("-"), 
+     * double minus ("--"), or an exclamation mark ("!") (the use 
+     * of "!" is deprecated).
      *
      * @param acl the acl
      * @return the user role conlet filter
@@ -169,16 +180,25 @@ public class RoleConletFilter extends Component {
         var permissions = new HashMap<String, Set<Permission>>();
         for (var conletType : knownTypes) {
             var conletPerms = new HashSet<Permission>();
+            permissions.put(conletType, conletPerms);
             for (var role : WebConsoleUtils
                 .rolesFromSession(channel.session())) {
                 var perms = permissionsFromRole(conletType, role);
-                logger.finest(() -> "Role " + role.getName() + " allows user "
-                    + WebConsoleUtils.userFromSession(channel.session()).get()
-                        .getName()
+                if (perms.isEmpty()) {
+                    continue;
+                }
+                logger.fine(() -> "Role " + role.getName() + " allows user "
+                    + WebConsoleUtils.userFromSession(channel.session())
+                        .get().getName()
                     + " to " + perms + " " + conletType);
                 conletPerms.addAll(perms);
+                if (conletPerms.size() == Permission.values().length) {
+                    logger.fine(() -> "User " + WebConsoleUtils
+                        .userFromSession(channel.session()).get().getName()
+                        + " has all possible permissions for " + conletType);
+                    break;
+                }
             }
-            permissions.put(conletType, conletPerms);
         }
 
         // Disable non-addable conlet types in GUI
@@ -201,9 +221,12 @@ public class RoleConletFilter extends Component {
     @SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop")
     private Set<Permission> permissionsFromRole(String conletType,
             ConsoleRole role) {
-        // Start with defaults
-        for (var rule : acl.getOrDefault(role.getName(),
-            Collections.emptyList())) {
+        var rules = acl.get(role.getName());
+        if (rules == null) {
+            // No rules for this role.
+            return Collections.emptySet();
+        }
+        for (var rule : rules) {
             // Extract conlet type
             int pos = 0;
             while (rule.charAt(pos) == '!' || rule.charAt(pos) == '-') {
@@ -273,6 +296,9 @@ public class RoleConletFilter extends Component {
                 Collections.emptySet());
             if (perms.isEmpty()) {
                 event.cancel(true);
+                // Avoid future rendering of this conlet
+                fire(new DeleteConlet(event.conletId(),
+                    Collections.emptySet()));
             }
         });
     }
