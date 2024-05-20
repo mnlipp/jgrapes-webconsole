@@ -96,23 +96,23 @@ public class RoleConletFilter extends Component {
      * Sets the allowed conlet types based on user roles.
      * 
      * By default, system components (e.g., policies) can add conlets,
-     * but users cannot. All added conlets are rendered (displayed).
-     * This method allows changing that behavior. The parameter is a 
-     * `Map<String, List<String>>` where each role maps to a list of 
-     * conlet types that authorized users with that role can add.
+     * but users cannot. This method allows changing that behavior.
+     * The parameter is a `Map<String, List<String>>` where each role
+     * maps to a list of conlet types that authorized users with that
+     * role can add.
      * 
-     * If a conlet type is prefixed with "--", it is excluded from 
-     * rendering, meaning it will never be displayed, even if added
-     * by a system policy. Note that this exclusion must be specified
-     * for all roles a user has, as permissions from different roles
-     * are combined.
+     * If a conlet type is prefixed with double minus ("`--`"), it 
+     * is also excluded from adding by system components, meaning 
+     * it will never be displayed. Note that this exclusion must be
+     * specified for all roles a user has, as permissions from 
+     * different roles are combined.
      * 
      * Instead of listing specific conlet types, users can be allowed
-     * to add any type of conlet by including "*" in the list.
-     * Specific conlet types can be excluded by placing them before
-     * the "*" in the list and prefixing them with a minus ("-"), 
-     * double minus ("--"), or an exclamation mark ("!") (the use 
-     * of "!" is deprecated).
+     * to add any type of conlet by including "`*`" in the list.
+     * Specific conlet types can be excluded from the wildcard match
+     * by placing them before the "`*`" in the list and prefixing
+     * them with a minus ("`-`"), double minus ("`--`"), or an
+     * exclamation mark ("`!`") (the use of "`!`" is deprecated).
      *
      * @param acl the acl
      * @return the user role conlet filter
