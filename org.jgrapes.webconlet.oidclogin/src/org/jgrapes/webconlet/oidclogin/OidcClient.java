@@ -80,7 +80,39 @@ import org.jgrapes.webconsole.base.events.UserAuthenticated;
 
 /**
  * Helper component for {@link LoginConlet} that handles the
- * communication with the OIDC provider.
+ * communication with the OIDC provider. "OidcClient" is a bit
+ * of a misnomer because this class not only initiates requests
+ * to the OIDC provider but also serves the redirect URI that the
+ * provider uses as callback. However, the callback can be seen 
+ * as the asynchronous response to the authentication request
+ * that the {@link OidcClient} sends initially, therefore the
+ * component primarily acts as a client nevertheless.
+ * 
+ * The component requires a HTTP server component (usually an
+ * instance of {@link HttpServer}) to exist that handles the 
+ * {@link Request.Out} events that this component fires. The HTTP
+ * server must also convert the calls to the redirect URI
+ * from the provider to a {@link Request.In.Get} event. Details 
+ * about configuring the various channels used can be found in the
+ * {@link #OidcClient description of the constructor}.
+ * 
+ * The component has a single configuration property that sets
+ * the value of the redirect URI sent to the OIDC provider.
+ * ```yaml
+ * "...":
+ *   "/OidcClient":
+ *     redirectUri: "https://localhost:5443/vjconsole/oauth/callback"
+ * ```
+ * 
+ * While it is tempting to simply use as redirect URI the host/port
+ * from the HTTP server component together with the request path
+ * passed to the constructor, there are two reasons why the redirect
+ * URI has to be configured explicitly. First, the framework does
+ * not support querying the host/port properties from the server
+ * component. Second, and more import, the HTTP server component will
+ * often be placed behind a firewall or reverse proxy and therefore
+ * the URL that it serves will usually differ from the redirect
+ * URI sent to the OIDC provider.
  */
 @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveImports",
     "PMD.CouplingBetweenObjects", "PMD.GodClass" })
@@ -142,10 +174,6 @@ public class OidcClient extends Component {
      * 
      * The following properties are recognized:
      * 
-     * `clientId`
-     * : The client id as defined in the OIDC provider.
-     * `secret`
-     * : The secret as defined in the OIDC provider.
      * `redirectUri`
      * : The redirect URI as defined in the OIDC provider.
      * 
