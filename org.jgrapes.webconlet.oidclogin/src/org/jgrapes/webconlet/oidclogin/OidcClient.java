@@ -59,6 +59,7 @@ import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.core.events.Error;
+import org.jgrapes.http.HttpConnector;
 import org.jgrapes.http.HttpServer;
 import org.jgrapes.http.ResponseCreationSupport;
 import org.jgrapes.http.annotation.RequestHandler;
@@ -88,13 +89,14 @@ import org.jgrapes.webconsole.base.events.UserAuthenticated;
  * that the {@link OidcClient} sends initially, therefore the
  * component primarily acts as a client nevertheless.
  * 
- * The component requires a HTTP server component (usually an
- * instance of {@link HttpServer}) to exist that handles the 
- * {@link Request.Out} events that this component fires. The HTTP
- * server must also convert the calls to the redirect URI
- * from the provider to a {@link Request.In.Get} event. Details 
- * about configuring the various channels used can be found in the
- * {@link #OidcClient description of the constructor}.
+ * The component requires an HTTP connector (usually an
+ * instance of {@link HttpConnector}) to exist that handles the 
+ * {@link Request.Out} events that this component fires. There
+ * must also be an HTTP server (usually an instance of
+ * {@link HttpServer}) that converts the provider's calls to the
+ * redirect URI from the provider to a {@link Request.In.Get} event.
+ * Details about configuring the various channels used can be found
+ * in the {@link #OidcClient description of the constructor}.
  * 
  * The component has a single configuration property that sets
  * the value of the redirect URI sent to the OIDC provider.
