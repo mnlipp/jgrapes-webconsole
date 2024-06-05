@@ -88,11 +88,13 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  *     - name: my-provider
  *       displayName: My Provider
  *       configurationEndpoint: https://test.com/.well-known/openid-configuration
- *       # If no configurationEndpoint is available, the authorization 
- *       # endpointEndpoint and the tokenEndpoint may be configured instead
+ *       # If no configurationEndpoint is available, the authorizationEndpoint 
+ *       # and the tokenEndpoint can be configured instead
+ *       # authorizationEndpoint: ...
+ *       # tokenEndpoint: ...
  *       clientId: "WebConsoleTest"
  *       secret: "(unknown)"
- *       # The size of the popup window for the provider's dialog
+ *       # The size of the popup window for the provider's login dialog
  *       popup:
  *         # Size of the popup windows for authentication. Either
  *         # relative to the browser window's size or absolute in pixels
