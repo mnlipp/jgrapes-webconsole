@@ -43,6 +43,8 @@ import org.jdrupes.httpcodec.protocols.http.HttpResponse;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
+import org.jgrapes.core.Event;
+import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.http.Session;
 import org.jgrapes.io.IOSubchannel;
@@ -53,6 +55,7 @@ import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.ResourceByProducer;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.ConletResourceRequest;
+import org.jgrapes.webconsole.base.events.NotifyConletModel;
 import org.jgrapes.webconsole.base.events.RenderConletRequest;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 
@@ -231,9 +234,8 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
      * @param conletState the conlet's state information
      * @return the model
      */
-    protected Map<String, Object> fmConletModel(
-            RenderConletRequestBase<?> event, IOSubchannel channel,
-            String conletId, Object conletState) {
+    protected Map<String, Object> fmConletModel(Event<?> event,
+            IOSubchannel channel, String conletId, Object conletState) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
         model.put("event", event);
@@ -275,10 +277,33 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
      */
     protected Map<String, Object> fmModel(RenderConletRequestBase<?> event,
             ConsoleConnection channel, String conletId, Object conletState) {
+        return fmModel(event, event.renderSupport(), channel, conletId,
+            conletState);
+    }
+
+    /**
+     * Build a freemarker model that combines {@link #fmTypeModel},
+     * {@link #fmSessionModel} and {@link #fmConletModel}. 
+     *
+     * @param event the event
+     * @param channel the channel
+     * @param conletId the conlet id
+     * @param conletState the conlet's state information
+     * @return the model
+     */
+    protected Map<String, Object> fmModel(NotifyConletModel event,
+            ConsoleConnection channel, String conletId, Object conletState) {
+        return fmModel(event, event.renderSupport(), channel, conletId,
+            conletState);
+    }
+
+    private Map<String, Object> fmModel(Event<?> event,
+            RenderSupport renderSupport, ConsoleConnection channel,
+            String conletId, Object conletState) {
         final Map<String, Object> model
             = fmSessionModel(channel.session());
         model.put("locale", channel.locale());
-        model.putAll(fmTypeModel(event.renderSupport()));
+        model.putAll(fmTypeModel(renderSupport));
         model.putAll(fmConletModel(event, channel, conletId, conletState));
         return model;
     }
@@ -335,10 +360,9 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
      * @param dataModel the data model
      * @return the future
      */
-    public Future<String> processTemplate(
-            RenderConletRequestBase<?> request, Template template,
+    public Future<String> processTemplate(Event<?> request, Template template,
             Object dataModel) {
-        return request.processedBy().map(procBy -> procBy.executorService())
+        return request.processedBy().map(EventPipeline::executorService)
             .orElse(Components.defaultExecutorService()).submit(() -> {
                 StringWriter out = new StringWriter();
                 try {
