@@ -62,6 +62,7 @@ import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 /**
  * 
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
 
     @SuppressWarnings({ "PMD.VariableNamingConventions",
@@ -347,6 +348,26 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
         } catch (IOException e) { // NOPMD
             throw new IllegalArgumentException(e);
         }
+    }
+
+    /**
+     * Returns a future string providing the result
+     * from processing the given template with the given data.
+     * 
+     * The method delegates to
+     * {@link #processTemplate(Event, Template, Object)}. The version with
+     * this signature is kept for backward compatibility.
+     *
+     * @param request the request, used to obtain the
+     * {@link ExecutorService} service related with the request being
+     * processed
+     * @param template the template
+     * @param dataModel the data model
+     * @return the future
+     */
+    public Future<String> processTemplate(RenderConletRequestBase<?> request,
+            Template template, Object dataModel) {
+        return processTemplate((Event<?>) request, template, dataModel);
     }
 
     /**
