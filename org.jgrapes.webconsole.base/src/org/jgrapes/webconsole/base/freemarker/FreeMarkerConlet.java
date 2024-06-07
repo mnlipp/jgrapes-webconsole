@@ -371,7 +371,6 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
                     throw new IllegalArgumentException(e);
                 }
                 return out.toString();
-
             });
     }
 }

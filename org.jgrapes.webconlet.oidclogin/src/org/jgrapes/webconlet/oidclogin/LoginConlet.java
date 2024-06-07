@@ -23,13 +23,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -38,15 +36,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.security.auth.Subject;
 import org.jgrapes.core.Channel;
-import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
-import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.LanguageSelector.Selection;
@@ -327,22 +322,6 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
                 .addOption("applyLabel",
                     providers.isEmpty() ? bundle.getString("Log in") : "")
                 .addOption("useSubmit", true));
-    }
-
-    private Future<String> processTemplate(
-            Event<?> request, Template template,
-            Object dataModel) {
-        return request.processedBy().map(EventPipeline::executorService)
-            .orElse(Components.defaultExecutorService()).submit(() -> {
-                StringWriter out = new StringWriter();
-                try {
-                    template.process(dataModel, out);
-                } catch (TemplateException | IOException e) {
-                    throw new IllegalArgumentException(e);
-                }
-                return out.toString();
-
-            });
     }
 
     @Override
