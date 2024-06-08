@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2016, 2022  Michael N. Lipp
+ * Copyright (C) 2016, 2024  Michael N. Lipp
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -131,37 +131,11 @@ class Console {
                 _this._renderer!.notification(content, options);
             });
         this._webSocket.addMessageHandler('openModalDialog',
-            (conletType, conletId, content, options: ModalDialogOptions) => {
-                if (_this._resourceManager.lockWhileLoading()) {
-                    this._webSocket.postponeMessage();
-                    return;
-                }
-                let container 
-                    = <HTMLElement>_this._modalDialogTemplate.cloneNode(true);
-                container.dataset["conletType"] = conletType;
-                container.dataset["conletId"] = conletId;
-                container.id = "jgwc-modal-dialog-" + ++_this._dialogIdCounter;
-                _this._renderer!.openModalDialog(container, options, content);
-                if (!container.parentNode) {
-                    // Must be attached to DOM tree
-                    let slot = document.querySelector("#console-modal-slot");
-                    if (slot) {
-                        while (slot!.firstChild) {
-                            slot!.removeChild(slot!.firstChild);
-                        }
-                        slot!.append(container);
-                    }
-                }
-                _this._execOnLoad(container, false);
-            });
+            (conletType, conletId, content, options: ModalDialogOptions) => 
+            _this.openModalDialog(conletType, conletId, content, options));
         this._webSocket.addMessageHandler('closeModalDialog',
-            (conletType, conletId) => {
-                let container = this._renderer!.findModalDialog(conletId);
-                if (container) {
-                    _this._execOnUnload(container, false);
-                    _this._renderer!.closeModalDialog(container);
-                }
-        });
+            (conletType, conletId) => 
+                _this.closeModalDialog(conletType, conletId));
         this._webSocket.addMessageHandler('retrieveLocalData',
             (path) => {
                 let result = [];
@@ -474,6 +448,55 @@ class Console {
                 Log.warn('Specified jgwc-on-unload function "' 
                     + onUnload + '" not found.');
             }
+        }
+    }
+
+    /**
+     * Opens a modal dialog related to the conlet with the given
+     * type and id.
+     * 
+     * @param conletType the opening conlet's type
+     * @param conletId the opening conlet's id
+     * @parem content the dialog's content as HTML
+     * @param options the dialog options
+     */
+    openModalDialog(conletType: string, conletId: string, content: string,
+            options: ModalDialogOptions) {
+        if (this._resourceManager.lockWhileLoading()) {
+            this._webSocket.postponeMessage();
+            return;
+        }
+        let container 
+            = <HTMLElement>this._modalDialogTemplate.cloneNode(true);
+        container.dataset["conletType"] = conletType;
+        container.dataset["conletId"] = conletId;
+        container.id = "jgwc-modal-dialog-" + ++this._dialogIdCounter;
+        this._renderer!.openModalDialog(container, options, content);
+        if (!container.parentNode) {
+            // Must be attached to DOM tree
+            let slot = document.querySelector("#console-modal-slot");
+            if (slot) {
+                while (slot!.firstChild) {
+                    slot!.removeChild(slot!.firstChild);
+                }
+                slot!.append(container);
+            }
+        }
+        this._execOnLoad(container, false);
+    }
+
+    /**
+     * Closes the modal dialog that has been opened by the conlet
+     * with the given id.
+     *
+     * @param conletType the conlet's type
+     * @param conletId the conlet's id
+     */
+    closeModalDialog(_conletType: string, conletId: string) {
+        let container = this._renderer!.findModalDialog(conletId);
+        if (container) {
+            this._execOnUnload(container, false);
+            this._renderer!.closeModalDialog(container);
         }
     }
 
