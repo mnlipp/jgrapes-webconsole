@@ -221,6 +221,7 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
      * 
      * This model provides:
      *  * The `event` property (of type {@link RenderConletRequest}).
+     *  * The `conletType` property (of type {@link String}).
      *  * The `conletId` property (of type {@link String}).
      *  * The `conlet` property with the conlet's state (if not `null`).
      *  * The function `_Id(String base)` that creates a unique
@@ -240,6 +241,7 @@ public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, Object> model = new HashMap<>();
         model.put("event", event);
+        model.put("conletType", type());
         model.put("conletId", conletId);
         if (conletState != null) {
             model.put("conlet", conletState);
