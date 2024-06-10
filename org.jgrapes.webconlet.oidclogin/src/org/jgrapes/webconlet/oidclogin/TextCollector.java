@@ -91,7 +91,7 @@ public class TextCollector implements InputConsumer {
      * Configures the maximum length of the collected text. Input
      * exceeding this size will be discarded.
      *
-     * @param consumer the consumer
+     * @param maximumLength the maximum length
      * @return the maximum size
      */
     public TextCollector maximumSize(int maximumLength) {
@@ -100,9 +100,8 @@ public class TextCollector implements InputConsumer {
     }
 
     /**
-     * Configures a consumer for lines. The consumer is invoked when
-     * a complete line has been detected. If a consumer is configured,
-     * {@link #getLine()} may not be used (always returns `null`).
+     * Configures a consumer for the collected text. The consumer 
+     * is invoked once when the complete text is available.
      *
      * @param consumer the consumer
      * @return the line collector
