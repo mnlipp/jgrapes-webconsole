@@ -445,9 +445,18 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             return;
         }
         var connection = ctx.connection;
-        var msg = event.kind() == OidcError.Kind.ACCESS_DENIED
-            ? resourceBundle(connection.locale()).getString("accessDenied")
-            : resourceBundle(connection.locale()).getString("oidcError");
+        String msg;
+        switch (event.kind()) {
+        case ACCESS_DENIED:
+            msg = resourceBundle(connection.locale()).getString("accessDenied");
+            break;
+        case INTERNAL_SERVER_ERROR:
+            msg = resourceBundle(connection.locale()).getString("serverError");
+            break;
+        default:
+            msg = resourceBundle(connection.locale()).getString("oidcError");
+            break;
+        }
         connection.respond(new DisplayNotification("<span>"
             + msg + "</span>").addOption("type", "Warning")
                 .addOption("autoClose", 5000));

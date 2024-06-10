@@ -35,7 +35,7 @@ public class OidcError extends Error {
     @SuppressWarnings("PMD.LongVariable")
     public enum Kind {
         INVALID_ISSUER, INVALID_AUDIENCE, ID_TOKEN_EXPIRED,
-        PREFERRED_USERNAME_MISSING, ACCESS_DENIED
+        PREFERRED_USERNAME_MISSING, ACCESS_DENIED, INTERNAL_SERVER_ERROR
     }
 
     private final Kind kind;

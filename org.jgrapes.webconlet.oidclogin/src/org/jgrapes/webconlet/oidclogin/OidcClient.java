@@ -54,7 +54,6 @@ import org.jdrupes.httpcodec.types.ParameterizedValue;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.ClassChannel;
 import org.jgrapes.core.Component;
-import org.jgrapes.core.Components;
 import org.jgrapes.core.Manager;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
@@ -248,16 +247,30 @@ public class OidcClient extends Component {
         var reqUri
             = clientChannel.associated(HttpRequest.class).get().requestUri();
         if (rsp.statusCode() != HttpURLConnection.HTTP_OK) {
-            fire(new Error(response, "Attempt to access " + reqUri
-                + " returned " + rsp.statusCode()));
+            fire(new Error(response, "Request \"" + reqUri + "\" returned \""
+                + rsp.statusCode() + " " + rsp.reasonPhrase() + "\""));
+            if (rsp.statusCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+                fire(new OidcError(optCtx.get().startEvent,
+                    Kind.INTERNAL_SERVER_ERROR,
+                    "Provider returned an internal server error."));
+            }
         }
-        // All expected responses have a JSON payload (body), so
-        // wait for it and delay dispatching until the data is available.
+        // All expected responses have a JSON payload (body), we don't
+        // perform any actions immediately.
         if (rsp.hasPayload()) {
-            clientChannel.setAssociated(InputConsumer.class,
-                new JsonReader(Map.class, activeEventPipeline(), clientChannel)
-                    .charset(
-                        response.charset().orElse(StandardCharsets.UTF_8)));
+            var charset = response.charset().orElse(StandardCharsets.UTF_8);
+            if (rsp.statusCode() == HttpURLConnection.HTTP_OK) {
+                clientChannel.setAssociated(InputConsumer.class,
+                    new JsonReader(Map.class, activeEventPipeline(),
+                        clientChannel).charset(charset));
+            } else {
+                clientChannel.setAssociated(InputConsumer.class,
+                    new TextCollector().charset(charset).consumer(msg -> {
+                        logger.warning(() -> "Request \"" + reqUri
+                            + "\" returned \"" + rsp.statusCode() + " "
+                            + rsp.reasonPhrase() + "\" with message:\n" + msg);
+                    }));
+            }
         }
     }
 
@@ -274,8 +287,12 @@ public class OidcClient extends Component {
         if (clientChannel.associated(this, Context.class).isEmpty()) {
             return;
         }
-        clientChannel.associated(InputConsumer.class).ifPresent(
-            ic -> ic.feed(event));
+        clientChannel.associated(InputConsumer.class).ifPresent(ic -> {
+            ic.feed(event);
+            if (event.isEndOfRecord()) {
+                ic.feed((Input<ByteBuffer>) null);
+            }
+        });
     }
 
     /**
@@ -301,10 +318,7 @@ public class OidcClient extends Component {
             .map(r -> (HttpResponse) r.response())
             .map(r -> r.statusCode() != HttpURLConnection.HTTP_OK)
             .orElse(true)) {
-            // Already handled in onResponse, log details
-            Response evt = clientChannel.associated(Response.class).get();
-            logger.finer(() -> "Payload of failed event "
-                + Components.objectName(evt) + ": " + event.data().toString());
+            // Payload already handled in onResponse
             return;
         }
         var provider = optCtx.get().startEvent.provider();
@@ -415,7 +429,7 @@ public class OidcClient extends Component {
         params.put("redirect_uri", config.redirectUri);
         @SuppressWarnings("resource")
         OutputSupplier body = (IOSubchannel c) -> {
-            new CharBufferWriter(c, activeEventPipeline())
+            new CharBufferWriter(c, channel.responsePipeline())
                 .append(HttpRequest.simpleWwwFormUrlencode(params)).close();
         };
         fire(post.setAssociated(OutputSupplier.class, body).setAssociated(this,
