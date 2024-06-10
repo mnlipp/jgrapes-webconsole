@@ -429,7 +429,7 @@ public class OidcClient extends Component {
         params.put("redirect_uri", config.redirectUri);
         @SuppressWarnings("resource")
         OutputSupplier body = (IOSubchannel c) -> {
-            new CharBufferWriter(c, channel.responsePipeline())
+            new CharBufferWriter(c, c.responsePipeline())
                 .append(HttpRequest.simpleWwwFormUrlencode(params)).close();
         };
         fire(post.setAssociated(OutputSupplier.class, body).setAssociated(this,
