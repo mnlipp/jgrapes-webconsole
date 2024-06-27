@@ -136,5 +136,5 @@ task buildDoc {
 task javadocJar(type: Jar) {
     dependsOn buildDoc
     from apidocs.destinationDir
-    classifier "javadoc"
+    archiveClassifier = "javadoc"
 }
