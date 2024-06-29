@@ -357,6 +357,7 @@ public class OidcClient extends Component {
         attemptAuthorization(ctx);
     }
 
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     private void attemptAuthorization(Context ctx) throws URISyntaxException {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<String, String> params = new TreeMap<>();
@@ -406,6 +407,12 @@ public class OidcClient extends Component {
             .orElse(Collections.emptyList()).stream().findFirst().orElse(null);
         var ctx = contexts.remove(state);
         if (ctx == null) {
+            return;
+        }
+        if (query.get("code") == null) {
+            fire(new OidcError(ctx.startEvent, Kind.INTERNAL_SERVER_ERROR,
+                Optional.ofNullable(query.get("error")).map(es -> es.get(0))
+                    .orElse("No code in callback from provider.")));
             return;
         }
         ctx.code = query.get("code").get(0);
