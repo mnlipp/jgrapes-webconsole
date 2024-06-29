@@ -16,9 +16,9 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import JGConsole from "@JGConsole"
-import { createApp, ref, Ref, reactive, computed } from "@Vue";
-import AashPlugin, { getApi, AashTreeView, provideApi } from "@Aash";
+import JGConsole from "jgconsole"
+import { createApp, ref, Ref, reactive, computed } from "vue";
+import AashPlugin, { getApi, AashTreeView, provideApi } from "aash-plugin";
 import MBeanValueRendererComponent, * as MBeanValueRenderer from "./components/MBeanValueRenderer.vue";
 
 import "./JmxBrowser-style.scss"

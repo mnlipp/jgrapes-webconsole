@@ -1,45 +1,35 @@
 import typescript from 'rollup-plugin-typescript2';
-import terser from '@rollup/plugin-terser';
-import path from 'path';
-import postcss from 'rollup-plugin-postcss'
+import postcss from 'rollup-plugin-postcss';
 import vue from "rollup-plugin-vue";
 
-let module = "build/generated/resources/org/jgrapes/webconlet/jmxbrowser/jmxbrowser.js"
+let packagePath = "org/jgrapes/webconlet/jmxbrowser";
+let baseName = "JmxBrowser"
+let module = "build/generated/resources/" + packagePath 
+    +  "/" + baseName + "-functions.js";
 
 let pathsMap = {
     "vue": "../../page-resource/vue/vue.esm-browser.js",
-    "@Vue": "../../page-resource/vue/vue.esm-browser.js",
-    "@JGConsole": "../../console-base-resource/jgconsole.js",
-    "@Aash": "../../page-resource/aash-vue-components/lib/aash-vue-components.js"
+    "jgconsole": "../../console-base-resource/jgconsole.js",
+    "aash-plugin": "../../page-resource/aash-vue-components/lib/aash-vue-components.js"
 }
 
 export default {
-  external: ['@Vue', '@Aash', '@JGConsole', 'vue'],
-  input: "src/org/jgrapes/webconlet/jmxbrowser/JmxBrowser-functions.ts",
+  external: ['vue', 'aash-plugin', 'jgconsole'],
+  input: "src/" + packagePath + "/" + baseName + "-functions.ts",
   output: [
     {
       format: "esm",
       file: module,
       sourcemap: true,
-      sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-        return "./" + path.basename(relativeSourcePath);
+      sourcemapPathTransform: (relativeSourcePath, _sourcemapPath) => {
+        return relativeSourcePath.replace(/^([^/]*\/){12}/, "./");
       },
       paths: pathsMap
-    },
-    {
-      format: "esm",
-      file: module.replace(".js", ".min.js"),
-      sourcemap: true,
-      sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-        return "./" + path.basename(relativeSourcePath);
-      },
-      paths: pathsMap,
-      plugins: [terser()]
     }
   ],
   plugins: [
     vue({ 'preprocessStyles': true }),
-    typescript({ sourceMap: false }),
+    typescript(),
     postcss()
   ]
 };

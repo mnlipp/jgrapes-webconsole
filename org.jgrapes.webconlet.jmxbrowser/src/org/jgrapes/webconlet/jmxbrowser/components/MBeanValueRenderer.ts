@@ -1,4 +1,4 @@
-import { defineComponent, getCurrentInstance, onUnmounted } from '@Vue'
+import { defineComponent, getCurrentInstance, onUnmounted } from 'vue';
 
 export default defineComponent({
     props: {
