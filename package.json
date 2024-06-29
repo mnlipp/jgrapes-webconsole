@@ -7,7 +7,7 @@
         "install": "^0.13.0",
         "jsdoc": "^4.0.2",
         "node-sass": "^9.0.0",
-        "npm": "^8.11.0",
+        "npm": "^10.8.1",
         "rollup": "^4.3.1",
         "rollup-plugin-peer-deps-external": "^2.2.3",
         "rollup-plugin-postcss": "^4.0.2",
@@ -16,9 +16,9 @@
         "sass": "^1.49.9",
         "terser": "^5.14.2",
         "tslib": "^2.3.1",
-        "typedoc": "^0.25.1",
-        "typedoc-plugin-missing-exports": "^2.1.0",
-        "typescript": "^5.2.2"
+        "typedoc": "^0.26.3",
+        "typedoc-plugin-missing-exports": "^3.0.0",
+        "typescript": "^5.5.2"
     },
     "eslintConfig": {
         "root": true,
