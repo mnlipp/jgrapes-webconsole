@@ -1,18 +1,21 @@
 import typescript from 'rollup-plugin-typescript2';
-import postcss from 'rollup-plugin-postcss'
+import postcss from 'rollup-plugin-postcss';
 
-let module = "build/generated/resources/org/jgrapes/webconsole/vuejs/vuejsrenderer.js"
+let packagePath = "org/jgrapes/webconsole/vuejs";
+let baseName = "vuejsrenderer"
+let module = "build/generated/resources/" + packagePath 
+    +  "/" + baseName + ".js";
 
 let pathsMap = {
-    "@GridStack": "../page-resource/gridstack/gridstack.js",
-    "@Vue": "../page-resource/vue/vue.esm-browser.js",
-    "@JGConsole": "../console-base-resource/jgconsole.js",
-    "@Aash": "../page-resource/aash-vue-components/lib/aash-vue-components.js"
+    "gridstack": "../page-resource/gridstack/gridstack.js",
+    "vue": "../page-resource/vue/vue.esm-browser.js",
+    "jgconsole": "../console-base-resource/jgconsole.js",
+    "aash-plugin": "../page-resource/aash-vue-components/lib/aash-vue-components.js"
 }
 
 export default {
-  external: ['@GridStack', '@Vue', '@Aash', '@JGConsole'],
-  input: "src/org/jgrapes/webconsole/vuejs/VueJsRenderer.ts",
+  external: ['jgconsole', 'vue', 'aash-plugin', 'jgconsole'],
+  input: "src/" + packagePath + "/VueJsRenderer.ts",
   output: [
     {
       format: "esm",

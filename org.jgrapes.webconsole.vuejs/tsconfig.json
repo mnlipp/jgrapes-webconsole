@@ -10,12 +10,11 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "lib": ["DOM", "ES2020"],
-    "baseUrl": "..",
     "paths": {
-      "@JGConsole": ["org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
-      "@GridStack": ["org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack"],
-      "@Vue": ["org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
-      "@Aash": ["aash-vue-components/lib/AashPlugin"]
+      "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
+      "gridstack": ["../org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack"],
+      "vue": ["../org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
+      "aash-plugin": ["../aash-vue-components/lib/AashPlugin"]
     }
   },
   "include": ["src/**/*.ts"],

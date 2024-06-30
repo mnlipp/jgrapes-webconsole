@@ -18,11 +18,11 @@
 
 import JGConsole, { Console, PageComponentSpecification, RenderMode, 
     Notification, NotificationOptions, NotificationType, ModalDialogOptions, 
-    parseHtml, Conlet } from "@JGConsole";
-import { GridStack, GridStackWidget, GridStackElement } from "@GridStack";
-import { reactive, ref, createApp, onMounted, computed, Ref } from "@Vue";
+    parseHtml, Conlet } from "jgconsole";
+import { GridStack, GridStackWidget, GridStackElement } from "gridstack";
+import { reactive, ref, createApp, onMounted, computed, Ref } from "vue";
 import AashPlugin, { provideApi, getApi, AashTablist, 
-    AashModalDialogComponent, AashModalDialog } from "@Aash";
+    AashModalDialogComponent, AashModalDialog } from "aash-plugin";
 
 import "./console.scss"
 
