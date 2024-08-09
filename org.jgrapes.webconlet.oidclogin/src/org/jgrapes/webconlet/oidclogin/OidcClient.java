@@ -28,7 +28,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -337,19 +336,19 @@ public class OidcClient extends Component {
             throws MalformedURLException, URISyntaxException {
         String aep = (String) event.data().get("authorization_endpoint");
         if (aep != null) {
-            provider.setAuthorizationEndpoint(new URL(aep));
+            provider.setAuthorizationEndpoint(new URI(aep).toURL());
         }
         String tep = (String) event.data().get("token_endpoint");
         if (tep != null) {
-            provider.setTokenEndpoint(new URL(tep));
+            provider.setTokenEndpoint(new URI(tep).toURL());
         }
         String uiep = (String) event.data().get("userinfo_endpoint");
         if (uiep != null) {
-            provider.setUserinfoEndpoint(new URL(uiep));
+            provider.setUserinfoEndpoint(new URI(uiep).toURL());
         }
         String issuer = (String) event.data().get("issuer");
         if (issuer != null) {
-            provider.setIssuer(new URL(issuer));
+            provider.setIssuer(new URI(issuer).toURL());
         }
 
         // We only get the configuration information as part of a login
