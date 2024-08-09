@@ -62,7 +62,6 @@ public class WebSocketInputSink extends Thread {
         pipelineRef = new WeakReference<>(wsInPipeline);
         ThreadCleaner.watch(wsInPipeline, this);
         ThreadCleaner.watch(consoleChannel, this);
-        setDaemon(true);
     }
 
     /**
@@ -75,7 +74,7 @@ public class WebSocketInputSink extends Thread {
         // Delayed initialization, allows adaption to buffer size.
         if (jsonSource == null) {
             jsonSource = new ManagedBufferReader();
-            start();
+            ofVirtual().start(this);
         }
         jsonSource.feed(input);
     }
