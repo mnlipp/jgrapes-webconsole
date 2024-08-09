@@ -18,8 +18,8 @@ release {
 
 // Nothing to compile, but avoids Eclipse warning.
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 // Not used due to:
@@ -84,8 +84,5 @@ eclipse {
     }
     classpath {
         containers 'aQute.bnd.classpath.container'
-    }
-    jdt {
-        javaRuntimeName = "JavaSE-17"
     }
 }

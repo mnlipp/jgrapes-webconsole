@@ -318,8 +318,7 @@ abstract class Renderer {
      * representations, which may be 
      * preview or view containers, from the DOM.
      *
-     * @param containers the existing containers for
-     * the preview or views 
+     * @param conlets the conlets to remove 
      */
     removeConletDisplays(conlets: Conlet[]) {
         Log.warn("Not implemented!");

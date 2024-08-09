@@ -86,7 +86,7 @@ task stage {
     dependsOn ":org.jgrapes.webconsole.base:buildDoc"
     dependsOn subprojects.tasks.collect { tc -> tc.findByName("build") }.flatten()
 
-    if (!isCiBuild || JavaVersion.current() == JavaVersion.VERSION_17) {
+    if (!isCiBuild || JavaVersion.current() == JavaVersion.VERSION_21) {
         // Publish JavaDoc
         dependsOn gitPublishPush
     }	

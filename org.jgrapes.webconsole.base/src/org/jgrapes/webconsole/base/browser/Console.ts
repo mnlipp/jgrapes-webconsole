@@ -457,7 +457,7 @@ class Console {
      * 
      * @param conletType the opening conlet's type
      * @param conletId the opening conlet's id
-     * @parem content the dialog's content as HTML
+     * @param content the dialog's content as HTML
      * @param options the dialog options
      */
     openModalDialog(conletType: string, conletId: string, content: string,
@@ -489,7 +489,7 @@ class Console {
      * Closes the modal dialog that has been opened by the conlet
      * with the given id.
      *
-     * @param conletType the conlet's type
+     * @param _conletType the conlet's type
      * @param conletId the conlet's id
      */
     closeModalDialog(_conletType: string, conletId: string) {
@@ -613,7 +613,7 @@ class Console {
     /**
      * Invokes the given method on the server.
      *
-     * @param the method
+     * @param method the method
      * @param params the parameters
      */
     send(method: string, ...params: any[]) {
@@ -674,7 +674,7 @@ class Console {
      * notifications for the component conlets have as additional
      * argument the collected properties.  
      *
-     * @param the conlet id
+     * @param conletId the conlet id
      */
     removePreview(conletId: string) {
         let view = this._renderer!.findConletView(conletId);
@@ -709,7 +709,7 @@ class Console {
      * notifications for the component conlets have as additional
      * argument the collected properties.  
      *
-     * @param the conlet id
+     * @param conletId the conlet id
      */
     removeView(conletId: string) {
         let view = this._renderer!.findConletView(conletId);
@@ -740,7 +740,7 @@ class Console {
      *
      * @param previewLayout the conlet ids from top left
      * to bottom right
-     * @param tabsLayout the ids of the conlets viewable in tabs
+     * @param tabLayout the ids of the conlets viewable in tabs
      * @param xtraInfo extra information spcific to the 
      * console implementation
      */
