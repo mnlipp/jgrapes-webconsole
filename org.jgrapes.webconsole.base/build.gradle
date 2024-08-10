@@ -61,9 +61,6 @@ task javadocResources(type: Copy) {
     from (rootProject.rootDir) {
         include 'WebConsole-pic1.png'
     }
-    from ("${rootProject.rootDir}/misc") {
-        include '*.woff2'
-    }
 }
 
 task apidocs(type: JavaExec) {
