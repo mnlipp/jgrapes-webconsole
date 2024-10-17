@@ -18,5 +18,5 @@
     </listAttribute>
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="WebConsoleTest"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="WebConsoleTest"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.util.logging.config.file=jul-debug.properties -Xmx512m"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djgrapes.useVirtualThreads=false -Djava.util.logging.config.file=jul-debug.properties -Xmx512m"/>
 </launchConfiguration>

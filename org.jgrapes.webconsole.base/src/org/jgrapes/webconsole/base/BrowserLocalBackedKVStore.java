@@ -117,21 +117,22 @@ public class BrowserLocalBackedKVStore extends Component {
                 // Having a store now also shows that retrieval has been done.
                 final String keyStart = consolePrefix
                     + BrowserLocalBackedKVStore.class.getName() + "/";
-                @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
-                    "PMD.LooseCoupling" })
-                Store data = getStore(channel);
-                JsonArray params = (JsonArray) event.request().params();
-                params.asArray(0).arrayStream().forEach(item -> {
-                    String key = item.asString(0);
-                    if (key.startsWith(keyStart)) {
-                        data.put(key.substring(
-                            keyStart.length() - 1), item.asString(1));
-                    }
-                });
-                // Don't re-use
-                channel.setAssociated(this, null);
-                // Let others process the web console ready event
-                origEvent.resumeHandling();
+                // TODO
+//                @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
+//                    "PMD.LooseCoupling" })
+//                Store data = getStore(channel);
+//                JsonArray params = (JsonArray) event.request().params();
+//                params.asArray(0).arrayStream().forEach(item -> {
+//                    String key = item.asString(0);
+//                    if (key.startsWith(keyStart)) {
+//                        data.put(key.substring(
+//                            keyStart.length() - 1), item.asString(1));
+//                    }
+//                });
+//                // Don't re-use
+//                channel.setAssociated(this, null);
+//                // Let others process the web console ready event
+//                origEvent.resumeHandling();
             });
     }
 

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
@@ -106,70 +107,69 @@ public class WebConsole extends Component {
     public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         // Send events to web console components on console's channel
-        JsonArray params = event.request().params();
-        switch (event.request().method()) {
+        var req = event.request();
+        switch (req.method()) {
         case "consoleReady": {
             fire(new ConsoleReady(view.renderSupport()), channel);
             break;
         }
         case "addConlet": {
             fire(new AddConletRequest(view.renderSupport(),
-                params.asString(0), params.asArray(1).stream().map(
+                req.asString(0), req.streamOf(String.class, 1).map(
                     value -> RenderMode.valueOf((String) value))
                     .collect(Collectors.toSet()),
-                params.size() < 3 ? Collections.emptyMap()
-                    : ((JsonObject) params.get(2)).backing())
-                        .setFrontendRequest(),
+                req.params().length < 3 ? Collections.emptyMap()
+                    : req.as(Map.class, 2)).setFrontendRequest(),
                 channel);
             break;
         }
         case "conletsDeleted": {
-            for (var item : params.asArray(0).backing()) {
-                var conletInfo = (JsonArray) item;
-                fire(
-                    new ConletDeleted(view.renderSupport(),
-                        conletInfo.asString(0),
-                        conletInfo.asArray(1).stream().map(
-                            value -> RenderMode.valueOf((String) value))
-                            .collect(Collectors.toSet()),
-                        conletInfo.size() < 3 ? Collections.emptyMap()
-                            : ((JsonObject) conletInfo.get(2)).backing()),
-                    channel);
-            }
+//            for (var item : params.asArray(0).backing()) {
+//                var conletInfo = (JsonArray) item;
+//                fire(
+//                    new ConletDeleted(view.renderSupport(),
+//                        conletInfo.asString(0),
+//                        conletInfo.asArray(1).stream().map(
+//                            value -> RenderMode.valueOf((String) value))
+//                            .collect(Collectors.toSet()),
+//                        conletInfo.size() < 3 ? Collections.emptyMap()
+//                            : ((JsonObject) conletInfo.get(2)).backing()),
+//                    channel);
+//            }
             break;
         }
         case "consoleLayout": {
-            List<String> previewLayout = params.asArray(0).stream().map(
-                value -> (String) value).collect(Collectors.toList());
-            List<String> tabsLayout = params.asArray(1).stream().map(
-                value -> (String) value).collect(Collectors.toList());
-            JsonObject xtraInfo = (JsonObject) params.get(2);
-            fire(new ConsoleLayoutChanged(
-                previewLayout, tabsLayout, xtraInfo), channel);
+//            List<String> previewLayout = params.asArray(0).stream().map(
+//                value -> (String) value).collect(Collectors.toList());
+//            List<String> tabsLayout = params.asArray(1).stream().map(
+//                value -> (String) value).collect(Collectors.toList());
+//            JsonObject xtraInfo = (JsonObject) params.get(2);
+//            fire(new ConsoleLayoutChanged(
+//                previewLayout, tabsLayout, xtraInfo), channel);
             break;
         }
         case "renderConlet": {
-            fire(new RenderConletRequest(view.renderSupport(),
-                params.asString(0),
-                params.asArray(1).stream().map(
-                    value -> RenderMode.valueOf((String) value))
-                    .collect(Collectors.toSet())),
-                channel);
+//            fire(new RenderConletRequest(view.renderSupport(),
+//                params.asString(0),
+//                params.asArray(1).stream().map(
+//                    value -> RenderMode.valueOf((String) value))
+//                    .collect(Collectors.toSet())),
+//                channel);
             break;
         }
         case "setLocale": {
-            fire(new SetLocale(view.renderSupport(),
-                Locale.forLanguageTag(params.asString(0)),
-                params.asBoolean(1)), channel);
+//            fire(new SetLocale(view.renderSupport(),
+//                Locale.forLanguageTag(params.asString(0)),
+//                params.asBoolean(1)), channel);
             break;
         }
         case "notifyConletModel": {
-            fire(new NotifyConletModel(view.renderSupport(),
-                params.asString(0), params.asString(1),
-                params.size() <= 2
-                    ? JsonArray.EMPTY_ARRAY
-                    : params.asArray(2)),
-                channel);
+//            fire(new NotifyConletModel(view.renderSupport(),
+//                params.asString(0), params.asString(1),
+//                params.size() <= 2
+//                    ? JsonArray.EMPTY_ARRAY
+//                    : params.asArray(2)),
+//                channel);
             break;
         }
         default:

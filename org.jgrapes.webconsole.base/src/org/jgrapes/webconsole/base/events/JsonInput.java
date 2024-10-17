@@ -18,10 +18,10 @@
 
 package org.jgrapes.webconsole.base.events;
 
-import org.jdrupes.json.JsonRpc;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
+import org.jgrapes.webconsole.base.JsonRpc;
 
 /**
  * A JSON notification from the web console view (browser) to the web console. 

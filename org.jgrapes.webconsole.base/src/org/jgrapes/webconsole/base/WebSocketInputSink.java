@@ -23,10 +23,6 @@ import java.lang.ref.WeakReference;
 import java.nio.CharBuffer;
 import java.util.Optional;
 import java.util.logging.Logger;
-import org.jdrupes.json.JsonBeanDecoder;
-import org.jdrupes.json.JsonDecodeException;
-import org.jdrupes.json.JsonRpc;
-import org.jdrupes.json.JsonRpc.DefaultJsonRpc;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.EventPipeline;
 import org.jgrapes.io.events.Input;
@@ -34,6 +30,9 @@ import org.jgrapes.io.util.ManagedBuffer;
 import org.jgrapes.io.util.ManagedBufferReader;
 import org.jgrapes.io.util.ThreadCleaner;
 import org.jgrapes.webconsole.base.events.JsonInput;
+
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 
 /**
  * Assembles {@link Input} events until a complete
@@ -49,6 +48,7 @@ public class WebSocketInputSink extends Thread {
     private final WeakReference<ConsoleConnection> channelRef;
     private final WeakReference<EventPipeline> pipelineRef;
     private ManagedBufferReader jsonSource;
+    private Jsonb jsonb = JsonbBuilder.create();
 
     /**
      * Instantiates a new web socket input reader.
@@ -74,7 +74,8 @@ public class WebSocketInputSink extends Thread {
         // Delayed initialization, allows adaption to buffer size.
         if (jsonSource == null) {
             jsonSource = new ManagedBufferReader();
-            ofVirtual().start(this);
+            (Components.useVirtualThreads() ? ofVirtual()
+                : ofPlatform()).start(this);
         }
         jsonSource.feed(input);
     }
@@ -104,20 +105,7 @@ public class WebSocketInputSink extends Thread {
     @Override
     public void run() {
         while (true) {
-            JsonBeanDecoder jsonDecoder = JsonBeanDecoder.create(jsonSource);
-            @SuppressWarnings("PMD.UnusedAssignment")
-            JsonRpc rpc = null;
-            try {
-                rpc = jsonDecoder.readObject(DefaultJsonRpc.class);
-            } catch (JsonDecodeException e) {
-                logger.severe(
-                    () -> toString() + " cannot decode request from console: "
-                        + e.getMessage());
-                break;
-            }
-            if (rpc == null) {
-                break;
-            }
+            JsonRpc rpc = jsonb.fromJson(jsonSource, WcJsonRpc.class);
             // Fully decoded JSON available.
             ConsoleConnection connection = channelRef.get();
             EventPipeline eventPipeline = pipelineRef.get();

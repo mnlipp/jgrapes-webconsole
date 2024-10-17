@@ -185,16 +185,17 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         // Send events to conlets on web console's channel
-        JsonArray params = event.request().params();
-        switch (event.request().method()) { // NOPMD
-        case "setTheme": {
-            fire(new SetTheme(params.asString(0)), channel);
-            break;
-        }
-        default:
-            // Ignore unknown
-            break;
-        }
+        // TODO
+//        JsonArray params = event.request().params();
+//        switch (event.request().method()) { // NOPMD
+//        case "setTheme": {
+//            fire(new SetTheme(params.asString(0)), channel);
+//            break;
+//        }
+//        default:
+//            // Ignore unknown
+//            break;
+//        }
     }
 
     /**
