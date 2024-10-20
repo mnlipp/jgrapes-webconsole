@@ -48,6 +48,7 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.RuntimeMBeanException;
 import org.jdrupes.json.JsonArray;
+import org.jdrupes.json.JsonBeanEncoder;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
@@ -63,8 +64,13 @@ import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
 
+    /** The mapper. */
+    @SuppressWarnings("PMD.FieldNamingConventions")
+    protected static final ObjectMapper mapper = new ObjectMapper();
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.Preview, RenderMode.View);
 
@@ -150,24 +156,27 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
             throws Exception {
         event.stop();
         if ("sendMBean".equals(event.method())) {
-//            JsonArray segments = (JsonArray) event.params().get(0);
-//            String domain = segments.asString(0);
-//            @SuppressWarnings("PMD.ReplaceHashtableWithMap")
-//            Hashtable<String, String> props = new Hashtable<>();
-//            for (int i = 1; i < segments.size(); i++) {
-//                String[] keyProp = segments.asString(i).split("=", 2);
-//                props.put(keyProp[0], keyProp[1]);
-//            }
-//            Set<ObjectName> mbeanNames
-//                = mbeanServer.queryNames(new ObjectName(domain, props), null);
-//            if (mbeanNames.isEmpty()) {
-//                return;
-//            }
-//            ObjectName mbeanName = mbeanNames.iterator().next();
-//            MBeanInfo info = mbeanServer.getMBeanInfo(mbeanName);
-//            channel.respond(new NotifyConletView(type(),
-//                event.conletId(), "mbeanDetails",
-//                new Object[] { genAttributesInfo(mbeanName, info), null }));
+            List<String> segments = event.param(0);
+            String domain = segments.get(0);
+            @SuppressWarnings("PMD.ReplaceHashtableWithMap")
+            Hashtable<String, String> props = new Hashtable<>();
+            for (int i = 1; i < segments.size(); i++) {
+                String[] keyProp = segments.get(i).split("=", 2);
+                props.put(keyProp[0], keyProp[1]);
+            }
+            Set<ObjectName> mbeanNames
+                = mbeanServer.queryNames(new ObjectName(domain, props), null);
+            if (mbeanNames.isEmpty()) {
+                return;
+            }
+            ObjectName mbeanName = mbeanNames.iterator().next();
+            MBeanInfo info = mbeanServer.getMBeanInfo(mbeanName);
+            var json = JsonBeanEncoder.create()
+                .writeObject(genAttributesInfo(mbeanName, info)).toJson();
+            Object model = mapper.readValue(json, Object.class);
+            channel.respond(new NotifyConletView(type(),
+                event.conletId(), "mbeanDetails",
+                new Object[] { model, null }));
         }
     }
 
