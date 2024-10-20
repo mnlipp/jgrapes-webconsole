@@ -18,6 +18,7 @@
 
 package org.jgrapes.webconlet.examples.helloworld;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
@@ -27,9 +28,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import org.jdrupes.json.JsonBeanDecoder;
-import org.jdrupes.json.JsonBeanEncoder;
-import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
@@ -59,6 +57,10 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  */
 public class HelloWorldConlet
         extends FreeMarkerConlet<HelloWorldConlet.HelloWorldModel> {
+
+    /** The mapper. */
+    @SuppressWarnings("PMD.FieldNamingConventions")
+    protected static final ObjectMapper mapper = new ObjectMapper();
 
     private static final Set<RenderMode> MODES = RenderMode.asSet(
         RenderMode.Preview, RenderMode.View, RenderMode.Help);
@@ -112,8 +114,7 @@ public class HelloWorldConlet
             Event<?> event, ConsoleConnection channel, String conletId)
             throws IOException {
         HelloWorldModel conletModel = new HelloWorldModel(conletId);
-        String jsonState
-            = JsonBeanEncoder.create().writeObject(conletModel).toJson();
+        String jsonState = mapper.writer().writeValueAsString(conletModel);
         channel.respond(new KeyValueStoreUpdate().update(
             storagePath(channel.session(), conletModel.getConletId()),
             jsonState));
@@ -131,11 +132,11 @@ public class HelloWorldConlet
             if (!query.results().isEmpty()) {
                 var json = query.results().get(0).values().stream().findFirst()
                     .get();
-                HelloWorldModel model = JsonBeanDecoder.create(json)
-                    .readObject(HelloWorldModel.class);
+                HelloWorldModel model
+                    = mapper.readValue(json.getBytes(), HelloWorldModel.class);
                 return Optional.of(model);
             }
-        } catch (InterruptedException | JsonDecodeException e) {
+        } catch (InterruptedException | IOException e) {
             // Means we have no result.
         }
 
@@ -202,8 +203,7 @@ public class HelloWorldConlet
         event.stop();
         conletModel.setWorldVisible(!conletModel.isWorldVisible());
 
-        String jsonState = JsonBeanEncoder.create()
-            .writeObject(conletModel).toJson();
+        String jsonState = mapper.writer().writeValueAsString(conletModel);
         channel.respond(new KeyValueStoreUpdate().update(
             storagePath(channel.session(), conletModel.getConletId()),
             jsonState));

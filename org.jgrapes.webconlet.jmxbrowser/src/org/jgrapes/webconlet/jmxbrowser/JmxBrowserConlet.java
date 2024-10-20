@@ -150,24 +150,24 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
             throws Exception {
         event.stop();
         if ("sendMBean".equals(event.method())) {
-            JsonArray segments = (JsonArray) event.params().get(0);
-            String domain = segments.asString(0);
-            @SuppressWarnings("PMD.ReplaceHashtableWithMap")
-            Hashtable<String, String> props = new Hashtable<>();
-            for (int i = 1; i < segments.size(); i++) {
-                String[] keyProp = segments.asString(i).split("=", 2);
-                props.put(keyProp[0], keyProp[1]);
-            }
-            Set<ObjectName> mbeanNames
-                = mbeanServer.queryNames(new ObjectName(domain, props), null);
-            if (mbeanNames.isEmpty()) {
-                return;
-            }
-            ObjectName mbeanName = mbeanNames.iterator().next();
-            MBeanInfo info = mbeanServer.getMBeanInfo(mbeanName);
-            channel.respond(new NotifyConletView(type(),
-                event.conletId(), "mbeanDetails",
-                new Object[] { genAttributesInfo(mbeanName, info), null }));
+//            JsonArray segments = (JsonArray) event.params().get(0);
+//            String domain = segments.asString(0);
+//            @SuppressWarnings("PMD.ReplaceHashtableWithMap")
+//            Hashtable<String, String> props = new Hashtable<>();
+//            for (int i = 1; i < segments.size(); i++) {
+//                String[] keyProp = segments.asString(i).split("=", 2);
+//                props.put(keyProp[0], keyProp[1]);
+//            }
+//            Set<ObjectName> mbeanNames
+//                = mbeanServer.queryNames(new ObjectName(domain, props), null);
+//            if (mbeanNames.isEmpty()) {
+//                return;
+//            }
+//            ObjectName mbeanName = mbeanNames.iterator().next();
+//            MBeanInfo info = mbeanServer.getMBeanInfo(mbeanName);
+//            channel.respond(new NotifyConletView(type(),
+//                event.conletId(), "mbeanDetails",
+//                new Object[] { genAttributesInfo(mbeanName, info), null }));
         }
     }
 

@@ -20,10 +20,10 @@ package org.jgrapes.webconsole.base;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Event;
@@ -120,12 +120,11 @@ public class BrowserLocalBackedKVStore extends Component {
                 @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
                     "PMD.LooseCoupling" })
                 Store data = getStore(channel);
-                JsonArray params = (JsonArray) event.request().params();
-                params.asArray(0).arrayStream().forEach(item -> {
-                    String key = item.asString(0);
+                String[][] values = event.request().param(0);
+                Arrays.stream(values).forEach(item -> {
+                    String key = item[0];
                     if (key.startsWith(keyStart)) {
-                        data.put(key.substring(
-                            keyStart.length() - 1), item.asString(1));
+                        data.put(key.substring(keyStart.length() - 1), item[1]);
                     }
                 });
                 // Don't re-use

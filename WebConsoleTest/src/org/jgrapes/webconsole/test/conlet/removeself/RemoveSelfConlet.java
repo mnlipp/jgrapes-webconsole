@@ -116,7 +116,7 @@ public class RemoveSelfConlet extends FreeMarkerConlet<Serializable> {
             ConsoleConnection channel, Serializable conletState)
             throws Exception {
         event.stop();
-        deleteConlets = event.params().asBoolean(1);
+        deleteConlets = event.param(1);
         detach();
     }
 

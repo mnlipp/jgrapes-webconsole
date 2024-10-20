@@ -18,11 +18,11 @@
 
 package org.jgrapes.webconsole.base.events;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.Writer;
-import org.jdrupes.json.JsonBeanEncoder;
-import org.jdrupes.json.JsonRpc;
 import org.jgrapes.core.Event;
+import org.jgrapes.webconsole.base.JsonRpc;
 
 /**
  * Events derived from this class are transformed to JSON messages
@@ -32,6 +32,10 @@ import org.jgrapes.core.Event;
  * {@link org.jgrapes.webconsole.base.ConsoleConnection#respond(org.jgrapes.core.Event)}).
  */
 public abstract class ConsoleCommand extends Event<Void> {
+
+    /** The mapper. */
+    @SuppressWarnings("PMD.FieldNamingConventions")
+    protected static final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Writes the event as JSON notification to the given writer.
@@ -55,13 +59,13 @@ public abstract class ConsoleCommand extends Event<Void> {
     @SuppressWarnings("PMD.LinguisticNaming")
     protected void toJson(Writer writer, String method, Object... params)
             throws IOException {
-        JsonRpc rpc = JsonRpc.create();
-        rpc.setMethod(method);
+        JsonRpc rpc = new JsonRpc(method);
         if (params.length > 0) {
             for (Object obj : params) {
                 rpc.addParam(obj);
             }
         }
-        JsonBeanEncoder.create(writer).writeObject(rpc).flush();
+        mapper.writeValue(writer, rpc);
+        writer.flush();
     }
 }

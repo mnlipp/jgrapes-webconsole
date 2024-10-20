@@ -358,7 +358,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             var locales = Optional.ofNullable(
                 (Selection) connection.session().get(Selection.class))
                 .map(Selection::get).orElse(new Locale[0]);
-            fire(new StartOidcLogin(providers.get(event.params().asString(0)),
+            fire(new StartOidcLogin(providers.get((String) event.params()[0]),
                 locales).setAssociated(this,
                     new LoginContext(connection, model)));
             return;
@@ -379,7 +379,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     private void attemptLocalLogin(NotifyConletModel event,
             ConsoleConnection connection, AccountModel model) {
         var bundle = resourceBundle(connection.locale());
-        String userName = event.params().asString(0);
+        String userName = (String) event.param(0);
         if (userName == null || userName.isEmpty()) {
             connection.respond(new NotifyConletView(type(),
                 model.getConletId(), "setMessages",
@@ -387,7 +387,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             return;
         }
         var userData = users.get(userName);
-        String password = event.params().asString(1);
+        String password = event.param(1);
         if (userData == null
             || !BCrypt.verifyer().verify(password.getBytes(),
                 userData.get("password").getBytes()).verified) {

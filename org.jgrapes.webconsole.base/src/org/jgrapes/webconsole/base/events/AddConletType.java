@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import org.jdrupes.json.JsonArray;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
 import org.jgrapes.webconsole.base.RenderSupport;
 import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
@@ -244,16 +243,12 @@ public class AddConletType extends ConsoleCommand {
 
     @Override
     public void toJson(Writer writer) throws IOException {
-        JsonArray strArray = JsonArray.create();
-        for (ScriptResource scriptResource : scriptResources()) {
-            strArray.append(scriptResource.toJsonValue());
-        }
         toJson(writer, "addConletType", conletType(),
             displayNames().entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getKey().toLanguageTag(),
                     Entry::getValue)),
             Arrays.stream(cssUris()).map(URI::toString).toArray(String[]::new),
-            strArray, renderModes().stream().map(RenderMode::name)
+            scriptResources(), renderModes().stream().map(RenderMode::name)
                 .toArray(size -> new String[size]),
             pageComponents);
     }

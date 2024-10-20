@@ -18,6 +18,10 @@
 
 package org.jgrapes.webconsole.base.events;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -28,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.jdrupes.json.JsonArray;
-import org.jdrupes.json.JsonObject;
 import org.jgrapes.webconsole.base.PageResourceProvider;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
 
@@ -169,13 +171,9 @@ public class AddPageResources extends ConsoleCommand {
 
     @Override
     public void toJson(Writer writer) throws IOException {
-        JsonArray scripts = JsonArray.create();
-        for (ScriptResource scriptResource : scriptResources()) {
-            scripts.append(scriptResource.toJsonValue());
-        }
         toJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
             URI::toString).toArray(String[]::new),
-            cssSource(), scripts);
+            cssSource(), scriptResources());
     }
 
     /**
@@ -183,6 +181,7 @@ public class AddPageResources extends ConsoleCommand {
      * by the browser. Note that a single instance can either be used
      * for a URI or inline JavaScript, not for both.
      */
+    @JsonSerialize(using = ScriptResource.Serializer.class)
     public static class ScriptResource {
         private static final String[] EMPTY_ARRAY = new String[0];
 
@@ -340,35 +339,63 @@ public class AddPageResources extends ConsoleCommand {
         }
 
         /**
-         * Provides the JSON representation of the information.
-         *
-         * @return the json object
+         * The Class Serializer.
          */
-        public JsonObject toJsonValue() {
-            JsonObject obj = JsonObject.create();
-            if (scriptUri != null) {
-                obj.setField("uri", scriptUri.toString());
+        @SuppressWarnings("serial")
+        public static class Serializer extends StdSerializer<ScriptResource> {
+
+            /**
+             * Instantiates a new serializer.
+             */
+            public Serializer() {
+                super((Class<ScriptResource>) null);
             }
-            if (scriptId != null) {
-                obj.setField("id", scriptId);
+
+            /**
+             * Instantiates a new serializer.
+             *
+             * @param type the type
+             */
+            public Serializer(Class<ScriptResource> type) {
+                super(type);
             }
-            if (scriptType != null) {
-                obj.setField("type", scriptType);
+
+            /**
+             * Serialize.
+             *
+             * @param obj the obj
+             * @param generator the generator
+             * @param ctx the ctx
+             * @throws IOException Signals that an I/O exception has occurred.
+             */
+            @Override
+            public void serialize(ScriptResource obj, JsonGenerator generator,
+                    SerializerProvider ctx) throws IOException {
+                generator.writeStartObject();
+                if (obj.scriptUri != null) {
+                    generator.writeStringField("uri", obj.scriptUri.toString());
+                }
+                if (obj.scriptId != null) {
+                    generator.writeStringField("id", obj.scriptId);
+                }
+                if (obj.scriptType != null) {
+                    generator.writeStringField("type", obj.scriptType);
+                }
+                if (obj.scriptSource != null) {
+                    generator.writeStringField("source", obj.scriptSource);
+                }
+                generator.writeArrayFieldStart("requires");
+                for (String req : obj.requires) {
+                    generator.writeString(req);
+                }
+                generator.writeEndArray();
+                generator.writeArrayFieldStart("provides");
+                for (String prov : obj.provides) {
+                    generator.writeString(prov);
+                }
+                generator.writeEndArray();
+                generator.writeEndObject();
             }
-            if (scriptSource != null) {
-                obj.setField("source", scriptSource);
-            }
-            JsonArray strArray = JsonArray.create();
-            for (String req : requires) {
-                strArray.append(req);
-            }
-            obj.setField("requires", strArray);
-            strArray = JsonArray.create();
-            for (String prov : provides) {
-                strArray.append(prov);
-            }
-            obj.setField("provides", strArray);
-            return obj;
         }
     }
 }

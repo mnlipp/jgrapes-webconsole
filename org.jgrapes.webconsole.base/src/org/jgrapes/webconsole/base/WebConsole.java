@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2017-2018 Michael N. Lipp
+ * Copyright (C) 2017-2024 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.ref.WeakReference;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -39,14 +39,13 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
-import org.jdrupes.json.JsonArray;
-import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.events.Stop;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
+import org.jgrapes.webconsole.base.WcJsonRpc.ConletInfo;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.ConletDeleted;
 import org.jgrapes.webconsole.base.events.ConsoleConfigured;
@@ -106,69 +105,65 @@ public class WebConsole extends Component {
     public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         // Send events to web console components on console's channel
-        JsonArray params = event.request().params();
-        switch (event.request().method()) {
+        var request = event.request();
+        switch (request.method()) {
         case "consoleReady": {
             fire(new ConsoleReady(view.renderSupport()), channel);
             break;
         }
         case "addConlet": {
             fire(new AddConletRequest(view.renderSupport(),
-                params.asString(0), params.asArray(1).stream().map(
-                    value -> RenderMode.valueOf((String) value))
+                request.param(0),
+                Arrays.stream((String[]) request.param(1)).map(
+                    value -> RenderMode.valueOf(value))
                     .collect(Collectors.toSet()),
-                params.size() < 3 ? Collections.emptyMap()
-                    : ((JsonObject) params.get(2)).backing())
-                        .setFrontendRequest(),
+                request.params().length < 3 ? Collections.emptyMap()
+                    : request.param(2)).setFrontendRequest(),
                 channel);
             break;
         }
         case "conletsDeleted": {
-            for (var item : params.asArray(0).backing()) {
-                var conletInfo = (JsonArray) item;
+            for (var conletInfo : (ConletInfo[]) request.param(0)) {
                 fire(
                     new ConletDeleted(view.renderSupport(),
-                        conletInfo.asString(0),
-                        conletInfo.asArray(1).stream().map(
+                        conletInfo.conletId(),
+                        conletInfo.modes().stream().map(
                             value -> RenderMode.valueOf((String) value))
                             .collect(Collectors.toSet()),
-                        conletInfo.size() < 3 ? Collections.emptyMap()
-                            : ((JsonObject) conletInfo.get(2)).backing()),
+                        Optional.ofNullable(conletInfo.opts())
+                            .orElse(Collections.emptyMap())),
                     channel);
             }
             break;
         }
         case "consoleLayout": {
-            List<String> previewLayout = params.asArray(0).stream().map(
-                value -> (String) value).collect(Collectors.toList());
-            List<String> tabsLayout = params.asArray(1).stream().map(
-                value -> (String) value).collect(Collectors.toList());
-            JsonObject xtraInfo = (JsonObject) params.get(2);
+            String[] previewLayout = request.param(0);
+            String[] tabsLayout = request.param(1);
+            Object xtraInfo = request.param(2);
             fire(new ConsoleLayoutChanged(
                 previewLayout, tabsLayout, xtraInfo), channel);
             break;
         }
         case "renderConlet": {
             fire(new RenderConletRequest(view.renderSupport(),
-                params.asString(0),
-                params.asArray(1).stream().map(
-                    value -> RenderMode.valueOf((String) value))
+                request.param(0),
+                Arrays.stream((String[]) request.param(1)).map(
+                    value -> RenderMode.valueOf(value))
                     .collect(Collectors.toSet())),
                 channel);
             break;
         }
         case "setLocale": {
             fire(new SetLocale(view.renderSupport(),
-                Locale.forLanguageTag(params.asString(0)),
-                params.asBoolean(1)), channel);
+                Locale.forLanguageTag(request.param(0)),
+                request.param(1)), channel);
             break;
         }
         case "notifyConletModel": {
             fire(new NotifyConletModel(view.renderSupport(),
-                params.asString(0), params.asString(1),
-                params.size() <= 2
-                    ? JsonArray.EMPTY_ARRAY
-                    : params.asArray(2)),
+                request.param(0), request.param(1),
+                request.params().length <= 2 ? new Object[0]
+                    : request.param(2)),
                 channel);
             break;
         }
