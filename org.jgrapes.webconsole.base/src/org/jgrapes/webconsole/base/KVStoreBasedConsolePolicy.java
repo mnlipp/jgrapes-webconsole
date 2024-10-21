@@ -206,7 +206,7 @@ public class KVStoreBasedConsolePolicy extends Component {
             @SuppressWarnings("unchecked")
             List<String> tabsLayout = (List<String>) persisted.computeIfAbsent(
                 "tabsLayout", newKey -> Collections.emptyList());
-            Object xtraInfo = (Map<?, ?>) persisted.computeIfAbsent(
+            Object xtraInfo = persisted.computeIfAbsent(
                 "xtraInfo", newKey -> new Object());
 
             // Update (now consistent) layout
