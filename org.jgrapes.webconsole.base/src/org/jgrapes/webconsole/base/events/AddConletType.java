@@ -242,8 +242,8 @@ public class AddConletType extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, "addConletType", conletType(),
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, "addConletType", conletType(),
             displayNames().entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getKey().toLanguageTag(),
                     Entry::getValue)),

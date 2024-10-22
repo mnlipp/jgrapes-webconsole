@@ -38,26 +38,27 @@ public abstract class ConsoleCommand extends Event<Void> {
     protected static final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * Writes the event as JSON notification to the given writer.
-     * Derived classes usually simply call 
-     * {@link #toJson(Writer, String, Object...)} with the method
+     * Emits the 
+     * [JSON notification](https://www.jsonrpc.org/specification#notification)
+     * using the given writer. Derived classes usually simply call 
+     * {@link #emitJson(Writer, String, Object...)} with the method
      * name and parameters.
      * 
      * @param writer the writer
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
-    public abstract void toJson(Writer writer)
+    public abstract void emitJson(Writer writer)
             throws InterruptedException, IOException;
 
     /**
      * Creates a JSON notification from the given data.
      * Closes the `writer`.
-     * 
+     *
      * @param writer the writer
-     * @throws IOException 
+     * @param method the method
+     * @param params the params
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
-    protected void toJson(Writer writer, String method, Object... params)
+    protected void emitJson(Writer writer, String method, Object... params)
             throws IOException {
         JsonRpc rpc = new JsonRpc(method);
         if (params.length > 0) {
@@ -67,5 +68,22 @@ public abstract class ConsoleCommand extends Event<Void> {
         }
         mapper.writeValue(writer, rpc);
         writer.flush();
+    }
+
+    /**
+     * Calls {@link #emitJson(Writer, String, Object...)} with the
+     * given method and parameters. Provided for backwards compatibility.
+     *
+     * @param writer the writer
+     * @param method the method
+     * @param params the params
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @deprecated Use {@link #emitJson(Writer, String, Object...)} instead.
+     */
+    @Deprecated
+    @SuppressWarnings("PMD.LinguisticNaming")
+    protected void toJson(Writer writer, String method, Object... params)
+            throws IOException {
+        emitJson(writer, method, params);
     }
 }

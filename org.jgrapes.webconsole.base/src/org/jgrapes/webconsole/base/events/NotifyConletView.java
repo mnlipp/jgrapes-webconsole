@@ -92,8 +92,8 @@ public class NotifyConletView extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, "notifyConletView", conletType(), conletId(),
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, "notifyConletView", conletType(), conletId(),
             method(), params());
     }
 

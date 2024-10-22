@@ -170,8 +170,8 @@ public class AddPageResources extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, "addPageResources", Arrays.stream(cssUris()).map(
             URI::toString).toArray(String[]::new),
             cssSource(), scriptResources());
     }

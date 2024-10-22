@@ -181,10 +181,10 @@ public class RenderConlet extends ConsoleCommand {
      * @throws InterruptedException 
      */
     @Override
-    public void toJson(Writer writer)
+    public void emitJson(Writer writer)
             throws InterruptedException, IOException {
         try {
-            toJson(writer, "updateConlet", conletType(), conletId(),
+            emitJson(writer, "updateConlet", conletType(), conletId(),
                 renderAs().stream().map(RenderMode::name)
                     .toArray(size -> new String[size]),
                 supportedRenderModes().stream().map(RenderMode::name)

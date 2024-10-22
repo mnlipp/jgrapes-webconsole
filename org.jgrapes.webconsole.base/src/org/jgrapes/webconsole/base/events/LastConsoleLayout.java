@@ -67,8 +67,8 @@ public class LastConsoleLayout extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, "lastConsoleLayout", previewLayout(), tabsLayout(),
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, "lastConsoleLayout", previewLayout(), tabsLayout(),
             xtraInfo());
     }
 

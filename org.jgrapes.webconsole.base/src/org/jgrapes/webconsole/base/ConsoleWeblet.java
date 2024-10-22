@@ -722,7 +722,7 @@ public abstract class ConsoleWeblet extends Component {
             @SuppressWarnings({ "resource", "PMD.CloseResource" })
             CharBufferWriter out = new CharBufferWriter(wsChannel,
                 wsChannel.responsePipeline()).suppressClose();
-            new SimpleConsoleCommand("reload").toJson(out);
+            new SimpleConsoleCommand("reload").emitJson(out);
             out.close();
             event.stop();
             return;
@@ -824,7 +824,7 @@ public abstract class ConsoleWeblet extends Component {
         @SuppressWarnings({ "resource", "PMD.CloseResource" })
         CharBufferWriter out = new CharBufferWriter(upstream,
             upstream.responsePipeline()).suppressClose();
-        event.toJson(out);
+        event.emitJson(out);
     }
 
     /**

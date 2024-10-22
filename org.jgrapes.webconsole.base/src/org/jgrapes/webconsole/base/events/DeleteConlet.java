@@ -64,8 +64,8 @@ public class DeleteConlet extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, "deleteConlet", conletId(),
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, "deleteConlet", conletId(),
             renderModes.stream().map(RenderMode::name)
                 .toArray(size -> new String[size]));
     }

@@ -76,8 +76,8 @@ public class UpdateConletType extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, "updateConletType", conletType(),
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, "updateConletType", conletType(),
             renderModes().stream().map(RenderMode::name)
                 .toArray(size -> new String[size]));
     }

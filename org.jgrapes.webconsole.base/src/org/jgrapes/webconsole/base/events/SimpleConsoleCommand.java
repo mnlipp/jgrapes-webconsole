@@ -63,8 +63,8 @@ public class SimpleConsoleCommand extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, method, params);
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, method, params);
     }
 
     /*
