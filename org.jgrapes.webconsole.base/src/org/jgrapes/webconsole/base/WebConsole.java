@@ -365,6 +365,7 @@ public class WebConsole extends Component {
 
         private static Set<WebConsoleInfo> consoleInfos = new HashSet<>();
 
+        @SuppressWarnings("PMD.AvoidSynchronizedStatement")
         public static void addConsole(WebConsole console) {
             synchronized (consoleInfos) {
                 consoleInfos.add(new WebConsoleInfo(console));
@@ -372,6 +373,7 @@ public class WebConsole extends Component {
         }
 
         @Override
+        @SuppressWarnings("PMD.AvoidSynchronizedStatement")
         public Set<ConsoleMXBean> getConsoles() {
             Set<WebConsoleInfo> expired = new HashSet<>();
             synchronized (consoleInfos) {

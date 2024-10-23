@@ -20,7 +20,7 @@ package org.jgrapes.webconsole.base;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 import org.jgrapes.webconsole.base.events.AddConletRequest;
 import org.jgrapes.webconsole.base.events.AddConletType;
@@ -114,14 +114,14 @@ public interface Conlet {
          * @return the sets the
          */
         public static Set<RenderMode> asSet(RenderMode... modes) {
-            return new HashSet<>(Arrays.asList(modes));
+            return EnumSet.copyOf(Arrays.asList(modes));
         }
 
         /**
          * Retrieves the modifiers.
          */
         public static Set<RenderMode> modifiers(Set<RenderMode> modes) {
-            Set<RenderMode> result = new HashSet<>(modes);
+            Set<RenderMode> result = EnumSet.copyOf(modes);
             result.removeAll(basicModes);
             return result;
         }

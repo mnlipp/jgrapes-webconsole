@@ -509,7 +509,8 @@ public abstract class AbstractConlet<S> extends Component {
      * @param toGet the locales to get bundles for
      * @return the map with locales and bundles
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops",
+        "PMD.AvoidSynchronizedStatement", "PMD.AvoidDuplicateLiterals" })
     protected Map<Locale, ResourceBundle> l10nBundles(Set<Locale> toGet) {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<Locale, ResourceBundle> result = new HashMap<>();
@@ -745,6 +746,7 @@ public abstract class AbstractConlet<S> extends Component {
      * a new {@link ConletTrackingInfo} is created and added
      * @return the conlet tracking info
      */
+    @SuppressWarnings("PMD.AvoidSynchronizedStatement")
     protected ConletTrackingInfo trackConlet(ConsoleConnection connection,
             String conletId, ConletTrackingInfo info) {
         ConletTrackingInfo result;
@@ -767,7 +769,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param session the session
      * @return the spaces, non-transient first
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "PMD.AvoidSynchronizedStatement" })
     private Stream<Map<String, S>> typeContexts(Session session) {
         synchronized (session) {
             return List.of(session, session.transientData()).stream()
@@ -790,6 +792,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param conletState the web console component state
      * @return the component state
      */
+    @SuppressWarnings("PMD.AvoidSynchronizedStatement")
     protected S putInSession(Session session, String conletId, S conletState) {
         synchronized (session) {
             var storages = typeContexts(session);
@@ -809,6 +812,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param conletId the web console component id
      * @return the web console component state
      */
+    @SuppressWarnings("PMD.AvoidSynchronizedStatement")
     protected Optional<S> stateFromSession(Session session, String conletId) {
         synchronized (session) {
             return typeContexts(session).map(storage -> storage.get(conletId))
@@ -823,6 +827,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param session the console connection
      * @return the states
      */
+    @SuppressWarnings("PMD.AvoidSynchronizedStatement")
     protected Collection<Map.Entry<String, S>>
             statesFromSession(Session session) {
         synchronized (session) {
@@ -839,6 +844,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @param conletId the web console component id
      * @return the removed state if state existed
      */
+    @SuppressWarnings("PMD.AvoidSynchronizedStatement")
     protected Optional<S> removeState(Session session, String conletId) {
         synchronized (session) {
             return typeContexts(session)

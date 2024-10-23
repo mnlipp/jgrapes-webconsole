@@ -165,7 +165,7 @@ public class ConsoleApp extends Component {
             throws URISyntaxException {
         ConsoleWeblet consoleWeblet
             = httpServer.attach(new VueJsConsoleWeblet(httpServer.channel(),
-                Channel.SELF, new URI("/")))
+                SELF, new URI("/")))
                 .prependClassTemplateLoader(this.getClass())
                 .prependResourceBundleProvider(ConsoleApp.class)
                 .prependConsoleResourceProvider(ConsoleApp.class);
@@ -197,7 +197,7 @@ public class ConsoleApp extends Component {
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void stop() throws Exception {
-        app.fire(new Stop(), Channel.BROADCAST);
+        app.fire(new Stop(), BROADCAST);
         Components.awaitExhaustion();
     }
 
