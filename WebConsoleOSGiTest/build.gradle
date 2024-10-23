@@ -52,7 +52,7 @@ task run(type: JavaExec) {
     dependsOn createRunRepo
     
     classpath = configurations.bndCli
-    main = 'aQute.bnd.main.bnd'
+    mainClass = 'aQute.bnd.main.bnd'
     args = ['WebConsoleOSGiDemo.bndrun']
     standardInput = System.in
 }
@@ -62,7 +62,7 @@ task runGoGo(type: JavaExec) {
     dependsOn createRunRepo
     
     classpath = configurations.bndCli
-    main = 'aQute.bnd.main.bnd'
+    mainClass = 'aQute.bnd.main.bnd'
     args = ['gogo.bndrun']
     standardInput = System.in
 }
@@ -72,7 +72,7 @@ task runRepoList(type: JavaExec) {
     dependsOn createRunRepo
     
     classpath = configurations.bndCli
-    main = 'aQute.bnd.main.bnd'
+    mainClass = 'aQute.bnd.main.bnd'
     args = ['repo', 'list']
     standardInput = System.in
 }
