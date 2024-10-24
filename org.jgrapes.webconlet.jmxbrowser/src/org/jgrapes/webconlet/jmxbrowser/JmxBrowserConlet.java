@@ -109,7 +109,7 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
                 localizations(channel.supportedLocales(), "conletName"))
             .addScript(new ScriptResource()
                 .setScriptUri(event.renderSupport().conletResource(
-                    type(), "jmxbrowser.min.js"))
+                    type(), "JmxBrowser-functions.js"))
                 .setScriptType("module")));
     }
 
