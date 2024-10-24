@@ -1,3 +1,8 @@
+plugins {
+    id 'org.jgrapes.java-bundle-conventions'
+    id 'com.github.node-gradle.node'
+}
+
 dependencies {
     // BndPomRepository (3.5.0) cannot handle ranges without upper limit
     api 'org.jgrapes:org.jgrapes.core:[1.22.1,2)'
@@ -8,8 +13,6 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-databind:2.18.0'
     api 'jakarta.mail:jakarta.mail-api:[2.1.3,3)'
 }
-
-apply plugin: 'com.github.node-gradle.node'
 
 task buildLib(type: NodeTask, dependsOn: ':npmInstall') {
     inputs.files(project.fileTree(dir: 'src', include: '**/*.ts').flatten())
@@ -30,10 +33,6 @@ sourceSets {
 }
 
 processResources.dependsOn 'buildLib'
-
-eclipse {
-    autoBuildTasks buildLib
-}
 
 ext.jsDocDestDir = "${rootProject.buildDir}/javadoc/org/jgrapes/webconsole/base/jsdoc"
 
@@ -123,7 +122,6 @@ task apidocs(type: JavaExec) {
         ]
 
     ignoreExitValue true
-    
 }
 
 task buildDoc {
@@ -132,8 +130,37 @@ task buildDoc {
     dependsOn 'apidocs'
 }
 
-task javadocJar(type: Jar) {
+tasks.named('javadocJar', Jar) {
     dependsOn buildDoc
     from apidocs.destinationDir
     archiveClassifier = "javadoc"
 }
+
+eclipse {
+    autoBuildTasks buildLib
+}
+
+/*
+apply plugin: 'biz.aQute.bnd.builder'
+
+import aQute.bnd.gradle.Baseline
+
+configurations {
+    baseline
+}
+
+dependencies {
+    baseline("group": group, "name": project.name) {
+    println "Baseline against (0,${jar.archiveVersion.get()}["
+        version {
+            strictly "(0,${jar.archiveVersion.get()}["
+        }
+        transitive = false
+  }
+}
+
+tasks.named("baseline", Baseline) {
+    bundle = jar
+    baseline = configurations.baseline
+}
+*/

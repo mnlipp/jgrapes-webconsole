@@ -1,3 +1,8 @@
+plugins {
+    id 'org.jgrapes.java-bundle-conventions'
+    id 'com.github.node-gradle.node'
+}
+
 dependencies {
 	api project(':org.jgrapes.webconsole.base')
     api 'org.jdrupes.json:json:[2.3.1,2.4.0)'
@@ -8,8 +13,6 @@ dependencies {
 release {
     enabled = false
 }
-
-apply plugin: 'com.github.node-gradle.node'
 
 task compileTs(type: NodeTask) {
     dependsOn ':npmInstall'

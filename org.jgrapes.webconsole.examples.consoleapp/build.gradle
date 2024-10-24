@@ -1,18 +1,7 @@
-buildscript {
-	
-	repositories {
-		mavenCentral()
-	}
-  }
-
-repositories {
-	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+plugins {
+    id 'org.jgrapes.java-bundle-conventions'
 }
 
 dependencies {
     implementation project(':org.jgrapes.webconsole.vuejs')
-}
-
-generatePomFileForMavenPublication {
-    mustRunAfter ':org.jgrapes.webconsole.vuejs:jar'
 }

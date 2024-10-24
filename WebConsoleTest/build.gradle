@@ -10,12 +10,11 @@ buildscript {
 	}
   }
 
-repositories {
-	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+plugins {
+    id 'org.jgrapes.java-application-conventions'
 }
 
 dependencies {
-
     implementation 'org.osgi:osgi.core:6.0.0'
     implementation project(':org.jgrapes.webconsole.rbac')
     implementation project(':org.jgrapes.webconsole.vuejs')

@@ -1,0 +1,129 @@
+plugins {
+    // Apply the common convention plugin for shared build configuration between library and application projects.
+    id 'org.jgrapes.java-common-conventions'
+
+    // Apply the java-library plugin for API and implementation separation.
+    id 'java-library'
+    
+    // Apply bnd plugin for OSGi support
+    id 'biz.aQute.bnd.builder'
+    
+    // Apply the javadoc conventions.
+    id 'org.jgrapes.java-doc-conventions'
+
+    // Add publishing information
+    id 'maven-publish'
+    id 'signing'
+}
+
+// Provide Implementation info and GitDescriptor (not bundle specific)
+jar {
+    duplicatesStrategy = 'exclude'
+    
+    manifest {
+        def matchExpr = [ project.tagName + "*" ]
+        
+        inputs.property("gitDescriptor",
+            { grgit.describe(always: true, match: matchExpr) })
+        
+        // Set Git revision information in the manifests of built bundles
+        def gitDesc = grgit.describe(always: true, match: matchExpr)
+        
+        attributes([
+            "Implementation-Title": project.name,
+            "Implementation-Version": "$project.version (built from ${gitDesc})",
+            "Implementation-Vendor": grgit.repository.jgit.repository.config.getString("user", null, "name")
+                + " (" + grgit.repository.jgit.repository.config.getString("user", null, "email") + ")",
+            "Git-Descriptor": gitDesc,
+            "Git-SHA": grgit.head().id,
+        ])
+    }
+}
+
+// Provide the Bundle-Version (derive from project version)
+def releaseVersion = version.replaceAll(/-SNAPSHOT$/, "")
+ext.bundleVersion = "${ -> releaseVersion +
+    (isSnapshot ? '.-\${tstamp}-SNAPSHOT' : '.ga') }"
+
+jar {
+    manifest {
+        attributes('Bundle-Version': bundleVersion)
+        attributes('Bundle-License': 'http://www.gnu.org/licenses/agpl-3.0.txt')
+    }
+}       
+
+// Additional jars for publishing
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = "sources"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            def pub = it
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+  
+            project.afterEvaluate {
+                def bndProps = new Properties()
+                file("bnd.bnd").withInputStream { bndProps.load(it) }
+            
+                pub.setArtifactId(base.archivesName.get())
+                pom {
+                    name = bndProps.getProperty('Bundle-Name')
+                    description = bndProps.getProperty('Bundle-Description')
+                    url = 'https://mnlipp.github.io/jgrapes/WebConsole.html'
+                    licenses {
+                        license {
+                            name = 'AGPL 3.0'
+                            url = 'https://www.gnu.org/licenses/agpl-3.0.en.html'
+                            distribution = 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'mnlipp'
+                            name = 'Michael N. Lipp'
+                            email = 'mnl@mnl.de'
+                        }
+                    }
+                    scm {
+                        url = 'https://github.com/mnlipp/jgrapes-webconsole/'
+                        connection = 'scm:git:https://github.com/mnlipp/jgrapes-webconsole.git'
+                        developerConnection = 'scm:git:git@github.com:mnlipp/jgrapes-webconsole.git'
+                    }
+                }
+            }
+        }
+    }
+}
+
+jar {
+    afterEvaluate {
+        into("META-INF/maven/$project.group/${base.archivesName.get()}") {
+            from { generatePomFileForMavenPublication }
+            rename ".*", "pom.xml"
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.maven
+}
+
+// Pick up the idea from https://github.com/gradle/gradle/issues/1629 to
+// create the configuration in another project (simply use the rootProject).
+
+def blName = project.name + "-baseline"
+def baselineConf = rootProject.configurations.create(blName)
+rootProject.dependencies.add(blName,
+    "${group}:${project.name}:(0,${project.version}[",
+    { transitive = false })
+
+tasks.named("baseline") {
+    bundle = jar
+    baseline = baselineConf
+}

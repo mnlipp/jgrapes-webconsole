@@ -26,6 +26,7 @@ include 'org.jgrapes.webconsole.provider.datatables'
 include 'org.jgrapes.webconsole.provider.chartjs'
 include 'org.jgrapes.webconsole.provider.markdownit'
 include 'org.jgrapes.webconsole.provider.vuejs'
+
 include 'org.jgrapes.webconlet.examples.helloworld'
 include 'org.jgrapes.webconlet.examples.formtest'
 include 'org.jgrapes.webconlet.examples.styletest'
@@ -36,7 +37,10 @@ include 'org.jgrapes.webconlet.markdowndisplay'
 include 'org.jgrapes.webconlet.jmxbrowser'
 include 'org.jgrapes.webconlet.locallogin'
 include 'org.jgrapes.webconlet.oidclogin'
+
 include 'org.jgrapes.webconsole.examples.consoleapp'
 include 'WebConsoleTest'
+/*
 include 'WebConsoleOSGiTest'
 include 'WebConsoleExample'
+*/

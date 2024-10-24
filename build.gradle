@@ -1,34 +1,22 @@
-import aQute.bnd.osgi.Processor
-import java.util.regex.Pattern
-
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:6.1.0'
-        classpath 'com.github.node-gradle:gradle-node-plugin:3.2.1'
-        classpath 'org.ajoberstar.grgit:grgit-gradle:4.1.0'
-        classpath 'org.ajoberstar:gradle-git-publish:3.0.0'
-    }
-}
-
 plugins {
+    id 'biz.aQute.bnd.builder' version "7.0.0"
+    id 'org.ajoberstar.git-publish' version '4.2.0'
     id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
-    id 'pl.allegro.tech.build.axion-release' version '1.15.0' apply false
+    id "com.github.node-gradle.node" version "7.0.1"
+    id 'eclipse'
+    // Make available, don't apply
+    id 'org.ajoberstar.grgit' version '5.2.0' apply false
+    id 'pl.allegro.tech.build.axion-release' version '1.17.2' apply false
 }
 
-nexusPublishing {
-    repositories {
-        sonatype {
-            username = project.properties['sonatypeTokenKey'] ?: "nouser"
-            password = project.properties['sonatypeTokenSecret'] ?: "nopass"
-        }
-    }
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
 }
 
-apply plugin: 'org.ajoberstar.git-publish'
-apply plugin: 'com.github.node-gradle.node'
+allprojects {
+    group = 'org.jgrapes'
+}
 
 ext {
 	isCiBuild = System.getenv().get("CI") == 'true'
@@ -41,22 +29,9 @@ if (System.properties['org.ajoberstar.grgit.auth.username'] == null) {
         project.rootProject.properties['repo.access.token'] ?: "nouser")
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-        // Snapshots
-        // maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    }
-    
-    group = 'org.jgrapes'
-}
-
-subprojects {
-    apply from: "${project.rootDir}/gradle/subprojects.gradle"
-    // Must be applied after configuring the subprojects,
-    // can therefore not be applied in allprojects.
-    apply from: "${project.rootDir}/gradle/eclipse.gradle"
-}
+// subprojects {
+//     rootProject.evaluationDependsOn(project)
+// }
 
 gitPublish {
 	repoUri = 'https://github.com/mnlipp/jgrapes.git'
@@ -97,4 +72,21 @@ configure(stage) {
 	group = 'build'
 }
 
-apply from: "${project.rootDir}/gradle/eclipse.gradle"
+nexusPublishing {
+    repositories {
+        sonatype {
+            username = project.properties['sonatypeTokenKey'] ?: "nouser"
+            password = project.properties['sonatypeTokenSecret'] ?: "nopass"
+        }
+    }
+}
+
+eclipse {
+    project {
+        file {
+            project.natures += 'org.eclipse.buildship.core.gradleprojectnature'
+            project.buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
+        }
+    }
+}
+

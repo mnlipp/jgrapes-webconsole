@@ -1,11 +1,14 @@
+plugins {
+    id 'org.jgrapes.java-bundle-conventions'
+    id 'com.github.node-gradle.node'
+}
+
 dependencies {
     api project(':org.jgrapes.webconsole.base')
     runtimeOnly project(':org.jgrapes.webconsole.provider.forkawesome')
     runtimeOnly project(':org.jgrapes.webconsole.provider.jquery')
     runtimeOnly project(':org.jgrapes.webconsole.provider.gridstack')
 }
-
-apply plugin: 'com.github.node-gradle.node'
 
 task prepareNpmLibs(type: Copy) {
     dependsOn 'npmInstall'

@@ -1,0 +1,17 @@
+plugins {
+    // Apply the common versioning conventions.
+    id 'org.jgrapes.versioning-conventions'
+}
+
+if (project.name != "org.jgrapes.webconsole.base") {
+    task javadocJar(type: Jar) {
+        from ("${project.rootDir}/misc/javadoc-redirect")
+        archiveClassifier = "javadoc"
+    }
+} else {
+    tasks.register('javadocJar', Jar) {
+//        dependsOn buildDoc
+//        from apidocs.destinationDir
+        archiveClassifier = "javadoc"
+    }
+}
