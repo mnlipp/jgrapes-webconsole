@@ -57,9 +57,9 @@ task stage {
     group = 'build'
 
     // Build everything first
+    subprojects.findAll { it.name != 'cnf' }.each { dependsOn("${it.name}:build") }
     dependsOn ":aash-vue-components:buildDoc"
     dependsOn ":org.jgrapes.webconsole.base:buildDoc"
-    dependsOn subprojects.tasks.collect { tc -> tc.findByName("build") }.flatten()
 
     if (!isCiBuild || JavaVersion.current() == JavaVersion.VERSION_21) {
         // Publish JavaDoc
