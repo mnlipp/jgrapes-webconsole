@@ -47,7 +47,7 @@
 	org.jgrapes.http;version='[3.5.0,100)',\
 	org.jgrapes.io;version='[2.12.1,100)',\
 	org.jgrapes.util;version='[1.38.1,100)',\
-	org.jgrapes.webconsole.base;version='[1.9.0,100)',\
+	org.jgrapes.webconsole.base;version='[2.0.0,100)',\
 	org.jgrapes.webconsole.vuejs;version='[1.7.0,100)',\
 	org.jgrapes.webconsole.bootstrap4;version='[0.50.0,100)',\
 	org.jgrapes.webconsole.jqueryui;version='[0.47.0,100)',\
