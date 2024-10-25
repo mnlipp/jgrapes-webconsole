@@ -1,13 +1,11 @@
 Bundle-Name: JGrapes HTTP Web Console
 Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
 
-api_version = 2.0.0
-
 Export-Package: \
-	org.jgrapes.webconsole.base;version="${api_version}",\
-	org.jgrapes.webconsole.base.util;version="${api_version}",\
-	org.jgrapes.webconsole.base.events;version="${api_version}",\
-	org.jgrapes.webconsole.base.freemarker;version="${api_version}"
+	org.jgrapes.webconsole.base;version="1.2.0",\
+	org.jgrapes.webconsole.base.util;version="1.1.0",\
+	org.jgrapes.webconsole.base.events;version="2.0.0",\
+	org.jgrapes.webconsole.base.freemarker;version="1.1.0"
 
 -fixupmessages.local: \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
