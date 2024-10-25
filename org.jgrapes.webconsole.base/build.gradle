@@ -62,7 +62,7 @@ task javadocResources(type: Copy) {
     }
 }
 
-task apidocs(type: JavaExec) {
+tasks.register("apidocs", JavaExec) {
     // Does not work on JitPack, no /usr/bin/dot
     enabled = JavaVersion.current() == JavaVersion.VERSION_21 && !isJitPackBuild
     
@@ -71,20 +71,9 @@ task apidocs(type: JavaExec) {
     dependsOn tsdoc
     inputs.file "${rootProject.rootDir}/overview.md"
     inputs.file "${rootProject.rootDir}/misc/javadoc-overwrites.css"
-
-    classpath files(rootProject.subprojects
-        .findAll {project -> project.pluginManager.hasPlugin('java-library')
-            || project.pluginManager.hasPlugin('application') }
-        .collect {project -> project.sourceSets.main.compileClasspath})
-    var sourceDirs = rootProject.subprojects
-        .findAll({project -> project.name.startsWith("org.jgrapes")})
-        .collect{project -> project.sourceSets.main.allJava.getSrcDirs() }
-        .flatten().findAll(dir -> dir.exists())
-    sourceDirs.each { inputs.dir(it) }
-            
     ext.destinationDir = file("${rootProject.buildDir}/javadoc")
     outputs.dir(destinationDir)
-    
+
     jvmArgs = ['--add-exports=jdk.compiler/com.sun.tools.doclint=ALL-UNNAMED',
         '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
         '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
@@ -95,33 +84,49 @@ task apidocs(type: JavaExec) {
         '-Duser.language=en', '-Duser.region=US']
     mainClass = 'jdk.javadoc.internal.tool.Main'
     
-    args = ['-doctitle', "JGrapes Web Console ${project.version}",
-        '-use',
-        '-linksource',
-        '-link', 'https://docs.oracle.com/en/java/javase/21/docs/api/',
-        '-link', 'https://mnlipp.github.io/jgrapes/latest-release/javadoc/',
-        '-link', 'https://freemarker.apache.org/docs/api/',
-        '--add-exports', 'jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED',
-        '--add-exports', 'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
-        '-docletpath', configurations.markdownDoclet.files.asType(List).join(":"),
-        '-doclet', 'org.jdrupes.mdoclet.MDoclet',
-        '-tagletpath', configurations.javadocTaglets.files.asType(List).join(":"),
-        '-taglet', 'org.jdrupes.taglets.plantUml.PlantUml',
-        '-taglet', 'org.jdrupes.taglets.plantUml.StartUml',
-        '-taglet', 'org.jdrupes.taglets.plantUml.EndUml',
-        '-overview', "${rootProject.rootDir}/overview.md",
-        '-d', destinationDir,
-        '-sourcepath', sourceDirs.join(':'),
-        '-subpackages', 'org.jgrapes',
-        '-bottom', file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text,
-        '--allow-script-in-comments',
-        '-Xdoclint:-html',
-        '--add-stylesheet', "${rootProject.rootDir}/misc/javadoc-overwrites.css",
-        '--add-exports=jdk.javadoc/jdk.javadoc.internal.doclets.formats.html=ALL-UNNAMED',
-        '-quiet'
-        ]
-
     ignoreExitValue true
+}
+
+// Delay collection of source directories (and anything that depends on it)
+// until the projects' sourceSets are available
+gradle.projectsEvaluated {
+    tasks.named("apidocs", JavaExec) {
+        classpath files(rootProject.subprojects
+            .findAll {project -> project.pluginManager.hasPlugin('java-library')
+                || project.pluginManager.hasPlugin('application') }
+            .collect {project -> project.sourceSets.main.compileClasspath})
+        var sourceDirs = rootProject.subprojects
+            .findAll({project -> project.name.startsWith("org.jgrapes")})
+            .collect{project -> project.sourceSets.main.allJava.getSrcDirs() }
+            .flatten().findAll(dir -> dir.exists())
+        sourceDirs.each { inputs.dir(it) }
+                
+        args = ['-doctitle', "JGrapes Web Console ${project.version}",
+            '-use',
+            '-linksource',
+            '-link', 'https://docs.oracle.com/en/java/javase/21/docs/api/',
+            '-link', 'https://mnlipp.github.io/jgrapes/latest-release/javadoc/',
+            '-link', 'https://freemarker.apache.org/docs/api/',
+            '--add-exports', 'jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED',
+            '--add-exports', 'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+            '-docletpath', configurations.markdownDoclet.files.asType(List).join(":"),
+            '-doclet', 'org.jdrupes.mdoclet.MDoclet',
+            '-tagletpath', configurations.javadocTaglets.files.asType(List).join(":"),
+            '-taglet', 'org.jdrupes.taglets.plantUml.PlantUml',
+            '-taglet', 'org.jdrupes.taglets.plantUml.StartUml',
+            '-taglet', 'org.jdrupes.taglets.plantUml.EndUml',
+            '-overview', "${rootProject.rootDir}/overview.md",
+            '-d', destinationDir,
+            '-sourcepath', sourceDirs.join(':'),
+            '-subpackages', 'org.jgrapes',
+            '-bottom', file("${rootProject.rootDir}/misc/javadoc.bottom.txt").text,
+            '--allow-script-in-comments',
+            '-Xdoclint:-html',
+            '--add-stylesheet', "${rootProject.rootDir}/misc/javadoc-overwrites.css",
+            '--add-exports=jdk.javadoc/jdk.javadoc.internal.doclets.formats.html=ALL-UNNAMED',
+            '-quiet'
+            ]
+    }
 }
 
 task buildDoc {
