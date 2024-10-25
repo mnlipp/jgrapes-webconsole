@@ -49,8 +49,8 @@ public class LogViewerHandler extends Handler {
         }
     }
 
-    /* default */ @SuppressWarnings("PMD.AvoidSynchronizedStatement")
-    static List<LogRecord> setConlet(LogViewerConlet conlet) {
+    @SuppressWarnings("PMD.AvoidSynchronizedStatement")
+    /* default */ static List<LogRecord> setConlet(LogViewerConlet conlet) {
         synchronized (buffer) {
             LogViewerHandler.conlet = conlet;
             return new ArrayList<>(buffer);

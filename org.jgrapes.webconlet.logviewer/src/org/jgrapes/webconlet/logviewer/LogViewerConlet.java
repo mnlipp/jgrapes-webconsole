@@ -137,8 +137,8 @@ public class LogViewerConlet extends FreeMarkerConlet<Serializable> {
                 .map(this::logEntryAsMap).toArray()));
     }
 
-    /* default */ @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    void addEntry(LogRecord entry) {
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    /* default */ void addEntry(LogRecord entry) {
         for (ConsoleConnection connection : trackedConnections()) {
             for (String conletId : conletIds(connection)) {
                 connection.respond(new NotifyConletView(type(),
