@@ -1,21 +1,10 @@
-buildscript {
-	
-	repositories {
-		mavenCentral()
-		maven { url 'https://jitpack.io' }
-	}
-	
-	dependencies {
-		classpath 'com.fizzed:rocker-compiler:0.20.0'
-	}
-  }
-
-repositories {
-	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+plugins {
+    id 'org.jgrapes.java-application-conventions'
+    // Apply bnd plugin for OSGi support
+    id 'biz.aQute.bnd.builder'
 }
 
 dependencies {
-
     implementation 'org.osgi:osgi.core:6.0.0'
     implementation project(':org.jgrapes.webconsole.rbac')
     implementation project(':org.jgrapes.webconsole.vuejs')

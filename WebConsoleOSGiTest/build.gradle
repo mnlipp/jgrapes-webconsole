@@ -1,15 +1,17 @@
-apply plugin: 'java'
-apply plugin: 'biz.aQute.bnd.builder'
+plugins {
+    id 'org.jgrapes.java-application-conventions'
+}
 
 dependencies {
-    runtimeOnly 'org.apache.felix:org.apache.felix.framework:7.0.3'
-    runtimeOnly ('org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.4') {
+    runtimeOnly 'org.apache.felix:org.apache.felix.framework:7.0.5'
+    runtimeOnly ('org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.7') {
         transitive = true }
     runtimeOnly 'org.glassfish.hk2:osgi-resource-locator:2.4.0'
     runtimeOnly 'org.apache.felix:org.apache.felix.gogo.command:1.1.2'
     runtimeOnly 'org.apache.felix:org.apache.felix.gogo.runtime:1.1.4'
     runtimeOnly 'org.apache.felix:org.apache.felix.gogo.shell:1.1.4'
-    runtimeOnly (project(':WebConsoleTest')) { transitive = true }
+    runtimeOnly (project(':WebConsoleTest')) {
+        transitive = true }
 }
 
 release {
@@ -44,11 +46,11 @@ configurations {
 }
 
 dependencies {
-    bndCli ('biz.aQute.bnd:biz.aQute.bnd:6.1.0') {
+    bndCli ('biz.aQute.bnd:biz.aQute.bnd:7.0.0') {
         transitive = true }
 }
 
-task run(type: JavaExec) {
+tasks.named("run", JavaExec) {
     dependsOn createRunRepo
     
     classpath = configurations.bndCli

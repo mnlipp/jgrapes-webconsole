@@ -2,6 +2,11 @@ plugins {
     id 'application'
 }
 
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
 dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.examples.consoleapp')
     runtimeOnly 'org.eclipse.angus:angus-activation:[1.0.0,2.0.0)'

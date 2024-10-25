@@ -1,0 +1,19 @@
+Bundle-Name: JGrapes System Logviewer
+Bundle-Copyright: Michael N. Lipp (c) 2017, 2018
+Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
+
+Export-Package: org.jgrapes.webconlet.logviewer
+
+Require-Capability: \
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=vue)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=jgwc-vue-components)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=fork-awesome)"
+    
+Provide-Capability: osgi.serviceloader; \
+    osgi.serviceloader=org.jgrapes.webconsole.base.ConletComponentFactory; \
+    uses:="org.jgrapes.webconsole.base,org.jgrapes.core"
+
+-fixupmessages.local: \
+    "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
+    "The .classpath contains a library that will not be available during continuous integration:"

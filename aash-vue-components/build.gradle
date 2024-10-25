@@ -1,5 +1,7 @@
 apply plugin: 'base'
 apply plugin: 'com.github.node-gradle.node'
+apply plugin: 'org.ajoberstar.grgit'
+apply plugin: 'pl.allegro.tech.build.axion-release'
 
 release {
     enabled = false

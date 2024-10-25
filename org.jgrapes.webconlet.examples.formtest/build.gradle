@@ -1,3 +1,8 @@
+plugins {
+    id 'org.jgrapes.java-bundle-conventions'
+    id 'com.github.node-gradle.node'
+}
+
 dependencies {
 	api project(':org.jgrapes.webconsole.base')
 }
