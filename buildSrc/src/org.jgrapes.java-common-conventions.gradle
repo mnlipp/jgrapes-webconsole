@@ -78,6 +78,16 @@ jar {
     }
 }
 
+testing {
+    suites {
+        // Configure the built-in test suite
+        test {
+            // Use JUnit test framework
+            useJUnit('4.12')
+        }
+    }
+}
+
 eclipse {
 
     project {
@@ -116,7 +126,7 @@ eclipse {
         file {
             withProperties { properties ->
                 def formatterPrefs = new Properties()
-                rootProject.file("gradle/org.eclipse.jdt.core.formatter.prefs")
+                rootProject.file("misc/org.eclipse.jdt.core.formatter.prefs")
                     .withInputStream { formatterPrefs.load(it) }
                 properties.putAll(formatterPrefs)
             }
@@ -124,12 +134,3 @@ eclipse {
     }
 }
 
-testing {
-    suites {
-        // Configure the built-in test suite
-        test {
-            // Use JUnit test framework
-            useJUnit('4.12')
-        }
-    }
-}
