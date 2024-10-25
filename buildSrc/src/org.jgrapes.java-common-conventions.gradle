@@ -53,6 +53,12 @@ sourceSets {
     }
 }
 
+// Set group
+
+group = 'org.jgrapes'
+
+// Supported Java version
+
 java {
     sourceCompatibility = "21"
     targetCompatibility = "21"

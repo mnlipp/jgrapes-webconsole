@@ -14,10 +14,6 @@ repositories {
     mavenCentral()
 }
 
-allprojects {
-    group = 'org.jgrapes'
-}
-
 ext {
 	isCiBuild = System.getenv().get("CI") == 'true'
     isJitPackBuild = System.getenv().get("JITPACK") == 'true'
