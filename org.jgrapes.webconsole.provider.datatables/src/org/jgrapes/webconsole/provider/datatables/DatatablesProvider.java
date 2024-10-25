@@ -85,6 +85,7 @@ public class DatatablesProvider extends PageResourceProvider {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {

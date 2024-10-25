@@ -41,8 +41,8 @@ public class CloseModalDialog extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, "closeModalDialog", conletType, conletId);
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, "closeModalDialog", conletType, conletId);
     }
 
 }

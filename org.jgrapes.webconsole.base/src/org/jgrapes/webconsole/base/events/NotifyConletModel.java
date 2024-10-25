@@ -18,7 +18,6 @@
 
 package org.jgrapes.webconsole.base.events;
 
-import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Event;
 import org.jgrapes.webconsole.base.RenderSupport;
 
@@ -52,7 +51,7 @@ public class NotifyConletModel extends Event<Void> {
     private final RenderSupport renderSupport;
     private final String conletId;
     private final String method;
-    private final JsonArray params;
+    private final Object[] params;
 
     /**
      * Creates a new event.
@@ -64,8 +63,9 @@ public class NotifyConletModel extends Event<Void> {
      * @param method the method to be executed
      * @param params parameters
      */
+    @SuppressWarnings({ "PMD.UseVarargs", "PMD.ArrayIsStoredDirectly" })
     public NotifyConletModel(RenderSupport renderSupport,
-            String conletId, String method, JsonArray params) {
+            String conletId, String method, Object[] params) {
         this.renderSupport = renderSupport;
         this.conletId = conletId;
         this.method = method;
@@ -104,7 +104,20 @@ public class NotifyConletModel extends Event<Void> {
      * 
      * @return the parameters
      */
-    public JsonArray params() {
+    @SuppressWarnings("PMD.MethodReturnsInternalArray")
+    public Object[] params() {
         return params;
+    }
+
+    /**
+     * Returns the selected param, cast to the generic type.
+     *
+     * @param <T> the generic type
+     * @param index the index
+     * @return the t
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T param(int index) {
+        return (T) params[index];
     }
 }

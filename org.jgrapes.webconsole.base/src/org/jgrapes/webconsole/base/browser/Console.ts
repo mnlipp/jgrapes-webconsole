@@ -353,7 +353,8 @@ class Console {
             }
         }
         if (!conlet) {
-            this.send("conletsDeleted", [conletId, [RenderMode.Content]]);
+            this.send("conletsDeleted",
+                [{"conletId": conletId, "modes": RenderMode.Content}]);
             return;
         }
         if (isNew) {
@@ -668,7 +669,7 @@ class Console {
      *
      * After un-displaying the conlet, any "execOnUnload" functions
      * in the conlet tree are invoked (depth first) and JSON RPC 
-     * notifications with method `conletDeleted` and the conlet id 
+     * notifications with method `conletsDeleted` and the conlet id 
      * as parameter are sent to the server for nested component 
      * conlets and the preview itself (again depth first). The 
      * notifications for the component conlets have as additional
@@ -693,7 +694,7 @@ class Console {
             this._execOnUnload(preview.element(), false);
             this._removeEmbedded(notifications, preview);
         }
-        notifications.push([conletId, modes]);
+        notifications.push({"conletId": conletId, "modes": modes});
         this.send("conletsDeleted", notifications);
     }
 
@@ -703,7 +704,7 @@ class Console {
      *
      * After un-displaying the conlet, any "execOnUnload" functions
      * in the conlet tree are invoked (depth first) and JSON RPC 
-     * notifications with method `conletDeleted` and the conlet id 
+     * notifications with method `conletsDeleted` and the conlet id 
      * as parameter are sent to the server for nested component 
      * conlets and the view itself (again depth first). The 
      * notifications for the component conlets have as additional
@@ -720,7 +721,8 @@ class Console {
         this._renderer!.removeConletDisplays([view]);
         this._execOnUnload(view.element(), false);
         this._removeEmbedded(notifications, view);
-        notifications.push([conletId, [RenderMode.View]]);
+        notifications.push({"conletId": conletId,
+            "modes": [RenderMode.View]});
         this.send("conletsDeleted", notifications);
     }
 
@@ -730,8 +732,9 @@ class Console {
             if (this._renderer!.findConletContents(embedded.id())) {
                 continue;
             }
-            notifications.push([embedded.id(), [RenderMode.Content], 
-                Object.fromEntries(this.collectConletProperties(embedded))]);
+            notifications.push({"conletId": embedded.id(),
+                "modes": [RenderMode.Content], "opts":
+                Object.fromEntries(this.collectConletProperties(embedded))});
         }
     }
 

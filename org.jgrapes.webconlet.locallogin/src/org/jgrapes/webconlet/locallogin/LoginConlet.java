@@ -246,7 +246,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
             ConsoleConnection connection, AccountModel model) throws Exception {
         var bundle = resourceBundle(connection.locale());
         if ("loginData".equals(event.method())) {
-            String userName = event.params().asString(0);
+            String userName = event.param(0);
             if (userName == null || userName.isEmpty()) {
                 connection.respond(new NotifyConletView(type(),
                     model.getConletId(), "setMessages",
@@ -254,7 +254,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
                 return;
             }
             var userData = users.get(userName);
-            String password = event.params().asString(1);
+            String password = event.param(1);
             if (userData == null
                 || !BCrypt.verifyer().verify(password.getBytes(),
                     userData.get("password").getBytes()).verified) {

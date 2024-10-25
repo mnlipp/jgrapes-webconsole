@@ -18,16 +18,13 @@
 
 package org.jgrapes.webconsole.base;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.jdrupes.json.JsonBeanDecoder;
-import org.jdrupes.json.JsonBeanEncoder;
-import org.jdrupes.json.JsonDecodeException;
-import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Component;
 import org.jgrapes.core.Event;
@@ -101,6 +98,10 @@ import org.jgrapes.webconsole.base.events.RenderConletRequest;
  * @enduml
  */
 public class KVStoreBasedConsolePolicy extends Component {
+
+    /** The mapper. */
+    @SuppressWarnings("PMD.FieldNamingConventions")
+    protected static final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Creates a new component with its channel set to
@@ -189,13 +190,11 @@ public class KVStoreBasedConsolePolicy extends Component {
                 if (data == null) {
                     persisted = new HashMap<>();
                 } else {
-                    JsonBeanDecoder decoder = JsonBeanDecoder.create(data);
-                    @SuppressWarnings({ "unchecked", "PMD.LooseCoupling" })
-                    Class<Map<String, Object>> cls
-                        = (Class<Map<String, Object>>) (Class<?>) HashMap.class;
-                    persisted = decoder.readObject(cls);
+                    persisted = mapper.readValue(data.getBytes(),
+                        mapper.getTypeFactory().constructMapType(Map.class,
+                            String.class, Object.class));
                 }
-            } catch (InterruptedException | JsonDecodeException e) {
+            } catch (InterruptedException | IOException e) {
                 persisted = new HashMap<>();
             }
 
@@ -207,8 +206,8 @@ public class KVStoreBasedConsolePolicy extends Component {
             @SuppressWarnings("unchecked")
             List<String> tabsLayout = (List<String>) persisted.computeIfAbsent(
                 "tabsLayout", newKey -> Collections.emptyList());
-            JsonObject xtraInfo = (JsonObject) persisted.computeIfAbsent(
-                "xtraInfo", newKey -> JsonObject.create());
+            Object xtraInfo = persisted.computeIfAbsent(
+                "xtraInfo", newKey -> new Object());
 
             // Update (now consistent) layout
             channel.respond(new LastConsoleLayout(
@@ -234,11 +233,8 @@ public class KVStoreBasedConsolePolicy extends Component {
             persisted.put("xtraInfo", event.xtraInfo());
 
             // Now store.
-            @SuppressWarnings("PMD.CloseResource")
-            JsonBeanEncoder encoder = JsonBeanEncoder.create();
-            encoder.writeObject(persisted);
-            fire(new KeyValueStoreUpdate()
-                .update(storagePath, encoder.toJson()), channel);
+            fire(new KeyValueStoreUpdate().update(storagePath,
+                mapper.writer().writeValueAsString(persisted)), channel);
         }
 
     }

@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.base.events;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Event;
 
 /**
@@ -32,9 +31,8 @@ import org.jgrapes.core.Event;
  * This event has a close relationship to the {@link NotifyConletModel}
  * event. The latter is used by web console component's functions to 
  * send information from the console page to the web console component 
- * model. It passes the information as a {@link JsonArray}. The 
- * interpretation of this information is only known by the web console 
- * component. The {@link UpdateConletModel} event should be 
+ * model. The interpretation of this information is only known by the web
+ * console component. The {@link UpdateConletModel} event should be 
  * used to to pass information within the application, i.e. on the server
  * side.
  * 

@@ -722,7 +722,7 @@ public abstract class ConsoleWeblet extends Component {
             @SuppressWarnings({ "resource", "PMD.CloseResource" })
             CharBufferWriter out = new CharBufferWriter(wsChannel,
                 wsChannel.responsePipeline()).suppressClose();
-            new SimpleConsoleCommand("reload").toJson(out);
+            new SimpleConsoleCommand("reload").emitJson(out);
             out.close();
             event.stop();
             return;
@@ -738,8 +738,9 @@ public abstract class ConsoleWeblet extends Component {
             = Optional.ofNullable(connectionIds[1])
                 .flatMap(oldId -> ConsoleConnection.lookup(oldId))
                 .map(conn -> conn.replaceId(connectionIds[0]))
-                .orElse(ConsoleConnection.lookupOrCreate(connectionIds[0],
-                    console, supportedLocales.keySet(), csNetworkTimeout))
+                .orElseGet(
+                    () -> ConsoleConnection.lookupOrCreate(connectionIds[0],
+                        console, supportedLocales.keySet(), csNetworkTimeout))
                 .setUpstreamChannel(wsChannel)
                 .setSessionSupplier(sessionSupplier);
         wsChannel.setAssociated(ConsoleConnection.class, connection);
@@ -823,7 +824,7 @@ public abstract class ConsoleWeblet extends Component {
         @SuppressWarnings({ "resource", "PMD.CloseResource" })
         CharBufferWriter out = new CharBufferWriter(upstream,
             upstream.responsePipeline()).suppressClose();
-        event.toJson(out);
+        event.emitJson(out);
     }
 
     /**

@@ -29,10 +29,11 @@ import java.util.logging.LogRecord;
  */
 public class LogViewerHandler extends Handler {
 
-    private static LinkedList<LogRecord> buffer = new LinkedList<>();
-    private static LogViewerConlet conlet = null;
+    private static List<LogRecord> buffer = new LinkedList<>();
+    private static LogViewerConlet conlet;
 
     @Override
+    @SuppressWarnings("PMD.AvoidSynchronizedStatement")
     public void publish(LogRecord record) {
         if (!isLoggable(record)) {
             return;
@@ -48,19 +49,21 @@ public class LogViewerHandler extends Handler {
         }
     }
 
-    /* default */ static List<LogRecord> setConlet(LogViewerConlet conlet) {
+    /* default */ @SuppressWarnings("PMD.AvoidSynchronizedStatement")
+    static List<LogRecord> setConlet(LogViewerConlet conlet) {
         synchronized (buffer) {
             LogViewerHandler.conlet = conlet;
-            return new ArrayList<LogRecord>(buffer);
+            return new ArrayList<>(buffer);
         }
     }
 
     @Override
     public void flush() {
+        // Nothing to do.
     }
 
     @Override
-    public void close() throws SecurityException {
+    public void close() {
         buffer.clear();
     }
 

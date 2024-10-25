@@ -18,6 +18,7 @@
 
 package org.jgrapes.webconlet.markdowndisplay;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
@@ -31,9 +32,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
-import org.jdrupes.json.JsonBeanDecoder;
-import org.jdrupes.json.JsonBeanEncoder;
-import org.jdrupes.json.JsonDecodeException;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
 import org.jgrapes.core.Manager;
@@ -69,6 +67,10 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 @SuppressWarnings({ "PMD.DataClass", "PMD.DataflowAnomalyAnalysis" })
 public class MarkdownDisplayConlet extends
         FreeMarkerConlet<MarkdownDisplayConlet.MarkdownDisplayModel> {
+
+    /** The mapper. */
+    @SuppressWarnings("PMD.FieldNamingConventions")
+    protected static final ObjectMapper mapper = new ObjectMapper();
 
     /** Property for forcing a conlet id (used for singleton instances). */
     public static final String CONLET_ID = "ConletId";
@@ -156,7 +158,7 @@ public class MarkdownDisplayConlet extends
         // Save model and return
         channel.respond(new KeyValueStoreUpdate().update(
             storagePath(channel.session()) + model.getConletId(),
-            JsonBeanEncoder.create().writeObject(model).toJson()));
+            mapper.writer().writeValueAsString(model)));
         return Optional.of(model);
     }
 
@@ -202,8 +204,7 @@ public class MarkdownDisplayConlet extends
         model.setEditableBy(editableBy);
 
         // Save model
-        String jsonState = JsonBeanEncoder.create()
-            .writeObject(model).toJson();
+        String jsonState = mapper.writer().writeValueAsString(model);
         session.respond(new KeyValueStoreUpdate().update(
             storagePath(session.session()) + model.getConletId(),
             jsonState));
@@ -223,11 +224,11 @@ public class MarkdownDisplayConlet extends
             if (!query.results().isEmpty()) {
                 var json = query.results().get(0).values().stream().findFirst()
                     .get();
-                MarkdownDisplayModel model = JsonBeanDecoder.create(json)
-                    .readObject(MarkdownDisplayModel.class);
+                MarkdownDisplayModel model = mapper.readValue(json.getBytes(),
+                    MarkdownDisplayModel.class);
                 return Optional.of(model);
             }
-        } catch (InterruptedException | JsonDecodeException e) {
+        } catch (InterruptedException | IOException e) {
             // Means we have no result.
         }
 
@@ -322,14 +323,14 @@ public class MarkdownDisplayConlet extends
         event.stop();
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<String, String> properties = new HashMap<>();
-        if (event.params().get(0) != null) {
-            properties.put(TITLE, event.params().asString(0));
+        if (event.params()[0] != null) {
+            properties.put(TITLE, event.param(0));
         }
-        if (event.params().get(1) != null) {
-            properties.put(PREVIEW_SOURCE, event.params().asString(1));
+        if (event.params()[1] != null) {
+            properties.put(PREVIEW_SOURCE, event.param(1));
         }
-        if (event.params().get(2) != null) {
-            properties.put(VIEW_SOURCE, event.params().asString(2));
+        if (event.params()[2] != null) {
+            properties.put(VIEW_SOURCE, event.param(2));
         }
         fire(new UpdateConletModel(event.conletId(), properties), connection);
     }
@@ -360,8 +361,8 @@ public class MarkdownDisplayConlet extends
                             model.setEditableBy((Set<Principal>) value);
                         });
                 try {
-                    String jsonState = JsonBeanEncoder.create()
-                        .writeObject(model).toJson();
+                    String jsonState
+                        = mapper.writer().writeValueAsString(model);
                     connection.respond(new KeyValueStoreUpdate().update(
                         storagePath(connection.session())
                             + model.getConletId(),

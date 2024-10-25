@@ -134,10 +134,11 @@ public class LogViewerConlet extends FreeMarkerConlet<Serializable> {
         channel.respond(new NotifyConletView(type(),
             conletId, "entries",
             (Object) LogViewerHandler.setConlet(this).stream()
-                .map(entry -> logEntryAsMap(entry)).toArray()));
+                .map(this::logEntryAsMap).toArray()));
     }
 
-    /* default */ void addEntry(LogRecord entry) {
+    /* default */ @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    void addEntry(LogRecord entry) {
         for (ConsoleConnection connection : trackedConnections()) {
             for (String conletId : conletIds(connection)) {
                 connection.respond(new NotifyConletView(type(),
@@ -151,7 +152,7 @@ public class LogViewerConlet extends FreeMarkerConlet<Serializable> {
         @SuppressWarnings("PMD.UseConcurrentHashMap")
         Map<String, Object> result = new HashMap<>();
         result.put("exception", Optional.ofNullable(record.getThrown())
-            .map(exc -> exc.getMessage()).orElse(""));
+            .map(Throwable::getMessage).orElse(""));
         result.put("stacktrace", Optional.ofNullable(record.getThrown())
             .map(exc -> {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();

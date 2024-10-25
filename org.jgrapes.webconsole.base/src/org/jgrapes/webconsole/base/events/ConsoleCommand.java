@@ -18,11 +18,11 @@
 
 package org.jgrapes.webconsole.base.events;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.Writer;
-import org.jdrupes.json.JsonBeanEncoder;
-import org.jdrupes.json.JsonRpc;
 import org.jgrapes.core.Event;
+import org.jgrapes.webconsole.base.JsonRpc;
 
 /**
  * Events derived from this class are transformed to JSON messages
@@ -33,35 +33,57 @@ import org.jgrapes.core.Event;
  */
 public abstract class ConsoleCommand extends Event<Void> {
 
+    /** The mapper. */
+    @SuppressWarnings("PMD.FieldNamingConventions")
+    protected static final ObjectMapper mapper = new ObjectMapper();
+
     /**
-     * Writes the event as JSON notification to the given writer.
-     * Derived classes usually simply call 
-     * {@link #toJson(Writer, String, Object...)} with the method
+     * Emits the 
+     * [JSON notification](https://www.jsonrpc.org/specification#notification)
+     * using the given writer. Derived classes usually simply call 
+     * {@link #emitJson(Writer, String, Object...)} with the method
      * name and parameters.
      * 
      * @param writer the writer
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
-    public abstract void toJson(Writer writer)
+    public abstract void emitJson(Writer writer)
             throws InterruptedException, IOException;
 
     /**
      * Creates a JSON notification from the given data.
      * Closes the `writer`.
-     * 
+     *
      * @param writer the writer
-     * @throws IOException 
+     * @param method the method
+     * @param params the params
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
-    protected void toJson(Writer writer, String method, Object... params)
+    protected void emitJson(Writer writer, String method, Object... params)
             throws IOException {
-        JsonRpc rpc = JsonRpc.create();
-        rpc.setMethod(method);
+        JsonRpc rpc = new JsonRpc(method);
         if (params.length > 0) {
             for (Object obj : params) {
                 rpc.addParam(obj);
             }
         }
-        JsonBeanEncoder.create(writer).writeObject(rpc).flush();
+        mapper.writeValue(writer, rpc);
+        writer.flush();
+    }
+
+    /**
+     * Calls {@link #emitJson(Writer, String, Object...)} with the
+     * given method and parameters. Provided for backwards compatibility.
+     *
+     * @param writer the writer
+     * @param method the method
+     * @param params the params
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @deprecated Use {@link #emitJson(Writer, String, Object...)} instead.
+     */
+    @Deprecated
+    @SuppressWarnings("PMD.LinguisticNaming")
+    protected void toJson(Writer writer, String method, Object... params)
+            throws IOException {
+        emitJson(writer, method, params);
     }
 }

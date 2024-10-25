@@ -21,7 +21,6 @@ package org.jgrapes.webconsole.base.events;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import org.jdrupes.json.JsonObject;
 
 /**
  * Sent by the server to the browser in response to {@link ConsolePrepared} 
@@ -33,14 +32,14 @@ public class LastConsoleLayout extends ConsoleCommand {
 
     private final List<String> previewLayout;
     private final List<String> tabsLayout;
-    private final JsonObject xtraInfo;
+    private final Object xtraInfo;
 
     /**
      * @param previewLayout
      * @param tabsLayout
      */
     public LastConsoleLayout(List<String> previewLayout,
-            List<String> tabsLayout, JsonObject xtraInfo) {
+            List<String> tabsLayout, Object xtraInfo) {
         this.previewLayout = previewLayout;
         this.tabsLayout = tabsLayout;
         this.xtraInfo = xtraInfo;
@@ -63,13 +62,13 @@ public class LastConsoleLayout extends ConsoleCommand {
     /**
      * @return the extra information
      */
-    public JsonObject xtraInfo() {
+    public Object xtraInfo() {
         return xtraInfo;
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
-        toJson(writer, "lastConsoleLayout", previewLayout(), tabsLayout(),
+    public void emitJson(Writer writer) throws IOException {
+        emitJson(writer, "lastConsoleLayout", previewLayout(), tabsLayout(),
             xtraInfo());
     }
 

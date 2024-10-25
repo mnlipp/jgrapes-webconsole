@@ -18,15 +18,15 @@
 
 package org.jgrapes.webconsole.base;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.CharBuffer;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jdrupes.json.JsonBeanDecoder;
-import org.jdrupes.json.JsonDecodeException;
-import org.jdrupes.json.JsonRpc;
-import org.jdrupes.json.JsonRpc.DefaultJsonRpc;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.EventPipeline;
 import org.jgrapes.io.events.Input;
@@ -45,6 +45,7 @@ public class WebSocketInputSink extends Thread {
     @SuppressWarnings("PMD.FieldNamingConventions")
     private static final Logger logger
         = Logger.getLogger(WebSocketInputSink.class.getName());
+    private static ObjectMapper mapper = new ObjectMapper();
 
     private final WeakReference<ConsoleConnection> channelRef;
     private final WeakReference<EventPipeline> pipelineRef;
@@ -74,7 +75,8 @@ public class WebSocketInputSink extends Thread {
         // Delayed initialization, allows adaption to buffer size.
         if (jsonSource == null) {
             jsonSource = new ManagedBufferReader();
-            ofVirtual().start(this);
+            (Components.useVirtualThreads() ? ofVirtual()
+                : ofPlatform()).start(this);
         }
         jsonSource.feed(input);
     }
@@ -103,19 +105,25 @@ public class WebSocketInputSink extends Thread {
         "PMD.GuardLogStatement", "PMD.CognitiveComplexity" })
     @Override
     public void run() {
+        @SuppressWarnings("PMD.CloseResource")
+        JsonParser parser;
+        try {
+            parser = new JsonFactory().createParser(jsonSource);
+        } catch (IOException e) {
+            logger.severe(() -> toString() + " cannot create JSON parser: "
+                + e.getMessage());
+            return;
+        }
         while (true) {
-            JsonBeanDecoder jsonDecoder = JsonBeanDecoder.create(jsonSource);
-            @SuppressWarnings("PMD.UnusedAssignment")
-            JsonRpc rpc = null;
+            JsonRpc rpc;
             try {
-                rpc = jsonDecoder.readObject(DefaultJsonRpc.class);
-            } catch (JsonDecodeException e) {
-                logger.severe(
-                    () -> toString() + " cannot decode request from console: "
-                        + e.getMessage());
-                break;
-            }
-            if (rpc == null) {
+                if (parser.nextToken() == null) {
+                    break;
+                }
+                rpc = mapper.readValue(parser, WcJsonRpc.class);
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, e, () -> toString()
+                    + " cannot read JSON: " + e.getMessage());
                 break;
             }
             // Fully decoded JSON available.
@@ -126,8 +134,7 @@ public class WebSocketInputSink extends Thread {
             }
             // WebConsole connection established, check for special disconnect
             if ("disconnect".equals(rpc.method())
-                && connection.consoleConnectionId()
-                    .equals(rpc.params().asString(0))) {
+                && connection.consoleConnectionId().equals(rpc.param(0))) {
                 connection.close();
                 return;
             }

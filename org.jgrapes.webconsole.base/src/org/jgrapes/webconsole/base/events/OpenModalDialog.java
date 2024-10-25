@@ -106,10 +106,10 @@ public class OpenModalDialog extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
+    public void emitJson(Writer writer) throws IOException {
         Map<String, Object> options = options();
         try {
-            toJson(writer, "openModalDialog", conletType, conletId,
+            emitJson(writer, "openModalDialog", conletType, conletId,
                 content().get(), options);
         } catch (ExecutionException | InterruptedException e) {
             throw new IOException(e);

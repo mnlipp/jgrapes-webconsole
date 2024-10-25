@@ -1,6 +1,6 @@
 /*
  * JGrapes Event Driven Framework
- * Copyright (C) 2017-2018 Michael N. Lipp
+ * Copyright (C) 2017-2024 Michael N. Lipp
  * 
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by 
@@ -18,10 +18,10 @@
 
 package org.jgrapes.webconsole.base.events;
 
-import org.jdrupes.json.JsonRpc;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Event;
+import org.jgrapes.webconsole.base.JsonRpc;
 
 /**
  * A JSON notification from the web console view (browser) to the web console. 

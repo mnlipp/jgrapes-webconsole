@@ -18,8 +18,6 @@
 
 package org.jgrapes.webconsole.base.events;
 
-import java.util.List;
-import org.jdrupes.json.JsonObject;
 import org.jgrapes.core.Event;
 
 /**
@@ -34,16 +32,17 @@ import org.jgrapes.core.Event;
  */
 public class ConsoleLayoutChanged extends Event<Void> {
 
-    private final List<String> previewLayout;
-    private final List<String> tabsLayout;
-    private final JsonObject xtraInfo;
+    private final String[] previewLayout;
+    private final String[] tabsLayout;
+    private final Object xtraInfo;
 
     /**
      * @param previewLayout
      * @param tabsLayout
      */
-    public ConsoleLayoutChanged(List<String> previewLayout,
-            List<String> tabsLayout, JsonObject xtraInfo) {
+    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
+    public ConsoleLayoutChanged(String[] previewLayout, String[] tabsLayout,
+            Object xtraInfo) {
         this.previewLayout = previewLayout;
         this.tabsLayout = tabsLayout;
         this.xtraInfo = xtraInfo;
@@ -52,14 +51,16 @@ public class ConsoleLayoutChanged extends Event<Void> {
     /**
      * @return the previewLayout
      */
-    public List<String> previewLayout() {
+    @SuppressWarnings("PMD.MethodReturnsInternalArray")
+    public String[] previewLayout() {
         return previewLayout;
     }
 
     /**
      * @return the tabsLayout
      */
-    public List<String> tabsLayout() {
+    @SuppressWarnings("PMD.MethodReturnsInternalArray")
+    public String[] tabsLayout() {
         return tabsLayout;
     }
 
@@ -68,7 +69,7 @@ public class ConsoleLayoutChanged extends Event<Void> {
      *
      * @return the value
      */
-    public JsonObject xtraInfo() {
+    public Object xtraInfo() {
         return xtraInfo;
     }
 

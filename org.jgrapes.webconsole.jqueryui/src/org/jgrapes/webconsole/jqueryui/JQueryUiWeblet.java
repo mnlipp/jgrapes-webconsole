@@ -27,7 +27,6 @@ import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.StreamSupport;
-import org.jdrupes.json.JsonArray;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.http.ResourcePattern;
@@ -185,10 +184,10 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         // Send events to conlets on web console's channel
-        JsonArray params = event.request().params();
+        var request = event.request();
         switch (event.request().method()) { // NOPMD
         case "setTheme": {
-            fire(new SetTheme(params.asString(0)), channel);
+            fire(new SetTheme(request.param(0)), channel);
             break;
         }
         default:

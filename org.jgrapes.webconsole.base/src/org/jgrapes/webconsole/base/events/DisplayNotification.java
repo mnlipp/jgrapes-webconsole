@@ -92,9 +92,9 @@ public class DisplayNotification extends ConsoleCommand {
     }
 
     @Override
-    public void toJson(Writer writer) throws IOException {
+    public void emitJson(Writer writer) throws IOException {
         options.put("destroyOnClose", true);
-        toJson(writer, "displayNotification", content(), options);
+        emitJson(writer, "displayNotification", content(), options);
     }
 
 }
