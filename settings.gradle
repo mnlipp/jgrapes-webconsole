@@ -40,7 +40,7 @@ include 'org.jgrapes.webconlet.oidclogin'
 
 include 'org.jgrapes.webconsole.examples.consoleapp'
 include 'WebConsoleTest'
-/*
 include 'WebConsoleOSGiTest'
+/*
 include 'WebConsoleExample'
 */
