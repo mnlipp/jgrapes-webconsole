@@ -74,7 +74,8 @@ publishing {
                 pub.setArtifactId(base.archivesName.get())
                 pom {
                     name = bndProps.getProperty('Bundle-Name')
-                    description = bndProps.getProperty('Bundle-Description')
+                    description = bndProps.getProperty('Bundle-Description') \
+                        ?: "JGrapes component."
                     url = 'https://mnlipp.github.io/jgrapes/WebConsole.html'
                     licenses {
                         license {
