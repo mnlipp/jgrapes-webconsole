@@ -10,6 +10,8 @@ dependencies {
     runtimeOnly project(':org.jgrapes.webconsole.provider.forkawesome')
 }
 
+gradle.startParameter.excludedTaskNames = [ "baseline" ]
+
 release {
     enabled = false
 }
