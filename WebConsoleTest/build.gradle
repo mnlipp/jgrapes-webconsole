@@ -1,5 +1,7 @@
 plugins {
     id 'org.jgrapes.java-application-conventions'
+    // Apply bnd plugin for OSGi support
+    id 'biz.aQute.bnd.builder'
 }
 
 dependencies {
