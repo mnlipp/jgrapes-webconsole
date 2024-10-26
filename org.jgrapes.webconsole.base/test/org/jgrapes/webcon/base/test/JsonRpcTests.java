@@ -30,7 +30,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.jgrapes.webconsole.base.JsonRpc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
