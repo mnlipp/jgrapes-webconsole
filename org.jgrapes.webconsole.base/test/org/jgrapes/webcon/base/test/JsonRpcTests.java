@@ -24,6 +24,10 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
@@ -69,7 +73,9 @@ public class JsonRpcTests {
         var value = new TestType();
         value.value = 42;
         rpc.addParam(value);
-        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+        ObjectMapper mapper = JsonMapper.builder()
+            .addModule(new ParameterNamesModule()).addModule(new Jdk8Module())
+            .addModule(new JavaTimeModule()).build();
         String json = mapper.writeValueAsString(rpc);
         assertEquals("{\"jsonrpc\":\"2.0\",\"method\":\"call1\","
             + "\"params\":[1,\"hello\",{\"value\":42}]}", json);
@@ -80,7 +86,9 @@ public class JsonRpcTests {
             JsonProcessingException {
         String json = "{\"jsonrpc\":\"2.0\",\"method\":\"call1\","
             + "\"params\":[1,\"hello\",{\"value\":42}],\"id\":1}";
-        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+        ObjectMapper mapper = JsonMapper.builder()
+            .addModule(new ParameterNamesModule()).addModule(new Jdk8Module())
+            .addModule(new JavaTimeModule()).build();
         var rpc = mapper.readValue(json, TestJsonRpc.class);
         assertEquals(Integer.class, rpc.params()[0].getClass());
         assertEquals(String.class, rpc.params()[1].getClass());
@@ -95,7 +103,9 @@ public class JsonRpcTests {
         var value = new TestType();
         value.value = 42;
         rpc.addParam(value);
-        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+        ObjectMapper mapper = JsonMapper.builder()
+            .addModule(new ParameterNamesModule()).addModule(new Jdk8Module())
+            .addModule(new JavaTimeModule()).build();
         String json = mapper.writeValueAsString(rpc);
         assertEquals("{\"jsonrpc\":\"2.0\",\"method\":\"call1\","
             + "\"params\":[1,\"hello\",{\"value\":42}]}", json);

@@ -21,6 +21,10 @@ package org.jgrapes.webconsole.base;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.CharBuffer;
@@ -45,8 +49,10 @@ public class WebSocketInputSink extends Thread {
     @SuppressWarnings("PMD.FieldNamingConventions")
     private static final Logger logger
         = Logger.getLogger(WebSocketInputSink.class.getName());
-    private static ObjectMapper mapper
-        = new ObjectMapper().findAndRegisterModules();
+    @SuppressWarnings("PMD.FieldNamingConventions")
+    protected static final ObjectMapper mapper = JsonMapper.builder()
+        .addModule(new ParameterNamesModule()).addModule(new Jdk8Module())
+        .addModule(new JavaTimeModule()).build();
 
     private final WeakReference<ConsoleConnection> channelRef;
     private final WeakReference<EventPipeline> pipelineRef;
