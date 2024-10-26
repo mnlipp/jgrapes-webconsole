@@ -101,7 +101,8 @@ public class KVStoreBasedConsolePolicy extends Component {
 
     /** The mapper. */
     @SuppressWarnings("PMD.FieldNamingConventions")
-    protected static final ObjectMapper mapper = new ObjectMapper();
+    protected static final ObjectMapper mapper
+        = new ObjectMapper().findAndRegisterModules();
 
     /**
      * Creates a new component with its channel set to

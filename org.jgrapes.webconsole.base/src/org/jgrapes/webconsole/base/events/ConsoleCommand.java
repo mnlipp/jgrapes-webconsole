@@ -35,7 +35,8 @@ public abstract class ConsoleCommand extends Event<Void> {
 
     /** The mapper. */
     @SuppressWarnings("PMD.FieldNamingConventions")
-    protected static final ObjectMapper mapper = new ObjectMapper();
+    protected static final ObjectMapper mapper
+        = new ObjectMapper().findAndRegisterModules();
 
     /**
      * Emits the 

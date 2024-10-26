@@ -29,6 +29,8 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import org.jgrapes.webconsole.base.JsonRpc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -60,7 +62,7 @@ public class JsonRpcTests {
     }
 
     @Test
-    public void testSerialze() throws URISyntaxException, JsonMappingException,
+    public void testSerialize() throws URISyntaxException, JsonMappingException,
             JsonProcessingException {
         JsonRpc rpc = new JsonRpc("call1");
         rpc.addParam(1);
@@ -68,7 +70,7 @@ public class JsonRpcTests {
         var value = new TestType();
         value.value = 42;
         rpc.addParam(value);
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         String json = mapper.writeValueAsString(rpc);
         assertEquals("{\"jsonrpc\":\"2.0\",\"method\":\"call1\","
             + "\"params\":[1,\"hello\",{\"value\":42}]}", json);
@@ -79,10 +81,24 @@ public class JsonRpcTests {
             JsonProcessingException {
         String json = "{\"jsonrpc\":\"2.0\",\"method\":\"call1\","
             + "\"params\":[1,\"hello\",{\"value\":42}],\"id\":1}";
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         var rpc = mapper.readValue(json, TestJsonRpc.class);
         assertEquals(Integer.class, rpc.params()[0].getClass());
         assertEquals(String.class, rpc.params()[1].getClass());
         assertEquals(TestType.class, rpc.params()[2].getClass());
+    }
+
+    @Test
+    public void testJdk8Types() throws JsonProcessingException {
+        JsonRpc rpc = new JsonRpc("call1");
+        rpc.addParam(1);
+        rpc.addParam(Optional.of("hello"));
+        var value = new TestType();
+        value.value = 42;
+        rpc.addParam(value);
+        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+        String json = mapper.writeValueAsString(rpc);
+        assertEquals("{\"jsonrpc\":\"2.0\",\"method\":\"call1\","
+            + "\"params\":[1,\"hello\",{\"value\":42}]}", json);
     }
 }

@@ -45,7 +45,8 @@ public class WebSocketInputSink extends Thread {
     @SuppressWarnings("PMD.FieldNamingConventions")
     private static final Logger logger
         = Logger.getLogger(WebSocketInputSink.class.getName());
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper
+        = new ObjectMapper().findAndRegisterModules();
 
     private final WeakReference<ConsoleConnection> channelRef;
     private final WeakReference<EventPipeline> pipelineRef;
