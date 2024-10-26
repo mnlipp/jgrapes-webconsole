@@ -7,6 +7,12 @@ Export-Package: \
 	org.jgrapes.webconsole.base.events;version="2.0.0",\
 	org.jgrapes.webconsole.base.freemarker;version="1.1.0"
 
+Import-Package: \
+    com.fasterxml.jackson.datatype.jdk8,\
+    com.fasterxml.jackson.module.paramnames,\
+    com.fasterxml.jackson.datatype.jsr310,\
+    *
+
 -fixupmessages.local: \
     "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
     "The .classpath contains a library that will not be available during continuous integration:"
