@@ -135,10 +135,10 @@ export default class Renderer extends JGConsole.Renderer {
                 gridItems.push(<HTMLElement>element);
         });
         gridItems.sort(function(a: HTMLElement, b: HTMLElement) {
-            if (a.getAttribute("gs-y") != b.getAttribute("gs-y")) {
-                return +b.getAttribute("gs-y")! - +a.getAttribute("gs-y")!;
+            if (+a.getAttribute("gs-y")! != +b.getAttribute("gs-y")!) {
+                return +a.getAttribute("gs-y")! - +b.getAttribute("gs-y")!;
             }
-            return +b.getAttribute("gs-x")! - +a.getAttribute("gs-x")!;
+            return +a.getAttribute("gs-x")! - +b.getAttribute("gs-x")!;
         });
 
         let previewLayout:string[] = [];
