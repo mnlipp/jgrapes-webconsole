@@ -160,7 +160,8 @@ public class ConsoleApp extends Component {
         return sslContext;
     }
 
-    @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
+    @SuppressWarnings({ "PMD.TooFewBranchesForASwitchStatement",
+        "PMD.TooFewBranchesForSwitch" })
     private void createVueJsConsole(HttpServer httpServer)
             throws URISyntaxException {
         ConsoleWeblet consoleWeblet
