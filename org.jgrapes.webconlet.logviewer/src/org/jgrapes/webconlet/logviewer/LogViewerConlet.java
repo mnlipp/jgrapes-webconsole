@@ -177,8 +177,7 @@ public class LogViewerConlet extends FreeMarkerConlet<Serializable> {
      * @see org.jgrapes.console.AbstractConlet#doNotifyConletModel
      */
     @Override
-    @SuppressWarnings({ "PMD.SwitchStmtsShouldHaveDefault",
-        "PMD.TooFewBranchesForASwitchStatement" })
+    @SuppressWarnings({ "PMD.TooFewBranchesForSwitch" })
     protected void doUpdateConletState(NotifyConletModel event,
             ConsoleConnection channel, Serializable conletState)
             throws Exception {
@@ -186,6 +185,8 @@ public class LogViewerConlet extends FreeMarkerConlet<Serializable> {
         switch (event.method()) {
         case "resync":
             sendAllEntries(channel, event.conletId());
+            break;
+        default:
             break;
         }
     }
