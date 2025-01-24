@@ -93,8 +93,8 @@ public class DisplayNotification extends ConsoleCommand {
 
     @Override
     public void emitJson(Writer writer) throws IOException {
-        options.put("destroyOnClose", true);
-        emitJson(writer, "displayNotification", content(), options);
+        var extOpts = new HashMap<>(options);
+        extOpts.put("destroyOnClose", true);
+        emitJson(writer, "displayNotification", content(), extOpts);
     }
-
 }
