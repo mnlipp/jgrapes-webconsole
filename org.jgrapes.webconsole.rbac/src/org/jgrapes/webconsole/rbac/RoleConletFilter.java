@@ -19,6 +19,7 @@
 package org.jgrapes.webconsole.rbac;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -179,7 +180,7 @@ public class RoleConletFilter extends Component {
             ConsoleConnection channel) {
         var permissions = new HashMap<String, Set<Permission>>();
         for (var conletType : knownTypes) {
-            var conletPerms = new HashSet<Permission>();
+            var conletPerms = EnumSet.noneOf(Permission.class);
             permissions.put(conletType, conletPerms);
             for (var role : WebConsoleUtils
                 .rolesFromSession(channel.session())) {
