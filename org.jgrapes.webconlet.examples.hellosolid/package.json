@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.26.0",
+    "babel-preset-solid": "^1.9.5",
+    "rollup-preset-solid": "^3.0.0"
+  }
+}

@@ -1,0 +1,52 @@
+plugins {
+    id 'org.jgrapes.java-bundle-conventions'
+    id 'com.github.node-gradle.node'
+}
+
+dependencies {
+	api project(':org.jgrapes.webconsole.base')
+}
+
+task copyTypes(type: Copy) {
+    dependsOn 'npmInstall'
+    description '''
+    Helper task that copies resources from the npm_modules 
+    directory into a package scoped subdirectory.
+    '''
+    into('build/generated/resources/org/jgrapes/webconsole/provider/solidjs/solidjs')
+    from ("node_modules/solid-js") {
+        include "types/**/*.d.ts"
+        include "web/types/**/*.d.ts"
+        include "store/types/**/*.d.ts"
+    }
+}
+
+task bundleNodePkg(type: NodeTask) {
+    dependsOn copyTypes
+    dependsOn ':npmInstall'
+    description '''
+    Helper task that bundles the package as distributed for usage in the
+    browser.
+    '''
+    inputs.dir project.file('src')
+    inputs.file project.file('rollup.config.mjs')
+    outputs.dir project.file('build/generated/resources')
+    script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
+    args = ['-c']
+}
+
+processResources {
+    dependsOn bundleNodePkg
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir project.file('build/generated/resources')
+        }
+    }
+}
+
+eclipse {
+    synchronizationTasks bundleNodePkg
+}

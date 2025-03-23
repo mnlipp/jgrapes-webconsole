@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "es2015",
+    "sourceMap": true,
+    "inlineSources": true,
+    "declaration": true,
+    "importHelpers": true,
+    "strict": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "lib": ["DOM", "ES2020"],
+    "paths": {
+      "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
+      "solid-js": ["../org.jgrapes.webconsole.provider.solidjs/node_modules/solid-js/types/"],
+      "solid-js/jsx-runtime": ["../org.jgrapes.webconsole.provider.solidjs/node_modules/solid-js/jsx-runtime"],
+      "solid-js/web": ["../org.jgrapes.webconsole.provider.solidjs/node_modules/solid-js/web/types/"]
+    }
+  },
+  "include": ["src/**/*.tsx"],
+  "exclude": ["node_modules"]
+}

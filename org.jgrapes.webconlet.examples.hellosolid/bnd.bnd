@@ -1,0 +1,16 @@
+Bundle-Name: Hello World example Conlet
+Bundle-Copyright: Michael N. Lipp (c) 2022
+Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
+
+Export-Package: org.jgrapes.webconlet.examples.helloworld
+
+Require-Capability: \
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+
+Provide-Capability: osgi.serviceloader; \
+    osgi.serviceloader=org.jgrapes.webconsole.base.ConletComponentFactory; \
+    uses:="org.jgrapes.webconsole.base,org.jgrapes.core"
+
+-fixupmessages.local: \
+    "The .classpath contains an unknown container: GROOVY_DSL_SUPPORT. This could make your build less portable.", \
+    "The .classpath contains a library that will not be available during continuous integration:"
