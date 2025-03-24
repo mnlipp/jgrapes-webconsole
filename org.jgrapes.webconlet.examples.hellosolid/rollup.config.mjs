@@ -10,12 +10,12 @@ let module = "build/generated/resources/" + packagePath
 
 let pathsMap = {
     "jgconsole": "../../console-base-resource/jgconsole.js",
-    "solid-js": "../../page-resource/solidjs/solid.js",
-    "solid-js/web": "../../page-resource/solidjs/web/web.js"
+    "solid-js": "../../page-resource/solid-js/solid.js",
+    "solid-js/web": "../../page-resource/solid-js/web/web.js"
 }
 
 export default withSolid([{
-  external: ['solidjs', 'solidjs/web', 'jgconsole'],
+  external: ['solid-js', 'solid-js/web', 'jgconsole'],
   input: "src/" + packagePath + "/" + baseName + "-functions.tsx",
   output: [
     {

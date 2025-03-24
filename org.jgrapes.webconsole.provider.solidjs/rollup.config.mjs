@@ -1,6 +1,6 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
-let moduleBase = "build/generated/resources/org/jgrapes/webconsole/provider/solidjs/solidjs"
+let moduleBase = "build/generated/resources/org/jgrapes/webconsole/provider/solidjs/solid-js"
 
 export default [{
   external: [],

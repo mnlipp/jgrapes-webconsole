@@ -65,6 +65,6 @@ public class SolidJsProvider extends PageResourceProvider {
             ParseException, IOException {
         connection.respond(new AddPageResources()
             .addScriptResource(new ScriptResource()
-                .setProvides(new String[] { "solidjs" })));
+                .setProvides(new String[] { "solid-js" })));
     }
 }
