@@ -9,6 +9,7 @@ dependencies {
 }
 
 task compileTs(type: NodeTask) {
+    dependsOn 'npmInstall'
     dependsOn ':npmInstall'
     dependsOn ':org.jgrapes.webconsole.base:buildLib'
     dependsOn ':org.jgrapes.webconsole.provider.solidjs:processResources'
