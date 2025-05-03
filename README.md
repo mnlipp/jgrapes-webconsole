@@ -54,8 +54,7 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/WebConsole.html).
 Demo
 ----
 
-A [demo configuration](https://jgrapes-console-demo.herokuapp.com/)
-of the portal is available at [heroku](https://www.heroku.com/).
+A live demo configuration of a console is available at [demo.jgrapes.org](https://demo.jgrapes.org/).
 
 Building
 --------
