@@ -100,6 +100,18 @@ publishing {
             }
         }
     }
+    
+    repositories {
+        maven {
+            if (project.version.endsWith('SNAPSHOT')) {
+                url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+            }
+            credentials(PasswordCredentials) {
+                username = project.properties['sonatypeTokenKey'] ?: "nouser"
+                password = project.properties['sonatypeTokenSecret'] ?: "nopass"
+            }
+        }
+    }
 }
 
 jar {
