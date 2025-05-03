@@ -36,8 +36,9 @@ class ConsoleWebSocket {
     private _recvQueueLocks = 0;
     private _messageHandlers = new Map<string, (...args: any[]) => void>();
     private _isHandling = false;
-    private _refreshTimer: ReturnType<typeof setInterval> | null = null;
-    private _inactivity = 0;
+    private _inactivityTimer: ReturnType<typeof setInterval> | null = null;
+    private _lastActivityAt: number = Date.now();
+    private _lastSendAt: number = 0;
     private _reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     private _connectRequested = false;
     private _initialConnect = true;
@@ -96,31 +97,16 @@ class ConsoleWebSocket {
                     _this._console.renderConlet(conlet.id(), [RenderMode.View]);
                 });
             }
-            _this._refreshTimer = setInterval(function() {
-                if (_this._sendQueue.length == 0) {
-                    _this._inactivity += _this._console.connectionRefreshInterval;
-                    if (_this._console.connectionInactivityTimeout > 0 &&
-                        _this._inactivity >= _this._console.connectionInactivityTimeout) {
-                        _this.close();
-                        _this._console.connectionSuspended(function() {
-                            _this._inactivity = 0;
-                            _this.connect();
-                        });
-                        return;
-                    }
-                    _this._send({
-			"jsonrpc": "2.0", "method": "keepAlive",
-			"params": []
-                    });
-                }
-            }, _this._console.connectionRefreshInterval);
+            // Activate timer
+            _this._lastSendAt = Date.now();
+            _this._rescheduleInactivityCheck();
         }
         this._ws.onclose = function(event) {
             Log.debug("OnClose called for WebSocket (reconnect: " +
                 _this._connectRequested + ").");
-            if (_this._refreshTimer !== null) {
-                clearInterval(_this._refreshTimer);
-                _this._refreshTimer = null;
+            if (_this._inactivityTimer !== null) {
+                clearInterval(_this._inactivityTimer);
+                _this._inactivityTimer = null;
             }
             if (_this._connectRequested) {
                 // Not an intended disconnect
@@ -181,6 +167,52 @@ class ConsoleWebSocket {
         this._ws?.close();
     }
 
+    _clearInactivityCheck() {
+        if (this._inactivityTimer) {
+            clearTimeout(this._inactivityTimer);
+            this._inactivityTimer = null;
+        }
+    }
+        
+    _rescheduleInactivityCheck() {
+        let _this = this;
+        _this._clearInactivityCheck();
+        _this._inactivityTimer = setTimeout(function() {
+             _this._checkForInactivity();
+             }, _this._console.connectionRefreshInterval + 50);
+    }
+
+    _checkForInactivity() {
+        let _this = this;
+        // Optimization, no need to check while sending
+        if (_this._sendQueue.length != 0) {
+            return;
+        }
+        let now = Date.now();
+        let inactiveFor = now - _this._lastActivityAt;
+        if (_this._console.connectionInactivityTimeout > 0 &&
+            inactiveFor >= _this._console.connectionInactivityTimeout) {
+            // Enter suspended state
+            _this._clearInactivityCheck();
+            _this.close();
+            _this._console.connectionSuspended(function() {
+                // Resume actions
+                _this._lastActivityAt = Date.now();
+                _this._rescheduleInactivityCheck();
+                _this.connect();
+            });
+            return;
+        }
+        let idleFor = now - _this._lastSendAt;
+        if (idleFor >= _this._console.connectionRefreshInterval) {
+            // Sending implies update for lastSendAt and rescheduling
+            _this._send({
+                "jsonrpc": "2.0", "method": "keepAlive",
+                "params": []
+            });
+        }
+    }
+
     _initiateReconnect() {
         if (!this._reconnectTimer) {
             let _this = this;
@@ -205,8 +237,11 @@ class ConsoleWebSocket {
     }
 
     _send(data: any) {
+        this._clearInactivityCheck();
         this._sendQueue.push(JSON.stringify(data));
         this._drainSendQueue();
+        this._lastSendAt = Date.now();
+        this._rescheduleInactivityCheck();
     }
 
     /**
@@ -217,7 +252,7 @@ class ConsoleWebSocket {
      * @param data the data
      */
     send(data: any) {
-        this._inactivity = 0;
+        this._lastActivityAt = Date.now();
         this._send(data);
     }
 
@@ -238,7 +273,6 @@ class ConsoleWebSocket {
             });
         }
     }
-    
 
     /**
      * When a JSON RPC notification is received, its method property
@@ -293,6 +327,10 @@ class ConsoleWebSocket {
                 Log.error(e);
             }
             this._beingHandled = null;
+            if (this._recvQueue.length > 0) {
+                // Lots of actions may block execution of inactivity timer
+                this._checkForInactivity();
+            }
         }
         this._isHandling = false;
     }
