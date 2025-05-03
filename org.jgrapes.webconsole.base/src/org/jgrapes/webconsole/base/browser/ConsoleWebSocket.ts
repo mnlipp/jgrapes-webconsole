@@ -327,10 +327,8 @@ class ConsoleWebSocket {
                 Log.error(e);
             }
             this._beingHandled = null;
-            if (this._recvQueue.length > 0) {
-                // Lots of actions may block execution of inactivity timer
-                this._checkForInactivity();
-            }
+            // Lots of actions may block execution of inactivity timer
+            this._checkForInactivity();
         }
         this._isHandling = false;
     }
