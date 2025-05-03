@@ -23,14 +23,13 @@ class Log {
 
     private static logDateTimeFormat = new Intl.DateTimeFormat(undefined, 
         <Intl.DateTimeFormatOptions>{
-        dateStyle: "short",
-        timeStyle: "short",
-    });
-
-    private static logDateTimeMillis = new Intl.NumberFormat(undefined, {
-        minimumIntegerDigits: 1,
-        minimumFractionDigits: 3,
-        maximumFractionDigits: 3,
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        fractionalSecondDigits: 3
     });
 
     /**
@@ -39,8 +38,7 @@ class Log {
      * @param date the date to format
      */
     static format (date: Date) {
-        return this.logDateTimeFormat.format(date) 
-            + this.logDateTimeMillis.format(date.getMilliseconds()/1000).substring(1);
+        return this.logDateTimeFormat.format(date);
     }
 
     /**
