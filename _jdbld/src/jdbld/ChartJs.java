@@ -40,9 +40,9 @@ public class ChartJs extends AbstractProject
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
             .generated(p -> Stream.of(JavaResourceTree.of(p,
-                p.buildDirectory().resolve("generated/resources/org/jgrapes"
-                    + "/webconsole/provider/chartjs/chart.js"),
-                "**/*")));
+                p.buildDirectory().resolve("generated/esm-output"),
+                "**/*")))
+            .provideResources(of(JavaResourceTree.class));
         Root.addNpmResourcesBuilder(npmExec,
             Path.of("org/jgrapes/webconsole/provider/chartjs/chart.js"),
             FileTree.of(this, Path.of("node_modules/chart.js"), "**/*.d.ts"));
