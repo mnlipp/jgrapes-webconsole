@@ -14,10 +14,10 @@
     "baseUrl": "..",
     "paths": {
       "vue": ["org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
-      "aash-plugin": ["org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components/lib/AashPlugin"],
-      "jgconsole": ["org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"]
+      "aash-plugin": ["org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/aash-resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components/lib/AashPlugin"],
+      "jgconsole": ["org.jgrapes.webconsole.base/build/generated/tsc-output/org/jgrapes/webconsole/base/JGConsole"]
     }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "build/generated/resources/**/*.ts"]
+  "exclude": ["node_modules", "build/generated/**/*.ts"]
 }

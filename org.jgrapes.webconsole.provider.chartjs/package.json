@@ -1,4 +1,7 @@
 {
+    "scripts": {
+      "build": "rollup -c"
+    },
 	"devDependencies": {
 		"chart.js": "^4.4.0"
 	}

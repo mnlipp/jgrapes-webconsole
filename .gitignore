@@ -1,8 +1,19 @@
+# Ignore build output directory
+**/build
+
+# Eclipse
+**/bin
+**/.classpath
+**/.project
+**/net.sf.jautodoc.prefs
+!_jdbld/.project
+!_jdbld/.classpath
+!_jdbld/.settings/
+
+# Others
 .gradle/
 .metadata/
 .recommenders/
-/build/
-**/.project
-**/.classpath
 **/org.eclipse.jdt.core.prefs
 **/node_modules/
+/jdbld.log
