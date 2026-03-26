@@ -115,6 +115,9 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(VueJs.class));
         dependency(Expose, project(Vuex.class));
 
+        // For npm init
+        dependency(Consume, prepareNpm(new NpmExecutor(this)));
+
         // Build javadoc
         generator(JGrapesJavadoc::new);
 
@@ -299,7 +302,8 @@ public class Root extends AbstractRootProject {
         var project = executor.project();
         if (!(project instanceof RootProject)) {
             executor.required(project.rootProject()
-                .resources(project.of(ExecResult.class)));
+                .resources(project.of(ExecResult.class).using(Consume)
+                    .withName("npmInit")));
         }
         return executor;
     }
