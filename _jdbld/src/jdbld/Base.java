@@ -19,6 +19,10 @@
 package jdbld;
 
 import static org.jdrupes.builder.api.Intent.*;
+
+import java.nio.file.Path;
+import java.util.stream.Stream;
+import org.jdrupes.builder.api.DocumentationDirectory;
 import org.jdrupes.builder.api.MergedTestProject;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
@@ -44,6 +48,15 @@ public class Base extends AbstractProject
             "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.0",
             "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.0"));
         Root.asProjectBundleBuilder(dependency(Supply, NpmExecutor::new));
+
+        // tsdoc
+        Root.prepareNpm(dependency(Supply, NpmExecutor::new)).name("apidocs")
+            .provideResources(of(DocumentationDirectory.class))
+            .args("run", "typedoc")
+            .required(Path.of("src"), "**/*.ts")
+            .generated(p -> Stream.of(DocumentationDirectory.of(p,
+                p.rootProject().buildDirectory()
+                    .resolve("javadoc/org/jgrapes/webconsole/base/jsdoc"))));
     }
 
     public static class BaseTest extends AbstractProject

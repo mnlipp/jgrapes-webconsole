@@ -39,6 +39,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.InvalidPatternException;
 import org.eclipse.jgit.errors.RevisionSyntaxException;
 import org.jdrupes.builder.api.BuildException;
+import org.jdrupes.builder.api.DocumentationDirectory;
 import org.jdrupes.builder.api.ExecResult;
 import org.jdrupes.builder.api.FileTree;
 import static org.jdrupes.builder.api.Intent.*;
@@ -59,7 +60,6 @@ import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceCollector;
 import org.jdrupes.builder.java.JavaResourceTree;
 import org.jdrupes.builder.java.JavadocDirectory;
-
 import static org.jdrupes.builder.java.JavaTypes.JavaResourceTreeType;
 import static org.jdrupes.builder.java.JavaTypes.JavaSourceTreeType;
 import org.jdrupes.builder.java.LibraryBuilder;
@@ -127,6 +127,7 @@ public class Root extends AbstractRootProject {
         commandAlias("prepareJs")
             .resources(of(ExecResult.class).withName("prepareJs"));
         commandAlias("javadoc").resources(of(JavadocDirectory.class));
+        commandAlias("apidocs").resources(of(DocumentationDirectory.class));
 //        commandAlias("pomFile").resources(of(PomFile.class));
 //        commandAlias("mavenPublication").resources(of(MvnPublication.class));
         commandAlias("test").resources(of(TestResult.class));
