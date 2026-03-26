@@ -295,7 +295,13 @@ public class Root extends AbstractRootProject {
      * Called from project configurations.
      */
     public static NpmExecutor prepareNpm(NpmExecutor executor) {
-        return executor.nodeJsVersion("25.7.0").name("npmInit");
+        executor.nodeJsVersion("25.7.0").name("npmInit");
+        var project = executor.project();
+        if (!(project instanceof RootProject)) {
+            executor.required(project.rootProject()
+                .resources(project.of(ExecResult.class)));
+        }
+        return executor;
     }
 
     public static NpmExecutor asBundleBuilder(NpmExecutor executor) {
