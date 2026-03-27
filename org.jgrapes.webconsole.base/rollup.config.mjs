@@ -1,7 +1,7 @@
 import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss'
 
-let module = "build/generated/resources/org/jgrapes/webconsole/base/jgconsole.js"
+let module = "build/generated/tsc-output/org/jgrapes/webconsole/base/jgconsole.js"
 
 export default {
   input: "src/org/jgrapes/webconsole/base/browser/JGConsole.ts",
