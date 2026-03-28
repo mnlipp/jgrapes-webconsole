@@ -298,12 +298,12 @@ public class Root extends AbstractRootProject {
      * Called from project configurations.
      */
     public static NpmExecutor prepareNpm(NpmExecutor executor) {
-        executor.nodeJsVersion("25.7.0").name("npmInit");
+        executor.nodeJsVersion("25.7.0").name("npmInstall");
         var project = executor.project();
         if (!(project instanceof RootProject)) {
             executor.required(project.rootProject()
                 .resources(project.of(ExecResult.class).using(Consume)
-                    .withName("npmInit")));
+                    .withName("npmInstall")));
         }
         return executor;
     }
@@ -334,7 +334,7 @@ public class Root extends AbstractRootProject {
         project.dependency(Supply, FileTreeBuilder::new)
             .into(project.buildDirectory().resolve("generated/npm-resources"))
             // "Derive" sources from NpmExecutor execution result to
-            // make sure that npmInit has been executed
+            // make sure that npmInstall has been executed
             .add(project.resources(project.of(ExecResult.class)
                 .using(Consume, Supply).withName(executor.name()))
                 .map(_ -> Arrays.stream(nodeSources)

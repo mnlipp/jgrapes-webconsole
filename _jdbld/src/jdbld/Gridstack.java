@@ -26,6 +26,7 @@ import org.jdrupes.builder.api.FileTree;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
 import org.jdrupes.builder.core.FileTreeBuilder.Source;
+import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 import static org.jdrupes.builder.java.JavaTypes.*;
@@ -36,11 +37,12 @@ public class Gridstack extends AbstractProject
     public Gridstack() {
         super(name("org.jgrapes.webconsole.provider.gridstack"));
         dependency(Expose, project(Base.class));
+        Root.prepareNpm(dependency(Consume, NpmExecutor::new));
         dependency(Supply, FileTreeBuilder::new)
             .into(buildDirectory().resolve("generated/resources"))
-            // "dummy" resource query to trigger npmInit maps to Sources
+            // "dummy" resource query to trigger npmInstall maps to Sources
             .add(resources(
-                of(ExecResult.class).using(Consume).withName("npmInit"))
+                of(ExecResult.class).using(Consume).withName("npmInstall"))
                     .map(_ -> nodeModuleSource()).flatMap(s -> s))
             .provideResources(of(JavaResourceTreeType));
     }
