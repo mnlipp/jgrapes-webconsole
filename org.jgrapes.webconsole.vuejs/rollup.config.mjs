@@ -3,7 +3,7 @@ import postcss from 'rollup-plugin-postcss';
 
 let packagePath = "org/jgrapes/webconsole/vuejs";
 let baseName = "vuejsrenderer"
-let module = "build/generated/resources/" + packagePath 
+let module = "build/generated/tsc-output/" + packagePath 
     +  "/" + baseName + ".js";
 
 let pathsMap = {

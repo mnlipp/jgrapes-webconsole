@@ -1,5 +1,8 @@
 {
 	"devDependencies": {
 		"normalize.css": "^8.0.1"
-	}
+	},
+    "scripts": {
+      "build": "rollup -c"
+    }
 }

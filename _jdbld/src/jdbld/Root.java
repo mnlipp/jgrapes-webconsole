@@ -113,6 +113,7 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(Rbac.class));
         dependency(Expose, project(Vue.class));
         dependency(Expose, project(VueJs.class));
+        dependency(Expose, project(VueJsConsole.class));
         dependency(Expose, project(Vuex.class));
 
         // For npm init
