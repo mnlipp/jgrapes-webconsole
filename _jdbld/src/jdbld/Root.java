@@ -105,6 +105,7 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(JgwcVueComponents.class));
         dependency(Expose, project(Jquery.class));
         dependency(Expose, project(JqueryUi.class));
+        dependency(Expose, project(JqueryUiConsole.class));
         dependency(Expose, project(JqUiTouchPunch.class));
         dependency(Expose, project(Gridstack.class));
         dependency(Expose, project(MarkdownIt.class));

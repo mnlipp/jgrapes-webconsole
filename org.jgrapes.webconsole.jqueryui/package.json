@@ -1,1 +1,5 @@
-{}
+{
+    "scripts": {
+      "jsdoc": "../node_modules/.bin/jsdoc -c ../jsdoc.json --destination ../build/javadoc/jsdoc resources/org/jgrapes/webconsole/jqueryui/jquiconsole.js"
+    }
+}
