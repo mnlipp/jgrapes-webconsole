@@ -1,7 +1,7 @@
 import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss'
 
-let module = "build/generated/tsc-output/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components.js"
+let module = "build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components.js"
 
 let pathsMap = {
     "vue": "../vue/vue.esm-browser.js",

@@ -14,7 +14,7 @@
     "baseUrl": "..",
     "paths": {
       "vue": ["org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
-      "aash-plugin": ["org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/aash-resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components/lib/AashPlugin"],
+      "aash-plugin": ["org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components/lib/AashPlugin"],
       "jgconsole": ["org.jgrapes.webconsole.base/build/generated/tsc-output/org/jgrapes/webconsole/base/JGConsole"]
     }
   },

@@ -111,6 +111,7 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(Gridstack.class));
         dependency(Expose, project(MarkdownDisplay.class));
         dependency(Expose, project(MarkdownIt.class));
+        dependency(Expose, project(MessageBox.class));
         dependency(Expose, project(Moment.class));
         dependency(Expose, project(Luxon.class));
         dependency(Expose, project(Rbac.class));

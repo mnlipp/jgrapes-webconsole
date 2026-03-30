@@ -20,9 +20,8 @@ package jdbld;
 
 import static org.jdrupes.builder.api.Intent.*;
 import static org.jdrupes.builder.java.JavaTypes.JavaResourceTreeType;
-
 import java.nio.file.Path;
-
+import java.util.stream.Stream;
 import org.jdrupes.builder.api.FileResource;
 import org.jdrupes.builder.api.FileTree;
 import org.jdrupes.builder.core.AbstractProject;
@@ -41,14 +40,23 @@ public class JgwcVueComponents extends AbstractProject
         dependency(Expose, project(Base.class));
         dependency(Reveal, project(Vue.class));
         var aashPrj = project(AashVueComponents.class);
-        Root.asProjectBundleBuilder(dependency(Supply, NpmExecutor::new),
-            project(Base.class)
-                .resources(of(JavaResourceTree.class).using(Supply)),
-            project(Vue.class)
-                .resources(of(JavaResourceTree.class).using(Supply)),
-            aashPrj.resources(of(FileTree.class).using(Supply)));
+        Root.asBundleBuilder(dependency(Supply, NpmExecutor::new)
+            .args("run", "build").required(Stream.of(
+                project(Base.class)
+                    .resources(of(JavaResourceTree.class).using(Supply)),
+                project(Vue.class)
+                    .resources(of(JavaResourceTree.class).using(Supply)),
+                aashPrj.resources(of(FileTree.class).using(Supply)))
+                .flatMap(s -> s))
+            .required(Path.of("node_modules"), "**/*")
+            .required(Path.of("src"), "**/*.ts")
+            .required(Path.of("tsconfig.json"))
+            .required(Path.of("rollup.config.mjs"))
+            .generated(p -> Stream.of(JavaResourceTree.of(p,
+                p.buildDirectory().resolve("generated/resources"),
+                "**/*"))));
         dependency(Supply, FileTreeBuilder::new)
-            .into(buildDirectory().resolve("generated/aash-resources"))
+            .into(buildDirectory().resolve("generated/resources"))
             .add(aashPrj.resources(of(FileTree.class).using(Supply))
                 .map(ft -> Source.of(ft).rename(p -> Path.of(
                     "org/jgrapes/webconsole/provider/jgwcvuecomponents"
