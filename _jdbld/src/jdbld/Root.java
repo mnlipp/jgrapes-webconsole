@@ -109,6 +109,7 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(JqueryUiConsole.class));
         dependency(Expose, project(JqUiTouchPunch.class));
         dependency(Expose, project(Gridstack.class));
+        dependency(Expose, project(MarkdownDisplay.class));
         dependency(Expose, project(MarkdownIt.class));
         dependency(Expose, project(Moment.class));
         dependency(Expose, project(Luxon.class));
