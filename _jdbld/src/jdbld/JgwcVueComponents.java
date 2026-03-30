@@ -41,13 +41,12 @@ public class JgwcVueComponents extends AbstractProject
         dependency(Reveal, project(Vue.class));
         var aashPrj = project(AashVueComponents.class);
         Root.asBundleBuilder(dependency(Supply, NpmExecutor::new)
-            .args("run", "build").required(Stream.of(
-                project(Base.class)
-                    .resources(of(JavaResourceTree.class).using(Supply)),
-                project(Vue.class)
-                    .resources(of(JavaResourceTree.class).using(Supply)),
-                aashPrj.resources(of(FileTree.class).using(Supply)))
-                .flatMap(s -> s))
+            .args("run", "build")
+            .required(project(Base.class)
+                .resources(of(JavaResourceTree.class).using(Supply)))
+            .required(project(Vue.class)
+                .resources(of(JavaResourceTree.class).using(Supply)))
+            .required(aashPrj.resources(of(FileTree.class).using(Supply)))
             .required(Path.of("node_modules"), "**/*")
             .required(Path.of("src"), "**/*.ts")
             .required(Path.of("tsconfig.json"))

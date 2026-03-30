@@ -36,6 +36,12 @@ public class MessageBox extends AbstractProject
 
         Root.prepareNpm(dependency(Supply, NpmExecutor::new))
             .args("run", "build").required(Path.of("src"), "**/*")
+            .required(project(Base.class)
+                .resources(of(JavaResourceTree.class).using(Supply)))
+            .required(project(Vue.class)
+                .resources(of(JavaResourceTree.class).using(Supply)))
+            .required(project(JgwcVueComponents.class)
+                .resources(of(JavaResourceTree.class).using(Supply)))
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
             .generated(p -> Stream.of(JavaResourceTree.of(p,
