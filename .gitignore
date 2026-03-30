@@ -6,6 +6,8 @@
 **/.classpath
 **/.project
 **/net.sf.jautodoc.prefs
+**/org.eclipse.core.resources.prefs
+**/org.eclipse.core.runtime.prefs
 !_jdbld/.project
 !_jdbld/.classpath
 !_jdbld/.settings/

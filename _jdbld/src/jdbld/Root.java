@@ -113,6 +113,7 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(Moment.class));
         dependency(Expose, project(Luxon.class));
         dependency(Expose, project(Rbac.class));
+        dependency(Expose, project(SysInfo.class));
         dependency(Expose, project(Vue.class));
         dependency(Expose, project(VueJs.class));
         dependency(Expose, project(VueJsConsole.class));
