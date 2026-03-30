@@ -40,18 +40,6 @@ public class VueJsConsole extends AbstractProject
         dependency(Reveal, project(Forkawesome.class));
         dependency(Reveal, project(Gridstack.class));
 
-//        dependsOn ':npmInstall'
-//        dependsOn ':aash-vue-components:buildLib'
-//        dependsOn ':org.jgrapes.webconsole.base:buildLib'
-//        dependsOn ':org.jgrapes.webconsole.provider.vue:npmInstall'
-//        dependsOn ':org.jgrapes.webconsole.provider.gridstack:npmInstall'
-//        inputs.dir project.file('src')
-//        inputs.file project.file('tsconfig.json')
-//        inputs.file project.file('rollup.config.mjs')
-//        outputs.dir project.file('build/generated/resources')
-//        script = file("${rootProject.rootDir}/node_modules/rollup/dist/bin/rollup")
-//        args = ["-c"]
-
         var npmExec = Root.prepareNpm(dependency(Supply, NpmExecutor::new));
         npmExec.args("run", "build").required(Path.of("src"), "**/*")
             .required(Path.of("tsconfig.json"))
@@ -65,20 +53,12 @@ public class VueJsConsole extends AbstractProject
                 "normalize.css"));
 
         // tsdoc
-        Root.prepareNpm(dependency(Supply, NpmExecutor::new)).name("apidocs")
-            .provideResources(of(DocumentationDirectory.class))
-            .args("run", "typedoc")
-            .required(Path.of("src"), "**/*.ts")
-            .generated(p -> Stream.of(DocumentationDirectory.of(p,
-                p.rootProject().buildDirectory()
-                    .resolve("javadoc/org/jgrapes/webconsole/base/jsdoc"))));
-    }
-
-    public static class BaseTest extends AbstractProject
-            implements JavaProject, MergedTestProject {
-        public BaseTest() {
-            super(parent(VueJsConsole.class));
-            dependency(Consume, project(VueJsConsole.class));
-        }
+//        Root.prepareNpm(dependency(Supply, NpmExecutor::new)).name("apidocs")
+//            .provideResources(of(DocumentationDirectory.class))
+//            .args("run", "typedoc")
+//            .required(Path.of("src"), "**/*.ts")
+//            .generated(p -> Stream.of(DocumentationDirectory.of(p,
+//                p.rootProject().buildDirectory()
+//                    .resolve("javadoc/org/jgrapes/webconsole/vuejs/jsdoc"))));
     }
 }
