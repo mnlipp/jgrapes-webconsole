@@ -98,6 +98,7 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(AashVueComponents.class));
         dependency(Expose, project(Base.class));
         dependency(Expose, project(Bootstrap4.class));
+        dependency(Expose, project(Bootstrap4Console.class));
         dependency(Expose, project(ChartJs.class));
         dependency(Expose, project(Datatables.class));
         dependency(Expose, project(Fontawesome.class));

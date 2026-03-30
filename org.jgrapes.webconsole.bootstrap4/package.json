@@ -1,5 +1,8 @@
 {
-	"devDependencies": {
-		"bootstrap": "^4.6.1"
-	}
+  "devDependencies": {
+	"bootstrap": "^4.6.1"
+  },
+  "scripts": {
+    "jsdoc": "../node_modules/.bin/jsdoc -c ../jsdoc.json --destination ../build/javadoc/jsdoc resources/org/jgrapes/webconsole/bootstrap4/b4uiconsole.js"
+  }
 }
