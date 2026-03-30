@@ -1,0 +1,9 @@
+{
+  "name": "Client-side Webconsole Vue renderer",
+  "entryPoints": ["./src/org/jgrapes/webconsole/vuejs/VueJsRenderer.ts"],
+  "readme": "./src/org/jgrapes/webconsole/vuejs/README.md",
+  "out": "../build/javadoc/org/jgrapes/webconsole/vuejs/jsdoc",
+  "categorizeByGroup": true,
+  "categoryOrder": ["*"],
+  "excludeExternals": true
+}
