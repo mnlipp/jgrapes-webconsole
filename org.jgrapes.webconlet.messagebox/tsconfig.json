@@ -11,7 +11,7 @@
     "experimentalDecorators": true,
     "lib": ["DOM", "ES2020"],
     "paths": {
-      "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/tsc-output/org/jgrapes/webconsole/base/JGConsole"],
+      "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
       "jgwc": ["../org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/jgwc-vue-components/jgwc-components"],
       "vue": ["../org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
       "l10nBundles": ["./src/org/jgrapes/webconlet/messagebox/browser/l10nBundles-stub"]

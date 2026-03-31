@@ -1,6 +1,6 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
-let module = "build/generated/esm-output/org/jgrapes/webconsole/provider/chartjs/chart.js/auto.js"
+let module = "build/generated/resources/org/jgrapes/webconsole/provider/chartjs/chart.js/auto.js"
 
 let pathsMap = {
 }

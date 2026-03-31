@@ -109,6 +109,7 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(JqueryUiConsole.class));
         dependency(Expose, project(JqUiTouchPunch.class));
         dependency(Expose, project(Gridstack.class));
+        dependency(Expose, project(LocalLogin.class));
         dependency(Expose, project(MarkdownDisplay.class));
         dependency(Expose, project(MarkdownIt.class));
         dependency(Expose, project(MessageBox.class));
@@ -329,7 +330,7 @@ public class Root extends AbstractRootProject {
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
             .output(p -> Stream.of(JavaResourceTree.of(p,
-                p.buildDirectory().resolve("generated/tsc-output"), "**/*")));
+                p.buildDirectory().resolve("generated/resources"), "**/*")));
     }
 
     public static void addNpmResourcesBuilder(NpmExecutor executor,

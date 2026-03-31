@@ -3,7 +3,7 @@ import postcss from 'rollup-plugin-postcss';
 
 let packagePath = "org/jgrapes/webconlet/messagebox";
 let baseName = "MessageBox"
-let module = "build/generated/tsc-output/" + packagePath 
+let module = "build/generated/resources/" + packagePath 
     +  "/" + baseName + "-functions.js";
 
 let pathsMap = {

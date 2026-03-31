@@ -28,17 +28,25 @@ import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
-public class JmxBrowser extends AbstractProject
+public class LocalLogin extends AbstractProject
         implements JavaProject, JavaLibraryProject, Unpublishable {
 
-    public JmxBrowser() {
-        super(name("org.jgrapes.webconlet.jmxbrowser"));
+    public LocalLogin() {
+        super(name("org.jgrapes.webconlet.locallogin"));
         dependency(Expose, project(Base.class));
-        dependency(Expose, new MvnRepoLookup()
-            .resolve("org.jdrupes.json:json:[2.3.1,2.4.0)"));
+        dependency(Reveal, project(Vue.class));
+        dependency(Reveal, project(JgwcVueComponents.class));
+        dependency(Consume, new MvnRepoLookup().resolve(
+            "at.favre.lib:bcrypt:[0.10.2,0.11)"));
 
         Root.prepareNpm(dependency(Supply, NpmExecutor::new))
-            .args("run", "build").required(Path.of("src"), "**/*")
+            .args("run", "build").required(Path.of("src"), "**/*.ts")
+            .required(project(Base.class)
+                .resources(of(JavaResourceTree.class).using(Supply)))
+            .required(project(Vue.class)
+                .resources(of(JavaResourceTree.class).using(Supply)))
+            .required(project(JgwcVueComponents.class)
+                .resources(of(JavaResourceTree.class).using(Supply)))
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
             .output(p -> Stream.of(JavaResourceTree.of(p,
