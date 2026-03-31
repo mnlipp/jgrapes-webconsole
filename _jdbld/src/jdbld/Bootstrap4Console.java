@@ -33,7 +33,7 @@ public class Bootstrap4Console extends AbstractProject
         implements JavaProject, JavaLibraryProject {
 
     public Bootstrap4Console() {
-        super(name("org.jgrapes.webconsole.vuejs"));
+        super(name("org.jgrapes.webconsole.bootstrap4"));
         dependency(Expose, project(Base.class));
         dependency(Reveal, project(Jquery.class));
         dependency(Reveal, project(Forkawesome.class));
