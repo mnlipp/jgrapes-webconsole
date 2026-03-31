@@ -100,6 +100,7 @@ public class Root extends AbstractRootProject {
         dependency(Expose, project(Bootstrap4.class));
         dependency(Expose, project(Bootstrap4Console.class));
         dependency(Expose, project(ChartJs.class));
+        dependency(Expose, project(ConsoleApp.class));
         dependency(Expose, project(Datatables.class));
         dependency(Expose, project(Fontawesome.class));
         dependency(Expose, project(Forkawesome.class));
@@ -137,7 +138,7 @@ public class Root extends AbstractRootProject {
 //        generator(GhPagesPublisher::new);
 
         // Commands
-        commandAlias("build").projects("**")
+        commandAlias("build").projects("**").without("WebConsoleExample")
             .resources(of(LibraryJarFile.class).using(Supply));
         commandAlias("prepareJs")
             .resources(of(ExecResult.class).withName("prepareJs"));
