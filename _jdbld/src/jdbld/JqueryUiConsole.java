@@ -44,7 +44,7 @@ public class JqueryUiConsole extends AbstractProject
             .args("run", "jsdoc")
             .required(Path.of("resoures/org/jgrapes/webconsole/jqueryui"),
                 "**/*")
-            .generated(p -> Stream.of(DocumentationDirectory.of(p,
+            .output(p -> Stream.of(DocumentationDirectory.of(p,
                 p.rootProject().buildDirectory().resolve("javadoc/jsdoc"))));
     }
 }

@@ -36,7 +36,6 @@ public class AashVueComponents extends AbstractProject
             .required(Path.of("src"), "**/*")
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
-            .generated(
-                p -> Stream.of(FileTree.of(p, Path.of("lib"), "**/*")));
+            .output(p -> Stream.of(FileTree.of(p, Path.of("lib"), "**/*")));
     }
 }

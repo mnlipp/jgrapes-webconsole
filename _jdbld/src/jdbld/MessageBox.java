@@ -44,7 +44,7 @@ public class MessageBox extends AbstractProject
                 .resources(of(JavaResourceTree.class).using(Supply)))
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
-            .generated(p -> Stream.of(JavaResourceTree.of(p,
+            .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/tsc-output"), "**/*")))
             .provideResources(of(JavaResourceTree.class));
     }

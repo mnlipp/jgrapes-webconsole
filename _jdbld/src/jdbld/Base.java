@@ -54,7 +54,7 @@ public class Base extends AbstractProject
             .provideResources(of(DocumentationDirectory.class))
             .args("run", "typedoc")
             .required(Path.of("src"), "**/*.ts")
-            .generated(p -> Stream.of(DocumentationDirectory.of(p,
+            .output(p -> Stream.of(DocumentationDirectory.of(p,
                 p.rootProject().buildDirectory()
                     .resolve("javadoc/org/jgrapes/webconsole/base/jsdoc"))));
     }

@@ -39,7 +39,7 @@ public class ChartJs extends AbstractProject
         npmExec.args("run", "build").required(Path.of("src"), "**/*")
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
-            .generated(p -> Stream.of(JavaResourceTree.of(p,
+            .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/esm-output"),
                 "**/*")))
             .provideResources(of(JavaResourceTree.class));

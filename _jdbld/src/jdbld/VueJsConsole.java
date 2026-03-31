@@ -42,7 +42,7 @@ public class VueJsConsole extends AbstractProject
         npmExec.args("run", "build").required(Path.of("src"), "**/*")
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
-            .generated(p -> Stream.of(JavaResourceTree.of(p,
+            .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/tsc-output"), "**/*")))
             .provideResources(of(JavaResourceTree.class));
         Root.addNpmResourcesBuilder(npmExec,
