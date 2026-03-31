@@ -1,7 +1,0 @@
-plugins {
-    id 'org.jgrapes.java-bundle-conventions'
-}
-
-dependencies {
-	api project(':org.jgrapes.webconsole.base')
-}
