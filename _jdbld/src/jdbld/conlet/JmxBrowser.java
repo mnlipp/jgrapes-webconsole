@@ -19,6 +19,7 @@
 package jdbld.conlet;
 
 import static org.jdrupes.builder.api.Intent.*;
+import static org.jdrupes.builder.api.ResourceType.*;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.jdrupes.builder.core.AbstractProject;
@@ -28,10 +29,10 @@ import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
 import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
-
 import jdbld.Root;
 import jdbld.Unpublishable;
 import jdbld.console.Base;
+import jdbld.provider.JgwcVueComponents;
 
 public class JmxBrowser extends AbstractProject
         implements JavaProject, JavaLibraryProject, Unpublishable {
@@ -46,6 +47,8 @@ public class JmxBrowser extends AbstractProject
             .args("run", "build").required(Path.of("src"), "**/*")
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
+            .required(project(JgwcVueComponents.class)
+                .resources(of(BaseFileTreeType).using(Supply)))
             .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/resources"), "**/*")))
             .provideResources(of(JavaResourceTreeType));
