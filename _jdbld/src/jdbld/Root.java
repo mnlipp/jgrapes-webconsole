@@ -79,6 +79,35 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import jdbld.WebConsoleOsgiTest.RunRepo;
+import jdbld.conlet.FormTest;
+import jdbld.conlet.HelloSolid;
+import jdbld.conlet.HelloWorld;
+import jdbld.conlet.LocalLogin;
+import jdbld.conlet.MarkdownDisplay;
+import jdbld.conlet.MessageBox;
+import jdbld.conlet.OidcLogin;
+import jdbld.conlet.StyleTest;
+import jdbld.conlet.SysInfo;
+import jdbld.console.Base;
+import jdbld.console.Bootstrap4Console;
+import jdbld.console.JqueryUiConsole;
+import jdbld.console.VueJsConsole;
+import jdbld.provider.Bootstrap4;
+import jdbld.provider.ChartJs;
+import jdbld.provider.Datatables;
+import jdbld.provider.Fontawesome;
+import jdbld.provider.Forkawesome;
+import jdbld.provider.Gridstack;
+import jdbld.provider.JgwcVueComponents;
+import jdbld.provider.JqUiTouchPunch;
+import jdbld.provider.Jquery;
+import jdbld.provider.JqueryUi;
+import jdbld.provider.Luxon;
+import jdbld.provider.MarkdownIt;
+import jdbld.provider.Moment;
+import jdbld.provider.Vue;
+import jdbld.provider.VueJs;
+import jdbld.provider.Vuex;
 
 public class Root extends AbstractRootProject {
 

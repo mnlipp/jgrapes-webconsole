@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package jdbld;
+package jdbld.conlet;
 
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.core.AbstractProject;
@@ -24,12 +24,16 @@ import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 
 import jdbld.console.Base;
+import jdbld.provider.JgwcVueComponents;
+import jdbld.provider.Vue;
 
-public class Rbac extends AbstractProject
+public class StyleTest extends AbstractProject
         implements JavaProject, JavaLibraryProject {
 
-    public Rbac() {
-        super(name("org.jgrapes.webconsole.rbac"));
+    public StyleTest() {
+        super(name("org.jgrapes.webconlet.examples.styletest"));
         dependency(Expose, project(Base.class));
+        dependency(Reveal, project(Vue.class));
+        dependency(Reveal, project(JgwcVueComponents.class));
     }
 }

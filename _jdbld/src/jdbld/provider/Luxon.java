@@ -16,20 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package jdbld;
+package jdbld.provider;
 
 import static org.jdrupes.builder.api.Intent.*;
+import java.nio.file.Path;
+import org.jdrupes.builder.api.FileTree;
 import org.jdrupes.builder.core.AbstractProject;
+import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 
+import jdbld.Root;
 import jdbld.console.Base;
 
-public class Rbac extends AbstractProject
+public class Luxon extends AbstractProject
         implements JavaProject, JavaLibraryProject {
 
-    public Rbac() {
-        super(name("org.jgrapes.webconsole.rbac"));
+    public Luxon() {
+        super(name("org.jgrapes.webconsole.provider.luxon"));
         dependency(Expose, project(Base.class));
+        var npmExec = Root.prepareNpm(dependency(Supply, NpmExecutor::new));
+        Root.addNpmResourcesBuilder(npmExec,
+            Path.of("org/jgrapes/webconsole/provider/luxon/luxon"),
+            FileTree.of(this, Path.of("node_modules/luxon"),
+                "build/es6/**", "src/**"));
+        Root.addNpmResourcesBuilder(npmExec,
+            Path.of("org/jgrapes/webconsole/provider/luxon/luxon/types"),
+            FileTree.of(this, Path.of("node_modules/@types/luxon"), "**/*"));
     }
 }
