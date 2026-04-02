@@ -53,10 +53,11 @@ public class Vue extends AbstractProject
     private Stream<Source> nodeModuleSource() {
         Path target = Path.of("org/jgrapes/webconsole/provider/vue/vue");
         return Stream.of(
-            Source.of(FileTree.of(this,
-                Path.of("node_modules/vue/dist"), "vue.d.ts"))
-                .replaceAll("@vue/", "./")
-                .rename(p -> target.resolve(p)),
+// Replaced by version in resources/...
+//            Source.of(FileTree.of(this,
+//                Path.of("node_modules/vue/dist"), "vue.d.ts"))
+//                .replaceAll("@vue/", "./")
+//                .rename(p -> target.resolve(p)),
             Source.of(FileTree.of(this,
                 Path.of("node_modules/vue/dist"), "*-browser.*"))
                 .rename(p -> target.resolve(p)),
