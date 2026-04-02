@@ -26,7 +26,8 @@ import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 import org.jdrupes.builder.uberjar.UberJarBuilder;
 
-public class WebConsoleExample extends AbstractProject implements JavaProject {
+public class WebConsoleExample extends AbstractProject
+        implements JavaProject, Unpublishable {
 
     public WebConsoleExample() {
         super(directory(Path.of("WebConsoleExample")));

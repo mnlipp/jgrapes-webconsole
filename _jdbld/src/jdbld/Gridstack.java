@@ -21,8 +21,8 @@ package jdbld;
 import static org.jdrupes.builder.api.Intent.*;
 import java.nio.file.Path;
 import java.util.stream.Stream;
-import org.jdrupes.builder.api.ExecResult;
 import org.jdrupes.builder.api.FileTree;
+import static org.jdrupes.builder.api.ResourceType.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
 import org.jdrupes.builder.core.FileTreeBuilder.Source;
@@ -42,7 +42,7 @@ public class Gridstack extends AbstractProject
             .into(buildDirectory().resolve("generated/resources"))
             // "dummy" resource query to trigger npmInstall maps to Sources
             .add(resources(
-                of(ExecResult.class).using(Consume).withName("npmInstall"))
+                of(ExecResultType).using(Consume).withName("npmInstall"))
                     .map(_ -> nodeModuleSource()).flatMap(s -> s))
             .provideResources(of(JavaResourceTreeType));
     }

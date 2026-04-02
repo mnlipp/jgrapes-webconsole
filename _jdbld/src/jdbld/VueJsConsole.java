@@ -27,6 +27,7 @@ import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
+import static org.jdrupes.builder.java.JavaTypes.*;
 
 public class VueJsConsole extends AbstractProject
         implements JavaProject, JavaLibraryProject {
@@ -43,10 +44,10 @@ public class VueJsConsole extends AbstractProject
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
             .required(project(Base.class)
-                .resources(of(JavaResourceTree.class).using(Supply)))
+                .resources(of(JavaResourceTreeType).using(Supply)))
             .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/resources"), "**/*")))
-            .provideResources(of(JavaResourceTree.class));
+            .provideResources(of(JavaResourceTreeType));
         Root.addNpmResourcesBuilder(npmExec,
             Path.of("org/jgrapes/webconsole/vuejs/lib"),
             FileTree.of(this, Path.of("node_modules/normalize.css"),

@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.jdrupes.builder.api.FileResource;
 import org.jdrupes.builder.api.FileTree;
+import static org.jdrupes.builder.api.ResourceType.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
 import org.jdrupes.builder.core.FileTreeBuilder.Source;
@@ -43,10 +44,10 @@ public class JgwcVueComponents extends AbstractProject
         Root.asBundleBuilder(dependency(Supply, NpmExecutor::new)
             .args("run", "build")
             .required(project(Base.class)
-                .resources(of(JavaResourceTree.class).using(Supply)))
+                .resources(of(JavaResourceTreeType).using(Supply)))
             .required(project(Vue.class)
-                .resources(of(JavaResourceTree.class).using(Supply)))
-            .required(aashPrj.resources(of(FileTree.class).using(Supply)))
+                .resources(of(JavaResourceTreeType).using(Supply)))
+            .required(aashPrj.resources(of(BaseFileTreeType).using(Supply)))
             .required(Path.of("node_modules"), "**/*")
             .required(Path.of("src"), "**/*.ts")
             .required(Path.of("tsconfig.json"))
@@ -56,7 +57,7 @@ public class JgwcVueComponents extends AbstractProject
                 name().replace('.', '/') + "/jgwc-vue-components/**/*"))));
         dependency(Supply, FileTreeBuilder::new)
             .into(buildDirectory().resolve("generated/resources"))
-            .add(aashPrj.resources(of(FileTree.class).using(Supply))
+            .add(aashPrj.resources(of(BaseFileTreeType).using(Supply))
                 .map(ft -> Source.of(ft).rename(p -> Path.of(
                     name().replace('.', '/') + "/aash-vue-components/lib")
                     .resolve(p))))

@@ -40,15 +40,15 @@ import org.eclipse.jgit.errors.InvalidPatternException;
 import org.eclipse.jgit.errors.RevisionSyntaxException;
 import org.jdrupes.builder.api.BuildException;
 import org.jdrupes.builder.api.DocumentationDirectory;
-import org.jdrupes.builder.api.ExecResult;
 import org.jdrupes.builder.api.FileTree;
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.api.MergedTestProject;
 import org.jdrupes.builder.api.Project;
 import org.jdrupes.builder.api.Resource;
+import org.jdrupes.builder.api.ResourceType;
 import static org.jdrupes.builder.api.Project.Properties.Version;
+import static org.jdrupes.builder.api.ResourceType.*;
 import org.jdrupes.builder.api.RootProject;
-import org.jdrupes.builder.api.TestResult;
 import org.jdrupes.builder.core.AbstractRootProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
 import org.jdrupes.builder.core.FileTreeBuilder.Source;
@@ -59,18 +59,14 @@ import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceCollector;
 import org.jdrupes.builder.java.JavaResourceTree;
-import org.jdrupes.builder.java.JavadocDirectory;
-import static org.jdrupes.builder.java.JavaTypes.JavaResourceTreeType;
-import static org.jdrupes.builder.java.JavaTypes.JavaSourceTreeType;
+import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.java.LibraryBuilder;
-import org.jdrupes.builder.java.LibraryJarFile;
-import org.jdrupes.builder.java.ManifestAttributes;
 import org.jdrupes.builder.junit.JUnitTestRunner;
 import org.jdrupes.builder.mvnrepo.JavadocJarBuilder;
 import static org.jdrupes.builder.mvnrepo.MvnProperties.GroupId;
 import org.jdrupes.builder.mvnrepo.MvnPublisher;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
-import org.jdrupes.builder.mvnrepo.PomFile;
+import static org.jdrupes.builder.mvnrepo.MvnRepoTypes.*;
 import org.jdrupes.builder.mvnrepo.PomFileGenerator;
 import org.jdrupes.builder.mvnrepo.SourcesJarGenerator;
 import org.jdrupes.builder.ext.bnd.BndAnalyzer;
@@ -81,6 +77,8 @@ import org.jdrupes.gitversioning.core.DefaultTagFilter;
 import org.jdrupes.gitversioning.core.MavenStyleTagProcessor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import jdbld.WebConsoleOsgiTest.RunRepo;
 
 public class Root extends AbstractRootProject {
 
@@ -139,18 +137,24 @@ public class Root extends AbstractRootProject {
 
         // Commands
         commandAlias("build").projects("**").without("WebConsoleExample")
-            .resources(of(LibraryJarFile.class).using(Supply));
+            .resources(of(LibraryJarFileType).using(Supply));
         commandAlias("prepareJs")
-            .resources(of(ExecResult.class).withName("prepareJs"));
-        commandAlias("javadoc").resources(of(JavadocDirectory.class));
-        commandAlias("apidocs").resources(of(DocumentationDirectory.class));
+            .resources(of(ExecResultType).withName("prepareJs"));
+        commandAlias("javadoc").resources(of(JavadocDirectoryType));
+        commandAlias("apidocs")
+            .resources(of(new ResourceType<DocumentationDirectory>() {}));
 //        commandAlias("pomFile").resources(of(PomFile.class));
 //        commandAlias("mavenPublication").resources(of(MvnPublication.class));
-        commandAlias("test").resources(of(TestResult.class));
-        commandAlias("eclipse").resources(of(EclipseConfiguration.class));
+        commandAlias("test").resources(of(TestResultType));
+        commandAlias("eclipse").projects("**")
+            .resources(of(new ResourceType<EclipseConfiguration>() {}));
 //        commandAlias("baseline").resources(of(BndBaselineEvaluation.class));
 //        commandAlias("ghPagesPublication")
 //            .resources(of(GhPagesPublication.class));
+        commandAlias("prepareRunRepo").projects("**")
+            .resources(of(new ResourceType<RunRepo>() {}).using(Consume));
+        commandAlias("runGoGo")
+            .resources(of(ExecResultType).withName("GoGo"));
     }
 
     private static void setupVersion(Project project)
@@ -247,9 +251,9 @@ public class Root extends AbstractRootProject {
                 IMPLEMENTATION_VENDOR, "Michael N. Lipp (mnl@mnl.de)")
                 .entrySet().stream())
             .addManifestAttributes(project.resources(
-                project.of(ManifestAttributes.class).using(Consume)))
+                project.of(ManifestAttributesType).using(Consume)))
             .addEntries(project.resources(
-                project.of(PomFile.class).using(Supply))
+                project.of(PomFileType).using(Supply))
                 .map(pomFile -> Map.entry(Path.of("META-INF/maven")
                     .resolve((String) project.get(GroupId))
                     .resolve(project.name())
@@ -315,7 +319,7 @@ public class Root extends AbstractRootProject {
         var project = executor.project();
         if (!(project instanceof RootProject)) {
             executor.required(project.rootProject()
-                .resources(project.of(ExecResult.class).using(Consume)
+                .resources(project.of(ExecResultType).using(Consume)
                     .withName("npmInstall")));
         }
         return executor;
@@ -323,7 +327,7 @@ public class Root extends AbstractRootProject {
 
     public static NpmExecutor asBundleBuilder(NpmExecutor executor) {
         return prepareNpm(executor).name("bundleBuilder")
-            .provideResources(executor.project().of(JavaResourceTree.class));
+            .provideResources(executor.project().of(JavaResourceTreeType));
     }
 
     @SafeVarargs
@@ -348,7 +352,7 @@ public class Root extends AbstractRootProject {
             .into(project.buildDirectory().resolve("generated/npm-resources"))
             // "Derive" sources from NpmExecutor execution result to
             // make sure that npmInstall has been executed
-            .add(project.resources(project.of(ExecResult.class)
+            .add(project.resources(project.of(ExecResultType)
                 .using(Consume, Supply).withName(executor.name()))
                 .map(_ -> Arrays.stream(nodeSources)
                     .map(s -> Source.of(s).rename(p -> target.resolve(p))))

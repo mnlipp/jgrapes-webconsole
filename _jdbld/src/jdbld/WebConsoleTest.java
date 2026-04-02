@@ -25,7 +25,8 @@ import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
-public class WebConsoleTest extends AbstractProject implements JavaProject {
+public class WebConsoleTest extends AbstractProject
+        implements JavaProject, Unpublishable {
 
     public WebConsoleTest() {
         super(directory(Path.of("WebConsoleTest")));

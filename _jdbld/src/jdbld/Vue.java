@@ -19,10 +19,10 @@
 package jdbld;
 
 import static org.jdrupes.builder.api.Intent.*;
+import static org.jdrupes.builder.api.ResourceType.*;
 import static org.jdrupes.builder.java.JavaTypes.JavaResourceTreeType;
 import java.nio.file.Path;
 import java.util.stream.Stream;
-import org.jdrupes.builder.api.ExecResult;
 import org.jdrupes.builder.api.FileTree;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
@@ -42,7 +42,7 @@ public class Vue extends AbstractProject
             .into(buildDirectory().resolve("generated/resources"))
             // "dummy" resource query to trigger npmInit maps to Sources
             .add(resources(
-                of(ExecResult.class).using(Consume).withName("npmInstall"))
+                of(ExecResultType).using(Consume).withName("npmInstall"))
                     .map(_ -> nodeModuleSource()).flatMap(s -> s))
             .provideResources(of(JavaResourceTreeType));
     }
