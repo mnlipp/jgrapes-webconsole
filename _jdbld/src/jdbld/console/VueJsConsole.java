@@ -53,8 +53,6 @@ public class VueJsConsole extends AbstractProject
                 .resources(of(JavaResourceTreeType).using(Supply)))
             .required(project(JgwcVueComponents.class)
                 .resources(of(JavaResourceTreeType).using(Supply)))
-            .required(project(Forkawesome.class)
-                .resources(of(JavaResourceTreeType).using(Supply)))
             .required(project(Gridstack.class)
                 .resources(of(JavaResourceTreeType).using(Supply)))
             .output(p -> Stream.of(JavaResourceTree.of(p,
