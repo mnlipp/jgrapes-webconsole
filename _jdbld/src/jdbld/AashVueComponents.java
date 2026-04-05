@@ -20,6 +20,7 @@ package jdbld;
 
 import org.jdrupes.builder.api.FileTree;
 import static org.jdrupes.builder.api.Intent.*;
+import static org.jdrupes.builder.api.ResourceType.*;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.jdrupes.builder.core.AbstractProject;
@@ -31,7 +32,7 @@ public class AashVueComponents extends AbstractProject
     public AashVueComponents() {
         super(name("aash-vue-components"));
         Root.prepareNpm(dependency(Supply, NpmExecutor::new))
-            .name("bundleBuilder").provideResources(of(FileTree.class))
+            .name("bundleBuilder").provideResources(of(BaseFileTreeType))
             .args("run", "build")
             .required(Path.of("src"), "**/*")
             .required(Path.of("tsconfig.json"))

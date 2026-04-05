@@ -26,6 +26,7 @@ import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
+import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
 public class JmxBrowser extends AbstractProject
@@ -43,6 +44,6 @@ public class JmxBrowser extends AbstractProject
             .required(Path.of("rollup.config.mjs"))
             .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/resources"), "**/*")))
-            .provideResources(of(JavaResourceTree.class));
+            .provideResources(of(JavaResourceTreeType));
     }
 }

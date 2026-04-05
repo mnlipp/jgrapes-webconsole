@@ -21,13 +21,13 @@ package jdbld;
 import static org.jdrupes.builder.api.Intent.*;
 import java.nio.file.Path;
 import java.util.stream.Stream;
-
 import org.jdrupes.builder.api.FileTree;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
+import static org.jdrupes.builder.java.JavaTypes.*;
 
 public class ChartJs extends AbstractProject
         implements JavaProject, JavaLibraryProject {
@@ -42,7 +42,7 @@ public class ChartJs extends AbstractProject
             .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/resources"),
                 "**/*")))
-            .provideResources(of(JavaResourceTree.class));
+            .provideResources(of(JavaResourceTreeType));
         Root.addNpmResourcesBuilder(npmExec,
             Path.of("org/jgrapes/webconsole/provider/chartjs/chart.js"),
             FileTree.of(this, Path.of("node_modules/chart.js"), "**/*.d.ts"));

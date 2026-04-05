@@ -28,6 +28,7 @@ import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
+import static org.jdrupes.builder.java.JavaTypes.*;
 
 public class SolidJs extends AbstractProject
         implements JavaProject, JavaLibraryProject {
@@ -42,7 +43,7 @@ public class SolidJs extends AbstractProject
             .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/resources"),
                 "**/*")))
-            .provideResources(of(JavaResourceTree.class));
+            .provideResources(of(JavaResourceTreeType));
         Root.addNpmResourcesBuilder(npmExec,
             Path.of("org/jgrapes/webconsole/provider/solidjs/solidjs"),
             FileTree.of(this, Path.of("node_modules/solid-js"),

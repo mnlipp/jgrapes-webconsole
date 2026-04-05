@@ -84,7 +84,7 @@ public class JGrapesJavadoc extends AbstractGenerator implements Renamable {
 
         // Classpath
         var classpath = elementsToPath(project().resources(
-            of(ClasspathElement.class).using(Consume, Reveal, Expose)));
+            of(ClasspathElementType).using(Consume, Reveal, Expose)));
 
         // Build command
         List<String> command = List.of(

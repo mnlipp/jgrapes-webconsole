@@ -26,6 +26,7 @@ import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
+import static org.jdrupes.builder.java.JavaTypes.*;
 
 public class HelloSolid extends AbstractProject
         implements JavaProject, JavaLibraryProject, Unpublishable {
@@ -38,13 +39,13 @@ public class HelloSolid extends AbstractProject
         Root.prepareNpm(dependency(Supply, NpmExecutor::new))
             .args("run", "build").required(Path.of("src"), "**/*.ts")
             .required(project(Base.class)
-                .resources(of(JavaResourceTree.class).using(Supply)))
+                .resources(of(JavaResourceTreeType).using(Supply)))
             .required(project(SolidJs.class)
-                .resources(of(JavaResourceTree.class).using(Supply)))
+                .resources(of(JavaResourceTreeType).using(Supply)))
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
             .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/resources"), "**/*")))
-            .provideResources(of(JavaResourceTree.class));
+            .provideResources(of(JavaResourceTreeType));
     }
 }
