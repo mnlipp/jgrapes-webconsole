@@ -33,10 +33,10 @@ import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 import static org.jdrupes.builder.mvnrepo.MvnRepoTypes.*;
 
-public class WebConsoleOsgiTest extends AbstractProject
+public class WebConsoleOSGiTest extends AbstractProject
         implements JavaProject, Unpublishable {
 
-    public WebConsoleOsgiTest() {
+    public WebConsoleOSGiTest() {
         super(directory(Path.of("WebConsoleOSGiTest")));
         dependency(Reveal, project(WebConsoleTest.class));
 

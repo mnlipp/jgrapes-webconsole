@@ -78,7 +78,7 @@ import org.jdrupes.gitversioning.core.MavenStyleTagProcessor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import jdbld.WebConsoleOsgiTest.RunRepo;
+import jdbld.WebConsoleOSGiTest.RunRepo;
 import jdbld.conlet.FormTest;
 import jdbld.conlet.HelloSolid;
 import jdbld.conlet.HelloWorld;
