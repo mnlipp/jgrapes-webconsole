@@ -24,14 +24,12 @@ import java.util.stream.Stream;
 import org.jdrupes.builder.api.FileTree;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
+import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
-
 import jdbld.Root;
 import jdbld.console.Base;
-
-import static org.jdrupes.builder.java.JavaTypes.*;
 
 public class ChartJs extends AbstractProject
         implements JavaProject, JavaLibraryProject {
