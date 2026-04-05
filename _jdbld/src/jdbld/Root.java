@@ -77,8 +77,6 @@ import org.jdrupes.gitversioning.core.DefaultTagFilter;
 import org.jdrupes.gitversioning.core.MavenStyleTagProcessor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import jdbld.WebConsoleOSGiTest.RunRepo;
 import jdbld.conlet.FormTest;
 import jdbld.conlet.HelloSolid;
 import jdbld.conlet.HelloWorld;
@@ -180,8 +178,6 @@ public class Root extends AbstractRootProject {
 //        commandAlias("baseline").resources(of(BndBaselineEvaluation.class));
 //        commandAlias("ghPagesPublication")
 //            .resources(of(GhPagesPublication.class));
-        commandAlias("prepareRunRepo").projects("**")
-            .resources(of(new ResourceType<RunRepo>() {}).using(Consume));
         commandAlias("runGoGo")
             .resources(of(ExecResultType).withName("GoGo"));
     }
