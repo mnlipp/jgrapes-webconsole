@@ -92,6 +92,7 @@ import jdbld.console.JqueryUiConsole;
 import jdbld.console.VueJsConsole;
 import jdbld.provider.Bootstrap4;
 import jdbld.provider.ChartJs;
+import jdbld.provider.Datatables;
 import jdbld.provider.Fontawesome;
 import jdbld.provider.Forkawesome;
 import jdbld.provider.Gridstack;
