@@ -16,20 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package jdbld;
+package jdbld.provider;
 
 import static org.jdrupes.builder.api.Intent.*;
+
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 
 import jdbld.console.Base;
 
-public class Rbac extends AbstractProject
+public class VueJs extends AbstractProject
         implements JavaProject, JavaLibraryProject {
 
-    public Rbac() {
-        super(name("org.jgrapes.webconsole.rbac"));
+    public VueJs() {
+        super(name("org.jgrapes.webconsole.provider.vuejs"));
         dependency(Expose, project(Base.class));
     }
 }

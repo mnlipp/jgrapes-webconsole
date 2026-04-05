@@ -25,6 +25,23 @@ import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
+import jdbld.conlet.HelloSolid;
+import jdbld.conlet.HelloWorld;
+import jdbld.conlet.JmxBrowser;
+import jdbld.conlet.LocalLogin;
+import jdbld.conlet.Logviewer;
+import jdbld.conlet.MarkdownDisplay;
+import jdbld.conlet.OidcLogin;
+import jdbld.conlet.StyleTest;
+import jdbld.conlet.SysInfo;
+import jdbld.console.Bootstrap4Console;
+import jdbld.console.JqueryUiConsole;
+import jdbld.console.VueJsConsole;
+import jdbld.provider.ChartJs;
+import jdbld.provider.Jquery;
+import jdbld.provider.MarkdownIt;
+import jdbld.provider.Vue;
+
 public class WebConsoleTest extends AbstractProject implements JavaProject {
 
     public WebConsoleTest() {

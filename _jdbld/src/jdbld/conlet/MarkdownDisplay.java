@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package jdbld;
+package jdbld.conlet;
 
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.core.AbstractProject;
@@ -24,12 +24,14 @@ import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 
 import jdbld.console.Base;
+import jdbld.provider.MarkdownIt;
 
-public class Rbac extends AbstractProject
+public class MarkdownDisplay extends AbstractProject
         implements JavaProject, JavaLibraryProject {
 
-    public Rbac() {
-        super(name("org.jgrapes.webconsole.rbac"));
+    public MarkdownDisplay() {
+        super(name("org.jgrapes.webconlet.markdowndisplay"));
         dependency(Expose, project(Base.class));
+        dependency(Reveal, project(MarkdownIt.class));
     }
 }

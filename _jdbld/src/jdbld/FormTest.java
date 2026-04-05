@@ -23,6 +23,8 @@ import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
 
+import jdbld.console.Base;
+
 public class FormTest extends AbstractProject
         implements JavaProject, JavaLibraryProject {
 
