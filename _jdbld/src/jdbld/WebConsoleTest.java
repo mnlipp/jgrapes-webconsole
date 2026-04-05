@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
-
 import jdbld.conlet.HelloSolid;
 import jdbld.conlet.HelloWorld;
 import jdbld.conlet.JmxBrowser;
@@ -42,7 +41,8 @@ import jdbld.provider.Jquery;
 import jdbld.provider.MarkdownIt;
 import jdbld.provider.Vue;
 
-public class WebConsoleTest extends AbstractProject implements JavaProject {
+public class WebConsoleTest extends AbstractProject
+        implements JavaProject, Unpublishable {
 
     public WebConsoleTest() {
         super(directory(Path.of("WebConsoleTest")));

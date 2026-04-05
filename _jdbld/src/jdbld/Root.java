@@ -46,8 +46,8 @@ import org.jdrupes.builder.api.MergedTestProject;
 import org.jdrupes.builder.api.Project;
 import org.jdrupes.builder.api.Resource;
 import org.jdrupes.builder.api.ResourceType;
-import static org.jdrupes.builder.api.ResourceType.*;
 import static org.jdrupes.builder.api.Project.Properties.Version;
+import static org.jdrupes.builder.api.ResourceType.*;
 import org.jdrupes.builder.api.RootProject;
 import org.jdrupes.builder.core.AbstractRootProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
@@ -66,9 +66,9 @@ import org.jdrupes.builder.mvnrepo.JavadocJarBuilder;
 import static org.jdrupes.builder.mvnrepo.MvnProperties.GroupId;
 import org.jdrupes.builder.mvnrepo.MvnPublisher;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
+import static org.jdrupes.builder.mvnrepo.MvnRepoTypes.*;
 import org.jdrupes.builder.mvnrepo.PomFileGenerator;
 import org.jdrupes.builder.mvnrepo.SourcesJarGenerator;
-import static org.jdrupes.builder.mvnrepo.MvnRepoTypes.*;
 import org.jdrupes.builder.ext.bnd.BndAnalyzer;
 import org.jdrupes.builder.ext.bnd.BndBaseliner;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
@@ -78,6 +78,7 @@ import org.jdrupes.gitversioning.core.MavenStyleTagProcessor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import jdbld.WebConsoleOSGiTest.RunRepo;
 import jdbld.conlet.HelloSolid;
 import jdbld.conlet.HelloWorld;
 import jdbld.conlet.LocalLogin;
@@ -173,11 +174,15 @@ public class Root extends AbstractRootProject {
 //        commandAlias("pomFile").resources(of(PomFile.class));
 //        commandAlias("mavenPublication").resources(of(MvnPublication.class));
         commandAlias("test").resources(of(TestResultType));
-        commandAlias("eclipse")
+        commandAlias("eclipse").projects("**")
             .resources(of(new ResourceType<EclipseConfiguration>() {}));
 //        commandAlias("baseline").resources(of(BndBaselineEvaluation.class));
 //        commandAlias("ghPagesPublication")
 //            .resources(of(GhPagesPublication.class));
+        commandAlias("prepareRunRepo").projects("**")
+            .resources(of(new ResourceType<RunRepo>() {}).using(Consume));
+        commandAlias("runGoGo")
+            .resources(of(ExecResultType).withName("GoGo"));
     }
 
     private static void setupVersion(Project project)

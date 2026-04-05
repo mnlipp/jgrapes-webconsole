@@ -19,11 +19,11 @@
 package jdbld.provider;
 
 import static org.jdrupes.builder.api.Intent.*;
+import static org.jdrupes.builder.api.ResourceType.*;
 import static org.jdrupes.builder.java.JavaTypes.JavaResourceTreeType;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.jdrupes.builder.api.FileTree;
-import static org.jdrupes.builder.api.ResourceType.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
 import org.jdrupes.builder.core.FileTreeBuilder.Source;
@@ -53,10 +53,11 @@ public class Vue extends AbstractProject
     private Stream<Source> nodeModuleSource() {
         Path target = Path.of("org/jgrapes/webconsole/provider/vue/vue");
         return Stream.of(
-            Source.of(FileTree.of(this,
-                Path.of("node_modules/vue/dist"), "vue.d.ts"))
-                .replaceAll("@vue/", "./")
-                .rename(p -> target.resolve(p)),
+// Replaced by version in resources/...
+//            Source.of(FileTree.of(this,
+//                Path.of("node_modules/vue/dist"), "vue.d.ts"))
+//                .replaceAll("@vue/", "./")
+//                .rename(p -> target.resolve(p)),
             Source.of(FileTree.of(this,
                 Path.of("node_modules/vue/dist"), "*-browser.*"))
                 .rename(p -> target.resolve(p)),

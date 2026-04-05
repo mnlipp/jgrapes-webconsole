@@ -28,7 +28,8 @@ import org.jdrupes.builder.uberjar.UberJarBuilder;
 
 import jdbld.conlet.SysInfo;
 
-public class WebConsoleExample extends AbstractProject implements JavaProject {
+public class WebConsoleExample extends AbstractProject
+        implements JavaProject, Unpublishable {
 
     public WebConsoleExample() {
         super(directory(Path.of("WebConsoleExample")));
