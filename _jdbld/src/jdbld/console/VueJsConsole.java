@@ -51,6 +51,10 @@ public class VueJsConsole extends AbstractProject
             .required(Path.of("rollup.config.mjs"))
             .required(project(Base.class)
                 .resources(of(JavaResourceTreeType).using(Supply)))
+            .required(project(JgwcVueComponents.class)
+                .resources(of(JavaResourceTreeType).using(Supply)))
+            .required(project(Gridstack.class)
+                .resources(of(JavaResourceTreeType).using(Supply)))
             .output(p -> Stream.of(JavaResourceTree.of(p,
                 p.buildDirectory().resolve("generated/resources"), "**/*")))
             .provideResources(of(JavaResourceTreeType));
