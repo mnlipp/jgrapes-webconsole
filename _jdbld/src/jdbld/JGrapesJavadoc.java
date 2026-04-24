@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,11 +63,11 @@ public class JGrapesJavadoc extends AbstractGenerator implements Renamable {
     }
 
     @Override
-    protected <T extends Resource> Stream<T>
+    protected <T extends Resource> Collection<T>
             doProvide(ResourceRequest<T> requested) {
         if (!requested.accepts(JavadocDirectoryType)
             && !requested.accepts(CleanlinessType)) {
-            return Stream.empty();
+            return Collections.emptyList();
         }
 
         // Get destination and check if we only have to cleanup.
@@ -74,7 +76,7 @@ public class JGrapesJavadoc extends AbstractGenerator implements Renamable {
         if (requested.accepts(CleanlinessType)) {
             generated.cleanup();
             destDir.toFile().delete();
-            return Stream.empty();
+            return Collections.emptyList();
         }
 
         // Sources
@@ -147,7 +149,7 @@ public class JGrapesJavadoc extends AbstractGenerator implements Renamable {
                     .message("Process javadoc returned: %d", ret);
             }
             @SuppressWarnings("unchecked")
-            var result = (Stream<T>) Stream
+            var result = (Collection<T>) List
                 .of(JavadocDirectory.of(project(), destDir));
             return result;
         } catch (IOException | InterruptedException e) {
