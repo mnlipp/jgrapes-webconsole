@@ -282,9 +282,7 @@ public class Root extends AbstractRootProject {
                 .map(pomFile -> Map.entry(Path.of("META-INF/maven")
                     .resolve((String) project.get(GroupId))
                     .resolve(project.name())
-                    .resolve("pom.xml"), pomFile)))
-            .add(Path.of("OSGI-OPT/src"), project.resources(
-                project.of(JavaSourceTreeType).using(Supply)));
+                    .resolve("pom.xml"), pomFile)));
         var git = project.<Git> get(GitApi);
         try {
             gen.attributes(
