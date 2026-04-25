@@ -43,7 +43,7 @@ public class LocalLogin extends AbstractProject
         dependency(Expose, project(Base.class));
         dependency(Reveal, project(Vue.class));
         dependency(Reveal, project(JgwcVueComponents.class));
-        dependency(Consume, new MvnRepoLookup().resolve(
+        dependency(Reveal, new MvnRepoLookup().resolve(
             "at.favre.lib:bcrypt:[0.10.2,0.11)"));
 
         Root.prepareNpm(dependency(Supply, NpmExecutor::new))
