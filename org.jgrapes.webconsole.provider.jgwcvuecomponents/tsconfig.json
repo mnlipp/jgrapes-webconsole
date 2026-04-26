@@ -8,9 +8,9 @@
     "importHelpers": true,
     "strict": true,
     "allowJs": true,
-    "moduleResolution": "node",
     "experimentalDecorators": true,
     "lib": ["DOM", "ES2020"],
+    "rootDir": "src/org/jgrapes/webconsole/provider/jgwcvuecomponents/browser",
     "paths": {
       "vue": ["../org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
       "aash-plugin": ["../org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components/lib/AashPlugin"],
