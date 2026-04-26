@@ -50,6 +50,13 @@ public class WebConsoleOSGiTest extends AbstractProject
             .add(new MvnRepoLookup().resolve(
                 "org.apache.felix:org.apache.felix.framework:7.0.5",
                 "org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.7",
+                // Explicitly download objectweb until spi fly dependencies
+                // are updated
+                "org.ow2.asm:asm:9.9.1",
+                "org.ow2.asm:asm-commons:9.9.1",
+                "org.ow2.asm:asm-tree:9.9.1",
+                "org.ow2.asm:asm-analysis:9.9.1",
+                "org.ow2.asm:asm-util:9.9.1",
                 "org.glassfish.hk2:osgi-resource-locator:2.4.0",
                 "org.apache.felix:org.apache.felix.gogo.command:1.1.2",
                 "org.apache.felix:org.apache.felix.gogo.runtime:1.1.4",
