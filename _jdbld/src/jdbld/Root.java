@@ -412,6 +412,19 @@ public class Root extends AbstractRootProject {
                     natures.appendChild(doc.createElement("nature"))
                         .appendChild(doc.createTextNode(
                             "ch.acanda.eclipse.pmd.builder.PMDNature"));
+                    if (project.directory().resolve("bnd.bnd").toFile()
+                        .exists()) {
+                        natures.appendChild(doc.createElement("nature"))
+                            .appendChild(
+                                doc.createTextNode("bndtools.core.bndnature"));
+                    }
+                }
+            }).adaptClasspathConfiguration((doc, classpath) -> {
+                if (project.directory().resolve("bnd.bnd").toFile().exists()) {
+                    var entry = doc.createElement("classpathentry");
+                    entry.setAttribute("kind", "con");
+                    entry.setAttribute("path", "aQute.bnd.classpath.container");
+                    classpath.appendChild(entry);
                 }
             }).adaptJdtCorePrefs(props -> {
                 var formatterPrefs = new java.util.Properties();
