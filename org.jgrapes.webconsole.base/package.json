@@ -1,1 +1,6 @@
-{}
+{
+  "scripts": {
+    "build": "rollup -c",
+    "typedoc": "typedoc"
+  }
+}

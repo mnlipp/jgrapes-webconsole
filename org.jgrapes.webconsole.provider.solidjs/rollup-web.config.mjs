@@ -1,6 +1,6 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
-let module = "build/generated/resources/org/jgrapes/webconsole/provider/solidjs/solidjs/web/web.js"
+let module = "build/generated/tsc-output/org/jgrapes/webconsole/provider/solidjs/solidjs/web/web.js"
 
 let pathsMap = {
     "solid-js": "../solid.js"

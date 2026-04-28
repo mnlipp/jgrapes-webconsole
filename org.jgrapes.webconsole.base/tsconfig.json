@@ -7,9 +7,9 @@
     "declaration": true,
     "importHelpers": true,
     "strict": true,
-    "moduleResolution": "node",
     "experimentalDecorators": true,
-    "lib": ["DOM", "ES2020"]
+    "lib": ["DOM", "ES2020"],
+    "rootDir": "./src/org/jgrapes/webconsole/base/browser"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

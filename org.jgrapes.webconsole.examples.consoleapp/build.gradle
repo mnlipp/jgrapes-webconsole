@@ -1,7 +1,0 @@
-plugins {
-    id 'org.jgrapes.java-bundle-conventions'
-}
-
-dependencies {
-    implementation project(':org.jgrapes.webconsole.vuejs')
-}

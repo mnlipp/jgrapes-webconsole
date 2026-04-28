@@ -9,9 +9,9 @@
     "strict": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "moduleResolution": "node",
     "experimentalDecorators": true,
     "lib": ["DOM", "ES2020"],
+    "rootDir": ".",
     "paths": {
       "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
       "solid-js": ["../org.jgrapes.webconsole.provider.solidjs/node_modules/solid-js/types/"],

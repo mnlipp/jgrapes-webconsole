@@ -8,16 +8,15 @@
     "importHelpers": true,
     "strict": true,
     "allowJs": true,
-    "moduleResolution": "node",
     "experimentalDecorators": true,
     "lib": ["DOM", "ES2020"],
-    "baseUrl": "..",
+    "rootDir": "src/org/jgrapes/webconsole/provider/jgwcvuecomponents/browser",
     "paths": {
-      "vue": ["org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
-      "aash-plugin": ["org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components/lib/AashPlugin"],
-      "jgconsole": ["org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"]
+      "vue": ["../org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
+      "aash-plugin": ["../org.jgrapes.webconsole.provider.jgwcvuecomponents/build/generated/resources/org/jgrapes/webconsole/provider/jgwcvuecomponents/aash-vue-components/lib/AashPlugin"],
+      "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"]
     }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "build/generated/resources/**/*.ts"]
+  "exclude": ["node_modules", "build/generated/**/*.ts"]
 }

@@ -7,9 +7,9 @@
     "declaration": true,
     "importHelpers": true,
     "strict": true,
-    "moduleResolution": "node",
     "experimentalDecorators": true,
     "lib": ["DOM", "ES2020"],
+    "rootDir": "./src/org/jgrapes/webconsole/vuejs",
     "paths": {
       "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
       "gridstack": ["../org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack"],

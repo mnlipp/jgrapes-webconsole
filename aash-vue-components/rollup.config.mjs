@@ -2,9 +2,10 @@ import resolve from "@rollup/plugin-node-resolve";
 import typescript from 'rollup-plugin-typescript2';
 import vue from "rollup-plugin-vue";
 import replace from '@rollup/plugin-replace';
-import postcss from 'rollup-plugin-postcss'
+import postcss from 'rollup-plugin-postcss';
+import terser from '@rollup/plugin-terser';
 
-import packageJson from "./package.json" assert { type: "json" };
+import packageJson from "./package.json" with { type: "json" };
 
 export default {
   external: ['vue'],
@@ -22,6 +23,15 @@ export default {
       paths: {
         'vue': './vue.esm.re-export.js'
       }
+    },
+    {
+      format: "esm",
+      file: packageJson.module.replace('.js', '.min.js'),
+      sourcemap: true,
+      paths: {
+        'vue': './vue.esm.re-export.js'
+      },
+      plugins: [terser()]
     }
   ],
   plugins: [resolve({

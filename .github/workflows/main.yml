@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on: [push]
 
-concurrency: 
+concurrency:
   group: doc_generation
   cancel-in-progress: false
 
@@ -17,12 +17,16 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: Install graphviz
-      run: sudo apt-get install graphviz
+    # jdk 25 and xmlstarlet for jdbld, and graphviz for javadoc, 
+    - name: Install required packages
+      run: sudo apt-get update && sudo apt-get install openjdk-25-jdk xmlstarlet graphviz
     - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v4
       with:
         java-version: ${{ matrix.java-version }}
-        distribution: 'temurin'
-    - name: Build with Gradle
-      run: ./gradlew -Prepo.access.token=${{ secrets.REPO_ACCESS_TOKEN }} stage
+        distribution: 'adopt'
+    - name: Build with jdbld
+      run: >
+          JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64/
+          ./jdbld -Pjgrapes.repo.access.token=${{ secrets.REPO_ACCESS_TOKEN }}
+          build test

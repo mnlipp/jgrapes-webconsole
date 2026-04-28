@@ -24,7 +24,7 @@ export default {
     }
   ],
   plugins: [
-    typescript(),
-    postcss()
+    postcss(),
+    typescript()
   ]
 };
