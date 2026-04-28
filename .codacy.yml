@@ -1,6 +1,6 @@
 ---
 exclude_paths:
-  - 'buildSrc/**'
+  - '_jdbld/**'
   - '*/test/**'
   - '*/test-resources/**'
   - 'org.jgrapes.webconsole.jqueryui/resources/org/jgrapes/webconsole/jqueryui/lib/**'  
