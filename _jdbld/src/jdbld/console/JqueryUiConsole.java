@@ -18,21 +18,20 @@
 
 package jdbld.console;
 
-import static org.jdrupes.builder.api.Intent.*;
 import java.nio.file.Path;
 import java.util.stream.Stream;
-import org.jdrupes.builder.api.DocumentationDirectory;
-import org.jdrupes.builder.api.ResourceType;
-import org.jdrupes.builder.core.AbstractProject;
-import org.jdrupes.builder.ext.nodejs.NpmExecutor;
-import org.jdrupes.builder.java.JavaLibraryProject;
-import org.jdrupes.builder.java.JavaProject;
-
 import jdbld.Root;
 import jdbld.provider.Forkawesome;
 import jdbld.provider.JqUiTouchPunch;
 import jdbld.provider.Jquery;
 import jdbld.provider.JqueryUi;
+import org.jdrupes.builder.api.DocumentationDirectory;
+import static org.jdrupes.builder.api.Intent.*;
+import org.jdrupes.builder.api.ResourceType;
+import org.jdrupes.builder.core.AbstractProject;
+import org.jdrupes.builder.ext.nodejs.NpmExecutor;
+import org.jdrupes.builder.java.JavaLibraryProject;
+import org.jdrupes.builder.java.JavaProject;
 
 public class JqueryUiConsole extends AbstractProject
         implements JavaProject, JavaLibraryProject {

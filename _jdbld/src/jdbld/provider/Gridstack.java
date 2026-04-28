@@ -18,10 +18,12 @@
 
 package jdbld.provider;
 
-import static org.jdrupes.builder.api.Intent.*;
 import java.nio.file.Path;
 import java.util.stream.Stream;
+import jdbld.Root;
+import jdbld.console.Base;
 import org.jdrupes.builder.api.FileTree;
+import static org.jdrupes.builder.api.Intent.*;
 import static org.jdrupes.builder.api.ResourceType.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
@@ -29,10 +31,6 @@ import org.jdrupes.builder.core.FileTreeBuilder.Source;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
-
-import jdbld.Root;
-import jdbld.console.Base;
-
 import static org.jdrupes.builder.java.JavaTypes.*;
 
 public class Gridstack extends AbstractProject

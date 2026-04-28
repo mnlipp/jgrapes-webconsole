@@ -18,9 +18,14 @@
 
 package jdbld.conlet;
 
-import static org.jdrupes.builder.api.Intent.*;
 import java.nio.file.Path;
 import java.util.stream.Stream;
+import jdbld.Root;
+import jdbld.Unpublishable;
+import jdbld.console.Base;
+import jdbld.provider.JgwcVueComponents;
+import jdbld.provider.Vue;
+import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
@@ -28,12 +33,6 @@ import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.java.JavaResourceTree;
 import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
-
-import jdbld.Root;
-import jdbld.Unpublishable;
-import jdbld.console.Base;
-import jdbld.provider.JgwcVueComponents;
-import jdbld.provider.Vue;
 
 public class OidcLogin extends AbstractProject
         implements JavaProject, JavaLibraryProject, Unpublishable {

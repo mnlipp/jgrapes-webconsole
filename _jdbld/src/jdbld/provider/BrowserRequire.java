@@ -18,14 +18,12 @@
 
 package jdbld.provider;
 
+import jdbld.Unpublishable;
+import jdbld.console.Base;
 import static org.jdrupes.builder.api.Intent.*;
-
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
-
-import jdbld.Unpublishable;
-import jdbld.console.Base;
 
 public class BrowserRequire extends AbstractProject
         implements JavaProject, JavaLibraryProject, Unpublishable {

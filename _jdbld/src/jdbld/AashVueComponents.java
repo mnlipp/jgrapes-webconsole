@@ -18,11 +18,11 @@
 
 package jdbld;
 
+import java.nio.file.Path;
+import java.util.stream.Stream;
 import org.jdrupes.builder.api.FileTree;
 import static org.jdrupes.builder.api.Intent.*;
 import static org.jdrupes.builder.api.ResourceType.*;
-import java.nio.file.Path;
-import java.util.stream.Stream;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 

@@ -18,15 +18,13 @@
 
 package jdbld;
 
-import static org.jdrupes.builder.api.Intent.*;
-
 import java.nio.file.Path;
+import jdbld.conlet.SysInfo;
+import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 import org.jdrupes.builder.uberjar.UberJarBuilder;
-
-import jdbld.conlet.SysInfo;
 
 public class WebConsoleExample extends AbstractProject
         implements JavaProject, Unpublishable {

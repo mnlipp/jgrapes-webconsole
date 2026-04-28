@@ -41,9 +41,8 @@ import org.jdrupes.builder.core.AbstractGenerator;
 import org.jdrupes.builder.java.ClassTree;
 import org.jdrupes.builder.java.ClasspathElement;
 import org.jdrupes.builder.java.JarFile;
-import org.jdrupes.builder.java.JavadocDirectory;
-
 import static org.jdrupes.builder.java.JavaTypes.*;
+import org.jdrupes.builder.java.JavadocDirectory;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
 /// Very special javadoc generation.

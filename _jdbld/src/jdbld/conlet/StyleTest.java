@@ -18,14 +18,13 @@
 
 package jdbld.conlet;
 
+import jdbld.console.Base;
+import jdbld.provider.JgwcVueComponents;
+import jdbld.provider.Vue;
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
-
-import jdbld.console.Base;
-import jdbld.provider.JgwcVueComponents;
-import jdbld.provider.Vue;
 
 public class StyleTest extends AbstractProject
         implements JavaProject, JavaLibraryProject {

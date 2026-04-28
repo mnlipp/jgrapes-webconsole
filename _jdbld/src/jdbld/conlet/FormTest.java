@@ -18,12 +18,11 @@
 
 package jdbld.conlet;
 
+import jdbld.console.Base;
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
-
-import jdbld.console.Base;
 
 public class FormTest extends AbstractProject
         implements JavaProject, JavaLibraryProject {

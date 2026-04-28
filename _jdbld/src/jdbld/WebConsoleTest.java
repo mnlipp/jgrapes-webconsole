@@ -18,14 +18,7 @@
 
 package jdbld;
 
-import static org.jdrupes.builder.api.Intent.*;
-
 import java.nio.file.Path;
-import org.jdrupes.builder.core.AbstractProject;
-import org.jdrupes.builder.java.JavaLibraryProject;
-import org.jdrupes.builder.java.JavaProject;
-import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
-
 import jdbld.conlet.FormTest;
 import jdbld.conlet.HelloSolid;
 import jdbld.conlet.HelloWorld;
@@ -43,6 +36,11 @@ import jdbld.provider.ChartJs;
 import jdbld.provider.Jquery;
 import jdbld.provider.MarkdownIt;
 import jdbld.provider.Vue;
+import static org.jdrupes.builder.api.Intent.*;
+import org.jdrupes.builder.core.AbstractProject;
+import org.jdrupes.builder.java.JavaLibraryProject;
+import org.jdrupes.builder.java.JavaProject;
+import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
 public class WebConsoleTest extends AbstractProject
         implements JavaProject, JavaLibraryProject, Unpublishable {
