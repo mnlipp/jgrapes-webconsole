@@ -28,15 +28,15 @@ See the [project's home page](https://mnlipp.github.io/jgrapes/) for details.
 [sysinfo](https://mnlipp.github.io/jgrapes/javadoc-webconsole/org/jgrapes/webconlet/sysinfo/package-summary.html) <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.sysinfo%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.sysinfo.svg"></a>
 
  * *Miscellaneous*: [rbac](https://mnlipp.github.io/jgrapes/javadoc-webconsole/org/jgrapes/webconsole/rbac/package-summary.html) <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.rbac%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.rbac.svg"></a>
- 
+
  * *Example (Demo) Conlets*: [formtest](https://mnlipp.github.io/jgrapes/javadoc-webconsole/org/jgrapes/webconlet/examples/formtest/package-summary.html) <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.examples.formtest%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.examples.formtest.svg"></a>,
 [helloworld](https://mnlipp.github.io/jgrapes/javadoc-webconsole/org/jgrapes/webconlet/examples/helloworld/package-summary.html) <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.examples.helloworld%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.examples.helloworld.svg"></a>,
 [styletest](https://mnlipp.github.io/jgrapes/javadoc-webconsole/org/jgrapes/webconlet/examples/styletest/package-summary.html) <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconlet.examples.styletest%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconlet.examples.styletest.svg"></a>,
 
 *Deprecated Modules*
 
-*Consoles*: bootstrap4 <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.bootstrap4%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.bootstrap4.svg"></a>, 
-jqueryui <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.jqueryui%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.jqueryui.svg"></a>, 
+*Consoles*: bootstrap4 <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.bootstrap4%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.bootstrap4.svg"></a>,
+jqueryui <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.jqueryui%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.jqueryui.svg"></a>,
 *Providers*: [datatables](https://mnlipp.github.io/jgrapes/javadoc-webconsole/org/jgrapes/webconsole/provider/datatables/package-summary.html) <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.datatables%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.datatables.svg"></a>,
 fontawesome <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.fontawesome%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.fontawesome.svg"></a>,
 [jqueryui](https://mnlipp.github.io/jgrapes/javadoc-webconsole/org/jgrapes/webconsole/provider/jqueryui/package-summary.html) <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22org.jgrapes.webconsole.provider.jqueryui%22"><img style="vertical-align: middle;" src="https://img.shields.io/maven-central/v/org.jgrapes/org.jgrapes.webconsole.provider.jqueryui.svg"></a>,
@@ -59,6 +59,6 @@ A live demo configuration of a console is available at [demo.jgrapes.org](https:
 Building
 --------
 
-The libraries can be built with `./gradlew build`. For working with 
-the project in Eclipse run `./gradlew eclipse` before importing the 
-project. 
+The libraries can be built with `./gradlew build`. For working with
+the project in Eclipse run `./gradlew eclipse` before importing the
+project.
