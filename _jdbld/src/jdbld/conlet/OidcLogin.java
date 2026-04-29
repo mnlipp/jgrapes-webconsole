@@ -21,7 +21,6 @@ package jdbld.conlet;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import jdbld.Root;
-import jdbld.Unpublishable;
 import jdbld.console.Base;
 import jdbld.provider.JgwcVueComponents;
 import jdbld.provider.Vue;
@@ -35,7 +34,7 @@ import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
 public class OidcLogin extends AbstractProject
-        implements JavaProject, JavaLibraryProject, Unpublishable {
+        implements JavaProject, JavaLibraryProject {
 
     public OidcLogin() {
         super(name("org.jgrapes.webconlet.oidclogin"));
