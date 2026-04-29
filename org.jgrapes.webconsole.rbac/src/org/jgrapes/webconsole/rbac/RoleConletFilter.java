@@ -45,7 +45,6 @@ import org.jgrapes.webconsole.base.events.UpdateConletType;
 /**
  * Configures the conlets available based on the user currently logged in.
  */
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 public class RoleConletFilter extends Component {
 
     /**
@@ -118,8 +117,6 @@ public class RoleConletFilter extends Component {
      * @param acl the acl
      * @return the user role conlet filter
      */
-    @SuppressWarnings({ "PMD.LinguisticNaming",
-        "PMD.AvoidInstantiatingObjectsInLoops" })
     public RoleConletFilter
             setConletTypesByRole(Map<String, List<String>> acl) {
         // Deep copy (and cleanup)
@@ -174,8 +171,7 @@ public class RoleConletFilter extends Component {
      * @param channel the channel
      */
     @Handler(priority = 800)
-    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops",
-        "PMD.AvoidLiteralsInIfCondition", "PMD.CognitiveComplexity" })
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops" })
     public void onConsolePrepared(ConsolePrepared event,
             ConsoleConnection channel) {
         var permissions = new HashMap<String, Set<Permission>>();

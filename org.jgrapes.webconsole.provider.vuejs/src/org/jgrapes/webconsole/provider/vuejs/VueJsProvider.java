@@ -46,6 +46,7 @@ public class VueJsProvider extends PageResourceProvider {
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
+    @Deprecated
     public VueJsProvider(Channel componentChannel) {
         super(componentChannel);
     }
@@ -60,7 +61,9 @@ public class VueJsProvider extends PageResourceProvider {
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
+    @Deprecated
     @Handler(priority = 100)
+    @SuppressWarnings("PMD.UnnecessaryVarargsArrayCreation")
     public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {

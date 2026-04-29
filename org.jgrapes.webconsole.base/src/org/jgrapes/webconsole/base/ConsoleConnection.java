@@ -130,7 +130,6 @@ import org.jgrapes.io.util.LinkedIOSubchannel;
  * ConsoleConnection "*" -up-> "1" Session: browser session
  * @enduml
  */
-@SuppressWarnings("PMD.LinguisticNaming")
 public final class ConsoleConnection extends DefaultIOSubchannel {
 
     private static Map<String, WeakReference<ConsoleConnection>> connections
@@ -152,6 +151,7 @@ public final class ConsoleConnection extends DefaultIOSubchannel {
     /**
      * Weak reference to session.
      */
+    @SuppressWarnings("PMD.PublicMemberInNonPublicType")
     private static class ConnectionReference
             extends WeakReference<ConsoleConnection> {
 
@@ -300,7 +300,7 @@ public final class ConsoleConnection extends DefaultIOSubchannel {
         if (connections.remove(connectionId) != null) {
             connected = false;
             open = false;
-            console.newEventPipeline().fire(new Closed<Void>(), this);
+            console.newEventPipeline().fire(new Closed<>(), this);
         }
     }
 

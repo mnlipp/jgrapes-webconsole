@@ -29,6 +29,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,6 +53,7 @@ import org.jgrapes.core.Component;
 import org.jgrapes.core.Components;
 import org.jgrapes.core.Components.Timer;
 import org.jgrapes.core.Event;
+import org.jgrapes.core.EventPipeline;
 import org.jgrapes.core.annotation.Handler;
 import org.jgrapes.core.annotation.HandlerDefinition.ChannelReplacements;
 import org.jgrapes.core.events.Detached;
@@ -333,14 +335,11 @@ public abstract class AbstractConlet<S> extends Component {
 
     /** Separator used between type and instance when generating the id. */
     public static final String TYPE_INSTANCE_SEPARATOR = "~";
-    @SuppressWarnings({ "PMD.FieldNamingConventions",
-        "PMD.VariableNamingConventions", "PMD.UseConcurrentHashMap",
-        "PMD.AvoidDuplicateLiterals" })
+    @SuppressWarnings({ "PMD.FieldNamingConventions" })
     private static final Map<Class<?>,
             Map<Locale, ResourceBundle>> supportedLocales
                 = Collections.synchronizedMap(new WeakHashMap<>());
-    @SuppressWarnings({ "PMD.FieldNamingConventions",
-        "PMD.VariableNamingConventions", "PMD.UseConcurrentHashMap" })
+    @SuppressWarnings({ "PMD.FieldNamingConventions" })
     private static final Map<Class<?>,
             Map<Locale, ResourceBundle>> l10nBundles
                 = Collections.synchronizedMap(new WeakHashMap<>());
@@ -401,7 +400,6 @@ public abstract class AbstractConlet<S> extends Component {
      * @param supplier the supplier
      * @return the web console component for easy chaining
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
     public AbstractConlet<S> setPeriodicRefresh(
             Duration interval, Supplier<Event<?>> supplier) {
         refreshInterval = interval;
@@ -642,8 +640,7 @@ public abstract class AbstractConlet<S> extends Component {
      * required
      * @throws Exception if an exception occurs
      */
-    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
-        "PMD.AvoidDuplicateLiterals" })
+    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException" })
     protected Optional<S> createNewState(
             AddConletRequest event, ConsoleConnection connection,
             String conletId) throws Exception {
@@ -666,8 +663,7 @@ public abstract class AbstractConlet<S> extends Component {
      * required
      * @throws Exception if an exception occurs
      */
-    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
-        "PMD.AvoidDuplicateLiterals" })
+    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException" })
     protected Optional<S> recreateState(
             Event<?> event, ConsoleConnection connection,
             String conletId) throws Exception {
@@ -867,8 +863,7 @@ public abstract class AbstractConlet<S> extends Component {
      * @throws Exception the exception
      */
     @Handler
-    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
-        "PMD.AvoidDuplicateLiterals" })
+    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException" })
     public final void onAddConletRequest(AddConletRequest event,
             ConsoleConnection connection) throws Exception {
         if (!event.conletType().equals(type())) {
@@ -1183,6 +1178,7 @@ public abstract class AbstractConlet<S> extends Component {
      * currently rendered views (only preview and view are tracked,
      * with "deletable preview" mapped to "preview").
      */
+    @SuppressWarnings("PMD.PublicMemberInNonPublicType")
     protected static class ConletTrackingInfo {
         private final String conletId;
         private final Set<RenderMode> renderedAs;
@@ -1194,7 +1190,7 @@ public abstract class AbstractConlet<S> extends Component {
          */
         public ConletTrackingInfo(String conletId) {
             this.conletId = conletId;
-            renderedAs = new HashSet<>();
+            renderedAs = EnumSet.noneOf(RenderMode.class);
         }
 
         /**
@@ -1283,7 +1279,7 @@ public abstract class AbstractConlet<S> extends Component {
     public Future<String> readContent(RenderConletRequestBase<?> request,
             Reader contentReader) {
         return readContent(
-            request.processedBy().map(pby -> pby.executorService())
+            request.processedBy().map(EventPipeline::executorService)
                 .orElse(Components.defaultExecutorService()),
             contentReader);
     }

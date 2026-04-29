@@ -26,7 +26,7 @@ import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -80,7 +80,6 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  * 
  * Passwords are hashed using bcrypt.
  */
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
 
     private static final String PENDING_CONSOLE_PREPARED
@@ -223,7 +222,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
             ConsoleConnection channel, String conletId,
             AccountModel model) throws Exception {
-        Set<RenderMode> renderedAs = new HashSet<>();
+        Set<RenderMode> renderedAs = EnumSet.noneOf(RenderMode.class);
         if (event.renderAs().contains(RenderMode.Content)) {
             Template tpl
                 = freemarkerConfig().getTemplate("Login-status.ftl.html");
@@ -293,6 +292,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
      */
     @Handler
     public void onUserAuthenticated(UserAuthenticated event, Channel channel) {
+        @SuppressWarnings("PMD.CompareObjectsWithEquals")
         var ctx = event.forLogin().associated(this, LoginContext.class)
             .filter(c -> c.conlet() == this).orElse(null);
         if (ctx == null) {
@@ -320,9 +320,9 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
     /**
      * The context to preserve during the authentication process.
      */
-    private class LoginContext {
-        public final ConsoleConnection connection;
-        public final AccountModel model;
+    private final class LoginContext {
+        private final ConsoleConnection connection;
+        private final AccountModel model;
 
         /**
          * Instantiates a new oidc context.
@@ -330,7 +330,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
          * @param connection the connection
          * @param model the model
          */
-        public LoginContext(ConsoleConnection connection, AccountModel model) {
+        private LoginContext(ConsoleConnection connection, AccountModel model) {
             this.connection = connection;
             this.model = model;
         }
@@ -340,7 +340,7 @@ public class LoginConlet extends FreeMarkerConlet<LoginConlet.AccountModel> {
          *
          * @return the login conlet
          */
-        public LoginConlet conlet() {
+        private LoginConlet conlet() {
             return LoginConlet.this;
         }
     }

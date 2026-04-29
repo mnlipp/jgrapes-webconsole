@@ -32,7 +32,6 @@ import org.jgrapes.io.util.ManagedBuffer;
  * Collects character data from buffers and makes it available as
  * a text.
  */
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 public class TextCollector implements InputConsumer {
     private boolean isEof;
     private CharsetDecoder decoder;

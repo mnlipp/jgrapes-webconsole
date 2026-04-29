@@ -53,8 +53,6 @@ import org.jgrapes.webconsole.jqueryui.themes.base.Provider;
  * are forwarded via the {@link WebConsole} component to the 
  * web console components.
  */
-@SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
-    "PMD.TooManyMethods", "PMD.LinguisticNaming" })
 public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
 
     private ServiceLoader<ThemeProvider> themeLoader;
@@ -88,6 +86,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
      * 
      * @return
      */
+    @SuppressWarnings("PMD.AssignmentInOperand")
     private ServiceLoader<ThemeProvider> themeLoader() {
         if (themeLoader != null) {
             return themeLoader;
@@ -129,7 +128,6 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
     }
 
     @Override
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     protected void provideConsoleResource(Request.In.Get event,
             String requestPath, IOSubchannel channel) {
         String[] requestParts = ResourcePattern.split(requestPath, 1);
@@ -140,7 +138,6 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
         super.provideConsoleResource(event, requestPath, channel);
     }
 
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private void sendThemeResource(Request.In.Get event, IOSubchannel channel,
             String resource) {
         // Get resource
@@ -179,7 +176,6 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
      * @throws InterruptedException the interrupted exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @Handler(channels = ConsoleChannel.class)
     public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
@@ -264,6 +260,7 @@ public class JQueryUiWeblet extends FreeMarkerConsoleWeblet {
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
+        @SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable")
         public int compareTo(ThemeInfo other) {
             return name().compareToIgnoreCase(other.name());
         }

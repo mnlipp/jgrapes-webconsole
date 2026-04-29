@@ -31,7 +31,7 @@ public class WcJsonRpc extends JsonRpc {
 
     @SuppressWarnings("unused")
     private static List<String> stringList;
-    @SuppressWarnings({ "PMD.SingularField", "unused" })
+    @SuppressWarnings("unused")
     private static Type stringListType;
 
     public record ConletInfo(String conletId, List<String> modes,

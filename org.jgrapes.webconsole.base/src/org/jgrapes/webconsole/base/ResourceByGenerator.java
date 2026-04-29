@@ -33,6 +33,7 @@ public class ResourceByGenerator extends ResourceByProducer {
     /**
      * The interface that must be implemented by the content provider.
      */
+    @SuppressWarnings("PMD.ImplicitFunctionalInterface")
     public interface Generator {
 
         /**

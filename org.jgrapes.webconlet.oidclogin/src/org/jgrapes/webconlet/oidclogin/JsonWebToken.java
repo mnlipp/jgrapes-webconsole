@@ -31,7 +31,6 @@ import java.util.StringTokenizer;
 /**
  * The Class OidcProviderData.
  */
-@SuppressWarnings("PMD.DataClass")
 public class JsonWebToken {
 
     private static ObjectMapper mapper = new ObjectMapper();

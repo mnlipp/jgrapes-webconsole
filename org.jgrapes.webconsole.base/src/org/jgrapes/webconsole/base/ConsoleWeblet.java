@@ -96,9 +96,8 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
  * are declared with class channel {@link ConsoleConnection} which
  * is replaced using the {@link ChannelReplacements} mechanism.
  */
-@SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
-    "PMD.TooManyMethods", "PMD.GodClass", "PMD.DataflowAnomalyAnalysis",
-    "PMD.CouplingBetweenObjects" })
+@SuppressWarnings({ "PMD.ExcessiveImports", "PMD.TooManyMethods",
+    "PMD.GodClass", "PMD.CouplingBetweenObjects" })
 public abstract class ConsoleWeblet extends Component {
 
     private static final String CONSOLE_SESSION_IDS
@@ -140,7 +139,6 @@ public abstract class ConsoleWeblet extends Component {
      * @param consoleChannel the console channel
      * @param consolePrefix the console prefix
      */
-    @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     public ConsoleWeblet(Channel webletChannel, Channel consoleChannel,
             URI consolePrefix) {
         this(webletChannel, new WebConsole(consoleChannel));
@@ -186,7 +184,6 @@ public abstract class ConsoleWeblet extends Component {
      *
      * @return the list
      */
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     protected final List<Class<?>> consoleHierarchy() {
         List<Class<?>> result = new ArrayList<>();
         Class<?> derivative = getClass();
@@ -234,7 +231,6 @@ public abstract class ConsoleWeblet extends Component {
      * @param timeout the timeout in milli seconds
      * @return the console view for easy chaining
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
     public ConsoleWeblet setConnectionNetworkTimeout(Duration timeout) {
         csNetworkTimeout = timeout.toMillis();
         return this;
@@ -258,7 +254,6 @@ public abstract class ConsoleWeblet extends Component {
      * @param interval the interval
      * @return the console view for easy chaining
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
     public ConsoleWeblet setConnectionRefreshInterval(Duration interval) {
         csRefreshInterval = interval.toMillis();
         return this;
@@ -282,7 +277,6 @@ public abstract class ConsoleWeblet extends Component {
      * @param timeout the timeout
      * @return the console view for easy chaining
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
     public ConsoleWeblet setConnectionInactivityTimeout(Duration timeout) {
         csInactivityTimeout = timeout.toMillis();
         return this;
@@ -467,7 +461,7 @@ public abstract class ConsoleWeblet extends Component {
             @SuppressWarnings({ "unchecked", "PMD.AvoidDuplicateLiterals" })
             Map<URI, UUID> knownIds = (Map<URI, UUID>) session.computeIfAbsent(
                 CONSOLE_SESSION_IDS,
-                newKey -> new ConcurrentHashMap<URI, UUID>());
+                newKey -> new ConcurrentHashMap<>());
             knownIds.put(prefix, consoleConnectionId);
             // Finally render
             renderConsole(event, channel, consoleConnectionId);
@@ -642,7 +636,7 @@ public abstract class ConsoleWeblet extends Component {
         @SuppressWarnings("unchecked")
         Map<URI, UUID> knownIds = (Map<URI, UUID>) browserSession
             .computeIfAbsent(CONSOLE_SESSION_IDS,
-                newKey -> new ConcurrentHashMap<URI, UUID>());
+                newKey -> new ConcurrentHashMap<>());
         if (!UUID.fromString(consoleConnectionId) // NOPMD, note negation
             .equals(knownIds.get(prefix))) {
             channel.setAssociated(this, new String[2]);
@@ -736,7 +730,7 @@ public abstract class ConsoleWeblet extends Component {
         // Reuse old console connection if still available
         ConsoleConnection connection
             = Optional.ofNullable(connectionIds[1])
-                .flatMap(oldId -> ConsoleConnection.lookup(oldId))
+                .flatMap(ConsoleConnection::lookup)
                 .map(conn -> conn.replaceId(connectionIds[0]))
                 .orElseGet(
                     () -> ConsoleConnection.lookupOrCreate(connectionIds[0],

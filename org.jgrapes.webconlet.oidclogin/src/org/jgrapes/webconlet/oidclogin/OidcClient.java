@@ -114,8 +114,8 @@ import org.jgrapes.webconsole.base.events.UserAuthenticated;
  * the URL that it serves will usually differ from the redirect
  * URI sent to the OIDC provider.
  */
-@SuppressWarnings({ "PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveImports",
-    "PMD.CouplingBetweenObjects", "PMD.GodClass" })
+@SuppressWarnings({ "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects",
+    "PMD.GodClass" })
 public class OidcClient extends Component {
 
     @SuppressWarnings("PMD.FieldNamingConventions")
@@ -444,8 +444,8 @@ public class OidcClient extends Component {
         event.stop();
     }
 
-    @SuppressWarnings({ "unchecked", "PMD.NPathComplexity",
-        "PMD.CognitiveComplexity", "PMD.CyclomaticComplexity" })
+    @SuppressWarnings({ "unchecked", "PMD.CognitiveComplexity",
+        "PMD.CyclomaticComplexity" })
     private void processTokenResponse(DataInput<Map<String, Object>> event,
             Context ctx, OidcProviderData provider) {
         ctx.idToken = JsonWebToken.parse((String) event.data().get("id_token"));
@@ -546,19 +546,18 @@ public class OidcClient extends Component {
     /**
      * The context information.
      */
-    @SuppressWarnings("PMD.DataClass")
-    private class Context {
+    private final class Context {
         private final Instant createdAt = Instant.now();
-        public final StartOidcLogin startEvent;
-        public String code;
-        public JsonWebToken idToken;
+        private final StartOidcLogin startEvent;
+        private String code;
+        private JsonWebToken idToken;
 
         /**
          * Instantiates a new context.
          *
          * @param startEvent the start event
          */
-        public Context(StartOidcLogin startEvent) {
+        private Context(StartOidcLogin startEvent) {
             super();
             this.startEvent = startEvent;
         }
@@ -568,7 +567,7 @@ public class OidcClient extends Component {
          *
          * @return the instant
          */
-        public Instant createdAt() {
+        private Instant createdAt() {
             return createdAt;
         }
     }

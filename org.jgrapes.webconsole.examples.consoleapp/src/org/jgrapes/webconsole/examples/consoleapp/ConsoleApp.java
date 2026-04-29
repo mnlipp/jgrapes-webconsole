@@ -72,8 +72,7 @@ public class ConsoleApp extends Component {
      * Instantiates a new http(s) web console demo.
      */
     public ConsoleApp() {
-        super(new ClassChannel() {
-        });
+        super(new ClassChannel() {});
     }
 
     /**
@@ -160,8 +159,7 @@ public class ConsoleApp extends Component {
         return sslContext;
     }
 
-    @SuppressWarnings({ "PMD.TooFewBranchesForASwitchStatement",
-        "PMD.TooFewBranchesForSwitch" })
+    @SuppressWarnings({ "PMD.TooFewBranchesForSwitch" })
     private void createVueJsConsole(HttpServer httpServer)
             throws URISyntaxException {
         ConsoleWeblet consoleWeblet

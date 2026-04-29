@@ -73,7 +73,6 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      * @param consoleChannel the console channel
      * @param consolePrefix the console prefix
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public FreeMarkerConsoleWeblet(Channel webletChannel,
             Channel consoleChannel, URI consolePrefix) {
         super(webletChannel, consoleChannel, consolePrefix);
@@ -159,7 +158,6 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
      * @param consoleConnectionId the console connection id
      * @return the map
      */
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     protected Map<String, Object> expandConsoleModel(
             Map<String, Object> model, Request.In.Get event,
             UUID consoleConnectionId) {
@@ -176,6 +174,7 @@ public abstract class FreeMarkerConsoleWeblet extends ConsoleWeblet {
             private Object cachedResult;
 
             @Override
+            @SuppressWarnings("PMD.AssignmentInOperand")
             public Object exec(@SuppressWarnings("rawtypes") List arguments)
                     throws TemplateModelException {
                 if (cachedResult != null) {

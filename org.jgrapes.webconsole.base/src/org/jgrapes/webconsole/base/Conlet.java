@@ -102,7 +102,6 @@ public interface Conlet {
         /**
          * The basic modes (the modes without modifiers).
          */
-        @SuppressWarnings("PMD.VariableNamingConventions")
         public static final Set<RenderMode> basicModes
             = Collections.unmodifiableSet(asSet(Preview, View, Edit, Help));
 

@@ -73,8 +73,8 @@ public class ConsoleResourceBundleControl extends Control {
      * can thus override resources from their base classes.
      */
     @Override
-    @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
-        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.CognitiveComplexity" })
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops",
+        "PMD.CognitiveComplexity", "PMD.AvoidDeeplyNestedIfStmts" })
     public ResourceBundle newBundle(String baseName, Locale locale,
             String format, ClassLoader loader, boolean reload)
             throws IllegalAccessException, InstantiationException, IOException {

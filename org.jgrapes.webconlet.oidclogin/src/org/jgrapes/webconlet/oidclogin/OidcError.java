@@ -26,7 +26,6 @@ import org.jgrapes.core.events.Error;
 /**
  * The Class OidcError.
  */
-@SuppressWarnings("PMD.DataClass")
 public class OidcError extends Error {
 
     /**

@@ -162,7 +162,8 @@ public class KVStoreBasedConsolePolicy extends Component {
     /**
      * Caches the data in the session.
      */
-    @SuppressWarnings("PMD.CommentRequired")
+    @SuppressWarnings({ "PMD.CommentRequired",
+        "PMD.PublicMemberInNonPublicType" })
     private class KVStoredLayoutData {
 
         private final String storagePath;
@@ -175,8 +176,6 @@ public class KVStoreBasedConsolePolicy extends Component {
                 + "/" + KVStoreBasedConsolePolicy.class.getName();
         }
 
-        @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
-            "PMD.AvoidInstantiatingObjectsInLoops" })
         public void onConsolePrepared(
                 ConsolePrepared event, IOSubchannel channel) {
             KeyValueStoreQuery query = new KeyValueStoreQuery(

@@ -26,8 +26,8 @@ import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -64,7 +64,7 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
  * a user himself. A typical use case, however, is to create
  * an instance during startup by a web console policy.
  */
-@SuppressWarnings({ "PMD.DataClass", "PMD.DataflowAnomalyAnalysis" })
+@SuppressWarnings({ "PMD.DataClass" })
 public class MarkdownDisplayConlet extends
         FreeMarkerConlet<MarkdownDisplayConlet.MarkdownDisplayModel> {
 
@@ -243,7 +243,7 @@ public class MarkdownDisplayConlet extends
         ResourceBundle resourceBundle
             = resourceBundle(consoleConnection.locale());
         Set<RenderMode> supported = renderModes(model);
-        Set<RenderMode> renderedAs = new HashSet<>();
+        Set<RenderMode> renderedAs = EnumSet.noneOf(RenderMode.class);
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl = freemarkerConfig()
                 .getTemplate("MarkdownDisplay-preview.ftl.html");
@@ -284,7 +284,7 @@ public class MarkdownDisplayConlet extends
     }
 
     private Set<RenderMode> renderModes(MarkdownDisplayModel model) {
-        Set<RenderMode> modes = new HashSet<>();
+        Set<RenderMode> modes = EnumSet.noneOf(RenderMode.class);
         modes.add(RenderMode.Preview);
         if (!model.isDeletable()) {
             modes.add(RenderMode.StickyPreview);

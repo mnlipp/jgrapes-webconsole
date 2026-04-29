@@ -26,8 +26,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -114,7 +114,7 @@ public class LogViewerConlet extends FreeMarkerConlet<Serializable> {
             ConsoleConnection channel, String conletId,
             Serializable conletState)
             throws Exception {
-        Set<RenderMode> renderedAs = new HashSet<>();
+        Set<RenderMode> renderedAs = EnumSet.noneOf(RenderMode.class);
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("LogViewer-view.ftl.html");

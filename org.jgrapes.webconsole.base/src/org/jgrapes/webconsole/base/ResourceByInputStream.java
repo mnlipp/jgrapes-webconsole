@@ -61,7 +61,6 @@ public class ResourceByInputStream extends ResourceResult {
     }
 
     @Override
-    @SuppressWarnings("PMD.ConfusingTernary")
     public void process() throws IOException, InterruptedException {
         if (stream == null) {
             ResponseCreationSupport.sendResponse(request().httpRequest(),

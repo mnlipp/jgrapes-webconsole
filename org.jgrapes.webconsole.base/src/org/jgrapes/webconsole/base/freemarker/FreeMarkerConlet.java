@@ -62,11 +62,9 @@ import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 /**
  * 
  */
-@SuppressWarnings("PMD.CouplingBetweenObjects")
 public abstract class FreeMarkerConlet<S> extends AbstractConlet<S> {
 
-    @SuppressWarnings({ "PMD.VariableNamingConventions",
-        "PMD.FieldNamingConventions" })
+    @SuppressWarnings({ "PMD.FieldNamingConventions" })
     private static final Pattern templatePattern
         = Pattern.compile(".*\\.ftl\\.[a-z]+$");
 

@@ -89,8 +89,7 @@ public class RoleConfigurator extends Component {
      * @param roles the roles
      * @return the user role conlet filter
      */
-    @SuppressWarnings({ "PMD.LinguisticNaming",
-        "PMD.AvoidInstantiatingObjectsInLoops" })
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops" })
     public RoleConfigurator setRolesByUser(Map<String, Set<String>> roles) {
         this.roles.clear();
         this.roles.putAll(roles);
@@ -107,7 +106,6 @@ public class RoleConfigurator extends Component {
      * @param replace the replace
      * @return the role configurator
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
     public RoleConfigurator setReplace(boolean replace) {
         this.replace = replace;
         return this;

@@ -115,8 +115,7 @@ public final class WebConsoleUtils {
      * @param parameters the parameters
      * @return the new URI
      */
-    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops",
-        "PMD.UselessParentheses" })
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops" })
     public static URI mergeQuery(URI uri, Map<String, String> parameters) {
         Map<String, List<String>> oldQuery = queryAsMap(uri);
         for (Map.Entry<String, String> entry : parameters.entrySet()) {

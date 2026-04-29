@@ -25,7 +25,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import org.jgrapes.core.Channel;
@@ -152,7 +152,7 @@ public class HelloSolidConlet
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
             ConsoleConnection channel, String conletId,
             HelloSolidModel conletState) throws Exception {
-        Set<RenderMode> renderedAs = new HashSet<>();
+        Set<RenderMode> renderedAs = EnumSet.noneOf(RenderMode.class);
         if (event.renderAs().contains(RenderMode.Preview)) {
             Template tpl
                 = freemarkerConfig().getTemplate("HelloSolid-preview.ftl.html");

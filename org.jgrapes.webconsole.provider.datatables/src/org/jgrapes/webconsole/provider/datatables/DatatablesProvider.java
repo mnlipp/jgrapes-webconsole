@@ -54,6 +54,7 @@ public class DatatablesProvider extends PageResourceProvider {
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      */
+    @Deprecated
     public DatatablesProvider(Channel componentChannel, Map<?, ?> properties) {
         super(componentChannel);
         stylingInfo = new StylingInfo(this, properties);
@@ -66,6 +67,8 @@ public class DatatablesProvider extends PageResourceProvider {
      * 
      * @return the resource bundle
      */
+    @Deprecated
+    @Override
     protected ResourceBundle resourceBundle(Locale locale) {
         return ResourceBundle.getBundle(
             getClass().getPackage().getName() + ".l10n", locale,
@@ -84,6 +87,7 @@ public class DatatablesProvider extends PageResourceProvider {
      * @throws ParseException the parse exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
+    @Deprecated
     @Handler(priority = 100)
     @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
@@ -104,6 +108,7 @@ public class DatatablesProvider extends PageResourceProvider {
         if (!"jqueryui".equals(styling) && !"bootstrap4".equals(styling)) {
             styling = "standard";
         }
+        @SuppressWarnings("PMD.UnnecessaryVarargsArrayCreation")
         AddPageResources addRequest = new AddPageResources()
             .addCss(event.renderSupport()
                 .pageResource(baseDir + "/" + styling + "/datatables"

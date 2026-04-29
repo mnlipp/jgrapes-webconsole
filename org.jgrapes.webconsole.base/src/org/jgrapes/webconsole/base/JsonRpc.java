@@ -54,7 +54,6 @@ import java.util.stream.Stream;
 @JsonSerialize(using = JsonRpc.Serializer.class)
 public class JsonRpc {
 
-    @SuppressWarnings("PMD.FieldNamingConventions")
     private static final String JSONRPC_VERSION = "2.0";
     private static Map<Class<? extends JsonRpc>,
             Map<String, List<Type>>> paramTypes = new ConcurrentHashMap<>();
@@ -161,7 +160,6 @@ public class JsonRpc {
      * @param params the params
      * @return the json rpc
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
     public JsonRpc setParams(Object... params) {
         this.params = new ArrayList<>(Arrays.asList(params));
         return this;

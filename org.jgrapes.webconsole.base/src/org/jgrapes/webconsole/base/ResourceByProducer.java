@@ -65,7 +65,6 @@ public class ResourceByProducer extends ResourceResult {
      * @see org.jgrapes.webconsole.base.base.ResourceResult#process()
      */
     @Override
-    @SuppressWarnings("PMD.ConfusingTernary")
     public void process() throws IOException, InterruptedException {
         if (contentProducer == null) {
             ResponseCreationSupport.sendResponse(request().httpRequest(),

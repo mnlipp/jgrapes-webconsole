@@ -64,7 +64,6 @@ public class ChartJsProvider extends PageResourceProvider {
      * {@link Manager#fire(Event, Channel...)} sends the event to 
      * @param properties the properties used to configure the component
      */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     public ChartJsProvider(Channel componentChannel, Map<?, ?> properties) {
         super(componentChannel);
     }

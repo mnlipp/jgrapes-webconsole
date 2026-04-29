@@ -105,7 +105,6 @@ public class BrowserLocalBackedKVStore extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         if (!"retrievedLocalData".equals(event.request().method())) {
@@ -117,8 +116,7 @@ public class BrowserLocalBackedKVStore extends Component {
                 // Having a store now also shows that retrieval has been done.
                 final String keyStart = consolePrefix
                     + BrowserLocalBackedKVStore.class.getName() + "/";
-                @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
-                    "PMD.LooseCoupling" })
+                @SuppressWarnings({ "PMD.LooseCoupling" })
                 Store data = getStore(channel);
                 String[][] values = event.request().param(0);
                 Arrays.stream(values).forEach(item -> {
@@ -143,8 +141,7 @@ public class BrowserLocalBackedKVStore extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
-        "PMD.AvoidInstantiatingObjectsInLoops" })
+    @SuppressWarnings("PMD.UnnecessaryVarargsArrayCreation")
     public void onKeyValueStoreUpdate(
             KeyValueStoreUpdate event, ConsoleConnection channel)
             throws InterruptedException, IOException {
@@ -154,7 +151,6 @@ public class BrowserLocalBackedKVStore extends Component {
         String keyStart = consolePrefix
             + BrowserLocalBackedKVStore.class.getName();
         for (Action action : event.actions()) {
-            @SuppressWarnings("PMD.UselessParentheses")
             String key = keyStart + (action.key().startsWith("/")
                 ? action.key()
                 : ("/" + action.key()));

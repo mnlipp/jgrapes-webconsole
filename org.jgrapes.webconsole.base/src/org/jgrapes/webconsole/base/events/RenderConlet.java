@@ -21,7 +21,7 @@ package org.jgrapes.webconsole.base.events;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -53,7 +53,6 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
  * function is invoked when changes made in the form must be
  * applied (e.g. before the dialog is closed).
  */
-@SuppressWarnings("PMD.LinguisticNaming")
 public class RenderConlet extends ConsoleCommand {
 
     private static final Set<RenderMode> DEFAULT_SUPPORTED
@@ -115,7 +114,7 @@ public class RenderConlet extends ConsoleCommand {
      * @return the event for easy chaining
      */
     public RenderConlet setRenderAs(Set<RenderMode> renderAs) {
-        this.renderAs = new HashSet<>(renderAs);
+        this.renderAs = EnumSet.copyOf(renderAs);
         return this;
     }
 
@@ -147,8 +146,8 @@ public class RenderConlet extends ConsoleCommand {
      * @return the event for easy chaining
      */
     public RenderConlet addSupportedMode(RenderMode supportedMode) {
-        if (supportedModes == DEFAULT_SUPPORTED) { // NOPMD, check identity
-            supportedModes = new HashSet<>(DEFAULT_SUPPORTED);
+        if (supportedModes == DEFAULT_SUPPORTED) {
+            supportedModes = EnumSet.copyOf(DEFAULT_SUPPORTED);
         }
         supportedModes.add(supportedMode);
         return this;

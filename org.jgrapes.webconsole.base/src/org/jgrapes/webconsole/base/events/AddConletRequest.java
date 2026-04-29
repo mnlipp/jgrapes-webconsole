@@ -108,7 +108,6 @@ public class AddConletRequest extends RenderConletRequestBase<String> {
      *
      * @return the adds the conlet request
      */
-    @SuppressWarnings("PMD.LinguisticNaming")
     public AddConletRequest setFrontendRequest() {
         frontendRequest = true;
         return this;

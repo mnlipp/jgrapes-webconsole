@@ -53,7 +53,6 @@ public class StylingInfo {
      *
      * @return the result
      */
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public String get() {
         if (styling != null) {
             return styling;

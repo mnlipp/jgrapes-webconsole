@@ -24,7 +24,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
@@ -93,7 +93,7 @@ public class StyleTestConlet extends FreeMarkerConlet<Serializable> {
     protected Set<RenderMode> doRenderConlet(RenderConletRequestBase<?> event,
             ConsoleConnection channel, String conletId,
             Serializable conletState) throws Exception {
-        Set<RenderMode> renderedAs = new HashSet<>();
+        Set<RenderMode> renderedAs = EnumSet.noneOf(RenderMode.class);
         if (event.renderAs().contains(RenderMode.View)) {
             Template tpl
                 = freemarkerConfig().getTemplate("StyleTest-view.ftl.html");

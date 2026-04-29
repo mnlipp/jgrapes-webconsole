@@ -20,7 +20,7 @@ package org.jgrapes.webconsole.base.events;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 import org.jgrapes.webconsole.base.Conlet;
 import org.jgrapes.webconsole.base.Conlet.RenderMode;
@@ -34,7 +34,8 @@ import org.jgrapes.webconsole.base.Conlet.RenderMode;
 public class UpdateConletType extends ConsoleCommand {
 
     private final String conletType;
-    private final Set<Conlet.RenderMode> renderModes = new HashSet<>();
+    private final Set<Conlet.RenderMode> renderModes
+        = EnumSet.noneOf(Conlet.RenderMode.class);
 
     /**
      * Create a new event for the given web console component type.

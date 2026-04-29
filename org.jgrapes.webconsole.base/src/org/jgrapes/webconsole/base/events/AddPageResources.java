@@ -105,7 +105,6 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  * deactivate PageResourceProvider
  * @enduml
  */
-@SuppressWarnings("PMD.LinguisticNaming")
 public class AddPageResources extends ConsoleCommand {
 
     private final List<ScriptResource> scriptResources = new ArrayList<>();

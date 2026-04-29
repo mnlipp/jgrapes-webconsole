@@ -28,7 +28,6 @@ import org.jgrapes.core.Components;
  * A notification (as defined by the JSON RPC specification) to be sent to
  * the web console component view (the browser).
  */
-@SuppressWarnings("PMD.DataClass")
 public class NotifyConletView extends ConsoleCommand {
 
     private final String conletType;

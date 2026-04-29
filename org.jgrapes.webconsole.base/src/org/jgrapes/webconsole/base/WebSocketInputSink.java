@@ -46,7 +46,6 @@ import org.jgrapes.webconsole.base.events.JsonInput;
  */
 public class WebSocketInputSink extends Thread {
 
-    @SuppressWarnings("PMD.FieldNamingConventions")
     private static final Logger logger
         = Logger.getLogger(WebSocketInputSink.class.getName());
     @SuppressWarnings("PMD.FieldNamingConventions")
@@ -108,8 +107,7 @@ public class WebSocketInputSink extends Thread {
     }
 
     @SuppressWarnings({ "PMD.AvoidLiteralsInIfCondition",
-        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.DataflowAnomalyAnalysis",
-        "PMD.GuardLogStatement", "PMD.CognitiveComplexity" })
+        "PMD.AvoidInstantiatingObjectsInLoops" })
     @Override
     public void run() {
         @SuppressWarnings("PMD.CloseResource")

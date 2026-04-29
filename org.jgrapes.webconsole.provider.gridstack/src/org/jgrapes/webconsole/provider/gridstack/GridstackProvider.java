@@ -37,7 +37,6 @@ import org.jgrapes.webconsole.base.events.ConsoleReady;
 /**
  * Provider for the [Gridstack.js](http://gridstackjs.com/) library.
  */
-@SuppressWarnings({ "PMD.GuardLogStatement", "PMD.DataflowAnomalyAnalysis" })
 public class GridstackProvider extends PageResourceProvider {
 
     /**
@@ -60,7 +59,6 @@ public class GridstackProvider extends PageResourceProvider {
      * handlers listen on by default and that 
      * {@link Manager#fire(Event, Channel...)} sends the event to
      */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     public GridstackProvider(Channel componentChannel) {
         this(componentChannel, Collections.emptyMap());
     }
@@ -74,7 +72,6 @@ public class GridstackProvider extends PageResourceProvider {
      * {@link Manager#fire(Event, Channel...)} sends the event to
      * @param properties the properties used to configure the component
      */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     public GridstackProvider(Channel componentChannel, Map<?, ?> properties) {
         super(componentChannel);
     }
@@ -90,7 +87,7 @@ public class GridstackProvider extends PageResourceProvider {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
+    @SuppressWarnings("PMD.UnnecessaryVarargsArrayCreation")
     public void onConsoleReady(ConsoleReady event, ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {

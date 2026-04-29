@@ -64,7 +64,6 @@ import org.jgrapes.webconsole.base.events.SimpleConsoleCommand;
 @SuppressWarnings("PMD.GuardLogStatement")
 public class WebConsole extends Component {
 
-    @SuppressWarnings("PMD.FieldNamingConventions")
     private static final Logger logger
         = Logger.getLogger(WebConsole.class.getName());
 
@@ -100,8 +99,7 @@ public class WebConsole extends Component {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler
-    @SuppressWarnings({ "PMD.DataflowAnomalyAnalysis",
-        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.NcssCount" })
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void onJsonInput(JsonInput event, ConsoleConnection channel)
             throws InterruptedException, IOException {
         // Send events to web console components on console's channel
@@ -114,8 +112,8 @@ public class WebConsole extends Component {
         case "addConlet": {
             fire(new AddConletRequest(view.renderSupport(),
                 request.param(0),
-                Arrays.stream((String[]) request.param(1)).map(
-                    value -> RenderMode.valueOf(value))
+                Arrays.stream((String[]) request.param(1))
+                    .map(RenderMode::valueOf)
                     .collect(Collectors.toSet()),
                 request.params().length < 3 ? Collections.emptyMap()
                     : request.param(2)).setFrontendRequest(),
@@ -127,8 +125,7 @@ public class WebConsole extends Component {
                 fire(
                     new ConletDeleted(view.renderSupport(),
                         conletInfo.conletId(),
-                        conletInfo.modes().stream().map(
-                            value -> RenderMode.valueOf((String) value))
+                        conletInfo.modes().stream().map(RenderMode::valueOf)
                             .collect(Collectors.toSet()),
                         Optional.ofNullable(conletInfo.opts())
                             .orElse(Collections.emptyMap())),
@@ -147,9 +144,8 @@ public class WebConsole extends Component {
         case "renderConlet": {
             fire(new RenderConletRequest(view.renderSupport(),
                 request.param(0),
-                Arrays.stream((String[]) request.param(1)).map(
-                    value -> RenderMode.valueOf(value))
-                    .collect(Collectors.toSet())),
+                Arrays.stream((String[]) request.param(1))
+                    .map(RenderMode::valueOf).collect(Collectors.toSet())),
                 channel);
             break;
         }
@@ -350,7 +346,8 @@ public class WebConsole extends Component {
      * invocation of {@link WebConsoleSummaryMXBean#getConsoles()} ensures
      * that entries for removed {@link WebConsole}s are unregistered.
      */
-    @SuppressWarnings("PMD.CommentRequired")
+    @SuppressWarnings({ "PMD.CommentRequired",
+        "PMD.ImplicitFunctionalInterface" })
     public interface WebConsoleSummaryMXBean {
 
         Set<ConsoleMXBean> getConsoles();
@@ -360,12 +357,12 @@ public class WebConsole extends Component {
     /**
      * Provides an MBean view of the console.
      */
-    @SuppressWarnings("PMD.CommentRequired")
+    @SuppressWarnings({ "PMD.AvoidSynchronizedStatement",
+        "PMD.PublicMemberInNonPublicType", "PMD.CommentRequired" })
     private static final class MBeanView implements WebConsoleSummaryMXBean {
 
         private static Set<WebConsoleInfo> consoleInfos = new HashSet<>();
 
-        @SuppressWarnings("PMD.AvoidSynchronizedStatement")
         public static void addConsole(WebConsole console) {
             synchronized (consoleInfos) {
                 consoleInfos.add(new WebConsoleInfo(console));
@@ -373,7 +370,6 @@ public class WebConsole extends Component {
         }
 
         @Override
-        @SuppressWarnings("PMD.AvoidSynchronizedStatement")
         public Set<ConsoleMXBean> getConsoles() {
             Set<WebConsoleInfo> expired = new HashSet<>();
             synchronized (consoleInfos) {

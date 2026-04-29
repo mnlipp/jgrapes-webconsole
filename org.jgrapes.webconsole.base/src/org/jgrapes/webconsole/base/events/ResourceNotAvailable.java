@@ -32,7 +32,6 @@ import org.jgrapes.core.Event;
  * 
  * @see ResourceUpdated
  */
-@SuppressWarnings("PMD.DataClass")
 public class ResourceNotAvailable extends Event<Void> {
 
     private final Object itemSpecification;

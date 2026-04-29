@@ -31,8 +31,6 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  * are forwarded via the {@link WebConsole} component to the 
  * web console components.
  */
-@SuppressWarnings({ "PMD.ExcessiveImports", "PMD.NcssCount",
-    "PMD.TooManyMethods" })
 public class Bootstrap4Weblet extends FreeMarkerConsoleWeblet {
 
     /**

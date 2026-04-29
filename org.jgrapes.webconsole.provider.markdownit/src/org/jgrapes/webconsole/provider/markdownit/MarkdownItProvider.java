@@ -62,14 +62,15 @@ public class MarkdownItProvider extends PageResourceProvider {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Handler(priority = 100)
-    @SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
-        "PMD.AvoidInstantiatingObjectsInLoops" })
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops",
+        "PMD.UnnecessaryVarargsArrayCreation" })
     public void onConsoleReady(ConsoleReady event,
             ConsoleConnection connection)
             throws TemplateNotFoundException, MalformedTemplateNameException,
             ParseException, IOException {
         String minExt = event.renderSupport()
             .useMinifiedResources() ? ".min" : "";
+        @SuppressWarnings("PMD.UnnecessaryVarargsArrayCreation")
         var pageResources = new AddPageResources()
             .addScriptResource(new ScriptResource()
                 .setProvides(new String[] { "markdown-it" })

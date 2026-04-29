@@ -66,9 +66,7 @@ public class ConletBaseModel {
      * @see java.lang.Object#hashCode()
      */
     @Override
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public int hashCode() {
-        @SuppressWarnings("PMD.AvoidFinalLocalVariable")
         final int prime = 31;
         int result = 1;
         result = prime * result
