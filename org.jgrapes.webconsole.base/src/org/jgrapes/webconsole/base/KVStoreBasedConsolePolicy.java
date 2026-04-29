@@ -24,6 +24,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -195,9 +196,10 @@ public class KVStoreBasedConsolePolicy extends Component {
                 if (data == null) {
                     persisted = new HashMap<>();
                 } else {
-                    persisted = mapper.readValue(data.getBytes(),
-                        mapper.getTypeFactory().constructMapType(Map.class,
-                            String.class, Object.class));
+                    persisted = mapper
+                        .readValue(data.getBytes(StandardCharsets.UTF_8),
+                            mapper.getTypeFactory().constructMapType(Map.class,
+                                String.class, Object.class));
                 }
             } catch (InterruptedException | IOException e) {
                 persisted = new HashMap<>();

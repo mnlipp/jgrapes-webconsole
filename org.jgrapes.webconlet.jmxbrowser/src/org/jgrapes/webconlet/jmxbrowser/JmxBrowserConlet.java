@@ -18,6 +18,7 @@
 
 package org.jgrapes.webconlet.jmxbrowser;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
@@ -47,7 +48,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.RuntimeMBeanException;
-import org.jdrupes.json.JsonArray;
 import org.jdrupes.json.JsonBeanEncoder;
 import org.jgrapes.core.Channel;
 import org.jgrapes.core.Event;
@@ -64,8 +64,10 @@ import org.jgrapes.webconsole.base.events.RenderConlet;
 import org.jgrapes.webconsole.base.events.RenderConletRequestBase;
 import org.jgrapes.webconsole.base.freemarker.FreeMarkerConlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+/**
+ * The Class JmxBrowserConlet.
+ */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
 
     /** The mapper. */
@@ -151,6 +153,7 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
     }
 
     @Override
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     protected void doUpdateConletState(NotifyConletModel event,
             ConsoleConnection channel, Serializable conletModel)
             throws Exception {
@@ -158,7 +161,8 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
         if ("sendMBean".equals(event.method())) {
             List<String> segments = event.param(0);
             String domain = segments.get(0);
-            @SuppressWarnings("PMD.ReplaceHashtableWithMap")
+            @SuppressWarnings({ "PMD.ReplaceHashtableWithMap",
+                "PMD.LooseCoupling" })
             Hashtable<String, String> props = new Hashtable<>();
             for (int i = 1; i < segments.size(); i++) {
                 String[] keyProp = segments.get(i).split("=", 2);
@@ -180,34 +184,76 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
         }
     }
 
+    /**
+     * The Class NodeDTO.
+     */
     public static class NodeDTO {
+
+        /** The segment. */
         public String segment;
+
+        /** The label. */
         public String label;
+
+        /** The children. */
         public Set<NodeDTO> children;
 
+        /**
+         * Instantiates a new node DTO.
+         *
+         * @param segment the segment
+         * @param label the label
+         * @param children the children
+         */
         public NodeDTO(String segment, String label, Set<NodeDTO> children) {
             this.segment = segment;
             this.label = label;
             this.children = children;
         }
 
+        /**
+         * Instantiates a new node DTO.
+         *
+         * @param segment the segment
+         * @param label the label
+         */
         public NodeDTO(String segment, String label) {
             this(segment, label,
                 new TreeSet<>(Comparator.comparing((node) -> node.label)));
         }
 
+        /**
+         * Gets the segment.
+         *
+         * @return the segment
+         */
         public String getSegment() {
             return segment;
         }
 
+        /**
+         * Gets the label.
+         *
+         * @return the label
+         */
         public String getLabel() {
             return label;
         }
 
+        /**
+         * Gets the children.
+         *
+         * @return the children
+         */
         public Set<NodeDTO> getChildren() {
             return children;
         }
 
+        /**
+         * Hash code.
+         *
+         * @return the int
+         */
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -217,6 +263,12 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
             return result;
         }
 
+        /**
+         * Equals.
+         *
+         * @param obj the obj
+         * @return true, if successful
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -279,11 +331,21 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
             mbn);
     }
 
+    /**
+     * The Class AttributeDTO.
+     */
     public static class AttributeDTO {
         private String name;
         private Object value;
         private boolean writable;
 
+        /**
+         * Instantiates a new attribute DTO.
+         *
+         * @param name the name
+         * @param value the value
+         * @param writable the writable
+         */
         public AttributeDTO(String name, Object value, boolean writable) {
             super();
             this.name = name;
@@ -291,14 +353,29 @@ public class JmxBrowserConlet extends FreeMarkerConlet<Serializable> {
             this.writable = writable;
         }
 
+        /**
+         * Gets the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Gets the value.
+         *
+         * @return the value
+         */
         public Object getValue() {
             return value;
         }
 
+        /**
+         * Gets the writable.
+         *
+         * @return the writable
+         */
         public boolean getWritable() {
             return writable;
         }
