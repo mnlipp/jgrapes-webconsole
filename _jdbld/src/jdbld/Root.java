@@ -71,6 +71,8 @@ import org.eclipse.jgit.errors.RevisionSyntaxException;
 import org.jdrupes.builder.api.BuildException;
 import org.jdrupes.builder.api.DocumentationDirectory;
 import org.jdrupes.builder.api.FileTree;
+import org.jdrupes.builder.api.InputTree;
+
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.api.MergedTestProject;
 import org.jdrupes.builder.api.Project;
@@ -372,7 +374,7 @@ public class Root extends AbstractRootProject {
     }
 
     public static void addNpmResourcesBuilder(NpmExecutor executor,
-            Path target, FileTree<?>... nodeSources) {
+            Path target, InputTree<?>... nodeSources) {
         // Pass NpmExecutor instead of project to make sure that the project
         // has set up an NpmExecutor
         var project = executor.project();
