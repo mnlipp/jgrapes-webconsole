@@ -70,9 +70,7 @@ import org.eclipse.jgit.errors.InvalidPatternException;
 import org.eclipse.jgit.errors.RevisionSyntaxException;
 import org.jdrupes.builder.api.BuildException;
 import org.jdrupes.builder.api.DocumentationDirectory;
-import org.jdrupes.builder.api.FileTree;
 import org.jdrupes.builder.api.InputTree;
-
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.api.MergedTestProject;
 import org.jdrupes.builder.api.Project;
