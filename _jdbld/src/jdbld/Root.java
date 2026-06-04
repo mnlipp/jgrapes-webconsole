@@ -69,12 +69,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.InvalidPatternException;
 import org.eclipse.jgit.errors.RevisionSyntaxException;
 import org.jdrupes.builder.api.BuildException;
+import static org.jdrupes.builder.api.CoreProperties.*;
 import org.jdrupes.builder.api.DocumentationDirectory;
 import org.jdrupes.builder.api.InputTree;
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.api.MergedTestProject;
 import org.jdrupes.builder.api.Project;
-import static org.jdrupes.builder.api.Project.Properties.Version;
 import org.jdrupes.builder.api.Resource;
 import org.jdrupes.builder.api.ResourceType;
 import static org.jdrupes.builder.api.ResourceType.*;
@@ -101,7 +101,7 @@ import org.jdrupes.builder.mvnrepo.MvnPublisher;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 import static org.jdrupes.builder.mvnrepo.MvnRepoTypes.*;
 import org.jdrupes.builder.mvnrepo.PomFileGenerator;
-import org.jdrupes.builder.mvnrepo.SourcesJarGenerator;
+import org.jdrupes.builder.mvnrepo.SourcesJarBuilder;
 import org.jdrupes.gitversioning.api.VersionEvaluator;
 import org.jdrupes.gitversioning.core.DefaultTagFilter;
 import org.jdrupes.gitversioning.core.MavenStyleTagProcessor;
@@ -325,7 +325,7 @@ public class Root extends AbstractRootProject {
         }
 
         // Supply sources jar
-        project.generator(SourcesJarGenerator::new).addTrees(
+        project.generator(SourcesJarBuilder::new).addTrees(
             project.resources(project.of(
                 JavaSourceTreeType).using(Supply, Expose)));
 
@@ -354,8 +354,7 @@ public class Root extends AbstractRootProject {
     }
 
     public static NpmExecutor asBundleBuilder(NpmExecutor executor) {
-        return prepareNpm(executor).name("bundleBuilder")
-            .provideResources(executor.project().of(JavaResourceTreeType));
+        return prepareNpm(executor).name("bundleBuilder");
     }
 
     @SafeVarargs
@@ -367,8 +366,9 @@ public class Root extends AbstractRootProject {
             .required(Path.of("src"), "**/*.ts")
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
-            .output(p -> Stream.of(JavaResourceTree.of(p,
-                p.buildDirectory().resolve("generated/resources"), "**/*")));
+            .provideResources(executor.project().of(JavaResourceTreeType),
+                p -> Stream.of(JavaResourceTree.of(p, p.buildDirectory()
+                    .resolve("generated/resources"), "**/*")));
     }
 
     public static void addNpmResourcesBuilder(NpmExecutor executor,

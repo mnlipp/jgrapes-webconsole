@@ -32,11 +32,12 @@ public class AashVueComponents extends AbstractProject
     public AashVueComponents() {
         super(name("aash-vue-components"));
         Root.prepareNpm(dependency(Supply, NpmExecutor::new))
-            .name("bundleBuilder").provideResources(of(BaseFileTreeType))
+            .name("bundleBuilder")
             .args("run", "build")
             .required(Path.of("src"), "**/*")
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
-            .output(p -> Stream.of(FileTree.of(p, Path.of("lib"), "**/*")));
+            .provideResources(of(BaseFileTreeType),
+                p -> Stream.of(FileTree.of(p, Path.of("lib"), "**/*")));
     }
 }

@@ -44,7 +44,7 @@ public class JgwcVueComponents extends AbstractProject
         dependency(Expose, project(Base.class));
         dependency(Reveal, project(Vue.class));
         var aashPrj = project(AashVueComponents.class);
-        Root.asBundleBuilder(dependency(Supply, NpmExecutor::new)
+        Root.asBundleBuilder(dependency(Supply, NpmExecutor::new))
             .args("run", "build")
             .required(project(Base.class)
                 .resources(of(JavaResourceTreeType).using(Supply)))
@@ -55,9 +55,10 @@ public class JgwcVueComponents extends AbstractProject
             .required(Path.of("src"), "**/*.ts")
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
-            .output(p -> Stream.of(JavaResourceTree.of(p,
-                p.buildDirectory().resolve("generated/resources"),
-                name().replace('.', '/') + "/jgwc-vue-components/**/*"))));
+            .provideResources(of(JavaResourceTreeType),
+                p -> Stream.of(JavaResourceTree.of(p,
+                    p.buildDirectory().resolve("generated/resources"),
+                    name().replace('.', '/') + "/jgwc-vue-components/**/*")));
         dependency(Supply, FileTreeBuilder::new)
             .into(buildDirectory().resolve("generated/resources"))
             .add(aashPrj.resources(of(BaseFileTreeType).using(Supply))

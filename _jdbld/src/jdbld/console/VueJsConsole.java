@@ -53,9 +53,9 @@ public class VueJsConsole extends AbstractProject
                 .resources(of(JavaResourceTreeType).using(Supply)))
             .required(project(Gridstack.class)
                 .resources(of(JavaResourceTreeType).using(Supply)))
-            .output(p -> Stream.of(JavaResourceTree.of(p,
-                p.buildDirectory().resolve("generated/resources"), "**/*")))
-            .provideResources(of(JavaResourceTreeType));
+            .provideResources(of(JavaResourceTreeType),
+                p -> Stream.of(JavaResourceTree.of(p, p.buildDirectory()
+                    .resolve("generated/resources"), "**/*")));
         Root.addNpmResourcesBuilder(npmExec,
             Path.of("org/jgrapes/webconsole/vuejs/lib"),
             FileTree.of(this, Path.of("node_modules/normalize.css"),

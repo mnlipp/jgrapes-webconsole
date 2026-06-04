@@ -49,8 +49,8 @@ public class JmxBrowser extends AbstractProject
             .required(Path.of("rollup.config.mjs"))
             .required(project(JgwcVueComponents.class)
                 .resources(of(BaseFileTreeType).using(Supply)))
-            .output(p -> Stream.of(JavaResourceTree.of(p,
-                p.buildDirectory().resolve("generated/resources"), "**/*")))
-            .provideResources(of(JavaResourceTreeType));
+            .provideResources(of(JavaResourceTreeType),
+                p -> Stream.of(JavaResourceTree.of(p, p.buildDirectory()
+                    .resolve("generated/resources"), "**/*")));
     }
 }

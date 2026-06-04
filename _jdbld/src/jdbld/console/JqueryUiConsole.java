@@ -46,11 +46,11 @@ public class JqueryUiConsole extends AbstractProject
 
         // jsdoc
         Root.prepareNpm(dependency(Supply, NpmExecutor::new)).name("apidocs")
-            .provideResources(of(new ResourceType<DocumentationDirectory>() {}))
             .args("run", "jsdoc")
             .required(Path.of("resoures/org/jgrapes/webconsole/jqueryui"),
                 "**/*")
-            .output(p -> Stream.of(DocumentationDirectory.of(p,
-                p.rootProject().buildDirectory().resolve("javadoc/jsdoc"))));
+            .provideResources(of(new ResourceType<DocumentationDirectory>() {}),
+                p -> Stream.of(DocumentationDirectory.of(p, p.rootProject()
+                    .buildDirectory().resolve("javadoc/jsdoc"))));
     }
 }

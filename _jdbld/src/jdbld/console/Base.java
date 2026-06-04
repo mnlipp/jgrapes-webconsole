@@ -52,12 +52,12 @@ public class Base extends AbstractProject
 
         // tsdoc
         Root.prepareNpm(dependency(Supply, NpmExecutor::new)).name("apidocs")
-            .provideResources(of(new ResourceType<DocumentationDirectory>() {}))
             .args("run", "typedoc")
             .required(Path.of("src"), "**/*.ts")
-            .output(p -> Stream.of(DocumentationDirectory.of(p,
-                p.rootProject().buildDirectory()
-                    .resolve("javadoc/org/jgrapes/webconsole/base/jsdoc"))));
+            .provideResources(of(new ResourceType<DocumentationDirectory>() {}),
+                p -> Stream.of(DocumentationDirectory.of(p,
+                    p.rootProject().buildDirectory().resolve(
+                        "javadoc/org/jgrapes/webconsole/base/jsdoc"))));
     }
 
     public static class BaseTest extends AbstractProject
