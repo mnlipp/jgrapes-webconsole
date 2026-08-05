@@ -214,7 +214,7 @@ public class KVStoreBasedConsolePolicy extends Component {
             List<String> tabsLayout = (List<String>) persisted.computeIfAbsent(
                 "tabsLayout", newKey -> Collections.emptyList());
             Object xtraInfo = persisted.computeIfAbsent(
-                "xtraInfo", newKey -> new Object());
+                "xtraInfo", newKey -> new HashMap<>());
 
             // Update (now consistent) layout
             channel.respond(new LastConsoleLayout(
