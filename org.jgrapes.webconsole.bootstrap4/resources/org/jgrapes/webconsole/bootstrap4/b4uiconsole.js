@@ -236,19 +236,19 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             let options = {}
             if (conletId in this._lastXtraInfo) {
                 options.autoPosition = false;
-                options.x = this._lastXtraInfo[conletId][0];
-                options.y = this._lastXtraInfo[conletId][1];
-                options.w = this._lastXtraInfo[conletId][2];
-                options.h = this._lastXtraInfo[conletId][3];
+                options.x = +this._lastXtraInfo[conletId][0];
+                options.y = +this._lastXtraInfo[conletId][1];
+                options.w = +this._lastXtraInfo[conletId][2];
+                options.h = +this._lastXtraInfo[conletId][3];
             } else {
                 options.autoPosition = true;
                 options.w = 4;
                 options.h = 4;
                 if (newContent.attr("data-conlet-grid-columns")) {
-                    options.w = newContent.attr("data-conlet-grid-columns");
+                    options.w = +newContent.attr("data-conlet-grid-columns");
                 }
                 if (newContent.attr("data-conlet-grid-rows")) {
-                    options.h = newContent.attr("data-conlet-grid-rows");
+                    options.h = +newContent.attr("data-conlet-grid-rows");
                 }
                 if ($(window).width() < 1200) {
                     let winWidth = Math.max(320, $(window).width());
@@ -260,13 +260,12 @@ B4UIConsole.Renderer = class extends JGConsole.Renderer {
             }
 
             // Put into grid item wrapper
-            let gridItem = $('<div class="grid-stack-item" data-gs-auto-position="1"'
-                + ' role="gridcell"></div>');
+            let gridItem = $('<div class="grid-stack-item" role="gridcell"></div>');
             container.addClass('grid-stack-item-content');
             gridItem.append(container);
 
             // Finally add to grid
-            _this._previewGrid.addWidget(gridItem[0], options);
+            _this._previewGrid.makeWidget(gridItem[0], options);
 
             this._layoutChanged();
         }

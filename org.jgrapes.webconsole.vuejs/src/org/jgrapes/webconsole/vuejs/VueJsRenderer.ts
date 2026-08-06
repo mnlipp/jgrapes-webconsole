@@ -302,10 +302,10 @@ export default class Renderer extends JGConsole.Renderer {
             let options: GridStackWidget = {};
             if (conletId in this._lastXtraInfo) {
                 options.autoPosition = false;
-                options.x = this._lastXtraInfo[conletId][0];
-                options.y = this._lastXtraInfo[conletId][1];
-                options.w = this._lastXtraInfo[conletId][2];
-                options.h = this._lastXtraInfo[conletId][3];
+                options.x = +this._lastXtraInfo[conletId][0];
+                options.y = +this._lastXtraInfo[conletId][1];
+                options.w = +this._lastXtraInfo[conletId][2];
+                options.h = +this._lastXtraInfo[conletId][3];
             } else {
                 options.autoPosition = true;
                 options.w = 4;
@@ -327,13 +327,12 @@ export default class Renderer extends JGConsole.Renderer {
 
             // Put into grid item wrapper
             let gridItem = parseHtml
-                ('<div class="grid-stack-item" data-gs-auto-position="1"'
-                   + ' role="gridcell"></div>')[0];
+                ('<div class="grid-stack-item" role="gridcell"></div>')[0];
             container.classList.add('grid-stack-item-content');
             gridItem.append(container);
 
             // Finally add to grid
-            this._previewGrid!.addWidget(gridItem, options);
+            this._previewGrid!.makeWidget(gridItem, options);
             this._layoutChanged();
 
             // Generate header
