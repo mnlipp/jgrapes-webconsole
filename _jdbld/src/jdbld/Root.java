@@ -19,6 +19,7 @@
 package jdbld;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -96,10 +97,13 @@ import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.java.LibraryBuilder;
 import org.jdrupes.builder.junit.JUnitTestRunner;
 import org.jdrupes.builder.mvnrepo.JavadocJarBuilder;
-import static org.jdrupes.builder.mvnrepo.MvnProperties.GroupId;
+import org.jdrupes.builder.mvnrepo.MvnDeployDestination;
+import static org.jdrupes.builder.mvnrepo.MvnProperties.*;
 import org.jdrupes.builder.mvnrepo.MvnPublisher;
+import org.jdrupes.builder.mvnrepo.MvnPublishingDestination;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 import static org.jdrupes.builder.mvnrepo.MvnRepoTypes.*;
+import org.jdrupes.builder.mvnrepo.MvnVersionType;
 import org.jdrupes.builder.mvnrepo.PomFileGenerator;
 import org.jdrupes.builder.mvnrepo.SourcesJarBuilder;
 import org.jdrupes.gitversioning.api.VersionEvaluator;
@@ -120,6 +124,13 @@ public class Root extends AbstractRootProject {
 
     public Root() throws IOException {
         super(name("JGrapes-WebConsole"));
+        set(PublishingDestinations, new MvnPublishingDestination[] {
+            new MvnDeployDestination(
+                MvnVersionType.SNAPSHOT, MvnVersionType.RELEASE)
+                    .repositoryUri(URI.create(
+                        "https://codeberg.org/api/packages/mnlipp/maven"))
+                    .id("codeberg")
+        });
 
         dependency(Expose, project(AashVueComponents.class));
         dependency(Expose, project(Base.class));
@@ -172,7 +183,7 @@ public class Root extends AbstractRootProject {
         commandAlias("apidocs")
             .resources(of(new ResourceType<DocumentationDirectory>() {}));
 //        commandAlias("pomFile").resources(of(PomFile.class));
-//        commandAlias("mavenPublication").resources(of(MvnPublication.class));
+        commandAlias("mavenPublication").resources(of(MvnPublicationType));
         commandAlias("test").resources(of(TestResultType));
         commandAlias("eclipse").projects("**")
             .resources(of(new ResourceType<EclipseConfiguration>() {}));
@@ -335,7 +346,8 @@ public class Root extends AbstractRootProject {
         if (!(project instanceof Unpublishable)) {
             // Publish (deploy). Credentials and signing information is
             // obtained through properties.
-            project.generator(MvnPublisher::new);
+            project.generator(MvnPublisher::new)
+                .destinations(project.get(PublishingDestinations));
         }
     }
 
