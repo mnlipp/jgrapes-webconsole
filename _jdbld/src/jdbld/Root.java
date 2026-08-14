@@ -232,7 +232,8 @@ public class Root extends AbstractRootProject implements Unpublishable {
         project.set(Version, evaluator.version());
         project.generator(VersionReporter::new);
         if (!(project instanceof Unpublishable)) {
-            project.generator(VersionTagger::new);
+            project.generator(VersionTagger::new)
+                .prefixEvalutor(_ -> tagPrefix);
         }
     }
 
