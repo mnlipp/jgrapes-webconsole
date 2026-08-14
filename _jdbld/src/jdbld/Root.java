@@ -31,7 +31,6 @@ import static java.util.jar.Attributes.Name.IMPLEMENTATION_TITLE;
 import static java.util.jar.Attributes.Name.IMPLEMENTATION_VENDOR;
 import static java.util.jar.Attributes.Name.IMPLEMENTATION_VERSION;
 import java.util.stream.Stream;
-import static jdbld.ExtProps.GitApi;
 import jdbld.WebConsoleOSGiTest.RunRepo;
 import jdbld.conlet.FormTest;
 import jdbld.conlet.HelloSolid;
@@ -83,10 +82,14 @@ import org.jdrupes.builder.api.RootProject;
 import org.jdrupes.builder.core.AbstractRootProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
 import org.jdrupes.builder.core.FileTreeBuilder.Source;
+import org.jdrupes.builder.core.VersionReporter;
 import org.jdrupes.builder.eclipse.EclipseConfiguration;
 import org.jdrupes.builder.eclipse.EclipseConfigurator;
 import org.jdrupes.builder.ext.bnd.BndAnalyzer;
 import org.jdrupes.builder.ext.bnd.BndBaseliner;
+import static org.jdrupes.builder.ext.git.GitProperties.*;
+import static org.jdrupes.builder.ext.git.GitTypes.*;
+import org.jdrupes.builder.ext.git.VersionTagger;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaCompiler;
 import org.jdrupes.builder.java.JavaLibraryProject;
@@ -175,6 +178,8 @@ public class Root extends AbstractRootProject {
 //        generator(GhPagesPublisher::new);
 
         // Commands
+        commandAlias("version").projects("**")
+            .resources(of(ProjectVersionType).using(Supply));
         commandAlias("build").projects("**").without("WebConsoleExample")
             .resources(of(LibraryJarFileType).using(Supply));
         commandAlias("prepareJs")
@@ -196,6 +201,8 @@ public class Root extends AbstractRootProject {
             .resources(of(ExecResultType).withName("GoGo"));
         commandAlias("runOSGiTest")
             .resources(of(ExecResultType).withName("OSGiTest"));
+        commandAlias("releaseTag").projects("**")
+            .resources(of(GitVersionTagType).using(Supply));
     }
 
     private static void setupVersion(Project project)
@@ -223,6 +230,10 @@ public class Root extends AbstractRootProject {
             .tagProcessor(new MavenStyleTagProcessor()
                 .ignoreBranches("testing/.*", "release/.*", "develop/.*"));
         project.set(Version, evaluator.version());
+        project.generator(VersionReporter::new);
+        if (!(project instanceof Unpublishable)) {
+            project.generator(VersionTagger::new);
+        }
     }
 
     private static void setupCommonGenerators(Project project) {

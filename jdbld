@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-releaseVersion="0.4.1"
+releaseVersion="0.5.0"
 propertiesFile=".jdbld.properties"
 
 if [ ! -r "$propertiesFile" ]; then
@@ -53,7 +53,7 @@ else
     echo >&2 "Need xmlstarlet to download a snapshot version"
     exit 1
   fi
-  snapshotBaseUrl="https://codeberg.org/api/packages/mnlipp/maven/org/jdrupes/jdrupes-builder"
+  snapshotBaseUrl="https://codeberg.org/api/packages/JDrupes/maven/org/jdrupes/jdrupes-builder"
   snapshotVersion=$(curl -s $snapshotBaseUrl/$jdbldVersion/maven-metadata.xml \
     | xmlstarlet sel -t -v "/metadata/versioning/snapshotVersions/snapshotVersion[extension='jar' and not(classifier)]/value")
   builderJar="$jdbldCommon/versions/jdrupes-builder-$snapshotVersion.jar"
