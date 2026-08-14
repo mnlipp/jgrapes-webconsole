@@ -20,8 +20,10 @@ package jdbld;
 
 import java.nio.file.Path;
 import java.util.stream.Stream;
+import org.jdrupes.builder.api.DocumentationDirectory;
 import org.jdrupes.builder.api.FileTree;
 import static org.jdrupes.builder.api.Intent.*;
+import org.jdrupes.builder.api.ResourceType;
 import static org.jdrupes.builder.api.ResourceType.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
@@ -39,5 +41,15 @@ public class AashVueComponents extends AbstractProject
             .required(Path.of("rollup.config.mjs"))
             .provideResources(of(BaseFileTreeType),
                 p -> Stream.of(FileTree.of(p, Path.of("lib"), "**/*")));
+
+        // docs
+        Root.prepareNpm(dependency(Supply, NpmExecutor::new)).name("apidocs")
+            .args("run", "build:doc")
+            .required(Path.of("package.json"))
+            .required(Path.of("src"), "**/*")
+            .provideResources(of(new ResourceType<DocumentationDirectory>() {}),
+                p -> Stream.of(DocumentationDirectory.of(p,
+                    p.rootProject().buildDirectory().resolve("aashdoc"))));
+
     }
 }
