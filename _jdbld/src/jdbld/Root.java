@@ -115,7 +115,7 @@ import org.jdrupes.gitversioning.core.MavenStyleTagProcessor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public class Root extends AbstractRootProject {
+public class Root extends AbstractRootProject implements Unpublishable {
 
     @Override
     public void prepareProject(Project project) throws Exception {
@@ -131,7 +131,7 @@ public class Root extends AbstractRootProject {
             new MvnDeployDestination(
                 MvnVersionType.SNAPSHOT, MvnVersionType.RELEASE)
                     .repositoryUri(URI.create(
-                        "https://codeberg.org/api/packages/mnlipp/maven"))
+                        "https://codeberg.org/api/packages/JGrapes/maven"))
                     .id("codeberg")
         });
 
