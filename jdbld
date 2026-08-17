@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-releaseVersion="0.5.0"
+releaseVersion="0.6.0"
 propertiesFile=".jdbld.properties"
 
 if [ ! -r "$propertiesFile" ]; then
