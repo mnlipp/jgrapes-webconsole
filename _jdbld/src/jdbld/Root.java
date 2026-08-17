@@ -211,6 +211,11 @@ public class Root extends AbstractRootProject implements Unpublishable {
             project.set(GitApi, Git.open(project.directory().toFile()));
         }
 
+        // Unpublishables have no version
+        if (project instanceof Unpublishable) {
+            return;
+        }
+
         // Use shortened project name for tags
         var shortened = project.name().startsWith(project.get(GroupId) + ".")
             ? project.name()
@@ -226,6 +231,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
 
         var evaluator = VersionEvaluator
             .forRepository(project.<Git> get(GitApi).getRepository())
+            .subDirectory(project.directory())
             .tagFilter(new DefaultTagFilter().prepend(tagPrefix))
             .tagProcessor(new MavenStyleTagProcessor()
                 .ignoreBranches("testing/.*", "release/.*", "develop/.*"));
@@ -233,7 +239,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
         project.generator(VersionReporter::new);
         if (!(project instanceof Unpublishable)) {
             project.generator(VersionTagger::new)
-                .prefixEvalutor(_ -> tagPrefix);
+                .prefixEvaluator(_ -> tagPrefix);
         }
     }
 
