@@ -19,6 +19,8 @@
 package jdbld;
 
 import com.google.common.flogger.FluentLogger;
+
+import jdbld.console.Base;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -102,7 +104,8 @@ public class JGrapesJavadoc extends AbstractGenerator implements Renamable {
             "-Duser.language=en_US", "-Duser.region=US",
             "jdk.javadoc.internal.tool.Main",
             "-doctitle", String.format("JGrapes Web Console %s",
-                project().<String> get(Version)),
+                project().rootProject().project(Base.class).<
+                        String> get(Version)),
             "-use", "-linksource",
             "-link", "https://docs.oracle.com/en/java/javase/21/docs/api/",
             "-link", "https://mnlipp.github.io/jdrupes-httpcodec/javadoc/",
