@@ -40,17 +40,19 @@ var orgJGrapesConletsMarkdownDisplay = {
                 let conlet = JGConsole.instance.findConletPreview(conletId);
                 if (conlet) {
                     JGConsole.instance.updateConletModes(conletId, modes);
-                    let content = $(conlet.element())
-                        .find(".jgrapes-markdownconlet-content");
-                    content.empty();
-                    content.append(mdProc.render(previewContent));
+                    let content = conlet.element()
+                        .querySelector(".jgrapes-markdownconlet-content");
+                    content.innerHTML = "";
+                    content.insertAdjacentHTML("beforeend",
+                            mdProc.render(previewContent));
                 }
                 conlet = JGConsole.instance.findConletView(conletId);
                 if (conlet) {
-                    let content = $(conlet.element())
-                        .find(".jgrapes-markdownconlet-content");
-                    content.empty();
-                    content.append(mdProc.render(viewContent));
+                    let content = conlet.element()
+                        .querySelector(".jgrapes-markdownconlet-content");
+                    content.innerHTML = "";
+                    content.insertAdjacentHTML("beforeend",
+                            mdProc.render(viewContent));
                 }
                 JGConsole.instance.updateConletTitle(conletId, title);
             });
@@ -63,41 +65,40 @@ var orgJGrapesConletsMarkdownDisplay = {
     }
     
     orgJGrapesConletsMarkdownDisplay.init = function(content) {
-        content = $(content);
         // Title
-        let titleSource = content.find('.jgrapes-conlet-mdp-title-input');
-        
+        let titleSource = content.querySelector('.jgrapes-conlet-mdp-title-input');
+
         // Preview
-        let previewSource = content.find('.jgrapes-conlet-mdp-preview-input');
-        let previewPreview = content.find('.jgrapes-conlet-mdp-preview-preview');
+        let previewSource = content.querySelector('.jgrapes-conlet-mdp-preview-input');
+        let previewPreview = content.querySelector('.jgrapes-conlet-mdp-preview-preview');
         let updatePreview = function() {
-            let input = previewSource.val();
+            let input = previewSource.value;
             let result = mdProc.render(input);
-            previewPreview.html(result);
+            previewPreview.innerHTML = result;
         }
         updatePreview();
-        previewSource.on("keyup", function() { debounce(updatePreview); });
-        
+        previewSource.addEventListener("keyup", () => debounce(updatePreview));
+
         // View
-        let viewSource = content.find('.jgrapes-conlet-mdp-view-input');
-        let viewPreview = content.find('.jgrapes-conlet-mdp-view-preview');
+        let viewSource = content.querySelector('.jgrapes-conlet-mdp-view-input');
+        let viewPreview = content.querySelector('.jgrapes-conlet-mdp-view-preview');
         let updateView = function() {
-            let input = viewSource.val();
+            let input = viewSource.value;
             let result = mdProc.render(input);
-            viewPreview.html(result);
+            viewPreview.innerHTML = result;
         }
         updateView();
-        viewSource.on("keyup", function() { debounce(updateView); });
+        viewSource.addEventListener("keyup", () => debounce(updateView));
     }
     
     orgJGrapesConletsMarkdownDisplay.action = function(element) {
-        element = $(element);
-        let conletId = element.closest("[data-conlet-id]").attr("data-conlet-id");
-        let titleSource = element.find('.jgrapes-conlet-mdp-title-input');
-        let previewSource = element.find('.jgrapes-conlet-mdp-preview-input');
-        let viewSource = element.find('.jgrapes-conlet-mdp-view-input');
-        JGConsole.notifyConletModel(conletId, "update", titleSource.val(),
-                previewSource.val(), viewSource.val());
+        let conletId = element.closest("[data-conlet-id]")
+                .getAttribute("data-conlet-id");
+        let titleSource = element.querySelector('.jgrapes-conlet-mdp-title-input');
+        let previewSource = element.querySelector('.jgrapes-conlet-mdp-preview-input');
+        let viewSource = element.querySelector('.jgrapes-conlet-mdp-view-input');
+        JGConsole.notifyConletModel(conletId, "update", titleSource.value,
+                previewSource.value, viewSource.value);
         return true;
     }
     
