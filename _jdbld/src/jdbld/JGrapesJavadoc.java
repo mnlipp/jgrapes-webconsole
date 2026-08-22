@@ -19,8 +19,6 @@
 package jdbld;
 
 import com.google.common.flogger.FluentLogger;
-
-import jdbld.console.Base;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import jdbld.console.Base;
 import org.jdrupes.builder.api.BuildException;
 import static org.jdrupes.builder.api.CoreProperties.*;
 import static org.jdrupes.builder.api.Intent.*;
