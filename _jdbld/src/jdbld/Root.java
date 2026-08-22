@@ -188,6 +188,10 @@ public class Root extends AbstractRootProject implements Unpublishable {
         commandAlias("apidocs")
             .resources(of(new ResourceType<DocumentationDirectory>() {}));
 //        commandAlias("pomFile").resources(of(PomFile.class));
+        commandAlias("mavenInstallation")
+            .description("Install artifacts in local maven repository")
+            .projects("**").resources(
+                of(MvnInstallationType).using(Supply));
         commandAlias("mavenPublication").resources(of(MvnPublicationType));
         commandAlias("test").resources(of(TestResultType));
         commandAlias("eclipse").projects("**")
