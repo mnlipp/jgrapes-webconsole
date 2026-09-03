@@ -29,5 +29,8 @@
     },
     "eslintIgnore": [
         "node_modules/**"
-    ]
+    ],
+    "dependencies": {
+        "glob": "^13.0.6"
+    }
 }

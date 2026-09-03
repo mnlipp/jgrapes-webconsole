@@ -55,9 +55,11 @@ import jdbld.provider.JgwcVueComponents;
 import jdbld.provider.JqUiTouchPunch;
 import jdbld.provider.Jquery;
 import jdbld.provider.JqueryUi;
+import jdbld.provider.Lit;
 import jdbld.provider.Luxon;
 import jdbld.provider.MarkdownIt;
 import jdbld.provider.Moment;
+import jdbld.provider.RcWebcomponents;
 import jdbld.provider.Vue;
 import jdbld.provider.VueJs;
 import jdbld.provider.Vuex;
@@ -153,6 +155,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
         dependency(Expose, project(Gridstack.class));
         dependency(Expose, project(HelloSolid.class));
         dependency(Expose, project(HelloWorld.class));
+        dependency(Expose, project(Lit.class));
         dependency(Expose, project(LocalLogin.class));
         dependency(Expose, project(Luxon.class));
         dependency(Expose, project(MarkdownDisplay.class));
@@ -161,6 +164,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
         dependency(Expose, project(Moment.class));
         dependency(Expose, project(OidcLogin.class));
         dependency(Expose, project(Rbac.class));
+        dependency(Expose, project(RcWebcomponents.class));
         dependency(Expose, project(StyleTest.class));
         dependency(Expose, project(SysInfo.class));
         dependency(Expose, project(Vue.class));

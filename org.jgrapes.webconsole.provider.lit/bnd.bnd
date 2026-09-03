@@ -1,0 +1,12 @@
+Bundle-Name: JGrapes Web Console Lit Provider
+Bundle-Copyright: Michael N. Lipp (c) 2026
+Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
+Export-Package: org.jgrapes.webconsole.provider.lit
+
+Require-Capability: \
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+
+Provide-Capability: osgi.serviceloader; \
+    osgi.serviceloader=org.jgrapes.webconsole.base.PageResourceProviderFactory; \
+        uses:="org.jgrapes.webconsole.base,org.jgrapes.core", \
+    org.jgrapes.webconsole.page.resource;name:List<String>="lit"
