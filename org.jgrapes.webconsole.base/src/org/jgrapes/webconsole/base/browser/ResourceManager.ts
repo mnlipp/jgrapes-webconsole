@@ -88,6 +88,7 @@ class ResourceManager {
             return;
         }
         if (!scriptResource.uri) {
+            _this._scriptResourceLoaded(scriptResource);
             return;
         }
         // Asynchronous loading.
