@@ -137,6 +137,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
                     .id("codeberg")
         });
 
+        dependency(Expose, project(AashLitComponents.class));
         dependency(Expose, project(AashVueComponents.class));
         dependency(Expose, project(Base.class));
         dependency(Expose, project(Bootstrap4.class));
