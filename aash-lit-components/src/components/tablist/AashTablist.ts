@@ -83,6 +83,10 @@ export class AashTablist extends LitElement {
   public addPanel(panel: Panel): void {
     this.panelList = [...this.panelList, panel];
     this.setupTabpanel(panel);
+    if (this.panelList.length === 1) {
+      // First panel, select it.
+      this.selectPanel(this.panelList[0].id);
+    }
   }
 
   public removePanel(panelId: string): void {
@@ -222,7 +226,7 @@ export class AashTablist extends LitElement {
         @keydown=${this.onKeydown} @keyup=${this.onKeyup}>
         ${this.panelList.map(panel => html`
           <span id="${panel.id}-tab" role="tab"
-            .aria-selected=${panel.id === this.selected ? 'true' : 'false'}
+            aria-selected=${panel.id === this.selected ? 'true' : 'false'}
             aria-controls="${panel.id}">
             <button type="button"
               tabindex="${panel.id === this.selected ? 0 : -1}"

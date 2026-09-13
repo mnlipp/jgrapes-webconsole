@@ -45,6 +45,7 @@ import jdbld.console.Base;
 import jdbld.console.Bootstrap4Console;
 import jdbld.console.JqueryUiConsole;
 import jdbld.console.VueJsConsole;
+import jdbld.provider.AashLit;
 import jdbld.provider.Bootstrap4;
 import jdbld.provider.ChartJs;
 import jdbld.provider.Datatables;
@@ -137,6 +138,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
                     .id("codeberg")
         });
 
+        dependency(Expose, project(AashLit.class));
         dependency(Expose, project(AashLitComponents.class));
         dependency(Expose, project(AashVueComponents.class));
         dependency(Expose, project(Base.class));
