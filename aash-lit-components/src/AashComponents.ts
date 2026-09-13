@@ -4,9 +4,7 @@
  * @module AashComponents
  */
 
-import * as AashTablist from './components/tablist/AashTablist';
-
 /* Importing triggers customElements.define() registration. */
 import './components/tablist/AashTablist';
 
-export { AashTablist };
+export { AashTablist } from './components/tablist/AashTablist';
