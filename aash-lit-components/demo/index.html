@@ -49,48 +49,96 @@
       <button id="addBtn">Add Panel</button>
       <button id="removeBtn">Remove Selected</button>
     </p>
-  </main>
 
-  <script type="module">
-    import '../lib/aash-lit-components.js';
+    <script type="module">
+      import '../lib/aash-lit-components.js';
 
-    const tablist = document.getElementById('demoTabs');
+      const tablist = document.getElementById('demoTabs');
 
-    tablist.addPanel({ id: 'panel-1', label: 'Tab 1' });
-    tablist.addPanel({ id: 'panel-2', label: 'Tab 2' });
-    tablist.addPanel({ id: 'panel-3', label: 'Tab 3' });
+      tablist.addPanel({ id: 'panel-1', label: 'Tab 1' });
+      tablist.addPanel({ id: 'panel-2', label: 'Tab 2' });
+      tablist.addPanel({ id: 'panel-3', label: 'Tab 3' });
 
-    let panelCounter = 4;
+      let panelCounter = 4;
 
-    document.getElementById('addBtn').addEventListener('click', () => {
-      const id = 'panel-' + panelCounter++;
-      const div = document.createElement('div');
-      div.id = id;
-      div.setAttribute('role', 'tabpanel');
-      div.innerHTML = '<h2>Panel ' + (panelCounter - 1) + '</h2><p>Dynamically added panel.</p>';
-      div.setAttribute('hidden', '');
-      tablist.after(div);
-      tablist.addPanel({
-        id: id,
-        label: 'Tab ' + (panelCounter - 1),
-        removeCallback: () => {
-          tablist.removePanel(id);
-          let el = document.getElementById(id);
-          if (el) el.remove();
+      document.getElementById('addBtn').addEventListener('click', () => {
+        const id = 'panel-' + panelCounter++;
+        const div = document.createElement('div');
+        div.id = id;
+        div.setAttribute('role', 'tabpanel');
+        div.innerHTML = '<h2>Panel ' + (panelCounter - 1) + '</h2><p>Dynamically added panel.</p>';
+        div.setAttribute('hidden', '');
+        tablist.after(div);
+        tablist.addPanel({
+          id: id,
+          label: 'Tab ' + (panelCounter - 1),
+          removeCallback: () => {
+            tablist.removePanel(id);
+            let el = document.getElementById(id);
+            if (el) el.remove();
+          }
+        });
+      });
+
+      document.getElementById('removeBtn').addEventListener('click', () => {
+        const panels = tablist.panels();
+        const tab = document.querySelector('.aash-tablist [aria-selected="true"]');
+        if (!tab) return;
+        const selectedId = tab.getAttribute('aria-controls');
+        const selected = panels.find(p => p.id === selectedId);
+        if (selected && selected.removeCallback) {
+          selected.removeCallback();
         }
       });
-    });
+    </script>
+    
+    <h1>AashModalDialog Demo</h1>
 
-    document.getElementById('removeBtn').addEventListener('click', () => {
-      const panels = tablist.panels();
-      const tab = document.querySelector('.aash-tablist [aria-selected="true"]');
-      if (!tab) return;
-      const selectedId = tab.getAttribute('aria-controls');
-      const selected = panels.find(p => p.id === selectedId);
-      if (selected && selected.removeCallback) {
-        selected.removeCallback();
-      }
-    });
-  </script>
+    <p>
+      <button id="openDialog">Open Dialog</button>
+    </p>
+    <aash-modal-dialog id="sampleDialog"
+        dialog-title="Sample Dialog"
+        show-cancel
+        apply-label="Apply">
+      <i>Sample dialog content</i>
+    </aash-modal-dialog>
+
+    <p>
+      <button id="openDialogSubmit">Open Dialog (Submit)</button>
+    </p>
+    <aash-modal-dialog id="sampleDialogSubmit"
+        dialog-title="Sample Dialog (Submit)"
+        show-cancel
+        submit-form="toBeSubmitted">
+      <form id="toBeSubmitted">
+        <input type="text" name="user">
+        <input type="password" name="password">
+      </form>
+    </aash-modal-dialog>
+    
+    <script type="module">
+      const sampleDialog = document.getElementById('sampleDialog');
+      sampleDialog.onAction = (confirmed, close) => {
+        window.alert(confirmed + ' ' + close);
+      };
+
+      const sampleDialogSubmit = document.getElementById('sampleDialogSubmit');
+      sampleDialogSubmit.onAction = (confirmed, close) => {
+        window.alert(confirmed + ' ' + close);
+      };
+
+      document.getElementById('openDialog').addEventListener('click', () => {
+        sampleDialog.open();
+      });
+
+      document.getElementById('openDialogSubmit').addEventListener('click', () => {
+        sampleDialogSubmit.open();
+      });
+    </script>
+
+    
+  </main>
+
 </body>
 </html>
