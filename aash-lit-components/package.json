@@ -15,7 +15,7 @@
   "scripts": {
     "build": "rollup -c",
     "build:doc": "typedoc",
-    "demo": "browser-sync start --config bs-config.js"
+    "demo": "browser-sync start --config bs-config.cjs"
   },
   "files": [
     "/src",
