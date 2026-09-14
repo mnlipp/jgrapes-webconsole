@@ -5,10 +5,10 @@ import postcss from 'rollup-plugin-postcss'
 let module = "build/generated/resources/js/org/jgrapes/webconsole/provider/aashlit/aash-lit/aash-lit-components.js"
 
 export default {
-  external: ["lit", /lit\/.*/, 
-    "lit-element", /lit-element\/.*/, 
-    "lit-html", /lit-html\/.*/,
-    "@lit/reactive-element", /@lit\/reactive-element\/.*/ ],
+  external: ["lit", /^lit\/.*/, 
+    "lit-element", /^lit-element\/.*/, 
+    "lit-html", /^lit-html\/.*/,
+    "@lit/reactive-element", /^@lit\/reactive-element\/.*/ ],
   input: "../aash-lit-components/lib/aash-lit-components.js",
   output: [
     {
