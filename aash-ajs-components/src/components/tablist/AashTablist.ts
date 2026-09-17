@@ -3,6 +3,7 @@
  * @module AashTablist
  */
 import Alpine from 'alpinejs';
+import { AashComponent, Attribute, functionConverter } from '../../AashUtil';
 
 /**
  * The information about a panel managed by the tablist.
@@ -61,6 +62,7 @@ interface TablistData {
  *
  * @class AashTablist
  */
+@AashComponent()
 export class AashTablist extends HTMLElement {
 
     /** @internal Reactive state managed by AlpineJS */
@@ -247,6 +249,7 @@ export class AashTablist extends HTMLElement {
      * Sets the localization function to apply to panel labels
      * before rendering.
      */
+    @Attribute('l10n', functionConverter)
     set l10n(value: ((key: string) => string) | null) {
         this.ajsData.l10n = value;
     }
