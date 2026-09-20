@@ -6,28 +6,18 @@ import Alpine from 'alpinejs';
 import {
   AashComponent,
   Attribute,
-  functionConverter
+  functionConverter,
+  aashId
 } from '../../AashUtil';
-
-/**
- * A single menu item consisting of a label and an opaque value.
- * The label is either a string or a function returning a string.
- */
-export type MenuItem = [string | (() => string), any];
 
 /**
  * @internal AlpineJS data definition for the dropdown-menu component.
  */
 interface DropdownMenuData {
   expanded: boolean;
-  label: string;
-  items: Array<[string, MenuItem]>;
-  l10n: ((key: string) => string) | null;
-  action: ((item: MenuItem) => void) | null;
   toggle: (event: MouseEvent) => void;
-  chooseItem: (item: MenuItem) => void;
+  chooseItem: (value: string) => void;
   close: () => void;
-  labelItem: (item: [string, MenuItem]) => string;
 }
 
 /**
@@ -38,18 +28,17 @@ interface DropdownMenuData {
  *
  * Example:
  * ```html
- * <aash-dropdown-menu id="language-selector"
- *     label="Language"></aash-dropdown-menu>
- * <script>
- *   const menu = document.getElementById('language-selector');
- *   menu.items = [
- *     ['English', 'English chosen'],
- *     ['German', 'German chosen']
- *   ];
- *   menu.action = function(item) {
- *     window.alert(item[1]);
- *   };
- * </script>
+ * <aash-dropdown-menu id="language-selector">
+ *   <template provides="label">
+ *     <span>Language</span>
+ *   </template>
+ *   <template provides="item" with-value="en">
+ *     <span>English</span>
+ *   </template>
+ *   <template provides="item" with-value="de">
+ *     <span>German</span>
+ *   </template>
+ * </aash-dropdown-menu>
  * ```
  *
  * @class AashDropdownMenu
@@ -62,7 +51,13 @@ export class AashDropdownMenu extends HTMLElement {
   /** @internal Global click handler for click-outside detection */
   private globalClickHandler:
     | ((event: MouseEvent) => void) | null = null;
+  private onSelected: ((value: string) => void) | null = null;
   private lastEvent: MouseEvent | null = null;
+  private insertedElements: Set<Element> = new Set();
+  private labelTarget = aashId();
+  private contentObserver = new MutationObserver(() => {
+      this.updateContent();
+  });
 
   constructor() {
     super();
@@ -77,10 +72,6 @@ export class AashDropdownMenu extends HTMLElement {
 
     return {
       expanded: false,
-      label: '',
-      items: [] as Array<[string, MenuItem]>,
-      action: null,
-      l10n: null,
 
       toggle(event: MouseEvent) {
         this.expanded = !this.expanded;
@@ -100,9 +91,9 @@ export class AashDropdownMenu extends HTMLElement {
         }
       },
 
-      chooseItem(item: MenuItem) {
-        if (this.action) {
-          this.action(item);
+      chooseItem(value: string) {
+        if (element.onSelected) {
+          element.onSelected(value);
         }
         this.close();
       },
@@ -110,10 +101,6 @@ export class AashDropdownMenu extends HTMLElement {
       close() {
         this.expanded = false;
         element.removeGlobalClickHandler();
-      },
-
-      labelItem(item: [string, MenuItem]): string {
-        return item[0];
       }
     };
   }
@@ -130,85 +117,68 @@ export class AashDropdownMenu extends HTMLElement {
   protected connectedCallback() {
     Alpine.addScopeToNode(this,
       this.ajsData as unknown as Record<string, unknown>);
-    this.render();
-    Alpine.initTree(this);
-  }
-
-  /** @internal Renders dropdown as HTML with Alpine directives. */
-  protected render() {
     const menuId = this.id + '-menu';
-    this.innerHTML =
+    const shown = this.ownerDocument.createRange().createContextualFragment(
       `<div class="dropdown-menu aash-dropdown-menu" x-cloak>
-        <button type="button" aria-haspopup="menu"
+        <button id="${this.labelTarget}" type="button" aria-haspopup="menu"
             x-bind:aria-controls="'${menuId}'"
             x-bind:aria-expanded="expanded
                 ? 'true' : 'false'" @click="toggle">
-            <span x-html="label"></span>
         </button>
-        <ul x-bind:id="'${menuId}'" role="menu">
-            <template x-for="item of items">
-                <li role="none">
-                    <button type="button" role="menuitem"
-                        @click="chooseItem(item[1])"
-                        x-text="labelItem(item)">
-                    </button>
-                </li>
-            </template>
+        <ul id="${menuId}" role="menu">
         </ul>
-    </div>`;
+      </div>`);
+    this.prepend(shown);
+    Alpine.initTree(this);
+    this.updateContent();
   }
 
-  /**
-   * The menu items as an array of MenuItem tuples.
-   * Each item is `[label | () => label, value]`.
-   * Items are sorted alphabetically by (translated) label.
-   */
-  set items(value: MenuItem[]) {
-    const l10n = this.ajsData.l10n;
-
-    const translate = (raw: string | (() => string)): string => {
-      const resolved = typeof raw === 'function' ? raw() : raw;
-      if (l10n) {
-        return l10n(resolved);
+  private updateContent() {
+    this.contentObserver.disconnect();
+    this.insertedElements.forEach(el => el.remove());
+    const button = this.querySelector(':scope button[aria-haspopup="menu"]')!;
+    const label = this.querySelector(':scope > [provides="label"]');
+    if (label) {
+      button.textContent = '';
+      label.setAttribute("x-teleport", "#" + this.labelTarget);
+    }
+    const ul = this.querySelector('ul[role="menu"]')!;
+    const items = this.querySelectorAll(':scope > [provides="item"]');
+    items.forEach(item => {
+      const itemTarget = aashId();
+      const itemDom = this.ownerDocument.createRange().createContextualFragment(
+        `<li role="none">
+           <button id="${itemTarget}" type="button" role="menuitem">
+           </button>
+         </li>`);
+      if (item.getAttribute('with-value')) {
+        itemDom.querySelector('button')!.setAttribute('@click',
+          `chooseItem(${JSON.stringify(item.getAttribute('with-value')!)})`);
       }
-      return resolved;
-    };
-
-    this.ajsData.items = value.map(item => [
-      translate(item[0]), item
-    ]);
-    this.ajsData.items.sort(
-      (a, b) => a[0].localeCompare(b[0]));
+      Array.prototype.slice.call(itemDom.children)
+          .forEach(el => this.insertedElements.add(el as Element));
+      ul.appendChild(itemDom);
+      item.setAttribute("x-teleport", "#" + itemTarget);
+    });
+    this.contentObserver.observe(this, {
+      childList: true,
+      subtree: false,
+      attributes: false,
+      characterData: false,
+    });
   }
-
-  /**
-   * The text of the button that opens the menu.
-   */
-  @Attribute('label')
-  set label(value: string) {
-    this.ajsData.label = value;
+  
+  disconnectedCallback() {
+    this.removeGlobalClickHandler();
   }
 
   /**
    * The action callback invoked when a menu item is chosen.
-   * Receives the chosen MenuItem as argument.
+   * Receives the value attribute as argument.
    */
   @Attribute('action', functionConverter)
-  set action(value: ((item: MenuItem) => void) | null) {
-    this.ajsData.action = value;
-  }
-
-  /**
-   * Sets the localization function applied to menu item labels
-   * before rendering.
-   */
-  @Attribute('l10n', functionConverter)
-  set l10n(value: ((key: string) => string) | null) {
-    this.ajsData.l10n = value;
-  }
-
-  disconnectedCallback() {
-    this.removeGlobalClickHandler();
+  set action(value: ((value: string) => void) | null) {
+    this.onSelected = value;
   }
 }
 
