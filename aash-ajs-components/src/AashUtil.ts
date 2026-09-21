@@ -1,3 +1,5 @@
+import Alpine from 'alpinejs';
+
 /**
  * Converter interface for attribute-to-property round-trip conversion.
  */
@@ -102,6 +104,12 @@ export const booleanConverter: Converter<boolean> = {
   }
 };
 
+var _idCounter = 0;
+
+function aashId() {
+  return "aash-" + (_idCounter++).toString();
+};
+
 /* ------------------------------------------------------------------ */
 /* Decorator infrastructure – WeakMap-based (no reflect-metadata)     */
 /* ------------------------------------------------------------------ */
@@ -121,6 +129,14 @@ const _attrStore = new WeakMap<object, AttrDescriptor[]>();
 
 /** @internal Stores attribute descriptors per class (constructor) */
 const _classAttrs = new WeakMap<object, AttrDescriptor[]>();
+
+/** @internal Stores renderer method key per prototype */
+const _rendererStore = new WeakMap<object, string>();
+
+/** @internal Retrieves renderer method key for a class */
+function getRendererKey(cls: object): string | undefined {
+  return _rendererStore.get(cls);
+}
 
 /** @internal Retrieves attribute descriptors for a prototype */
 function getAttrs(proto: object): AttrDescriptor[] {
@@ -172,6 +188,34 @@ export function Attribute(
     const existing: AttrDescriptor[] = getAttrs(target);
     existing.push(entry);
     setAttrs(target, existing);
+    return descriptor;
+  };
+}
+
+/**
+ * Method decorator: marks a method as the component's renderer.
+ *
+ * The `aash-component` Alpine directive looks up the decorated method
+ * via the class's prototype and invokes it. This replaces the previous
+ * convention of hard-coding the method name "render".
+ *
+ * Example:
+ * ```ts
+ * class MyElement extends HTMLElement {
+ *   @Renderer()
+ *   protected renderComponent() {
+ *     this.innerHTML = `<span>...</span>`;
+ *   }
+ * }
+ * ```
+ */
+export function Renderer(): MethodDecorator {
+  return (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor
+  ) => {
+    _rendererStore.set(target, String(propertyKey));
     return descriptor;
   };
 }
@@ -251,10 +295,27 @@ export function AashComponent(): ClassDecorator {
       if (userConnCb) {
         userConnCb.call(this);
       }
+      if (!this.hasAttribute("x-data")) {
+        this.setAttribute("x-data", "");
+      }
+      if (!this.hasAttribute("x-aash-component")) {
+        this.setAttribute("x-aash-component", "");
+      }
     };
 
     return cls;
   };
 }
 
-export { functionConverter };
+Alpine.directive('aash-component',
+  (el, { value, modifiers, expression }, { Alpine, effect, cleanup }) => {
+  const key = getRendererKey(Object.getPrototypeOf(el));
+  if (key) {
+    const render = (el as any)[key];
+    if (render && typeof render === "function") {
+      render.call(el);
+    }
+  }
+});
+
+export { functionConverter, aashId };

@@ -6,6 +6,7 @@ import Alpine from 'alpinejs';
 import {
   AashComponent,
   Attribute,
+  Renderer,
   functionConverter,
   aashId
 } from '../../AashUtil';
@@ -56,7 +57,7 @@ export class AashDropdownMenu extends HTMLElement {
   private insertedElements: Set<Element> = new Set();
   private labelTarget = aashId();
   private contentObserver = new MutationObserver(() => {
-      this.updateContent();
+      Alpine.nextTick(() => this.updateContent());
   });
 
   constructor() {
@@ -114,7 +115,8 @@ export class AashDropdownMenu extends HTMLElement {
     }
   }
 
-  protected connectedCallback() {
+  @Renderer()
+  protected render() {
     Alpine.addScopeToNode(this,
       this.ajsData as unknown as Record<string, unknown>);
     const menuId = this.id + '-menu';
@@ -129,7 +131,6 @@ export class AashDropdownMenu extends HTMLElement {
         </ul>
       </div>`);
     this.prepend(shown);
-    Alpine.initTree(this);
     this.updateContent();
   }
 
