@@ -26,7 +26,7 @@
     "url": "https://github.com/mnlipp/jgrapes-webconsole"
   },
   "dependencies": {
-    "alpinejs":"^3.17.3"
+    "alpinejs":"^3.17.4"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.0",
