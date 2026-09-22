@@ -7,7 +7,7 @@ import {
   AashComponent,
   Attribute,
   Renderer,
-  functionConverter,
+  expressionConverter,
   aashId
 } from '../../AashUtil';
 
@@ -62,16 +62,8 @@ export class AashDropdownMenu extends HTMLElement {
 
   constructor() {
     super();
-    this.ajsData = Alpine.reactive(this.dropdownMenuAlpineData());
-  }
-
-  /**
-   * @internal AlpineJS data definition for the dropdown-menu component.
-   */
-  protected dropdownMenuAlpineData(): DropdownMenuData {
     const element = this;
-
-    return {
+    this.ajsData = Alpine.reactive({
       expanded: false,
 
       toggle(event: MouseEvent) {
@@ -103,7 +95,7 @@ export class AashDropdownMenu extends HTMLElement {
         this.expanded = false;
         element.removeGlobalClickHandler();
       }
-    };
+    } satisfies DropdownMenuData);
   }
 
   /** @internal Removes the global click handler */
@@ -177,7 +169,7 @@ export class AashDropdownMenu extends HTMLElement {
    * The action callback invoked when a menu item is chosen.
    * Receives the value attribute as argument.
    */
-  @Attribute('action', functionConverter)
+  @Attribute('action', expressionConverter)
   set action(value: ((value: string) => void) | null) {
     this.onSelected = value;
   }
