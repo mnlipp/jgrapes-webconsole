@@ -1,0 +1,5 @@
+{
+    "scripts": {
+          "build": "rollup -c"
+        },
+    "devDependencies":{"alpinejs":"^3.17.4"}}
