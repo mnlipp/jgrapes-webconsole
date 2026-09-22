@@ -4,5 +4,6 @@
   "exclude": ["index.js"],
   "out": "../build/aash-components-docs",
   "categorizeByGroup": true,
-  "categoryOrder": ["Alpine JS Component", "*"]
+  "categoryOrder": ["Alpine JS Component", "*"],
+  "projectDocuments": ["Overview.md", "WebComponents.md"]
 }
