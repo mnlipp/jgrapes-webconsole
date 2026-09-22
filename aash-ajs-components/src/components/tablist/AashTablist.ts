@@ -3,7 +3,8 @@
  * @module AashTablist
  */
 import Alpine from 'alpinejs';
-import { AashComponent, Attribute, functionConverter } from '../../AashUtil';
+import { AashComponent, Attribute, Renderer, 
+    expressionConverter } from '../../AashUtil';
 
 /**
  * The information about a panel managed by the tablist.
@@ -70,16 +71,8 @@ export class AashTablist extends HTMLElement {
 
     constructor() {
         super();
-        this.ajsData = Alpine.reactive(this.tablistAlpineData());
-    }
-
-    /**
-     * @internal AlpineJS data definition for the tablist component.
-     */
-    protected tablistAlpineData(): TablistData {
         const element = this;
-
-        return {
+        this.ajsData = Alpine.reactive({
             panels: [] as Panel[],
             selected: null,
             l10n: null as ((key: string) => string) | null,
@@ -175,7 +168,7 @@ export class AashTablist extends HTMLElement {
                     (tab as HTMLElement)?.focus();
                 }
             }
-        };
+        } satisfies TablistData);
     }
 
     /**
@@ -208,19 +201,12 @@ export class AashTablist extends HTMLElement {
         return tabpanel;
     }
     
-    protected connectedCallback() {
-        // Required because defining
-        // "interface TablistData extends Record<string, unknown>"
-        // instead would accept access with arbitrary keys 
-        Alpine.addScopeToNode(this,
-            this.ajsData as unknown as Record<string, unknown>);
-        this.render();
-        Alpine.initTree(this);
-        this.setupTabpanels();
-    }
-
     /** @internal Renders tab strip as HTML with Alpine directives. */
+    @Renderer()
     protected render() {
+        Alpine.addScopeToNode(this,
+          this.ajsData as unknown as Record<string, unknown>);
+        this.setupTabpanels();
         this.innerHTML =
             `<div class="aash-tablist" role="tablist"
                 x-bind:aria-orientation="isVertical ? 'vertical' : 'horizontal'"
@@ -249,7 +235,7 @@ export class AashTablist extends HTMLElement {
      * Sets the localization function to apply to panel labels
      * before rendering.
      */
-    @Attribute('l10n', functionConverter)
+    @Attribute('l10n', expressionConverter)
     set l10n(value: ((key: string) => string) | null) {
         this.ajsData.l10n = value;
     }
