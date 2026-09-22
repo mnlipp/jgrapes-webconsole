@@ -1,8 +1,0 @@
-{
-  "name": "Components for AaSH (ARIA augmented Semantic HTML)",
-  "entryPoints": ["./src/AashComponents.ts"],
-  "exclude": ["index.js"],
-  "out": "../build/aash-components-docs",
-  "categorizeByGroup": true,
-  "categoryOrder": ["Lit Component", "*"]
-}
