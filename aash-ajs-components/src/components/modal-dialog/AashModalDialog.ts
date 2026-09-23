@@ -1,0 +1,285 @@
+/**
+ * Provides modal-dialog element.
+ * @module AashModalDialog
+ */
+import Alpine from 'alpinejs';
+import {
+  AashComponent,
+  Attribute,
+  Renderer,
+  expressionConverter,
+  aashId
+} from '../../AashUtil';
+
+/**
+ * @internal AlpineJS data definition for the modal-dialog component.
+ */
+interface ModalDialogData {
+  hasCancelButton: boolean;
+  hasApplyButton: boolean;
+  hasOkayButton: boolean;
+  submitForm: string | null;
+  cancel: () => void;
+  apply: () => void;
+  close: () => void;
+}
+
+/**
+ * Generates a modal dialog with all required ARIA attributes.
+ *
+ * The DOM is generated as shown in the
+ * [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.1/examples/dialog-modal/)
+ *
+ * Content is provided via <template provides="..."> children:
+ *
+ * ```html
+ * <aash-modal-dialog id="sampleDialog"
+ *     action="dialogAction(apply, close)">
+ *   <template provides="dialog-title">
+ *     <p>Sample Dialog</p>
+ *   </template>
+ *   <template provides="content">
+ *     <i>Sample dialog content</i>
+ *   </template>
+ *   <template provides="cancel-label">
+ *     <span>×</span>
+ *   </template>
+ *   <template provides="apply-label">
+ *     <span>Apply</span>
+ *   </template>
+ *   <template provides="okay-label">
+ *     <span>Close</span>
+ *   </template>
+ * </aash-modal-dialog>
+ * ```
+ * 
+ * The rendered dialog template is:
+ * 
+ * ```html
+ * <dialog>
+ *   <header>
+ *     <p>Title content</p>
+ *     <button>
+ *       Cancel button content
+ *     </button>
+ *   </header>
+ *   <section>
+ *     Dialog content
+ *   </section>
+ *   <footer>
+ *     <button>
+ *       Apply button content
+ *     </button>
+ *     <button>
+ *       Okay button content
+ *     </button>
+ *   </footer>
+ * </dialog>
+ * ```
+ *
+ * @class AashModalDialog
+ */
+@AashComponent()
+export class AashModalDialog extends HTMLElement {
+
+  /** @internal Reactive state managed by AlpineJS */
+  private readonly ajsData: ModalDialogData;
+  /** @internal Action callback */
+  private actionCallback:
+    ((apply: boolean, close: boolean) => void) | null = null;
+
+  /**
+   * Callback invoked when an action button is pressed.
+   * For programmatic usage. For template usage, use the action attribute.
+   * @param apply true if the apply button was pressed
+   * @param close true if the close/okay button was pressed
+   */
+  set onAction(value: ((apply: boolean, close: boolean) => void) | null) {
+    this.actionCallback = value;
+  }
+
+  /** @internal Teleport target for title area */
+  private titleTarget = aashId();
+  /** @internal Teleport target for cancel button label */
+  private cancelLabelTarget = aashId();
+  /** @internal Teleport target for apply button label */
+  private applyLabelTarget = aashId();
+  /** @internal Teleport target for okay button label */
+  private okayLabelTarget = aashId();
+  /** @internal Teleport target for content area */
+  private contentTarget = aashId();
+  /** @internal Tracked inserted elements for cleanup */
+  private insertedElements: Set<Element> = new Set();
+  /** @internal Observer for template children changes */
+  private contentObserver = new MutationObserver(() => {
+      Alpine.nextTick(() => this.updateContent());
+  });
+
+  constructor() {
+    super();
+    const element = this;
+    this.ajsData = Alpine.reactive({
+      hasCancelButton: false,
+      hasApplyButton: false,
+      hasOkayButton: true,
+      submitForm: null,
+
+      cancel() {
+        if (element.actionCallback) {
+          element.actionCallback(false, false);
+        }
+        element.dialogElement().close();
+        element.ownerDocument.querySelector('html')!.removeAttribute('inert');
+      },
+
+      apply() {
+        if (element.actionCallback) {
+          element.actionCallback(true, false);
+        }
+      },
+
+      close() {
+        element.close();
+      }
+    } satisfies ModalDialogData);
+  }
+
+  /** @internal Returns the native dialog element */
+  private dialogElement(): HTMLDialogElement {
+    return <HTMLDialogElement>this.querySelector('dialog');
+  }
+
+  /** @internal Renders dialog structure and teleports content. */
+  @Renderer()
+  protected render() {
+    Alpine.addScopeToNode(this,
+      this.ajsData as unknown as Record<string, unknown>);
+    const dialogId = this.id || `aash-modal-dialog`;
+    const labelId = dialogId + '-label';
+    const shown = this.ownerDocument.createRange().createContextualFragment(
+      `<dialog aria-labelledby="${labelId}" x-cloak>
+        <header id="${labelId}">
+          <p id="${this.titleTarget}"></p>
+          <button x-show="hasCancelButton" type="button"
+              id="${this.cancelLabelTarget}" @click="cancel()">
+          </button>
+        </header>
+        <section id="${this.contentTarget}">
+        </section>
+        <footer x-show="hasApplyButton || hasOkayButton">
+          <button id="${this.applyLabelTarget}"
+              x-show="hasApplyButton"
+              x-bind:form="submitForm"
+              x-bind:type="submitForm ? 'submit' : 'button'"
+              @click="apply()">
+          </button>
+          <button id="${this.okayLabelTarget}"
+              x-show="hasOkayButton"
+              x-bind:form="submitForm"
+              x-bind:type="submitForm ? 'submit' : 'button'"
+              @click="close()">
+          </button>
+        </footer>
+      </dialog>`);
+    this.prepend(shown);
+    this.updateContent();
+  }
+
+  /** @internal Teleports template content into structural targets. */
+  private updateContent() {
+    this.contentObserver.disconnect();
+    this.insertedElements.forEach(el => el.remove());
+    const titleSpan = this.querySelector(`#${this.titleTarget}`)!;
+    const titleTemplate = this.querySelector(':scope > [provides="dialog-title"]');
+    if (titleTemplate) {
+      titleSpan.textContent = '';
+      titleTemplate.setAttribute("x-teleport", "#" + this.titleTarget);
+    }
+    const cancelButton = this.querySelector(`#${this.cancelLabelTarget}`)!;
+    const cancelLabelTemplate = this.querySelector(':scope > [provides="cancel-label"]');
+    if (cancelLabelTemplate) {
+      this.ajsData.hasCancelButton = true;
+      cancelLabelTemplate.setAttribute("x-teleport", "#" + this.cancelLabelTarget);
+    } else {
+      this.ajsData.hasCancelButton = false;
+    }
+    const applyButton = this.querySelector(`#${this.applyLabelTarget}`)!;
+    const applyLabelTemplate = this.querySelector(':scope > [provides="apply-label"]');
+    if (applyLabelTemplate) {
+      this.ajsData.hasApplyButton = true;
+      applyLabelTemplate.setAttribute("x-teleport", "#" + this.applyLabelTarget);
+    } else {
+      this.ajsData.hasApplyButton = false;
+    }
+    const okayButton = this.querySelector(`#${this.okayLabelTarget}`)!;
+    const okayLabelTemplate = this.querySelector(':scope > [provides="okay-label"]');
+    if (okayLabelTemplate) {
+      this.ajsData.hasOkayButton = true;
+      okayLabelTemplate.setAttribute("x-teleport", "#" + this.okayLabelTarget);
+    } else {
+      this.ajsData.hasOkayButton = true;
+      okayButton.textContent = 'OK';
+    }
+    const contentSpan = this.querySelector(`#${this.contentTarget}`)!;
+    const contentTemplate = this.querySelector(':scope > [provides="content"]');
+    if (contentTemplate) {
+      contentSpan.textContent = '';
+      contentTemplate.setAttribute("x-teleport", "#" + this.contentTarget);
+    }
+    this.contentObserver.observe(this, {
+      childList: true,
+      subtree: false,
+      attributes: false,
+      characterData: false,
+    });
+  }
+
+  disconnectedCallback() {
+    this.contentObserver.disconnect();
+  }
+
+  /**
+   * Opens the dialog.
+   */
+  open(): void {
+    this.ownerDocument.querySelector('html')!.setAttribute('inert', '');
+    this.dialogElement().showModal();
+  }
+
+  /**
+   * Closes the dialog (confirm action).
+   */
+  close(): void {
+    if (this.actionCallback) {
+      this.actionCallback(true, true);
+    }
+    this.dialogElement().close();
+    this.ownerDocument.querySelector('html')!.removeAttribute('inert');
+  }
+
+  /**
+   * Cancels the dialog.
+   */
+  cancel(): void {
+    this.ajsData.cancel();
+  }
+
+  /**
+   * ID of a form to associate with action buttons.
+   */
+  @Attribute('submit-form')
+  set submitForm(value: string | null) {
+    this.ajsData.submitForm = value;
+  }
+
+  /**
+   * The action callback invoked when an action button is pressed.
+   * Receives (apply: boolean, close: boolean) as arguments.
+   */
+  @Attribute('action', expressionConverter)
+  set action(value: ((apply: boolean, close: boolean) => void) | null) {
+    this.actionCallback = value;
+  }
+}
+
+customElements.define('aash-modal-dialog', AashModalDialog);
