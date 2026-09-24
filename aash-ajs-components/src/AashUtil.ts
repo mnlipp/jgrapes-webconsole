@@ -5,34 +5,10 @@ import Alpine from 'alpinejs';
  */
 export interface Converter<T> {
   /** Converts attribute string value (or null) to property value */
-  fromAttribute(value: string | null): T;
+  fromAttribute(value: string | null, el?: HTMLElement): T;
   /** Converts property value to attribute string (or null) */
   toAttribute(value: T): string | null;
 }
-
-/**
- * Converts from attribute string to function, using `new Function`.
- * Handles arrow functions, function expressions, and `function` keyword.
- * Returns null if value is null or conversion fails.
- */
-const functionConverter: Converter<((...args: any[]) => any) | null> = {
-  fromAttribute(value: string | null): ((...args: any[]) => any) | null {
-    if (!value) {
-      return null;
-    }
-
-    try {
-      return new Function(`return (${value})`)();
-    } catch (error) {
-      console.error('Failed to convert attribute to function:', value, error);
-      return null;
-    }
-  },
-
-  toAttribute(value: ((...args: any[]) => any) | null): string | null {
-    return value ? value.toString() : null;
-  }
-};
 
 /**
  * Default converter that auto-detects type from the attribute value.
@@ -47,7 +23,7 @@ const functionConverter: Converter<((...args: any[]) => any) | null> = {
  * - otherwise → string
  *
  * For presence-based booleans, use `booleanConverter`.
- * For function-valued attributes, use `functionConverter`.
+ * For expression-valued attributes, use `expressionConverter`.
  */
 /** @internal Return type of the auto-detect converter */
 type AutoValue = string | boolean | number | object | any[];
@@ -104,9 +80,52 @@ export const booleanConverter: Converter<boolean> = {
   }
 };
 
+/**
+ * Converts from attribute string to function, using `new Function`.
+ * Handles arrow functions, function expressions, and `function` keyword.
+ * Returns null if value is null or conversion fails.
+ */
+export const functionConverter: Converter<((...args: any[]) => void) | null> = {
+  fromAttribute(value: string | null): ((...args: any[]) => void) | null {
+    if (!value) {
+      return null;
+    }
+    try {
+      return new Function(`return (${value})`)();
+    } catch (error) {
+      console.error('Failed to convert attribute to function:', value, error);
+      return null;
+    }
+  },
+
+  toAttribute(value: ((...args: any[]) => any) | null): string | null {
+    return value ? value.toString() : null;
+  }
+};
+
+/**
+ * Converts from attribute string to function, using Alpine's
+ * `evaluate`.
+ */
+export const expressionConverter: Converter<((...args: any[]) => void) | null> = {
+  fromAttribute(value: string | null, el: HTMLElement): ((...args: any[]) => void) | null {
+    if (!value) {
+      return null;
+    }
+    return (...args: any[]) => {
+      const wrapped = `(${value})(...${JSON.stringify(args)})`;
+      Alpine.evaluate(el, wrapped);
+    };
+  },
+
+  toAttribute(value: ((...args: any[]) => any) | null): string | null {
+    return value ? value.toString() : null;
+  }
+};
+
 var _idCounter = 0;
 
-function aashId() {
+export function aashId() {
   return "aash-" + (_idCounter++).toString();
 };
 
@@ -124,33 +143,26 @@ interface AttrDescriptor {
   propName: string;
 }
 
-/** @internal Stores attribute descriptors per prototype object */
-const _attrStore = new WeakMap<object, AttrDescriptor[]>();
-
-/** @internal Stores attribute descriptors per class (constructor) */
-const _classAttrs = new WeakMap<object, AttrDescriptor[]>();
-
-/** @internal Stores renderer method key per prototype */
-const _rendererStore = new WeakMap<object, string>();
-
-/** @internal Retrieves renderer method key for a class */
-function getRendererKey(cls: object): string | undefined {
-  return _rendererStore.get(cls);
+/** @internal All decorator metadata for a component prototype */
+interface ComponentMetadata {
+  attrs: AttrDescriptor[];
+  rendererKey: string | undefined;
 }
 
-/** @internal Retrieves attribute descriptors for a prototype */
-function getAttrs(proto: object): AttrDescriptor[] {
-  return _attrStore.get(proto) ?? [];
+/** @internal Single WeakMap: prototype → metadata */
+const _metadata = new WeakMap<object, ComponentMetadata>();
+
+/** @internal Gets or creates metadata for a prototype */
+function getMetadata(proto: object): ComponentMetadata {
+  return _metadata.get(proto) ?? {
+    attrs: [],
+    rendererKey: undefined,
+  };
 }
 
-/** @internal Retrieves attribute descriptors for a class */
-function getClassAttrs(cls: object): AttrDescriptor[] {
-  return _classAttrs.get(cls) ?? [];
-}
-
-/** @internal Stores attribute descriptors for a prototype */
-function setAttrs(proto: object, entries: AttrDescriptor[]): void {
-  _attrStore.set(proto, entries);
+/** @internal Ensures metadata is written back after mutation */
+function ensureMetadata(proto: object, meta: ComponentMetadata): void {
+  _metadata.set(proto, meta);
 }
 
 /**
@@ -166,7 +178,7 @@ function setAttrs(proto: object, entries: AttrDescriptor[]): void {
  * @Attribute('dialog-title')
  * set title(value: string) { this.ajsData.title = value; }
  *
- * @Attribute('l10n', functionConverter)
+ * @Attribute('l10n', expressionConverter)
  * set l10n(value: ((k: string) => string) | null) { ... }
  * ```
  */
@@ -185,9 +197,9 @@ export function Attribute(
       converter,
       propName: String(propertyKey)
     };
-    const existing: AttrDescriptor[] = getAttrs(target);
-    existing.push(entry);
-    setAttrs(target, existing);
+    const meta = getMetadata(target);
+    meta.attrs.push(entry);
+    ensureMetadata(target, meta);
     return descriptor;
   };
 }
@@ -204,6 +216,8 @@ export function Attribute(
  * class MyElement extends HTMLElement {
  *   @Renderer()
  *   protected renderComponent() {
+ *     Alpine.addScopeToNode(this,
+ *       this.ajsData as unknown as Record<string, unknown>);
  *     this.innerHTML = `<span>...</span>`;
  *   }
  * }
@@ -215,7 +229,9 @@ export function Renderer(): MethodDecorator {
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor
   ) => {
-    _rendererStore.set(target, String(propertyKey));
+    const meta = getMetadata(target);
+    meta.rendererKey = String(propertyKey);
+    ensureMetadata(target, meta);
     return descriptor;
   };
 }
@@ -228,8 +244,9 @@ export function Renderer(): MethodDecorator {
  * generates `static get observedAttributes()` and
  * `attributeChangedCallback(name, oldVal, newVal)`.
  *
- * On `connectedCallback`, initializes attributes from the DOM before
- * the component's own `connectedCallback` body runs.
+ * On `connectedCallback`, sets the attributes `x-data` (if missing)
+ * and `x-aash-comoponent` after the component's own `connectedCallback`
+ * body runs (if provided).
  *
  * Assumes the decorated class extends HTMLElement directly
  * (no intermediate @AashComponent decorated classes).
@@ -246,25 +263,18 @@ export function Renderer(): MethodDecorator {
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function AashComponent(): ClassDecorator {
   return (cls: any) => {
-    /* Collect descriptors from this class's prototype. */
-    const descriptors: AttrDescriptor[] = getAttrs(cls.prototype);
-    setAttrs(cls.prototype, descriptors);
-
-    /* Store on class for runtime access via WeakMap. */
-    _classAttrs.set(cls, descriptors);
+    /* Capture user-defined callbacks before replacement. */
+    const userAttrCb = cls.prototype.attributeChangedCallback;
+    const userConnCb = cls.prototype.connectedCallback;
 
     /* Generate static get observedAttributes() */
     Object.defineProperty(cls, 'observedAttributes', {
       get(this: typeof HTMLElement): string[] {
-        const attrs: AttrDescriptor[] = getClassAttrs(this);
-        return attrs.map((a) => a.attrName);
+        const meta = getMetadata(this.prototype);
+        return meta.attrs.map((a) => a.attrName);
       },
       configurable: true
     });
-
-    /* Capture user-defined callbacks before replacement. */
-    const userAttrCb = cls.prototype.attributeChangedCallback;
-    const userConnCb = cls.prototype.connectedCallback;
 
     /* Generate attributeChangedCallback */
     cls.prototype.attributeChangedCallback = function (
@@ -276,22 +286,16 @@ export function AashComponent(): ClassDecorator {
       if (userAttrCb) {
         userAttrCb.call(this, name, _oldVal, newVal);
       }
-      const attrs: AttrDescriptor[] = getClassAttrs(this.constructor);
-      const match = attrs.find((a: AttrDescriptor) => a.attrName === name);
+      const meta = getMetadata(Object.getPrototypeOf(this));
+      const match = meta.attrs.find((a: AttrDescriptor) => a.attrName === name);
       if (match) {
-        const value = match.converter.fromAttribute(newVal);
+        const value = match.converter.fromAttribute(newVal, this);
         (this as any)[match.propName] = value;
       }
     };
 
     /* Generate connectedCallback */
     cls.prototype.connectedCallback = function (this: HTMLElement): void {
-      const attrs: AttrDescriptor[] = getClassAttrs(this.constructor);
-      for (const entry of attrs) {
-        const raw = this.getAttribute(entry.attrName);
-        const value = entry.converter.fromAttribute(raw);
-        (this as any)[entry.propName] = value;
-      }
       if (userConnCb) {
         userConnCb.call(this);
       }
@@ -308,14 +312,13 @@ export function AashComponent(): ClassDecorator {
 }
 
 Alpine.directive('aash-component',
-  (el, { value, modifiers, expression }, { Alpine, effect, cleanup }) => {
-  const key = getRendererKey(Object.getPrototypeOf(el));
-  if (key) {
-    const render = (el as any)[key];
+  (el, {}, { evaluate }) => {
+  const meta = getMetadata(Object.getPrototypeOf(el));
+  if (meta.rendererKey) {
+    const render = (el as any)[meta.rendererKey];
     if (render && typeof render === "function") {
-      render.call(el);
+      render.call(el, evaluate);
     }
   }
 });
 
-export { functionConverter, aashId };
