@@ -36,6 +36,10 @@ Command can be run for sub-projects only, e.g. `./jdbld aash-lit-components::bui
 
 - `npm install` runs at **root level** first (managed by jdbld's NpmExecutor,
   node v25.7.0).
+- **AlpineJS** does **not** use `{{ ... }}` mustache syntax — use
+  `x-text="..."` for text interpolation and `x-bind:...` / `:` for
+  attributes. Components in `aash-ajs-components` use Alpine directives
+  in `innerHTML` templates, not imperative DOM manipulation.
 - Modules with `rollup.config.mjs` compile TypeScript to JS
   via `npm run build` -> `rollup -c`.
 - Compiled output lands in `build/generated/resources/` and is packaged into
@@ -50,6 +54,7 @@ Flat monorepo — each module is a root-level directory:
 | `org.jgrapes.webconsole.*` | Console framework | `base`, `vuejs`, `lit` |
 | `org.jgrapes.webconsole.provider.*` | JS/CSS library providers | `jquery`, `chartjs`, `lit` |
 | `org.jgrapes.webconlet.*` | Conlets (web widgets) | `locallogin`, `oidclogin`, `sysinfo` |
+| `aash-ajs-components` | Shared AlpineJS component library (unpublished) | — |
 | `aash-vue-components` | Shared Vue component library (unpublished) | — |
 | `aash-lit-components` | Shared Lit component library (unpublished) | — |
 | `WebConsoleTest` | Merged test project (unpublished) | — |
@@ -73,6 +78,8 @@ rollup.config.mjs Rollup bundler config
 
 Some modules depend on sibling component libraries built first:
 
+- `aash-ajs-components` -> `org.jgrapes.webconsole.provider.aashalpinejs`
+  (provider consumes `lib/` output from aash-ajs-components)
 - `aash-lit-components` -> `org.jgrapes.webconsole.provider.aashlit`
   (provider consumes `lib/` output from aash-lit-components)
 - `aash-vue-components` -> `org.jgrapes.webconsole.provider.jgwcvuecomponents`
@@ -84,21 +91,24 @@ respect this order.
 
 ## TypeScript Modules
 
-Modules that compile TypeScript (16 total):
+Modules that compile TypeScript (19 total):
 
-- **Console**: `org.jgrapes.webconsole.base`, `org.jgrapes.webconsole.vuejs`,
-  `org.jgrapes.webconsole.lit`
-- **Providers**: `org.jgrapes.webconsole.provider.jgwcvuecomponents`,
-  `org.jgrapes.webconsole.provider.solidjs`,
+- **Console**: `org.jgrapes.webconsole.alpinejs`, `org.jgrapes.webconsole.base`,
+  `org.jgrapes.webconsole.vuejs`
+- **Providers**: `org.jgrapes.webconsole.provider.aashalpinejs` (repackages
+  aash-ajs-components), `org.jgrapes.webconsole.provider.aashlit` (repackages
+  aash-lit-components),
   `org.jgrapes.webconsole.provider.chartjs`,
+  `org.jgrapes.webconsole.provider.jgwcvuecomponents`,
   `org.jgrapes.webconsole.provider.lit` (repackages Lit npm dist),
   `org.jgrapes.webconsole.provider.rcwebcomponents` (repackages),
-  `org.jgrapes.webconsole.provider.aashlit` (repackages aash-lit-components)
+  `org.jgrapes.webconsole.provider.solidjs`
 - **Conlets**: `org.jgrapes.webconlet.locallogin`,
   `org.jgrapes.webconlet.oidclogin`, `org.jgrapes.webconlet.messagebox`,
   `org.jgrapes.webconlet.jmxbrowser`,
   `org.jgrapes.webconlet.examples.hellosolid`
-- **Libraries**: `aash-vue-components`, `aash-lit-components`
+- **Libraries**: `aash-ajs-components`, `aash-lit-components`,
+  `aash-vue-components`
 
 Repackaging providers take pre-compiled JS from `node_modules` or sibling
 `lib/` and rewrite import paths via Rollup's `paths` function. Their source
