@@ -29,6 +29,7 @@ import jdbld.conlet.MarkdownDisplay;
 import jdbld.conlet.OidcLogin;
 import jdbld.conlet.StyleTest;
 import jdbld.conlet.SysInfo;
+import jdbld.console.AlpineJsConsole;
 import jdbld.console.Bootstrap4Console;
 import jdbld.console.JqueryUiConsole;
 import jdbld.console.VueJsConsole;
@@ -48,6 +49,7 @@ public class WebConsoleTest extends AbstractProject
     public WebConsoleTest() {
         super(directory(Path.of("WebConsoleTest")));
         dependency(Consume, project(Rbac.class));
+        dependency(Consume, project(AlpineJsConsole.class));
         dependency(Consume, project(VueJsConsole.class));
         dependency(Consume, project(Bootstrap4Console.class));
         dependency(Consume, project(JqueryUiConsole.class));

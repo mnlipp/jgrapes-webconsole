@@ -1,0 +1,65 @@
+@use "globals";
+@use "./_ui-common";
+
+/*
+ * JGrapes Event Driven Framework
+ * Copyright (C) 2021 Michael N. Lipp
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* ## Disclosure */
+
+[data-aash-role="disclosure-button"] {
+    pointer-events: none;
+    border: none;
+    text-align: inherit;
+
+    &::before {
+        @extend %disclosure-control-icon-common;
+    }
+
+    &[aria-expanded="false"] {
+        &::before {
+            @extend %disclosure-control-icon-concealed;
+        }
+    }
+
+    &[aria-expanded="true"] {
+        &::before {
+            @extend %disclosure-control-icon-disclosed;
+        }
+    }
+
+}
+
+:not(button)[data-aash-role="disclosure-button"] {
+    @include globals.button-shape-hover;
+}
+
+button[data-aash-role="disclosure-button"] {
+    pointer-events: inherit;
+    
+    &[aria-expanded="false"] {
+        &::before {
+            border-color: transparent transparent transparent var(--background);
+        }
+    }
+
+    &[aria-expanded="true"] {
+        &::before {
+            border-color: var(--background) transparent transparent transparent;
+        }
+    }
+}

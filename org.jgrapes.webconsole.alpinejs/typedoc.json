@@ -1,0 +1,9 @@
+{
+  "name": "Client-side Webconsole Alpine JS based renderer",
+  "entryPoints": ["./src/org/jgrapes/webconsole/alpinejs/AlpineJsRenderer.ts"],
+  "readme": "./src/org/jgrapes/webconsole/vuejs/README.md",
+  "out": "../build/javadoc/org/jgrapes/webconsole/lit/jsdoc",
+  "categorizeByGroup": true,
+  "categoryOrder": ["*"],
+  "excludeExternals": true
+}

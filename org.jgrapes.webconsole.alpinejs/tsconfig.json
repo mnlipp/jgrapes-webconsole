@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "ES2020",
+    "sourceMap": true,
+    "inlineSources": true,
+    "declaration": true,
+    "importHelpers": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "lib": ["DOM", "ES2020"],
+    "rootDir": "./src/org/jgrapes/webconsole/alpinejs",
+    "paths": {
+      "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
+      "gridstack": ["../org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack"],
+      "vue": ["../org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
+      "aash-plugin": ["../aash-vue-components/lib/AashPlugin"],
+      "aash-alpinejs": ["../aash-ajs-components/lib/AashComponents"],
+      "aash-tablist": ["../aash-lit-components/components/tablist/AashTablist"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

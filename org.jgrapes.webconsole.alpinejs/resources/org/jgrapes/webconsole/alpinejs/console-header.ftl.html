@@ -1,0 +1,30 @@
+<header id="ajs-console-header">
+
+  <!-- Top navigation -->
+  <span><#include "console-brand.ftl.html"></span>
+  <!-- Items are set by the renderer -->
+  <aash-dropdown-menu id="conlet-menu"
+    action="function(row) { this.$consoleRenderer.console.addConlet(row[1], row[2]) }">
+    <template provides="label">
+      <span class='fa fa-puzzle-piece'></span>
+    </template>
+    <template x-for="conletData of $consoleRenderer.conletMenuItems()">
+      <template provides="item" :with-value="conletData.type">
+        <span x-text="$consoleRenderer.displayName(conletData.type)"></span>
+      </template>
+    </template>
+  </aash-dropdown-menu>
+  <aash-dropdown-menu id="language-selector"
+    action="function(value) { document.querySelector('html').setAttribute('lang', value) }">
+    <template provides="label">
+      <span class='fa fa-language'></span>
+    </template>
+    <template x-for="labelKey of $consoleRenderer.localeMenuItems()">
+      <template provides="item" :with-value='`${"$"}{labelKey[1]}`'>
+        <span x-text="`${"$"}{labelKey[0]}`"></span>
+      </template>
+    </template>
+  </aash-dropdown-menu>
+  <#include "console-header-append.ftl.html">
+
+</header>

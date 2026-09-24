@@ -1,0 +1,13 @@
+Bundle-Name: JGrapes Alpine JS based Web Console
+Bundle-Copyright: Michael N. Lipp (c) 2026
+Bundle-License: http://www.gnu.org/licenses/agpl-3.0.txt
+
+Export-Package: org.jgrapes.webconsole.alpinejs
+
+Require-Capability: \
+    osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=lit)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=jgwc-vue-components)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=fork-awesome)",\
+    org.jgrapes.webconsole.page.resource;filter:="(name=gridstack)"
+	

@@ -1,0 +1,6 @@
+[
+  {
+    "pattern": "^node_modules/vue",
+    "replace": "https://github.com/vuejs/vue/blob/master/"
+  }
+]
