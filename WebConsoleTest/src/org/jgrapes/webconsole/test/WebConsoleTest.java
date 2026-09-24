@@ -66,6 +66,7 @@ import org.jgrapes.util.YamlConfigurationStore;
 import org.jgrapes.util.events.WatchFile;
 import org.jgrapes.webconlet.oidclogin.LoginConlet;
 import org.jgrapes.webconlet.oidclogin.OidcClient;
+import org.jgrapes.webconsole.alpinejs.AlpineJsConsoleWeblet;
 import org.jgrapes.webconsole.base.BrowserLocalBackedKVStore;
 import org.jgrapes.webconsole.base.ConletComponentFactory;
 import org.jgrapes.webconsole.base.ConsoleWeblet;
@@ -192,6 +193,7 @@ public class WebConsoleTest extends Component implements BundleActivator {
         createJQueryUiConsole(guiHttpChannel);
         createBootstrap4Console(guiHttpChannel);
         createVueJsConsole(guiHttpChannel);
+        createAlpineJsConsole(guiHttpChannel);
         Components.start(app);
     }
 
@@ -295,6 +297,54 @@ public class WebConsoleTest extends Component implements BundleActivator {
         console.attach(new LoginConlet(console.channel()));
         console.attach(new OidcClient(console.channel(), guiHttpChannel,
             guiHttpChannel, new URI("/vjconsole/oauth/callback"), 1500));
+        console.attach(new UserLogger(console.channel()));
+        // Add all available page resource providers
+        console.attach(new ComponentCollector<>(
+            PageResourceProviderFactory.class, console.channel(),
+            type -> {
+                switch (type) {
+                case "org.jgrapes.webconsole.provider.gridstack.GridstackProvider":
+                    return Arrays.asList(
+                        Map.of("requireTouchPunch", true,
+                            "configuration", "CoreWithJQUiPlugin"));
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
+        // Add all available conlets
+        console.attach(new ComponentCollector<>(
+            ConletComponentFactory.class, console.channel(), type -> {
+                switch (type) {
+                default:
+                    return Arrays.asList(Collections.emptyMap());
+                }
+            }));
+    }
+
+    @SuppressWarnings("PMD.TooFewBranchesForASwitchStatement")
+    private void createAlpineJsConsole(Channel guiHttpChannel)
+            throws URISyntaxException, IOException {
+        app.attach(new InMemorySessionManager(guiHttpChannel, "/ajsconsole")
+            .setIdName("id-alpinejs"));
+        ConsoleWeblet consoleWeblet
+            = app.attach(new AlpineJsConsoleWeblet(guiHttpChannel, Channel.SELF,
+                new URI("/ajsconsole/")))
+                .prependClassTemplateLoader(this.getClass())
+                .prependResourceBundleProvider(WebConsoleTest.class)
+                .prependConsoleResourceProvider(WebConsoleTest.class);
+        WebConsole console = consoleWeblet.console();
+        consoleWeblet.setConnectionInactivityTimeout(Duration.ofMinutes(5));
+
+        // More components
+        console.attach(new BrowserLocalBackedKVStore(
+            console.channel(), consoleWeblet.prefix().getPath()));
+        console.attach(new KVStoreBasedConsolePolicy(console.channel()));
+        console.attach(new AvoidEmptyPolicy(console.channel()));
+//        console.attach(new RoleConfigurator(console.channel()));
+//        console.attach(new RoleConletFilter(console.channel()));
+//        console.attach(new LoginConlet(console.channel()));
+//        console.attach(new OidcClient(console.channel(), guiHttpChannel,
+//            guiHttpChannel, new URI("/ajsconsole/oauth/callback"), 1500));
         console.attach(new UserLogger(console.channel()));
         // Add all available page resource providers
         console.attach(new ComponentCollector<>(
