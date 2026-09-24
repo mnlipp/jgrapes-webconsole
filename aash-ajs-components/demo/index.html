@@ -7,6 +7,7 @@
   }
 }
 </script>
+
 <head>
   <title>AaSH Demo</title>
   <style>
@@ -22,34 +23,62 @@
   <script type="module">
   import Alpine from 'alpinejs';
   window.Alpine = Alpine;
-  queueMicrotask(() => {
+  if (document.readyState !== "loading") {
+    queueMicrotask(() => {
       Alpine.start()
-  });
+    });
+  } else {
+    addEventListener("DOMContentLoaded", (event) => {
+      queueMicrotask(() => {
+        Alpine.start()
+      });
+    });
+  }
   </script>
 </head>
 <body>
-  <main>
+  <main x-data="{ items: 3 }">
     <h1>AashDropdownMenu Demo</h1>
 
     <aash-dropdown-menu id="language-selector"
-        label="Language"></aash-dropdown-menu>
+      action="value => window.alert(value)">
+      <template provides="label">
+        <span>Language</span>
+      </template>
+      <template provides="item" with-value="en">
+        <span provides="item">English</span>
+      </template>
+      <template provides="item" with-value="de">
+        <span provides="item">German</span>
+      </template>
+      <template x-for="i in items">
+        <template provides="item" :with-value='`x${i}`'>
+          <span x-text="`Item ${i}`"></span>
+        </template>
+      </template>
+    </aash-dropdown-menu>
 
-    <script type="module">
-      import '../lib/aash-alpinejs-components.js';
-        
-      const dropdownMenu = document.getElementById('language-selector');
-      dropdownMenu.items = [
-        ['English', 'English chosen'],
-        ['German', 'German chosen']
-      ];
-      dropdownMenu.action = function(item) {
-        window.alert(item[1]);
-      };
-    </script>
+    <p>
+      <label x-data">
+        Extra Items: 
+        <input type="number" value="3" step="1" x-model.number="items">
+      </label>
+    </p>
 
     <h1>AashTablist Demo</h1>
 
-    <aash-tablist id="demoTabs"></aash-tablist>
+    <aash-tablist id="demoTabs">
+      <template provides="tab" panel-id="panel-1">
+        <span>Tab 1</span>
+      </template>
+      <template provides="tab" panel-id="panel-2">
+        <span>Tab 2</span>
+      </template>
+      <template provides="tab" panel-id="panel-3">
+        <span>Tab 3</span>
+      </template>
+    </aash-tablist>
+    
     <div id="panel-1" role="tabpanel">
       <h2>Panel One</h2>
       <p>This is the content of panel one.</p>
@@ -72,29 +101,25 @@
 
       const tablist = document.getElementById('demoTabs');
 
-      tablist.addPanel({ id: 'panel-1', label: 'Tab 1' });
-      tablist.addPanel({ id: 'panel-2', label: 'Tab 2' });
-      tablist.addPanel({ id: 'panel-3', label: 'Tab 3' });
-
       let panelCounter = 4;
 
       document.getElementById('addBtn').addEventListener('click', () => {
         const id = 'panel-' + panelCounter++;
+        const label = 'Tab ' + (panelCounter - 1);
         const div = document.createElement('div');
         div.id = id;
         div.setAttribute('role', 'tabpanel');
         div.innerHTML = '<h2>Panel ' + (panelCounter - 1) + '</h2><p>Dynamically added panel.</p>';
         div.setAttribute('hidden', '');
         tablist.after(div);
-        tablist.addPanel({
-          id: id,
-          label: 'Tab ' + (panelCounter - 1),
-          removeCallback: () => {
-            tablist.removePanel(id);
-            let el = document.getElementById(id);
-            if (el) el.remove();
-          }
-        });
+        const tpl = document.createElement('template');
+        tpl.setAttribute('provides', 'tab');
+        tpl.setAttribute('panel-id', id);
+        tpl.setAttribute('remove-callback',
+          `document.querySelector('aash-tablist').removePanel('${id}');
+           document.getElementById('${id}').remove()`);
+        tpl.innerHTML = `<span>${label}</span>`;
+        tablist.appendChild(tpl);
       });
     </script>
 
@@ -103,36 +128,53 @@
     <p>
       <button id="openDialog">Open Dialog</button>
     </p>
-    <aash-modal-dialog id="sampleDialog"
-        dialog-title="Sample Dialog"
-        show-cancel
-        apply-label="Apply">
-      <i>Sample dialog content</i>
+    <aash-modal-dialog id="sampleDialog">
+      <template provides="dialog-title">
+        <span>Sample Dialog</span>
+      </template>
+      <template provides="cancel-label">
+        <span>×</span>
+      </template>
+      <template provides="apply-label">
+        <span>Apply</span>
+      </template>
+      <template provides="okay-label">
+        <span>OK</span>
+      </template>
+      <template provides="content">
+        <i>Sample dialog content</i>
+      </template>
     </aash-modal-dialog>
 
     <p>
       <button id="openDialogSubmit">Open Dialog (Submit)</button>
     </p>
     <aash-modal-dialog id="sampleDialogSubmit"
-        dialog-title="Sample Dialog (Submit)"
-        show-cancel
         submit-form="toBeSubmitted">
-      <form id="toBeSubmitted">
-        <input type="text" name="user">
-        <input type="password" name="password">
-      </form>
+      <template provides="cancel-label">
+        <span>×</span>
+      </template>
+      <template provides="dialog-title">
+        <p>Sample Dialog (Submit)</p>
+      </template>
+      <template provides="content">
+        <form id="toBeSubmitted">
+          <input type="text" name="user">
+          <input type="password" name="password">
+        </form>
+      </template>
     </aash-modal-dialog>
 
     <script type="module">
       import '../lib/aash-alpinejs-components.js';
         
       const sampleDialog = document.getElementById('sampleDialog');
-      sampleDialog.onAction = (confirmed, close) => {
+      sampleDialog.action = (confirmed, close) => {
         window.alert(confirmed + ' ' + close);
       };
 
       const sampleDialogSubmit = document.getElementById('sampleDialogSubmit');
-      sampleDialogSubmit.onAction = (confirmed, close) => {
+      sampleDialogSubmit.action = (confirmed, close) => {
         window.alert(confirmed + ' ' + close);
       };
 
