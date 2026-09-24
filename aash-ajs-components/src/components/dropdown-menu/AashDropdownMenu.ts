@@ -131,7 +131,7 @@ export class AashDropdownMenu extends HTMLElement {
     this.insertedElements.forEach(el => el.remove());
     const button = this.querySelector(':scope button[aria-haspopup="menu"]')!;
     const label = this.querySelector(':scope > [provides="label"]');
-    if (label) {
+    if (label && !label.hasAttribute("x-teleport")) {
       button.textContent = '';
       label.setAttribute("x-teleport", "#" + this.labelTarget);
     }
