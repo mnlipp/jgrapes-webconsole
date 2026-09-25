@@ -13,6 +13,8 @@ import './components/tree-view/AashTreeView';
 import './components/accordion/AashAccordionSection';
 import './components/accordion/AashAccordion';
 
+export * from './AashUtil';
+export { AashComponent, createFragment } from './AashUtil';
 export { AashTablist } from './components/tablist/AashTablist';
 export { AashDropdownMenu } from './components/dropdown-menu/AashDropdownMenu';
 export { AashModalDialog } from './components/modal-dialog/AashModalDialog';

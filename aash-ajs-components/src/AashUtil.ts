@@ -322,3 +322,13 @@ Alpine.directive('aash-component',
   }
 });
 
+/* ------------------------------------------------------------------ */
+/* Miscellaneous                                                      */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Shortcut for creating an HTML fragment from a string.
+ */
+export function createFragment(element: Element, text: string) {
+  return element.ownerDocument.createRange().createContextualFragment(text);
+}
