@@ -108,8 +108,6 @@ export class AashModalDialog extends HTMLElement {
   private okayLabelTarget = aashId();
   /** @internal Teleport target for content area */
   private contentTarget = aashId();
-  /** @internal Tracked inserted elements for cleanup */
-  private insertedElements: Set<Element> = new Set();
   /** @internal Observer for template children changes */
   private contentObserver = new MutationObserver(() => {
       Alpine.nextTick(() => this.updateContent());
@@ -157,7 +155,8 @@ export class AashModalDialog extends HTMLElement {
     const dialogId = this.id || `aash-modal-dialog`;
     const labelId = dialogId + '-label';
     const shown = this.ownerDocument.createRange().createContextualFragment(
-      `<dialog aria-labelledby="${labelId}" x-cloak>
+      `<dialog class="aash-modal-dialog" id="${dialogId}"
+        aria-labelledby="${labelId}" x-cloak>
         <header id="${labelId}">
           <p id="${this.titleTarget}"></p>
           <button x-show="hasCancelButton" type="button"
@@ -188,41 +187,51 @@ export class AashModalDialog extends HTMLElement {
   /** @internal Teleports template content into structural targets. */
   private updateContent() {
     this.contentObserver.disconnect();
-    this.insertedElements.forEach(el => el.remove());
     const titleSpan = this.querySelector(`#${this.titleTarget}`)!;
-    const titleTemplate = this.querySelector(':scope > [provides="dialog-title"]');
-    if (titleTemplate) {
+    const titleTemplate
+      = this.querySelector(':scope > [provides="dialog-title"]');
+    if (titleTemplate && !titleTemplate.hasAttribute("x-teleport")) {
       titleSpan.textContent = '';
       titleTemplate.setAttribute("x-teleport", "#" + this.titleTarget);
     }
     const cancelButton = this.querySelector(`#${this.cancelLabelTarget}`)!;
-    const cancelLabelTemplate = this.querySelector(':scope > [provides="cancel-label"]');
+    const cancelLabelTemplate
+      = this.querySelector(':scope > [provides="cancel-label"]');
     if (cancelLabelTemplate) {
+      if (!cancelLabelTemplate.hasAttribute("x-teleport")) {
+        cancelLabelTemplate.setAttribute(
+          "x-teleport", "#" + this.cancelLabelTarget);
+      }
       this.ajsData.hasCancelButton = true;
-      cancelLabelTemplate.setAttribute("x-teleport", "#" + this.cancelLabelTarget);
     } else {
       this.ajsData.hasCancelButton = false;
     }
     const applyButton = this.querySelector(`#${this.applyLabelTarget}`)!;
-    const applyLabelTemplate = this.querySelector(':scope > [provides="apply-label"]');
+    const applyLabelTemplate
+      = this.querySelector(':scope > [provides="apply-label"]');
     if (applyLabelTemplate) {
+      if (!applyLabelTemplate.hasAttribute("x-teleport")) {
+        applyLabelTemplate.setAttribute(
+            "x-teleport", "#" + this.applyLabelTarget);
+      }
       this.ajsData.hasApplyButton = true;
-      applyLabelTemplate.setAttribute("x-teleport", "#" + this.applyLabelTarget);
     } else {
       this.ajsData.hasApplyButton = false;
     }
     const okayButton = this.querySelector(`#${this.okayLabelTarget}`)!;
     const okayLabelTemplate = this.querySelector(':scope > [provides="okay-label"]');
     if (okayLabelTemplate) {
+      if (!okayLabelTemplate.hasAttribute("x-teleport")) {
+        okayLabelTemplate.setAttribute("x-teleport", "#" + this.okayLabelTarget);
+      }
       this.ajsData.hasOkayButton = true;
-      okayLabelTemplate.setAttribute("x-teleport", "#" + this.okayLabelTarget);
     } else {
       this.ajsData.hasOkayButton = true;
       okayButton.textContent = 'OK';
     }
     const contentSpan = this.querySelector(`#${this.contentTarget}`)!;
     const contentTemplate = this.querySelector(':scope > [provides="content"]');
-    if (contentTemplate) {
+    if (contentTemplate && !contentTemplate.hasAttribute("x-teleport")) {
       contentSpan.textContent = '';
       contentTemplate.setAttribute("x-teleport", "#" + this.contentTarget);
     }
@@ -283,3 +292,34 @@ export class AashModalDialog extends HTMLElement {
 }
 
 customElements.define('aash-modal-dialog', AashModalDialog);
+
+/**
+ * Injects the global styles for the dialog once.
+ */
+const injectStyles = () => {
+  if (!document.querySelector('style[aash-modal-dialog-styles]')) {
+    const style = document.createElement('style');
+    style.setAttribute('aash-modal-dialog-styles', '');
+    style.textContent = `
+.aash-modal-dialog [role="dialog"] {
+  margin-top: 2rem;
+}
+
+.aash-modal-dialog header {
+  display: flex;
+}
+
+.aash-modal-dialog header > :first-child {
+  flex-grow: 1;
+}
+
+.aash-modal-dialog footer {
+  display: flex;
+  justify-content: end;
+}`;
+    document.head.appendChild(style);
+  }
+};
+
+injectStyles();
+
