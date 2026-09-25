@@ -46,10 +46,10 @@
         <span>Language</span>
       </template>
       <template provides="item" with-value="en">
-        <span provides="item">English</span>
+        <span>English</span>
       </template>
       <template provides="item" with-value="de">
-        <span provides="item">German</span>
+        <span>German</span>
       </template>
       <template x-for="i in items">
         <template provides="item" :with-value='`x${i}`'>
@@ -76,6 +76,9 @@
       </template>
       <template provides="tab" panel-id="panel-3">
         <span>Tab 3</span>
+      </template>
+      <template provides="remove-label">
+        <span>x</span>
       </template>
     </aash-tablist>
     
