@@ -181,6 +181,10 @@ export class AashTablist extends HTMLElement {
     });
   }
 
+  disconnectedCallback() {
+    this.contentObserver.disconnect();
+  }
+  
   /** @internal Sets up a tabpanel element with required attributes. */
   private setupTabpanel(panelId: string): void {
     const tabpanel = document.querySelector(`[id='${panelId}']`);

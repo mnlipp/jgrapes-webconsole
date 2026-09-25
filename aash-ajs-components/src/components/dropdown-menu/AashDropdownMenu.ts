@@ -181,6 +181,7 @@ export class AashDropdownMenu extends HTMLElement {
   }
   
   disconnectedCallback() {
+    this.contentObserver.disconnect();
     this.removeGlobalClickHandler();
   }
 
