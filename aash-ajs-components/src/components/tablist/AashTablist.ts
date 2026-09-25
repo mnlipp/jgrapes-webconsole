@@ -11,7 +11,6 @@ interface PanelData {
   panelId: string;
   removeCallback: string | null;
   labelTarget: string;
-  removeTarget: string;
 }
 
 /**
@@ -127,7 +126,7 @@ export class AashTablist extends HTMLElement {
               @click="selectPanel(panel.panelId)"
               x-init="teleportLabel(panel.panelId, panel.labelTarget)">
             </button>
-            <button type="button" :id="panel.removeTarget" tabindex="-1"
+            <button type="button" tabindex="-1"
               class="aash-tablist-remove" x-show="!!panel.removeCallback"
               @click="runRemoveCallback(panel.removeCallback)"
               x-html="removeLabel">
@@ -163,7 +162,7 @@ export class AashTablist extends HTMLElement {
         || aashId();
       const removeCallback = tabTemplate.getAttribute('remove-callback');
       this.ajsData.panels.push({ panelId, removeCallback,
-        labelTarget, removeTarget: aashId() });
+        labelTarget });
 
       // Setup tabpanel
       this.setupTabpanel(panelId);
