@@ -11,14 +11,22 @@ import {
   aashId
 } from '../../AashUtil';
 
+interface ItemData {
+  template: HTMLElement;
+  target: string;
+  value: string | null;
+}
+
 /**
  * @internal AlpineJS data definition for the dropdown-menu component.
  */
 interface DropdownMenuData {
+  items: ItemData[];
   expanded: boolean;
   toggle: (event: MouseEvent) => void;
   chooseItem: (value: string) => void;
   close: () => void;
+  teleportItem(element: HTMLElement, target: string): void;
 }
 
 /**
@@ -64,6 +72,7 @@ export class AashDropdownMenu extends HTMLElement {
     super();
     const element = this;
     this.ajsData = Alpine.reactive({
+      items: [],
       expanded: false,
 
       toggle(event: MouseEvent) {
@@ -94,7 +103,14 @@ export class AashDropdownMenu extends HTMLElement {
       close() {
         this.expanded = false;
         element.removeGlobalClickHandler();
+      },
+      
+      teleportItem(template: HTMLElement, itemTarget: string) {
+        // Ignored if added during current evaluation
+        Alpine.nextTick(
+            () => template?.setAttribute("x-teleport", "#" + itemTarget));
       }
+      
     } satisfies DropdownMenuData);
   }
 
@@ -120,6 +136,13 @@ export class AashDropdownMenu extends HTMLElement {
                 ? 'true' : 'false'" @click="toggle">
         </button>
         <ul id="${menuId}" role="menu">
+          <template x-for="item of items" :key="item.target">
+          <li role="none">
+            <button :id="item.target" type="button" role="menuitem"
+              @click="item.value ? chooseItem(item.value) : null"
+              x-init="teleportItem(item.template, item.target)">
+            </button>
+          </li>
         </ul>
       </div>`);
     this.prepend(shown);
@@ -128,30 +151,26 @@ export class AashDropdownMenu extends HTMLElement {
 
   private updateContent() {
     this.contentObserver.disconnect();
-    this.insertedElements.forEach(el => el.remove());
+    
+    // Handle label
     const button = this.querySelector(':scope button[aria-haspopup="menu"]')!;
     const label = this.querySelector(':scope > [provides="label"]');
     if (label && !label.hasAttribute("x-teleport")) {
       button.textContent = '';
       label.setAttribute("x-teleport", "#" + this.labelTarget);
     }
-    const ul = this.querySelector('ul[role="menu"]')!;
+    
+    // Handle items
+    this.ajsData.items = [];
     const items = this.querySelectorAll(':scope > [provides="item"]');
     items.forEach(item => {
-      const itemTarget = aashId();
-      const itemDom = this.ownerDocument.createRange().createContextualFragment(
-        `<li role="none">
-           <button id="${itemTarget}" type="button" role="menuitem">
-           </button>
-         </li>`);
-      if (item.getAttribute('with-value')) {
-        itemDom.querySelector('button')!.setAttribute('@click',
-          `chooseItem(${JSON.stringify(item.getAttribute('with-value')!)})`);
-      }
-      Array.prototype.slice.call(itemDom.children)
-          .forEach(el => this.insertedElements.add(el as Element));
-      ul.appendChild(itemDom);
-      item.setAttribute("x-teleport", "#" + itemTarget);
+      var itemTarget: string = item.getAttribute("x-teleport")?.slice(1)
+          || aashId();
+      this.ajsData.items.push({
+        template: item as HTMLElement,
+        target: itemTarget,
+        value: item.getAttribute("with-value")
+      });
     });
     this.contentObserver.observe(this, {
       childList: true,
