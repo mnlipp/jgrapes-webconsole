@@ -61,7 +61,7 @@ public class AlpineJsConsole extends AbstractProject
                 p -> Stream.of(JavaResourceTree.of(p, p.buildDirectory()
                     .resolve("generated/resources"), "**/*")));
         Root.addNpmResourcesBuilder(npmExec,
-            Path.of("org/jgrapes/webconsole/lit/lib"),
+            Path.of("org/jgrapes/webconsole/alpinejs/lib"),
             FileTree.of(this, Path.of("node_modules/normalize.css"),
                 "normalize.css"));
 
