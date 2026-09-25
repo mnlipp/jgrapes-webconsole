@@ -54,15 +54,27 @@ customElements.define('my-component', MyComponent);
 2. **Lifecycle** — `connectedCallback` (provided by the class decorator)
    sets the attributes `x-data` (if missing) and `x-aash-component`.
    The `x-aash-component` directive causes Alpine to call the method
-   annotated with `@Renderer()`.
+   annotated with `@Renderer()`. If the component defines its own
+   `connectedCallback`, the decorator invokes it before setting the
+   attributes. This allows the component to initialize controller state
+   before rendering (e.g. AashAccordionSection registers itself with
+   the parent AashAccordion).
 
-3. **Render** — The method decorated with `@Renderer()` makes the components
-   data available in the Alpine data stack and creates the `innerHTML`
-   of the web comoponent.
+3. **Render** — The method decorated with `@Renderer()` makes the component's
+   data available in the Alpine data stack via `Alpine.addScopeToNode()`
+   and creates the `innerHTML` of the web component. Templates use
+   Alpine directives (`x-text`, `x-bind`, `x-for`, `x-show`, `x-init`,
+   `x-cloak`, etc.) for reactive rendering.
 
 4. **Property setters** — Public setters mutate `ajsData`, triggering
    Alpine's reactivity. Use `@Attribute` to bind setters to HTML
-   attributes.
+   attributes. For programmatic API usage, expose plain setters without
+   `@Attribute` (e.g. `onAction` on AashModalDialog).
+
+5. **Cleanup** — Override `disconnectedCallback` to release resources
+   (remove event listeners, disconnect `MutationObserver`s). The
+   decorator chains the user's callback after its own setup, so
+   cleanup code should not interfere with the decorator's lifecycle.
 
 ## Decorator Usage
 
@@ -77,6 +89,11 @@ Class decorator that generates:
 - Component preparation in `connectedCallback` — calls the component's
   own `connectedCallback` if it exists and then sets the attributes
   `x-data` (if missing) and `x-aash-component`.
+
+Components that define their own `connectedCallback` (e.g. AashDisclosureButton,
+AashAccordionSection) must manually call `Alpine.addScopeToNode()`, `render()`,
+and `Alpine.initTree()` because the decorator's attribute-based initialization
+via `x-aash-component` runs asynchronously after the element connects.
 
 Usage:
 ```ts
@@ -213,29 +230,16 @@ this.prepend(
      </button>`));
 ```
 
-`updateContent()` finds the `<template provides="...">` children and sets
-an `x-teleport` attribute pointing to the corresponding target:
-
-```ts
-const label = this.querySelector(':scope > [provides="label"]');
-if (label) {
-  label.setAttribute("x-teleport", "#" + this.labelTarget);
-}
-```
-
-For repeated slots (like menu items), the component generates a new target
-for each template:
-
-```ts
-const items = this.querySelectorAll(':scope > [provides="item"]');
-items.forEach(item => {
-  const itemTarget = aashId();
-  const li = document.createElement('li');
-  li.innerHTML = `<button id="${itemTarget}"></button>`;
-  item.setAttribute("x-teleport", "#" + itemTarget);
-  ul.appendChild(li);
-});
-```
+For repeated slots (like menu items), the preferred approach is to
+include a `<template x-for=...>` in the component's template. The value
+that `x-for` iterates over must be reactive data and is updated by
+`updateContent()` based on the `<template provides="...">` children.
+The `x-init` directive of elements generated in the loop is used to
+set an `x-teleport` attribute pointing to the corresponding target.
+The teleport must be scheduled via `Alpine.nextTick()` because setting
+`x-teleport` during `x-init` evaluation is too early — Alpine has not
+yet registered the target element. The `teleportItem` method in
+AashDropdownMenu demonstrates this pattern.
 
 Alpine's `x-teleport` moves the template's inner content into the target
 element at initialization time (when the `render` method is called).
@@ -247,6 +251,15 @@ keeping the rendered structure in sync.
 To avoid the observer firing on the DOM mutations caused by `updateContent`
 itself, the observer must be disconnected before the update and re-connected
 afterward.
+
+### Static Teleport (no loop)
+
+For non-repeated slots (a single title, label, or content area), the
+component sets `x-teleport` on the `<template>` directly in
+`updateContent()`. The target element gets its content cleared first
+so the teleported content replaces any default text. AashModalDialog
+demonstrates this for its title, cancel-label, apply-label, okay-label,
+and content slots.
 
 ### Rules
 
