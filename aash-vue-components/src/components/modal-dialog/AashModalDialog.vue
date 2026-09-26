@@ -25,7 +25,7 @@
 <script lang="ts" src="./AashModalDialog.ts"></script>
 
 <style>
-.aash-modal-dialog {
+div.aash-modal-dialog {
     position: fixed;
     overflow-y: auto;
     top: 0;
@@ -35,7 +35,7 @@
     z-index: var(--z-index-modal, 1060);
 }
 
-.aash-modal-dialog [role="dialog"] {
+div.aash-modal-dialog [role="dialog"] {
     min-height: 100vh;
     position: absolute;
     top: 2rem;
@@ -45,15 +45,15 @@
     min-height: auto;
 }
 
-.aash-modal-dialog header {
+div.aash-modal-dialog header {
     display: flex;
 }
 
-.aash-modal-dialog header > :first-child {
+div.aash-modal-dialog header > :first-child {
     flex-grow: 1;
 }
 
-.aash-modal-dialog footer {
+div.aash-modal-dialog footer {
     display: flex;
     justify-content: end;
 }
