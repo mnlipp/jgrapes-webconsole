@@ -120,18 +120,16 @@ export class AashTablist extends HTMLElement {
         <template x-for="panel of panels" :key="panel.panelId">
           <span :id="panel.panelId + '-tab'" role="tab" data-aash-tab
             :aria-selected="selected == panel.panelId ? 'true' : 'false'"
-            :aria-controls="panel.panelId">
-            <button type="button" :id="panel.labelTarget"
+            :aria-controls="panel.panelId"><button
+              type="button" :id="panel.labelTarget"
               :tabindex="selected == panel.panelId ? 0 : -1"
               @click="selectPanel(panel.panelId)"
               x-init="teleportLabel(panel.panelId, panel.labelTarget)">
-            </button>
-            <button type="button" tabindex="-1"
+            </button><button type="button" tabindex="-1"
               class="aash-tablist-remove" x-show="!!panel.removeCallback"
               @click="runRemoveCallback(panel.removeCallback)"
               x-html="removeLabel">
-            </button>
-          </span>
+            </button></span>
         </template>
       </div>`);
     this.prepend(shown);
