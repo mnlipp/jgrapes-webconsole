@@ -386,6 +386,19 @@ abstract class Renderer {
         }
     }
 
+    /**
+     * Some renderers may not be able to generate the DOM for a conlet
+     * immediately. Therefore, after requesting a conlet to be rendered,
+     * the console wraps subsequent operations that require the conlet
+     * in a function that is passed to this method.
+     *
+     * The renderer may execute this function immediately (default behavior)
+     * or delay the execution until the conlet is rendered. 
+     */
+    whenRendered(todo: () => void) {
+        todo();
+    } 
+    
     // Utility methods.
 
     /**

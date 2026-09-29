@@ -365,8 +365,10 @@ class Console {
             this._execOnUnload(conlet.element(), true);
         }
         this._renderer!.updateConletContent(conlet, content);
-        this._execOnLoad(conlet.element(), !isNew);
-        this._resolveComponents();
+        this._whenRendered(() => {
+            this._execOnLoad(conlet.element(), !isNew);
+            this._resolveComponents();
+        });
     }
 
     private _updatePreview(conletType: string, conletId: string, 
@@ -388,8 +390,11 @@ class Console {
         }
         this._renderer!.updateConletPreview(isNew, conlet!, modes,
             parseHtml(content), foreground);
-        this._execOnLoad(conlet!.element(), !isNew);
-        this._resolveComponents();
+        const _this = this;
+        this._whenRendered(() => {
+            _this._execOnLoad(conlet!.element(), !isNew);
+            _this._resolveComponents();
+        });
     }
 
     private _updateView(conletType: string, conletId: string, modes: RenderMode[], 
@@ -406,8 +411,11 @@ class Console {
         }
         this._renderer!.updateConletView(isNew, conlet!, modes,
             parseHtml(content), foreground);
-        this._execOnLoad(conlet!.element(), !isNew);
-        this._resolveComponents();
+        const _this = this;
+        this._whenRendered(() => {
+            _this._execOnLoad(conlet!.element(), !isNew);
+            _this._resolveComponents();
+        });
     }
 
     private _execOnLoad(container: HTMLElement, isUpdate: boolean) {
@@ -427,6 +435,17 @@ class Console {
         });
     }
 
+    private _whenRendered(callback: () => void) {
+        this._webSocket.lockMessageReceiver();
+        this._renderer!.whenRendered(() => {
+            try {
+                callback();
+            } finally {
+                this._webSocket.unlockMessageReceiver();
+            }
+        });
+    }
+    
     /**
      * Execute unload functions depth first. 
      */
@@ -483,7 +502,10 @@ class Console {
                 slot!.append(container);
             }
         }
-        this._execOnLoad(container, false);
+        const _this = this;
+        this._whenRendered(() => {
+            _this._execOnLoad(container, false);
+        });
     }
 
     /**
