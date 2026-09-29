@@ -8,7 +8,8 @@ import {
   Attribute,
   Renderer,
   expressionConverter,
-  aashId
+  aashId,
+  createFragment
 } from '../../AashUtil';
 
 /**
@@ -112,6 +113,7 @@ export class AashModalDialog extends HTMLElement {
   private contentObserver = new MutationObserver(() => {
       Alpine.nextTick(() => this.updateContent());
   });
+  private dialogElement: HTMLDialogElement | null = null;
 
   constructor() {
     super();
@@ -126,7 +128,7 @@ export class AashModalDialog extends HTMLElement {
         if (element.actionCallback) {
           element.actionCallback(false, false);
         }
-        element.dialogElement().close();
+        element.dialogElement?.close();
         element.ownerDocument.querySelector('html')!.removeAttribute('inert');
       },
 
@@ -142,11 +144,6 @@ export class AashModalDialog extends HTMLElement {
     } satisfies ModalDialogData);
   }
 
-  /** @internal Returns the native dialog element */
-  private dialogElement(): HTMLDialogElement {
-    return <HTMLDialogElement>this.querySelector('dialog');
-  }
-
   /** @internal Renders dialog structure and teleports content. */
   @Renderer()
   protected render() {
@@ -154,9 +151,9 @@ export class AashModalDialog extends HTMLElement {
       this.ajsData as unknown as Record<string, unknown>);
     const dialogId = this.id || `aash-modal-dialog`;
     const labelId = dialogId + '-label';
-    const shown = this.ownerDocument.createRange().createContextualFragment(
-      `<dialog class="aash-modal-dialog" id="${dialogId}"
-        aria-labelledby="${labelId}" x-cloak>
+    this.dialogElement = createFragment(this,
+      `<dialog class="aash-modal-dialog dialog__backdrop" id="${dialogId}"
+        role="dialog" aria-modal="true" aria-labelledby="${labelId}" x-cloak>
         <header id="${labelId}">
           <p id="${this.titleTarget}"></p>
           <button x-show="hasCancelButton" type="button"
@@ -179,9 +176,10 @@ export class AashModalDialog extends HTMLElement {
               @click="close()">
           </button>
         </footer>
-      </dialog>`);
-    this.prepend(shown);
-    this.updateContent();
+      </dialog>`).firstChild as HTMLDialogElement;
+    this.prepend(this.dialogElement!);
+    // Let the new DOM settle.
+    Alpine.nextTick(() => this.updateContent());
   }
 
   /** @internal Teleports template content into structural targets. */
@@ -252,7 +250,12 @@ export class AashModalDialog extends HTMLElement {
    */
   open(): void {
     this.ownerDocument.querySelector('html')!.setAttribute('inert', '');
-    this.dialogElement().showModal();
+    // Maybe not rendered yet
+    if (!!this.dialogElement) {
+       this.dialogElement!.showModal();
+    } else {
+        Alpine.nextTick(() => this.dialogElement?.showModal());
+    }
   }
 
   /**
@@ -262,7 +265,7 @@ export class AashModalDialog extends HTMLElement {
     if (this.actionCallback) {
       this.actionCallback(true, true);
     }
-    this.dialogElement().close();
+    this.dialogElement?.close();
     this.ownerDocument.querySelector('html')!.removeAttribute('inert');
   }
 
@@ -301,19 +304,15 @@ const injectStyles = () => {
     const style = document.createElement('style');
     style.setAttribute('aash-modal-dialog-styles', '');
     style.textContent = `
-.aash-modal-dialog [role="dialog"] {
-  margin-top: 2rem;
-}
-
-.aash-modal-dialog header {
+dialog.aash-modal-dialog header {
   display: flex;
 }
 
-.aash-modal-dialog header > :first-child {
+dialog.aash-modal-dialog header > :first-child {
   flex-grow: 1;
 }
 
-.aash-modal-dialog footer {
+dialog.aash-modal-dialog footer {
   display: flex;
   justify-content: end;
 }`;
