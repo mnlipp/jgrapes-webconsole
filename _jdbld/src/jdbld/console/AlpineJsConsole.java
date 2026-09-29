@@ -25,7 +25,6 @@ import jdbld.provider.AashAlpineJs;
 import jdbld.provider.AlpineJs;
 import jdbld.provider.Forkawesome;
 import jdbld.provider.Gridstack;
-import jdbld.provider.JgwcVueComponents;
 import org.jdrupes.builder.api.FileTree;
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.core.AbstractProject;
@@ -43,7 +42,6 @@ public class AlpineJsConsole extends AbstractProject
         dependency(Expose, project(Base.class));
         dependency(Reveal, project(AashAlpineJs.class));
         dependency(Reveal, project(AlpineJs.class));
-        dependency(Reveal, project(JgwcVueComponents.class));
         dependency(Reveal, project(Forkawesome.class));
         dependency(Reveal, project(Gridstack.class));
 
@@ -52,8 +50,6 @@ public class AlpineJsConsole extends AbstractProject
             .required(Path.of("tsconfig.json"))
             .required(Path.of("rollup.config.mjs"))
             .required(project(Base.class)
-                .resources(of(JavaResourceTreeType).using(Supply)))
-            .required(project(JgwcVueComponents.class)
                 .resources(of(JavaResourceTreeType).using(Supply)))
             .required(project(Gridstack.class)
                 .resources(of(JavaResourceTreeType).using(Supply)))

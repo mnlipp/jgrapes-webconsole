@@ -13,10 +13,8 @@
     "paths": {
       "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
       "gridstack": ["../org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack"],
-      "vue": ["../org.jgrapes.webconsole.provider.vue/node_modules/vue/dist/vue"],
       "aash-plugin": ["../aash-vue-components/lib/AashPlugin"],
-      "aash-alpinejs": ["../aash-ajs-components/lib/AashComponents"],
-      "aash-tablist": ["../aash-lit-components/components/tablist/AashTablist"]
+      "aash-alpinejs": ["../aash-ajs-components/lib/AashComponents"]
     }
   },
   "include": ["src/**/*.ts"],

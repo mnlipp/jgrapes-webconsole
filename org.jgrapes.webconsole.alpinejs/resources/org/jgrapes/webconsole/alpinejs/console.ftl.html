@@ -37,7 +37,20 @@
   <main role="main">
 
   <div class="consoleAlpineJs">
-    <aash-tablist id="consoleTabs"></aash-tablist>
+    <aash-tablist id="consoleTabs">
+      <template provides="remove-label">
+        <span class="fa fa-times"></span>
+      </template>
+      <template provides="tab" panel-id="consoleOverviewPanel">
+        <span x-text="$consoleRenderer.localize('Overview')"></span>
+      </template>
+      <template x-for="view of $consoleRenderer.conletMgr.views" :key="view.id">
+        <template provides="tab" :panel-id="view.panelId"
+          :remove-callback='`$consoleRenderer.conletMgr.removeView("${"$"}{view.id}")`'>
+          <span x-text="view.evalTitle()"></span>
+        </template>
+      </template>
+    </aash-tablist>
   </div>
   <div id="consolePanels">
     <section id="consoleOverviewPanel" role="tabpanel" hidden>
@@ -52,7 +65,16 @@
   <#include "console-footer.ftl.html">
 
   <!-- Notification area -->
-  <div id="notification-area">
+  <div id="notification-area" x-data>
+    <template x-for="entry of $consoleRenderer.notificationMgr.entries"
+      :key="entry.id">
+      <div role="alert" :class="entry.notificationClass()">
+        <p x-html="entry.content"></p>
+        <button x-show="entry.options.closeable !== false" type="button"
+          class="fa fa-times"
+          @click="$consoleRenderer.notificationMgr.remove(entry.id)"></button>
+      </div>
+    </template>
   </div>
 
   <aash-modal-dialog id="suspended-dialog">
@@ -60,7 +82,7 @@
       <span x-text="$consoleRenderer.localize('Console Session Suspended')"></span>
     </template>
     <template provides="content">
-      <span x-text="$consoleRenderer.localize('consoleSessionSuspended')"></span>
+      <span x-text="$consoleRenderer.localize('consoleSessionSuspendedMessage')"></span>
     </template>
     <template provides="okay-label">
       <span x-text="$consoleRenderer.localize('Resume')"></span>

@@ -1,7 +1,4 @@
 {
-    "dependencies": {
-      "lit": "^3.3.3"
-    },
 	"devDependencies": {
 		"normalize.css": "^8.0.1",
         "@types/alpinejs": "^3.13.11"

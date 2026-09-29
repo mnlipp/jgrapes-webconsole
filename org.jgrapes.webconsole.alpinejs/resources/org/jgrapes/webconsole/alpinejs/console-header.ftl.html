@@ -4,13 +4,14 @@
   <span><#include "console-brand.ftl.html"></span>
   <!-- Items are set by the renderer -->
   <aash-dropdown-menu id="conlet-menu"
-    action="function(row) { this.$consoleRenderer.console.addConlet(row[1], row[2]) }">
+    action="function(value) { $consoleRenderer.addConlet(value) }">
     <template provides="label">
       <span class='fa fa-puzzle-piece'></span>
     </template>
-    <template x-for="conletData of $consoleRenderer.conletMenuItems()">
+    <template x-for="conletData of $consoleRenderer.conletTypeMgr.menuItems()"
+      :key="conletData.type">
       <template provides="item" :with-value="conletData.type">
-        <span x-text="$consoleRenderer.displayName(conletData.type)"></span>
+        <span x-text="$consoleRenderer.conletTypeMgr.displayName(conletData.type)"></span>
       </template>
     </template>
   </aash-dropdown-menu>
