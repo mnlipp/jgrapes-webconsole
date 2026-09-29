@@ -20,6 +20,7 @@ package jdbld;
 
 import java.nio.file.Path;
 import jdbld.conlet.FormTest;
+import jdbld.conlet.HelloAlpine;
 import jdbld.conlet.HelloSolid;
 import jdbld.conlet.HelloWorld;
 import jdbld.conlet.JmxBrowser;
@@ -63,6 +64,7 @@ public class WebConsoleTest extends AbstractProject
         dependency(Reveal, project(ChartJs.class));
         dependency(Reveal, project(MarkdownIt.class));
         dependency(Reveal, project(Vue.class));
+        dependency(Reveal, project(HelloAlpine.class));
         dependency(Reveal, project(HelloSolid.class));
         dependency(Reveal, project(HelloWorld.class));
         dependency(Reveal, project(FormTest.class));

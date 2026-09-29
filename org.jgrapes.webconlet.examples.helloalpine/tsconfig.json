@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "ES2020",
+    "sourceMap": true,
+    "inlineSources": true,
+    "declaration": true,
+    "importHelpers": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "lib": ["DOM", "ES2020"],
+    "rootDir": "src/org/jgrapes/webconlet/examples/helloalpine/browser",
+    "paths": {
+      "jgconsole": ["../org.jgrapes.webconsole.base/build/generated/resources/org/jgrapes/webconsole/base/JGConsole"],
+      "gridstack": ["../org.jgrapes.webconsole.provider.gridstack/node_modules/gridstack/dist/gridstack"],
+      "aash-plugin": ["../aash-vue-components/lib/AashPlugin"],
+      "aash-alpinejs": ["../aash-ajs-components/lib/AashComponents"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

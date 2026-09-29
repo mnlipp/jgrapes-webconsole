@@ -1,0 +1,24 @@
+<div class="HelloAlpine-view"
+    data-jgwc-on-load="orgJGrapesConletsExampleHelloAlpine.onLoad"
+    x-data="{
+        conletId: null,
+        state: null
+    }"
+    x-init="conletId = $el.closest('[data-conlet-id]').getAttribute('data-conlet-id');
+        state = orgJGrapesConletsExampleHelloAlpine.get(conletId);">
+    <div style="font-size: 400%">${_("HelloWorld")}
+        <img class="helloWorldIcon"
+            x-show="state.worldVisible"
+            x-cloak
+            style='vertical-align: bottom;'
+            height='100'
+            src="${conletResource('Icojam-Blue-Bits-Globe.ico')}">
+        <!-- Globe icon from https://web.archive.org/web/20190618095520/http://www.iconarchive.com/show/blue-bits-icons-by-icojam/globe-icon.html -->
+    </div>
+    <button type="button"
+        class="HelloAlpine-toggle ui-button ui-widget ui-corner-all"
+        @click="state.worldVisible = !state.worldVisible;
+            JGConsole.notifyConletModel(
+                $el.closest('[data-conlet-id]').getAttribute('data-conlet-id'),
+                'toggleWorld')">${_("ToggleWorld")}</button>
+</div>

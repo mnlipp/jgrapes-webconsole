@@ -33,6 +33,7 @@ import static java.util.jar.Attributes.Name.IMPLEMENTATION_VERSION;
 import java.util.stream.Stream;
 import jdbld.WebConsoleOSGiTest.RunRepo;
 import jdbld.conlet.FormTest;
+import jdbld.conlet.HelloAlpine;
 import jdbld.conlet.HelloSolid;
 import jdbld.conlet.HelloWorld;
 import jdbld.conlet.LocalLogin;
@@ -155,6 +156,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
         dependency(Expose, project(JqueryUiConsole.class));
         dependency(Expose, project(JqUiTouchPunch.class));
         dependency(Expose, project(Gridstack.class));
+        dependency(Expose, project(HelloAlpine.class));
         dependency(Expose, project(HelloSolid.class));
         dependency(Expose, project(HelloWorld.class));
         dependency(Expose, project(Lit.class));
