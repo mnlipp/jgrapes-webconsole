@@ -61,6 +61,6 @@ A live demo configuration of a console is available at [demo.jgrapes.org](https:
 Building
 --------
 
-The libraries can be built with `./gradlew build`. For working with
-the project in Eclipse run `./gradlew eclipse` before importing the
+The libraries can be built with `./jdbld build`. For working with
+the project in Eclipse run `./jdbld eclipse` before importing the
 project.
