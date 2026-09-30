@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "markdown-it": "^14.3.0",
+    "markdown-it": "^14.3.2",
     "markdown-it-abbr": "^2.0.0",
     "markdown-it-container": "^4.0.0",
     "markdown-it-deflist": "^4.0.0",
