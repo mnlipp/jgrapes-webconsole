@@ -41,7 +41,8 @@ export default {
     vue({ 'preprocessStyles': true }),
     typescript(),
     replace({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      'preventAssignment': true
     }),
     postcss()
   ]
