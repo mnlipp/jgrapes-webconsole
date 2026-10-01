@@ -590,4 +590,4 @@ export class AashTreeView extends HTMLElement {
   }
 }
 
-customElements.define('aash-tree-view', AashTreeView);
+customElements.define('aash2-tree-view', AashTreeView);

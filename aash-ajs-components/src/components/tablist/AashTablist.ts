@@ -311,4 +311,4 @@ export class AashTablist extends HTMLElement {
   }
 }
 
-customElements.define('aash-tablist', AashTablist);
+customElements.define('aash2-tablist', AashTablist);

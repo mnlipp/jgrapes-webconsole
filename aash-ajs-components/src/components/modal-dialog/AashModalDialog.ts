@@ -294,7 +294,7 @@ export class AashModalDialog extends HTMLElement {
   }
 }
 
-customElements.define('aash-modal-dialog', AashModalDialog);
+customElements.define('aash2-modal-dialog', AashModalDialog);
 
 /**
  * Injects the global styles for the dialog once.

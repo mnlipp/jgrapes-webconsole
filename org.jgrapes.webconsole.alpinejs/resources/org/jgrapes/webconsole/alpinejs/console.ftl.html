@@ -37,7 +37,7 @@
   <main role="main">
 
   <div class="consoleAlpineJs">
-    <aash-tablist id="consoleTabs">
+    <aash2-tablist id="consoleTabs">
       <template provides="remove-label">
         <span class="fa fa-times"></span>
       </template>
@@ -50,7 +50,7 @@
           <span x-text="view.evalTitle()"></span>
         </template>
       </template>
-    </aash-tablist>
+    </aash2-tablist>
   </div>
   <div id="consolePanels">
     <section id="consoleOverviewPanel" role="tabpanel" hidden>
@@ -77,7 +77,7 @@
     </template>
   </div>
 
-  <aash-modal-dialog id="suspended-dialog">
+  <aash2-modal-dialog id="suspended-dialog">
     <template provides="dialog-title">
       <span x-text="$consoleRenderer.localize('Console Session Suspended')"></span>
     </template>
@@ -87,7 +87,7 @@
     <template provides="okay-label">
       <span x-text="$consoleRenderer.localize('Resume')"></span>
     </template>
-  </aash-modal-dialog>
+  </aash2-modal-dialog>
 
 <script type="module">
 import "${renderSupport.pageResource('aash-alpinejs/aash-alpinejs-components.js')}";

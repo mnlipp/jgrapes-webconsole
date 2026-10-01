@@ -162,4 +162,4 @@ export class AashDisclosureButton extends HTMLElement {
     }
 }
 
-customElements.define('aash-disclosure-button', AashDisclosureButton);
+customElements.define('aash2-disclosure-button', AashDisclosureButton);

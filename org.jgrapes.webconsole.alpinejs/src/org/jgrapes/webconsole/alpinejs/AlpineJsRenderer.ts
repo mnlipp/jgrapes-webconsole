@@ -190,7 +190,7 @@ export default class AlpineJsRenderer extends JGConsole.Renderer {
         content: string) {
         const _this = this;
         const formId = container.id! + "-form";
-        let dialog = <AashModalDialog>document.createElement("aash-modal-dialog");
+        let dialog = <AashModalDialog>document.createElement("aash2-modal-dialog");
         dialog.submitForm = options.useSubmit ? formId : null;
         dialog.onAction = function(apply: boolean, close: boolean) {
             _this.console.execOnAction(container, apply, close);

@@ -195,7 +195,7 @@ export class AashDropdownMenu extends HTMLElement {
   }
 }
 
-customElements.define('aash-dropdown-menu', AashDropdownMenu);
+customElements.define('aash2-dropdown-menu', AashDropdownMenu);
 
 /**
  * Injects the global styles for the dropdown menu once.
