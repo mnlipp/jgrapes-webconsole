@@ -89,6 +89,31 @@ Some modules depend on sibling component libraries built first:
 jdbld resolves these via `dependency()` declarations. Manual builds must
 respect this order.
 
+## AlpineJS Conlet Pattern
+
+See `org.jgrapes.webconlet.examples.helloalpine` for the reference
+implementation. Key aspects:
+
+- **Centralised data store:** a class extending `Map<string, State>` lives
+  on `window` (e.g. `window.orgJGrapesConletsExampleHelloAlpine`). Each
+  conlet instance stores `Alpine.reactive()` wrapped state keyed by conlet
+  ID. The store class declares `onLoad` and `onUnload` as function-typed
+  properties (using `!:`) -- these are assigned as plain functions (not
+  methods) because the framework invokes them without `this` binding.
+- **View template** uses `data-jgwc-on-load` to initialise the data store
+  entry, `x-data` + `x-init` to bind a reference to the global state, and
+  Alpine directives (`x-show`, `@click`) against that reference.
+- **Preview template** carries `data-jgwc-on-unload` (not the view) so the
+  "conlet removed" notification fires only when the conlet is actually
+  deleted, not when a view is closed. The `isUpdate` parameter distinguishes
+  layout refresh (`true`) from removal (`false`).
+- **Server push:** the conlet registers a function via
+  `JGConsole.registerConletFunction()` that mutates the reactive state when
+  the server sends `NotifyConletView` -- Alpine's reactivity updates the DOM
+  automatically.
+- TypeScript sources live in
+  `src/org/jgrapes/webconlet/.../browser/ConletName-functions.ts`.
+
 ## TypeScript Modules
 
 Modules that compile TypeScript (19 total):
@@ -106,6 +131,7 @@ Modules that compile TypeScript (19 total):
 - **Conlets**: `org.jgrapes.webconlet.locallogin`,
   `org.jgrapes.webconlet.oidclogin`, `org.jgrapes.webconlet.messagebox`,
   `org.jgrapes.webconlet.jmxbrowser`,
+  `org.jgrapes.webconlet.examples.helloalpine`,
   `org.jgrapes.webconlet.examples.hellosolid`
 - **Libraries**: `aash-ajs-components`, `aash-lit-components`,
   `aash-vue-components`
