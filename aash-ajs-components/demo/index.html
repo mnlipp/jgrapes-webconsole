@@ -40,7 +40,7 @@
   <main x-data="{ items: 3 }">
     <h1>AashDropdownMenu Demo</h1>
 
-    <aash-dropdown-menu id="language-selector"
+    <aash2-dropdown-menu id="language-selector"
       action="value => window.alert(value)">
       <template provides="label">
         <span>Language</span>
@@ -56,7 +56,7 @@
           <span x-text="`Item ${i}`"></span>
         </template>
       </template>
-    </aash-dropdown-menu>
+    </aash2-dropdown-menu>
 
     <p>
       <label x-data">
@@ -67,7 +67,7 @@
 
     <h1>AashTablist Demo</h1>
 
-    <aash-tablist id="demoTabs">
+    <aash2-tablist id="demoTabs">
       <template provides="tab" panel-id="panel-1">
         <span>Tab 1</span>
       </template>
@@ -80,7 +80,7 @@
       <template provides="remove-label">
         <span>x</span>
       </template>
-    </aash-tablist>
+    </aash2-tablist>
     
     <div id="panel-1" role="tabpanel">
       <h2>Panel One</h2>
@@ -100,7 +100,7 @@
     </p>
 
     <script type="module">
-      import '../lib/aash-alpinejs-components.js';
+      import '../lib/aash2-alpinejs-components.js';
 
       const tablist = document.getElementById('demoTabs');
 
@@ -119,7 +119,7 @@
         tpl.setAttribute('provides', 'tab');
         tpl.setAttribute('panel-id', id);
         tpl.setAttribute('remove-callback',
-          `document.querySelector('aash-tablist').removePanel('${id}');
+          `document.querySelector('aash2-tablist').removePanel('${id}');
            document.getElementById('${id}').remove()`);
         tpl.innerHTML = `<span>${label}</span>`;
         tablist.appendChild(tpl);
@@ -131,7 +131,7 @@
     <p>
       <button id="openDialog">Open Dialog</button>
     </p>
-    <aash-modal-dialog id="sampleDialog">
+    <aash2-modal-dialog id="sampleDialog">
       <template provides="dialog-title">
         <span>Sample Dialog</span>
       </template>
@@ -147,12 +147,12 @@
       <template provides="content">
         <i>Sample dialog content</i>
       </template>
-    </aash-modal-dialog>
+    </aash2-modal-dialog>
 
     <p>
       <button id="openDialogSubmit">Open Dialog (Submit)</button>
     </p>
-    <aash-modal-dialog id="sampleDialogSubmit"
+    <aash2-modal-dialog id="sampleDialogSubmit"
         submit-form="toBeSubmitted">
       <template provides="cancel-label">
         <span>×</span>
@@ -166,10 +166,10 @@
           <input type="password" name="password">
         </form>
       </template>
-    </aash-modal-dialog>
+    </aash2-modal-dialog>
 
     <script type="module">
-      import '../lib/aash-alpinejs-components.js';
+      import '../lib/aash2-alpinejs-components.js';
         
       const sampleDialog = document.getElementById('sampleDialog');
       sampleDialog.action = (confirmed, close) => {
@@ -190,6 +190,23 @@
       });
     </script>
 
+    <h1>Accordeon demo</h1>
+    
+    <aash2-accordion>
+      <details>
+        <summary>Section 1</summary>
+        <p>Content 1</p>
+      </details>
+      <details>
+        <summary>Section 2</summary>
+        <p>Content 2</p>
+      </details>
+      <details>
+        <summary>Section 3</summary>
+        <p>Content 3</p>
+      </details>
+    </aash2-accordion>
+    
   </main>
   
 </body>
