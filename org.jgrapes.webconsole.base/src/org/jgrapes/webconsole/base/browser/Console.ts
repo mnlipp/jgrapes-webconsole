@@ -52,6 +52,8 @@ class Console {
     private _resourceManager: ResourceManager;
     private _dialogIdCounter = 0;
     private _pageComponentCounter = 0;
+    private _localeChangeCallbacks: ((locale: string) => void)[] = [];
+    private _langObserver: MutationObserver;
 
     constructor() {
         document.querySelector("body")?.append(parseHtml(
@@ -178,6 +180,23 @@ class Console {
             (cookie) => { window.document.cookie = cookie; });
         this._webSocket.addMessageHandler('reload',
             () => { window.location.reload(); });
+        
+        let htmlRoot = document.querySelector("html")!;
+        this._langObserver = new MutationObserver(function(mutations) {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes'
+                    && mutation.attributeName === 'lang') {
+                    let newLang = htmlRoot.getAttribute('lang') || 'en';
+                    _this._localeChangeCallbacks
+                        .forEach((callback) => callback(newLang));
+                }
+            });
+        });
+        this._langObserver.observe(htmlRoot, {
+          childList: false,
+          attributes: true,
+          subtree: false
+        });
     }
 
     /**
@@ -365,8 +384,8 @@ class Console {
             this._execOnUnload(conlet.element(), true);
         }
         this._renderer!.updateConletContent(conlet, content);
+        this._execOnLoad(conlet.element(), !isNew);
         this._whenRendered(() => {
-            this._execOnLoad(conlet.element(), !isNew);
             this._resolveComponents();
         });
     }
@@ -391,8 +410,8 @@ class Console {
         this._renderer!.updateConletPreview(isNew, conlet!, modes,
             parseHtml(content), foreground);
         const _this = this;
+        _this._execOnLoad(conlet!.element(), !isNew);
         this._whenRendered(() => {
-            _this._execOnLoad(conlet!.element(), !isNew);
             _this._resolveComponents();
         });
     }
@@ -412,8 +431,8 @@ class Console {
         this._renderer!.updateConletView(isNew, conlet!, modes,
             parseHtml(content), foreground);
         const _this = this;
+        _this._execOnLoad(conlet!.element(), !isNew);
         this._whenRendered(() => {
-            _this._execOnLoad(conlet!.element(), !isNew);
             _this._resolveComponents();
         });
     }
@@ -446,6 +465,19 @@ class Console {
         });
     }
     
+    /**
+     * Registers a callback to be invoked when the locale changes.
+     */
+    whenLocaleChanged(callback: (locale: string) => void): () => void {
+        this._localeChangeCallbacks.push(callback);
+        return () => {
+            const index = this._localeChangeCallbacks.indexOf(callback);
+            if (index !== -1) {
+                this._localeChangeCallbacks.splice(index, 1);
+            }
+        };
+    }
+
     /**
      * Execute unload functions depth first. 
      */
@@ -503,9 +535,8 @@ class Console {
             }
         }
         const _this = this;
-        this._whenRendered(() => {
-            _this._execOnLoad(container, false);
-        });
+        _this._execOnLoad(container, false);
+        this._whenRendered(() => {});
     }
 
     /**
