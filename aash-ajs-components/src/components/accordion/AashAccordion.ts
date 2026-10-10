@@ -5,18 +5,14 @@
  * @module AashAccordion
  */
 import Alpine from 'alpinejs';
-import { AashComponent, Attribute, booleanConverter } from '../../AashUtil';
-
-/**
- * The interface provided by the component.
- *
- * `expand(index: number): void` ensures that the section is expanded.
- *
- * @memberof module:AashAccordion
- */
-export interface Api {
-  expand(index: number): void;
-}
+import {
+  AashComponent,
+  Attribute,
+  aashId,
+  booleanConverter,
+  Data,
+  Renderer
+} from '../../AashUtil';
 
 /**
  * @internal Controller class managing accordion state and navigation.
@@ -26,11 +22,12 @@ export class Controller {
   private _singleExpansion: boolean;
   private _domRoot: HTMLElement | null = null;
   private _sections: string[] = [];
-  private _expanded: Set<number> = new Set();
+  readonly expanded: Set<number>;
 
   constructor(alwaysExpanded: boolean, singleExpansion: boolean) {
     this._alwaysExpanded = alwaysExpanded;
     this._singleExpansion = singleExpansion;
+    this.expanded = Alpine.reactive(new Set<number>());
   }
 
   setDomRoot(root: HTMLElement) {
@@ -39,8 +36,8 @@ export class Controller {
 
   addSection(id: string): number {
     this._sections.push(id);
-    if (this._alwaysExpanded && this._expanded.size === 0) {
-      this._expanded.add(0);
+    if (this._alwaysExpanded && this.expanded.size === 0) {
+      this.expanded.add(0);
     }
     return this._sections.length - 1;
   }
@@ -51,45 +48,45 @@ export class Controller {
       return;
     }
     this._sections.splice(idx, 1);
-    this._expanded.delete(idx);
+    this.expanded.delete(idx);
     /* Re-map indices after removed section. */
-    const newExpanded = new Set<number>();
-    for (const i of this._expanded) {
+    const oldValues = [...this.expanded];
+    this.expanded.clear();
+    for (const i of oldValues) {
       if (i < idx) {
-        newExpanded.add(i);
+        this.expanded.add(i);
       } else if (i > idx && this._sections.length > i - 1) {
-        newExpanded.add(i - 1);
+        this.expanded.add(i - 1);
       }
     }
-    this._expanded = newExpanded;
-    if (this._alwaysExpanded && this._expanded.size === 0) {
-      this._expanded.add(0);
+    if (this._alwaysExpanded && this.expanded.size === 0) {
+      this.expanded.add(0);
     }
   }
 
   isExpanded(index: number): boolean {
-    return this._expanded.has(index);
+    return this.expanded.has(index);
   }
 
   expand(index: number) {
-    if (this._expanded.has(index)) {
+    if (this.expanded.has(index)) {
       return;
     }
     this.toggleExpanded(index);
   }
 
   toggleExpanded(index: number) {
-    if (this._expanded.has(index)) {
-      if (this._alwaysExpanded && this._expanded.size === 1) {
+    if (this.expanded.has(index)) {
+      if (this._alwaysExpanded && this.expanded.size === 1) {
         return;
       }
-      this._expanded.delete(index);
+      this.expanded.delete(index);
       return;
     }
     if (this._singleExpansion) {
-      this._expanded.clear();
+      this.expanded.clear();
     }
-    this._expanded.add(index);
+    this.expanded.add(index);
   }
 
   selectNext(index: number) {
@@ -116,8 +113,9 @@ export class Controller {
 
   private _updateDomFocus(index: number) {
     requestAnimationFrame(() => {
+      const sectionId = this._sections[index];
       const target = this._domRoot?.querySelector(
-        `#${this._sections[index]}-control`
+        `summary[data-section-id="${sectionId}"]`
       );
       (target as HTMLElement | null)?.focus();
     });
@@ -128,30 +126,27 @@ export class Controller {
  * @classdesc
  * Generates an accordion.
  *
- * Sections are added using `aash-accordion-section`.
+ * The primary usage is native {@code <details>}/{@code <summary>} elements
+ * as direct children. The accordion progressively enhances them with
+ * ARIA attributes and shared expansion state.
  *
  * Example source:
  * ```html
  * <aash-accordion always-expanded>
- *   <aash-accordion-section title="Header 1">
+ *   <details>
+ *     <summary>Header 1</summary>
  *     Panel 1
- *   </aash-accordion-section>
- *   <aash-accordion-section title="Header 2">
+ *   </details>
+ *   <details>
+ *     <summary>Header 2</summary>
  *     Panel 2
- *   </aash-accordion-section>
+ *   </details>
  * </aash-accordion>
  * ```
  *
- * The resulting DOM follows the example shown in the
- * [WAI-ARIA Authoring Practices 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html).
- * Notable differences are a `div` surrounding the pairs of headers and panels
- * and an additional div between the panel and its content.
- *
- * The former simplifies styling of a section independent of its expanded state
- * with e.g. a shadow.
- *
- * The latter is required for animating accordions. Details can be found in
- * the documentation of `AashAccordionSection`.
+ * For backward compatibility, {@code aash-accordion-section} elements are
+ * also supported. Each such element generates a {@code <details>} structure
+ * with a nested {@code <summary>}.
  *
  * @class AashAccordion
  */
@@ -160,6 +155,10 @@ export class AashAccordion extends HTMLElement {
 
   /** @internal Controller instance for child sections */
   private readonly ctrl: Controller;
+  /** @internal Observer for details children changes */
+  private contentObserver = new MutationObserver(() => {
+    Alpine.nextTick(() => this.updateContent());
+  });
 
   constructor() {
     super();
@@ -173,7 +172,87 @@ export class AashAccordion extends HTMLElement {
     /* Expose controller for child sections. */
     (this as unknown as Record<string, unknown>)._aashCtrl = this.ctrl;
     this.ctrl.setDomRoot(this);
-    Alpine.initTree(this);
+  }
+
+  @Data()
+  protected data(): object {
+    const _this = this;
+    return {
+      isExpanded: (index: number) => _this.ctrl.isExpanded(index)
+    }
+  }
+  
+  /** @internal Adds scope and triggers initial content update. */
+  @Renderer()
+  protected render() {
+    this.updateContent();
+  }
+
+  /**
+   * @internal Enhances unattributed details children.
+   */
+  private updateContent() {
+    this.contentObserver.disconnect();
+    const detailsElements = this.querySelectorAll(':scope > details');
+    for (const details of detailsElements) {
+      if (!details.hasAttribute('data-section-id')) {
+        this.enhanceNativeSection(details as HTMLDetailsElement);
+      }
+    }
+    this.contentObserver.observe(this, {
+      childList: true,
+      subtree: false
+    });
+  }
+
+  /** @internal Enhances a single details element. */
+  private enhanceNativeSection(details: HTMLDetailsElement) {
+    const sectionId = aashId();
+    const index = this.ctrl.addSection(sectionId);
+    let contentId = details.getAttribute('id');
+    if (!contentId) {
+        contentId = sectionId + '-content';
+        details.setAttribute('id', contentId);
+    }
+    details.setAttribute('data-section-id', sectionId);
+    details.setAttribute('x-bind:open', `isExpanded(${index}) ? '' : null`);
+
+    let summary = details.querySelector<HTMLElement>('summary');
+    if (!summary) {
+      summary = this.ownerDocument.createElement('summary');
+      details.prepend(summary);
+    }
+    details.setAttribute('data-section-index', String(index));
+    const controlId = sectionId + '-control';
+    summary.setAttribute('id', controlId);
+    summary.setAttribute('role', 'button');
+    summary.setAttribute('x-bind:aria-expanded',
+      `isExpanded(${index}) ? 'true' : 'false'`);
+    summary.setAttribute('aria-controls', contentId);
+    summary.addEventListener('click', (event: Event) => {
+      event.preventDefault();
+      this.ctrl.toggleExpanded(index);
+    });
+
+    summary.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        this.ctrl.selectNext(index);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        this.ctrl.selectPrev(index);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        this.ctrl.selectFirst();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        this.ctrl.selectLast();
+      }
+    });
+  }
+
+  disconnectedCallback() {
+    this.contentObserver.disconnect();
   }
 
   /**
@@ -203,4 +282,4 @@ export class AashAccordion extends HTMLElement {
   }
 }
 
-customElements.define('aash-accordion', AashAccordion);
+customElements.define('aash2-accordion', AashAccordion);

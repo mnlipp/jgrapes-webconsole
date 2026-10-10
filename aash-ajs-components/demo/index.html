@@ -19,7 +19,47 @@
       box-sizing: inherit;
   }
 
+  aash2-accordion details {
+    margin-bottom: 0.5em;
+  }
+  
+  aash2-accordion summary {
+    background-color: #F0F0F0;
+    margin: 0;
+    padding: 0.5em 0.5em;
+    border-style: solid;
+    border-radius: 5px;
+  }
+
+  aash2-accordion summary:focus {
+    background-color: #F8F8F8;
+  }
+
+  aash2-accordion summary h2 {
+    display: inline;
+    margin: 0;
+  }
+  
+  [data-aash-role="accordion"] [role=region] {
+    transition: height 0.2s;
+  }
+
+  [data-aash-role="accordion"] [role=region][data-transitioning] {
+    overflow: hidden;
+    display: block;
+  }
+
+  [data-aash-role="accordion"] [role=region][hidden] {
+    height: 0;
+  }
+  
+  div.paragraph {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+  }
   </style>
+  
   <script type="module">
   import Alpine from 'alpinejs';
   window.Alpine = Alpine;
@@ -38,172 +78,192 @@
 </head>
 <body>
   <main x-data="{ items: 3 }">
-    <h1>AashDropdownMenu Demo</h1>
+    <h1>Aash Components Demo</h1>
 
-    <aash2-dropdown-menu id="language-selector"
-      action="value => window.alert(value)">
-      <template provides="label">
-        <span>Language</span>
-      </template>
-      <template provides="item" with-value="en">
-        <span>English</span>
-      </template>
-      <template provides="item" with-value="de">
-        <span>German</span>
-      </template>
-      <template x-for="i in items">
-        <template provides="item" :with-value='`x${i}`'>
-          <span x-text="`Item ${i}`"></span>
-        </template>
-      </template>
-    </aash2-dropdown-menu>
-
-    <p>
-      <label x-data">
-        Extra Items: 
-        <input type="number" value="3" step="1" x-model.number="items">
-      </label>
-    </p>
-
-    <h1>AashTablist Demo</h1>
-
-    <aash2-tablist id="demoTabs">
-      <template provides="tab" panel-id="panel-1">
-        <span>Tab 1</span>
-      </template>
-      <template provides="tab" panel-id="panel-2">
-        <span>Tab 2</span>
-      </template>
-      <template provides="tab" panel-id="panel-3">
-        <span>Tab 3</span>
-      </template>
-      <template provides="remove-label">
-        <span>x</span>
-      </template>
-    </aash2-tablist>
-    
-    <div id="panel-1" role="tabpanel">
-      <h2>Panel One</h2>
-      <p>This is the content of panel one.</p>
-    </div>
-    <div id="panel-2" role="tabpanel" hidden>
-      <h2>Panel Two</h2>
-      <p>This is the content of panel two.</p>
-    </div>
-    <div id="panel-3" role="tabpanel" hidden>
-      <h2>Panel Three</h2>
-      <p>This is the content of panel three.</p>
-    </div>
-
-    <p>
-      <button id="addBtn">Add Panel</button>
-    </p>
-
-    <script type="module">
-      import '../lib/aash2-alpinejs-components.js';
-
-      const tablist = document.getElementById('demoTabs');
-
-      let panelCounter = 4;
-
-      document.getElementById('addBtn').addEventListener('click', () => {
-        const id = 'panel-' + panelCounter++;
-        const label = 'Tab ' + (panelCounter - 1);
-        const div = document.createElement('div');
-        div.id = id;
-        div.setAttribute('role', 'tabpanel');
-        div.innerHTML = '<h2>Panel ' + (panelCounter - 1) + '</h2><p>Dynamically added panel.</p>';
-        div.setAttribute('hidden', '');
-        tablist.after(div);
-        const tpl = document.createElement('template');
-        tpl.setAttribute('provides', 'tab');
-        tpl.setAttribute('panel-id', id);
-        tpl.setAttribute('remove-callback',
-          `document.querySelector('aash2-tablist').removePanel('${id}');
-           document.getElementById('${id}').remove()`);
-        tpl.innerHTML = `<span>${label}</span>`;
-        tablist.appendChild(tpl);
-      });
-    </script>
-
-    <h1>AashModalDialog Demo</h1>
-
-    <p>
-      <button id="openDialog">Open Dialog</button>
-    </p>
-    <aash2-modal-dialog id="sampleDialog">
-      <template provides="dialog-title">
-        <span>Sample Dialog</span>
-      </template>
-      <template provides="cancel-label">
-        <span>×</span>
-      </template>
-      <template provides="apply-label">
-        <span>Apply</span>
-      </template>
-      <template provides="okay-label">
-        <span>OK</span>
-      </template>
-      <template provides="content">
-        <i>Sample dialog content</i>
-      </template>
-    </aash2-modal-dialog>
-
-    <p>
-      <button id="openDialogSubmit">Open Dialog (Submit)</button>
-    </p>
-    <aash2-modal-dialog id="sampleDialogSubmit"
-        submit-form="toBeSubmitted">
-      <template provides="cancel-label">
-        <span>×</span>
-      </template>
-      <template provides="dialog-title">
-        <p>Sample Dialog (Submit)</p>
-      </template>
-      <template provides="content">
-        <form id="toBeSubmitted">
-          <input type="text" name="user">
-          <input type="password" name="password">
-        </form>
-      </template>
-    </aash2-modal-dialog>
-
-    <script type="module">
-      import '../lib/aash2-alpinejs-components.js';
-        
-      const sampleDialog = document.getElementById('sampleDialog');
-      sampleDialog.action = (confirmed, close) => {
-        window.alert(confirmed + ' ' + close);
-      };
-
-      const sampleDialogSubmit = document.getElementById('sampleDialogSubmit');
-      sampleDialogSubmit.action = (confirmed, close) => {
-        window.alert(confirmed + ' ' + close);
-      };
-
-      document.getElementById('openDialog').addEventListener('click', () => {
-        sampleDialog.open();
-      });
-
-      document.getElementById('openDialogSubmit').addEventListener('click', () => {
-        sampleDialogSubmit.open();
-      });
-    </script>
-
-    <h1>Accordeon demo</h1>
-    
     <aash2-accordion>
       <details>
-        <summary>Section 1</summary>
-        <p>Content 1</p>
+        <summary><h2>AashDropdownMenu Demo</h2></summary>
+
+        <p>    
+        <aash2-dropdown-menu id="language-selector"
+            action="value => window.alert(value)">
+            <template provides="label">
+              <span>Language</span>
+            </template>
+            <template provides="item" with-value="en">
+              <span>English</span>
+            </template>
+            <template provides="item" with-value="de">
+              <span>German</span>
+            </template>
+            <template x-for="i in items">
+              <template provides="item" :with-value='`x${i}`'>
+                <span x-text="`Item ${i}`"></span>
+              </template>
+            </template>
+          </aash2-dropdown-menu>
+        </p>
+    
+        <p>
+          <label x-data">
+            Extra Items: 
+            <input type="number" value="3" step="1" x-model.number="items">
+          </label>
+        </p>
       </details>
+    
       <details>
-        <summary>Section 2</summary>
-        <p>Content 2</p>
+        <summary><h2>AashTablist Demo</h2></summary>
+
+        <p>
+          <aash2-tablist id="demoTabs">
+            <template provides="tab" panel-id="panel-1">
+              <span>Tab 1</span>
+            </template>
+            <template provides="tab" panel-id="panel-2">
+              <span>Tab 2</span>
+            </template>
+            <template provides="tab" panel-id="panel-3">
+              <span>Tab 3</span>
+            </template>
+            <template provides="remove-label">
+              <span>x</span>
+            </template>
+          </aash2-tablist>
+        </p>
+        
+        <div id="panel-1" role="tabpanel">
+          <h2>Panel One</h2>
+          <p>This is the content of panel one.</p>
+        </div>
+        <div id="panel-2" role="tabpanel" hidden>
+          <h2>Panel Two</h2>
+          <p>This is the content of panel two.</p>
+        </div>
+        <div id="panel-3" role="tabpanel" hidden>
+          <h2>Panel Three</h2>
+          <p>This is the content of panel three.</p>
+        </div>
+    
+        <p>
+          <button id="addBtn">Add Panel</button>
+        </p>
+    
+        <script type="module">
+          import '../lib/aash-alpinejs-components.js';
+    
+          const tablist = document.getElementById('demoTabs');
+    
+          let panelCounter = 4;
+    
+          document.getElementById('addBtn').addEventListener('click', () => {
+            const id = 'panel-' + panelCounter++;
+            const label = 'Tab ' + (panelCounter - 1);
+            const div = document.createElement('div');
+            div.id = id;
+            div.setAttribute('role', 'tabpanel');
+            div.innerHTML = '<h2>Panel ' + (panelCounter - 1) + '</h2><p>Dynamically added panel.</p>';
+            div.setAttribute('hidden', '');
+            tablist.after(div);
+            const tpl = document.createElement('template');
+            tpl.setAttribute('provides', 'tab');
+            tpl.setAttribute('panel-id', id);
+            tpl.setAttribute('remove-callback',
+              `document.querySelector('aash2-tablist').removePanel('${id}');
+               document.getElementById('${id}').remove()`);
+            tpl.innerHTML = `<span>${label}</span>`;
+            tablist.appendChild(tpl);
+          });
+        </script>
       </details>
+
       <details>
-        <summary>Section 3</summary>
-        <p>Content 3</p>
+        <summary><h2>AashModalDialog Demo</h2></summary>
+
+        <p>
+          <button id="openDialog">Open Dialog</button>
+        </p>
+        <aash2-modal-dialog id="sampleDialog">
+          <template provides="dialog-title">
+            <span>Sample Dialog</span>
+          </template>
+          <template provides="cancel-label">
+            <span>×</span>
+          </template>
+          <template provides="apply-label">
+            <span>Apply</span>
+          </template>
+          <template provides="okay-label">
+            <span>OK</span>
+          </template>
+          <template provides="content">
+            <i>Sample dialog content</i>
+          </template>
+        </aash2-modal-dialog>
+    
+        <p>
+          <button id="openDialogSubmit">Open Dialog (Submit)</button>
+        </p>
+        <aash2-modal-dialog id="sampleDialogSubmit"
+            submit-form="toBeSubmitted">
+          <template provides="cancel-label">
+            <span>×</span>
+          </template>
+          <template provides="dialog-title">
+            <p>Sample Dialog (Submit)</p>
+          </template>
+          <template provides="content">
+            <form id="toBeSubmitted">
+              <input type="text" name="user">
+              <input type="password" name="password">
+            </form>
+          </template>
+        </aash2-modal-dialog>
+    
+        <script type="module">
+          import '../lib/aash-alpinejs-components.js';
+            
+          const sampleDialog = document.getElementById('sampleDialog');
+          sampleDialog.action = (confirmed, close) => {
+            window.alert(confirmed + ' ' + close);
+          };
+    
+          const sampleDialogSubmit = document.getElementById('sampleDialogSubmit');
+          sampleDialogSubmit.action = (confirmed, close) => {
+            window.alert(confirmed + ' ' + close);
+          };
+    
+          document.getElementById('openDialog').addEventListener('click', () => {
+            sampleDialog.open();
+          });
+    
+          document.getElementById('openDialogSubmit').addEventListener('click', () => {
+            sampleDialogSubmit.open();
+          });
+        </script>
+      </details>
+      
+      <details>
+        <summary><h2>Accordeon Demo</h2></summary>
+
+        <!-- cannot use details in side p  -->
+        <div class="paragraph">
+          <aash2-accordion multiple-expansion>
+            <details>
+              <summary>Section 1</summary>
+              <p>Content 1</p>
+            </details>
+            <details>
+              <summary>Section 2</summary>
+              <p>Content 2</p>
+            </details>
+            <details>
+              <summary>Section 3</summary>
+              <p>Content 3</p>
+            </details>
+          </aash2-accordion>
+        </div>
+        
       </details>
     </aash2-accordion>
     
