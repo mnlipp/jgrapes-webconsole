@@ -551,6 +551,7 @@ class Console {
         if (container) {
             this._execOnUnload(container, false);
             this._renderer!.closeModalDialog(container);
+            container.remove();
         }
     }
 
