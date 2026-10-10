@@ -4,12 +4,8 @@
  */
 import Alpine from 'alpinejs';
 import {
-  AashComponent,
-  Attribute,
-  Renderer,
-  expressionConverter,
-  aashId,
-  createFragment
+  AashComponent, Attribute, Data, Renderer,
+  expressionConverter, aashId, createFragment
 } from '../../AashUtil';
 
 /**
@@ -126,7 +122,7 @@ export class AashModalDialog extends HTMLElement {
 
       cancel() {
         if (element.actionCallback) {
-          element.actionCallback(false, false);
+          element.actionCallback(false, true);
         }
         element.dialogElement?.close();
         element.ownerDocument.querySelector('html')!.removeAttribute('inert');
@@ -144,11 +140,14 @@ export class AashModalDialog extends HTMLElement {
     } satisfies ModalDialogData);
   }
 
+  @Data()
+  protected data(): object {
+    return this.ajsData;
+  }
+  
   /** @internal Renders dialog structure and teleports content. */
   @Renderer()
   protected render() {
-    Alpine.addScopeToNode(this,
-      this.ajsData as unknown as Record<string, unknown>);
     const dialogId = this.id || `aash-modal-dialog`;
     const labelId = dialogId + '-label';
     this.dialogElement = createFragment(this,
@@ -178,8 +177,7 @@ export class AashModalDialog extends HTMLElement {
         </footer>
       </dialog>`).firstChild as HTMLDialogElement;
     this.prepend(this.dialogElement!);
-    // Let the new DOM settle.
-    Alpine.nextTick(() => this.updateContent());
+    this.updateContent();
   }
 
   /** @internal Teleports template content into structural targets. */

@@ -4,7 +4,7 @@
  */
 import Alpine from 'alpinejs';
 import {
-  AashComponent, Attribute, Renderer, aashId
+  AashComponent, Attribute, Data, Renderer, aashId
 } from '../../AashUtil';
 
 interface PanelData {
@@ -108,11 +108,14 @@ export class AashTablist extends HTMLElement {
     } satisfies TablistData);
   }
 
+  @Data()
+  protected data(): object {
+    return this.ajsData;
+  }
+  
   /** @internal Renders tab strip as HTML with Alpine directives. */
   @Renderer()
   protected render() {
-    Alpine.addScopeToNode(this,
-      this.ajsData as unknown as Record<string, unknown>);
     const shown = this.ownerDocument.createRange().createContextualFragment(
       `<div class="aash-tablist" role="tablist"
           :aria-orientation="isVertical ? 'vertical' : 'horizontal'"

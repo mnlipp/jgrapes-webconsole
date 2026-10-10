@@ -4,11 +4,8 @@
  */
 import Alpine from 'alpinejs';
 import {
-  AashComponent,
-  Attribute,
-  Renderer,
-  expressionConverter,
-  aashId
+  AashComponent, Attribute, Data, Renderer,
+  expressionConverter, aashId
 } from '../../AashUtil';
 
 interface ItemData {
@@ -123,10 +120,13 @@ export class AashDropdownMenu extends HTMLElement {
     }
   }
 
+  @Data()
+  protected data(): object {
+    return this.ajsData;
+  }
+  
   @Renderer()
   protected render() {
-    Alpine.addScopeToNode(this,
-      this.ajsData as unknown as Record<string, unknown>);
     const menuId = this.id + '-menu';
     const shown = this.ownerDocument.createRange().createContextualFragment(
       `<div class="dropdown-menu aash-dropdown-menu" x-cloak>

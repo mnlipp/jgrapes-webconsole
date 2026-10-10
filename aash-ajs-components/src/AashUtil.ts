@@ -108,7 +108,8 @@ export const functionConverter: Converter<((...args: any[]) => void) | null> = {
  * `evaluate`.
  */
 export const expressionConverter: Converter<((...args: any[]) => void) | null> = {
-  fromAttribute(value: string | null, el: HTMLElement): ((...args: any[]) => void) | null {
+  fromAttribute(value: string | null, el: HTMLElement):
+        ((...args: any[]) => void) | null {
     if (!value) {
       return null;
     }
@@ -147,6 +148,7 @@ interface AttrDescriptor {
 interface ComponentMetadata {
   attrs: AttrDescriptor[];
   rendererKey: string | undefined;
+  dataKey: string | undefined;
 }
 
 /** @internal Single WeakMap: prototype → metadata */
@@ -157,6 +159,7 @@ function getMetadata(proto: object): ComponentMetadata {
   return _metadata.get(proto) ?? {
     attrs: [],
     rendererKey: undefined,
+    dataKey: undefined
   };
 }
 
@@ -237,6 +240,22 @@ export function Renderer(): MethodDecorator {
 }
 
 /**
+ * Method decorator: returns a component's instance data.
+ */
+export function Data(): MethodDecorator {
+  return (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor
+  ) => {
+    const meta = getMetadata(target);
+    meta.dataKey = String(propertyKey);
+    ensureMetadata(target, meta);
+    return descriptor;
+  };
+}
+
+/**
  * Class decorator: turns an HTMLElement subclass into an AashComponent
  * with automatic attribute observation and initialization.
  *
@@ -299,28 +318,49 @@ export function AashComponent(): ClassDecorator {
       if (userConnCb) {
         userConnCb.call(this);
       }
-      if (!this.hasAttribute("x-data")) {
-        this.setAttribute("x-data", "");
-      }
-      if (!this.hasAttribute("x-aash-component")) {
-        this.setAttribute("x-aash-component", "");
+      // If the element has not yet been initialized by Alpine yet,
+      // setting the attributes may not trigger their (premature
+      // evaluation).
+      if (!(this as any)._x_marker) {
+        Alpine.mutateDom(() => {
+          addDirectives(this);
+        });
+      } else {
+        addDirectives(this);
       }
     };
 
+    cls.prototype._aash_data = function (this: HTMLElement): object {
+      const meta = getMetadata(Object.getPrototypeOf(this));
+      if (meta.dataKey) {
+        const dataSupplier = (this as any)[meta.dataKey];
+        if (dataSupplier && typeof dataSupplier === "function") {
+          return dataSupplier.call(this) as object;
+        }
+      }
+      return {};
+    }
+    
     return cls;
   };
 }
 
-Alpine.directive('aash-component',
-  (el, {}, { evaluate }) => {
+function addDirectives(el: HTMLElement) {
+  if (!el.hasAttribute("x-data")) {
+    el.setAttribute("x-data", "$el._aash_data()");
+  }
+  
+  // Call renderer
   const meta = getMetadata(Object.getPrototypeOf(el));
   if (meta.rendererKey) {
     const render = (el as any)[meta.rendererKey];
     if (render && typeof render === "function") {
-      render.call(el, evaluate);
+      render.call(el, (expression: string) => {
+          Alpine.evaluate(el, expression);
+      });
     }
   }
-});
+}
 
 /* ------------------------------------------------------------------ */
 /* Miscellaneous                                                      */

@@ -30,10 +30,13 @@ export class MyComponent extends HTMLElement {
     } satisfies MyComponentData);
   }
 
+  @Data()
+  protected data() {
+    return this.ajsData;
+  }
+
   @Renderer()
   protected render() {
-    Alpine.addScopeToNode(this,
-      this.ajsData as unknown as Record<string, unknown>);
     this.innerHTML = `<span x-text="someProperty"></span>`;
   }
 
@@ -52,26 +55,28 @@ customElements.define('my-component', MyComponent);
    containing all state and methods that Alpine templates reference.
 
 2. **Lifecycle** — `connectedCallback` (provided by the class decorator)
-   sets the attributes `x-data` (if missing) and `x-aash-component`.
-   The `x-aash-component` directive causes Alpine to call the method
-   annotated with `@Renderer()`. If the component defines its own
+   sets the attribute `x-data` (if missing) to the object returned
+   by the method decorated with `@Data()`. It then calls the method
+   decorated with `@Renderer()`. If the component defines its own
    `connectedCallback`, the decorator invokes it before setting the
-   attributes. This allows the component to initialize controller state
-   before rendering (e.g. AashAccordionSection registers itself with
-   the parent AashAccordion).
+   attribute. This allows the component to initialize controller state
+   before rendering.
 
-3. **Render** — The method decorated with `@Renderer()` makes the component's
-   data available in the Alpine data stack via `Alpine.addScopeToNode()`
-   and creates the `innerHTML` of the web component. Templates use
-   Alpine directives (`x-text`, `x-bind`, `x-for`, `x-show`, `x-init`,
-   `x-cloak`, etc.) for reactive rendering.
+3. **Data** — The method decorated with `@Data()` is called to get the
+   object with the component's data (Alpine's `x-data` attribute).
 
-4. **Property setters** — Public setters mutate `ajsData`, triggering
-   Alpine's reactivity. Use `@Attribute` to bind setters to HTML
+4. **Render** — The method decorated with `@Renderer()` creates the
+   `innerHTML` of the web component. The `innerHTML` uses Alpine directives
+   (`x-text`, `x-bind`, `x-for`, `x-show`, `x-init`, `x-cloak`, etc.) for
+   reactive rendering. The directives can reference the data provided
+   for the instance by the method decorated with `@Data()`.
+
+5. **Property setters** — Public setters mutate the component's data,
+   triggering Alpine's reactivity. Use `@Attribute` to bind setters to HTML
    attributes. For programmatic API usage, expose plain setters without
-   `@Attribute` (e.g. `onAction` on AashModalDialog).
+   `@Attribute` (e.g. `onAction` on `AashModalDialog`).
 
-5. **Cleanup** — Override `disconnectedCallback` to release resources
+6. **Cleanup** — Override `disconnectedCallback` to release resources
    (remove event listeners, disconnect `MutationObserver`s). The
    decorator chains the user's callback after its own setup, so
    cleanup code should not interfere with the decorator's lifecycle.
@@ -88,12 +93,7 @@ Class decorator that generates:
   string via the setter's converter and calls the setter
 - Component preparation in `connectedCallback` — calls the component's
   own `connectedCallback` if it exists and then sets the attributes
-  `x-data` (if missing) and `x-aash-component`.
-
-Components that define their own `connectedCallback` (e.g. AashDisclosureButton,
-AashAccordionSection) must manually call `Alpine.addScopeToNode()`, `render()`,
-and `Alpine.initTree()` because the decorator's attribute-based initialization
-via `x-aash-component` runs asynchronously after the element connects.
+  `x-data` (if missing).
 
 Usage:
 ```ts
@@ -173,13 +173,13 @@ set onAction(value: ((...args: any[]) => any) | null) {
 For presence-based boolean attributes (e.g. `show-cancel`) use
 `booleanConverter` instead.
 
+### `@Data()`
+
+Method decorator that marks a method as the supplier for the componet's data.
+
 ### `@Renderer()`
 
-Method decorator that marks a method as the component's renderer. The
-`x-aash-component` Alpine directive looks up the decorated method via
-the class's prototype and invokes it after Alpine initializes the tree.
-This replaces the previous convention of hard-coding the method name
-`"render"`.
+Method decorator that marks a method as the component's renderer.
 
 Usage:
 ```ts
@@ -230,10 +230,12 @@ this.prepend(
      </button>`));
 ```
 
-For repeated slots (like menu items), the preferred approach is to
-include a `<template x-for=...>` in the component's template. The value
-that `x-for` iterates over must be reactive data and is updated by
-`updateContent()` based on the `<template provides="...">` children.
+For repeated slots (e.g. menu items), the preferred approach is to
+use a `<template x-for=...>` in the template that generates the component's
+DOM. The value that `x-for` iterates over must be reactive data and is
+updated by `updateContent()` based on the `<template provides="...">` children
+found.
+
 The `x-init` directive of elements generated in the loop is used to
 set an `x-teleport` attribute pointing to the corresponding target.
 The teleport must be scheduled via `Alpine.nextTick()` because setting
