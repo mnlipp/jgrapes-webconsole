@@ -193,7 +193,6 @@ export class ConletManager {
               ></button>
             </header>
             <section></section>`));
-            this.renderer.awaitInDom(container);
 
             // Get grid info
             let options: GridStackWidget = {};
@@ -268,7 +267,6 @@ export class ConletManager {
             container.setAttribute("id", panelId);
             container.setAttribute("hidden", "");
             container.append(...content);
-            this.renderer.awaitInDom(container);            
             let consolePanels = <HTMLElement>document.querySelector("#consolePanels");
             consolePanels.append(container);
             // Add to tab list

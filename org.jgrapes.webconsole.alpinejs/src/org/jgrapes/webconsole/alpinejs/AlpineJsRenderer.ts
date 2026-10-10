@@ -62,26 +62,11 @@ export default class AlpineJsRenderer extends JGConsole.Renderer {
         this.conletTypeManager = new ConletTypeManager(this);
         this.conletManager = new ConletManager(this, console);
         this.notificationManager = new NotificationManager(this, console);
-        
-        /*
-         * Install a MutationObserver for root html node's attribute lang
-         * that feeds back the value to a the lang property
-         * in app data for simpler reactivity.
-         */
-        new MutationObserver(function(mutations) {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'attributes'
-                    && mutation.attributeName === 'lang') {
-                    let newLang = htmlRoot.getAttribute('lang') || 'en';
-                    _this.consoleData.locale = newLang;
-                    _this.console.setLocale(newLang, false);
-                }
-            });
-        }).observe(htmlRoot, {
-          childList: false,
-          attributes: true,
-          subtree: false
-        });
+
+        console.whenLocaleChanged((locale) => {
+            _this.consoleData.locale = locale;
+            _this.console.setLocale(locale, false);
+        })        
     }
     
     init() {
@@ -102,32 +87,6 @@ export default class AlpineJsRenderer extends JGConsole.Renderer {
         this.isConfigured = true;
     }
 
-    awaitInDom(element: HTMLElement) {
-        var attributed: HTMLElement = element;
-        if (element instanceof HTMLTemplateElement) {
-            attributed = element.content.firstElementChild! as HTMLElement;
-        }
-        const token = aashId();
-        attributed.dataset["domCreatedToken"] = token;
-        this.awaitedTokens.push(token);
-    }
-    
-    whenRendered(todo: () => void) {
-        while (this.awaitedTokens.length > 0) {
-            const token = this.awaitedTokens[0];
-            const attributed = document.querySelector(
-                `[data-dom-created-token="${token}"]`) as HTMLElement;
-            if (attributed) {
-                this.awaitedTokens.splice(0, 1);
-                delete attributed.dataset["domCreatedToken"];
-            } else {
-                setTimeout(() => this.whenRendered(todo), 0);
-                return;
-            }
-        }
-        todo();
-    }
-    
     get conletTypeMgr() {
         return this.conletTypeManager;
     }
@@ -189,13 +148,24 @@ export default class AlpineJsRenderer extends JGConsole.Renderer {
     openModalDialog(container: HTMLElement, options: ModalDialogOptions,
         content: string) {
         const _this = this;
+        
+        // Must be attached to DOM tree for Alpine to initialize
+        let slot = document.querySelector("#console-modal-slot");
+        if (slot) {
+            while (slot!.firstChild) {
+                slot!.removeChild(slot!.firstChild);
+            }
+            slot!.append(container);
+        }
+
+        // Create dialog        
         const formId = container.id! + "-form";
         let dialog = <AashModalDialog>document.createElement("aash2-modal-dialog");
         dialog.submitForm = options.useSubmit ? formId : null;
         dialog.onAction = function(apply: boolean, close: boolean) {
             _this.console.execOnAction(container, apply, close);
             if (close) {
-                dialog.remove();
+                container.remove();
             }
         };
         if (options.title) {
@@ -226,9 +196,14 @@ export default class AlpineJsRenderer extends JGConsole.Renderer {
             = document.createElement("template") as HTMLTemplateElement;
         contentTpl.setAttribute("provides", "content");
         contentTpl.innerHTML = content;
-        this.awaitInDom(contentTpl);
         dialog.appendChild(contentTpl);
-        container.appendChild(dialog);
+        // Prevent later initialization of new DOM tree
+        Alpine.mutateDom(() => {
+            container.appendChild(dialog);
+        });
+        // Init tree now to make sure that the dialog is available for
+        // conlet's on load function.
+        Alpine.initTree(dialog);
         dialog.open();
         if (!this.isConfigured) {
             let loaderOverlay = <HTMLElement>document.querySelector("#loader-overlay");
