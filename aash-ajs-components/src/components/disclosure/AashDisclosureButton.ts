@@ -5,11 +5,35 @@
  */
 import Alpine from 'alpinejs';
 import {
-  AashComponent,
-  Attribute,
-  Renderer,
-  expressionConverter
+  AashComponent, Attribute, Data, Renderer, expressionConverter,
+  aashGlobals, aashId
 } from '../../AashUtil';
+
+let disclosureRegistry = Alpine.reactive(new Map<string, boolean>());
+
+interface AashGlobals {
+    /**
+     * Returns the state of the disclosure with the given `id`.
+     * @function
+     * @param id the id
+     */
+    isDisclosed(id: string): boolean;
+    
+    /**
+     * Remove the discloure data for the given `id`.
+     * @function
+     * @param id the id
+     */
+    removeDisclosure(id: string): void;
+}
+
+(aashGlobals as AashGlobals).isDisclosed = (id: string) => {
+    return disclosureRegistry.get(id) || false;
+},
+
+(aashGlobals as AashGlobals).removeDisclosure = (id: string) => {
+    return disclosureRegistry.delete(id);
+}
 
 /** @internal Maps idRef → reactive disclosure state */
 const disclosureStates = new Map<string, { disclosed: boolean }>();
@@ -20,9 +44,6 @@ const disclosureStates = new Map<string, { disclosed: boolean }>();
 interface DisclosureData {
   idRef: string;
   disclosed: boolean;
-  onShow: (() => void) | null;
-  onHide: (() => void) | null;
-  onToggle: ((value: boolean) => void) | null;
   toggleDisclosed: () => void;
 }
 
@@ -45,78 +66,68 @@ export class AashDisclosureButton extends HTMLElement {
 
     /** @internal Reactive state managed by AlpineJS */
     private readonly ajsData: DisclosureData;
+    private wrapper: string = 'button';
+    private onShowCb: (() => void) | null = null;
+    private onHideCb: (() => void) | null = null;
+    private onToggleCb: ((value: boolean) => void) | null = null;
 
     constructor() {
         super();
-        this.ajsData = Alpine.reactive(this.disclosureButtonAlpineData());
-    }
-
-    /**
-     * @internal AlpineJS data definition for the disclosure component.
-     */
-    protected disclosureButtonAlpineData(): DisclosureData {
-        const element = this;
-
-        return {
+        const _this = this;
+        this.ajsData = Alpine.reactive({
             idRef: '',
-            disclosed: false,
-            onShow: null,
-            onHide: null,
-            onToggle: null,
-
-            toggleDisclosed() {
-                this.disclosed = !this.disclosed;
-                if (this.onToggle) {
-                    this.onToggle(this.disclosed);
-                }
-                if (this.disclosed) {
-                    if (this.onShow) {
-                        this.onShow();
-                    }
-                } else {
-                    if (this.onHide) {
-                        this.onHide();
-                    }
-                }
-            }
-        };
+            get disclosed() {
+                return _this.isDisclosed;
+            },
+            toggleDisclosed: () => _this.toggleDisclosed()
+        } satisfies DisclosureData);
     }
 
-    protected connectedCallback() {
-        const idRef = this.getAttribute('id-ref') || '';
-        if (idRef) {
-            /* Share state across buttons controlling the same element. */
-            if (disclosureStates.has(idRef)) {
-                const existing = disclosureStates.get(idRef);
-                /* Copy disclosed value from existing state. */
-                if (existing) {
-                    this.ajsData.disclosed = existing.disclosed;
-                }
-            } else {
-                disclosureStates.set(idRef, {
-                    disclosed: this.ajsData.disclosed
-                });
-            }
-        }
-        Alpine.addScopeToNode(this,
-            this.ajsData as unknown as Record<string, unknown>);
-        this.render();
-        Alpine.initTree(this);
+    @Data()
+    protected data(): object {
+        return this.ajsData;
     }
-
+    
     /** @internal Renders as a button with Alpine directives. */
     @Renderer()
     protected render() {
+        if(this.ajsData.idRef === '') {
+            this.ajsData.idRef = aashId();
+        }
+        
+        const content = this.innerHTML;
         this.innerHTML =
-            `<button type="button"
+            `<${this.wrapper} ${this.wrapper === "button"
+                ? "type='button'" : "aria-role='button' tabindex='0'"}
                 data-aash-role="disclosure-button"
                 x-bind:aria-expanded="disclosed ? 'true' : 'false'"
                 x-bind:aria-controls="idRef"
                 @click="toggleDisclosed()">
-                <slot></slot>
             </button>`;
+        this.firstElementChild!.innerHTML = content;
     }
 
+    get isDisclosed() {
+        return disclosureRegistry.get(this.ajsData.idRef) || false;
+    }
+    
+    toggleDisclosed() {
+        const disclosed = !this.isDisclosed;
+        disclosureRegistry.set(this.ajsData.idRef, disclosed);
+        if (this.onToggleCb) {
+            this.onToggleCb(disclosed);
+        }
+        if (disclosed) {
+            if (this.onShowCb) {
+                this.onShowCb();
+            }
+        } else {
+            if (this.onHideCb) {
+                this.onHideCb();
+            }
+        }
+    }
+    
     /**
      * The id of the controlled element.
      */
@@ -126,11 +137,19 @@ export class AashDisclosureButton extends HTMLElement {
     }
 
     /**
+     * The type of the controlling element.
+     */
+    @Attribute('wrapper-type')
+    set wrapperType(value: string) {
+        this.wrapper = value;
+    }
+
+    /**
      * Callback invoked when the controlled element is shown.
      */
     @Attribute('on-show', expressionConverter)
     set onShow(value: (() => void) | null) {
-        this.ajsData.onShow = value;
+        this.onShowCb = value;
     }
 
     /**
@@ -138,7 +157,7 @@ export class AashDisclosureButton extends HTMLElement {
      */
     @Attribute('on-hide', expressionConverter)
     set onHide(value: (() => void) | null) {
-        this.ajsData.onHide = value;
+        this.onHideCb = value;
     }
 
     /**
@@ -146,7 +165,7 @@ export class AashDisclosureButton extends HTMLElement {
      */
     @Attribute('on-toggle', expressionConverter)
     set onToggle(value: ((value: boolean) => void) | null) {
-        this.ajsData.onToggle = value;
+        this.onToggleCb = value;
     }
 
     disconnectedCallback() {

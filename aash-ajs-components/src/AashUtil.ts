@@ -372,3 +372,7 @@ function addDirectives(el: HTMLElement) {
 export function createFragment(element: Element, text: string) {
   return element.ownerDocument.createRange().createContextualFragment(text);
 }
+
+export const aashGlobals: object = {}
+
+Alpine.store('$aash', aashGlobals);
