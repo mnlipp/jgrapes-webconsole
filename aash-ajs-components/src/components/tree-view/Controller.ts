@@ -1,40 +1,57 @@
 import Alpine from 'alpinejs';
 
 /**
- * A label can either be provided literally or by a function.
+ * A label supplier: either a static string or a function returning a string.
+ * The function form allows dynamic labels that re-evaluate on access.
  *
  * @memberof module:AashTreeView
  */
 export type LabelSupplier = string | (() => string);
 
 /**
- * The information about a tree node managed by the view.
+ * A node in the tree structure. Each node carries a unique segment identifier,
+ * a display label, and an array of child nodes.
  *
  * @memberof module:AashTreeView
  */
 export type TreeNode = {
-  /** The name of the branch */
+  /**
+   * Unique segment identifier within the parent's children list. Used as the
+   * path element for navigation and focus tracking.
+   */
   segment: string;
-  /** The label to show in the view */
+  /**
+   * Display label. May be a static string or a function that returns the label,
+   * enabling dynamic content such as translated or computed text.
+   */
   label: LabelSupplier;
-  /** The node's child nodes */
+  /**
+   * Child nodes. An empty or absent array makes the node a leaf. Nodes with
+   * non-empty children are expandable.
+   */
   children: TreeNode[];
 };
 
 /**
- * A function invoked with the desired new state before a tree node
- * is expanded. Return the new state (may veto the change).
+ * Veto callback for expand/collapse operations. Receives the current path, the
+ * requested new expansion state, and the triggering DOM event. Return the
+ * desired state: returning the current state (i.e. not changing it) vetoes
+ * the toggle.
  *
  * @memberof module:AashTreeView
  */
 export type ToggleVetoer = (
+  /** Path from root to the node being toggled */
   path: string[],
+  /** Requested expansion state (true = expand, false = collapse) */
   expand: boolean,
+  /** The DOM event that triggered the toggle */
   event: Event
 ) => boolean;
 
 /**
- * @internal Controller class managing tree state and navigation logic.
+ * @internal Controller class managing tree state, keyboard navigation, and
+ * expand/collapse logic.
  * @memberof module:AashTreeView
  */
 export class Controller {
@@ -64,14 +81,22 @@ export class Controller {
     this._singlePath = singlePath;
   }
 
+  /** @internal Stores the DOM root element for descendant queries. */
   setDomRoot(root: HTMLElement) {
     this._domRoot = root;
   }
 
+  /** @internal Returns the reactive root nodes array. */
   get roots() {
     return this._roots;
   }
-  
+
+  /**
+   * @internal Builds the segment path from a DOM element up to the tree root.
+   * Walks parent `<li>` elements, reading their Alpine data segments.
+   * @param item the starting DOM element
+   * @returns ordered path from root to the item
+   */
   collectPath(item: HTMLElement): string[] {
     const path: string[] = [];
     let cur: HTMLElement | null | undefined = item;
@@ -87,6 +112,11 @@ export class Controller {
     return path;
   }
 
+  /**
+   * @internal Resolves a path to its tree node.
+   * @param path segment path from root
+   * @returns the node at the path, or null if not found
+   */
   toNode(path: string[]): TreeNode | null {
     let node: TreeNode | null = null;
     let children = this._roots;
@@ -102,6 +132,11 @@ export class Controller {
     return node;
   }
 
+  /**
+   * @internal Finds the DOM element for a path.
+   * @param path segment path from root
+   * @returns the `<li>` element, or null if not found
+   */
   toItemElement(path: string[]): HTMLElement | null {
     let list: HTMLElement | null = this._domRoot!.querySelector(":scope ul");
     let cur: HTMLElement | null = null;
@@ -122,6 +157,11 @@ export class Controller {
     return cur;
   }
   
+  /**
+   * @internal Gets the Alpine data object for the item at the path.
+   * @param path segment path from root
+   * @returns the Alpine data, or null if the item has no DOM element
+   */
   toItemData(path: string[]): any | null {
     const item = this.toItemElement(path);
     if (!item) {
@@ -130,6 +170,11 @@ export class Controller {
     return Alpine.$data(item) as any;
   }
   
+  /**
+   * @internal Moves the path to the next sibling. Mutates the path in place.
+   * @param path current path (mutated on success)
+   * @returns true if a next sibling exists
+   */
   nextSibling(path: string[]): boolean {
     if (path.length === 0) {
       return false;
@@ -147,6 +192,12 @@ export class Controller {
     return false;
   }
 
+  /**
+   * @internal Moves the path to the next visible item (depth-first).
+   * Prefers first child if expanded, otherwise next sibling or ancestor sibling.
+   * @param path current path (mutated)
+   * @returns true if movement succeeded
+   */
   nextDown(path: string[]): boolean {
     if (this.isExpanded(path)) {
       path.push(this.toNode(path)!.children[0].segment);
@@ -164,6 +215,11 @@ export class Controller {
     return false;
   }
 
+  /**
+   * @internal Moves the path to the previous sibling. Mutates the path in place.
+   * @param path current path (mutated on success)
+   * @returns true if a previous sibling exists
+   */
   prevSibling(path: string[]): boolean {
     if (path.length === 0) {
       return false;
@@ -181,6 +237,12 @@ export class Controller {
     return false;
   }
 
+  /**
+   * @internal Moves the path to the previous visible item (depth-first).
+   * Prefers last descendant of previous sibling, otherwise parent.
+   * @param path current path (mutated)
+   * @returns true if movement succeeded
+   */
   prevUp(path: string[]): boolean {
     if (this.prevSibling(path)) {
       while (this.isExpanded(path)) {
@@ -196,15 +258,31 @@ export class Controller {
     return true;
   }
 
+  /**
+   * @internal Checks whether the node at the path has children.
+   * @param path segment path from root
+   * @returns true if the node is expandable
+   */
   isExpandable(path: string[]): boolean {
     const node = this.toNode(path);
     return !!(node && node.children && node.children.length > 0);
   }
 
+  /**
+   * @internal Checks whether the node at the path is currently expanded.
+   * @param path segment path from root
+   * @returns true if the node is expanded
+   */
   isExpanded(path: string[]): boolean {
     return this.toItemData(path)?.expanded || false;
   }
 
+  /**
+   * @internal Toggles the expanded state of the node at the path.
+   * Invokes the toggle vetoer and handles single-path sibling collapsing.
+   * @param path segment path from root
+   * @param event the triggering DOM event
+   */
   toggleExpanded(path: string[], event: Event) {
     const data = this.toItemData(path);
     if (!data) {
@@ -227,10 +305,20 @@ export class Controller {
     data.expanded = newState;
   }
 
+  /**
+   * @internal Fires the selection callback for the path.
+   * @param path segment path from root
+   * @param event the triggering DOM event
+   */
   onSelected(path: string[], event: Event) {
     this._onSelected(path, event);
   }
 
+  /**
+   * @internal Checks whether the given path currently holds keyboard focus.
+   * @param path segment path from root
+   * @returns true if the path matches the focus holder
+   */
   hasFocus(path: string[]): boolean {
     if (this._focusHolder.length !== path.length) {
       return false;
@@ -243,6 +331,11 @@ export class Controller {
     return true;
   }
 
+  /**
+   * @internal Sets the keyboard focus to the node at the path.
+   * Fires the focus callback when the path changes.
+   * @param path segment path from root
+   */
   setFocus(path: string[]) {
     if (this._focusHolder.length === path.length) {
       let foundDiff = false;
@@ -261,12 +354,18 @@ export class Controller {
     this._onFocus(path);
   }
 
+  /** @internal Schedules a DOM focus update on the focused item element. */
   updateDomFocus() {
     requestAnimationFrame(() => {
       this.toItemElement(this._focusHolder)?.focus();
     });
   }
 
+  /**
+   * @internal Returns the aria-expanded value for the path.
+   * @param path segment path from root
+   * @returns "true" / "false" if expandable, null for leaf nodes
+   */
   ariaExpanded(path: string[]): string | null {
     if (!this.isExpandable(path)) {
       return null;
@@ -274,6 +373,10 @@ export class Controller {
     return String(this.isExpanded(path));
   }
 
+  /**
+   * @internal Replaces the tree roots and resets focus to the first root.
+   * @param roots the new root nodes
+   */
   resetState(roots: TreeNode[]) {
     this._roots = roots;
     this._focusHolder.length = 0;

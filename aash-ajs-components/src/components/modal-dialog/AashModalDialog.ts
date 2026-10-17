@@ -49,9 +49,9 @@ interface ModalDialogData {
  *   </template>
  * </aash-modal-dialog>
  * ```
- * 
+ *
  * The rendered dialog template is:
- * 
+ *
  * ```html
  * <dialog>
  *   <header>
@@ -73,6 +73,10 @@ interface ModalDialogData {
  *   </footer>
  * </dialog>
  * ```
+ *
+ * The following properties can be set as HTML attributes:
+ * - `submit-form` — form ID to associate with action buttons
+ * - `action` — Alpine expression for the button-action callback
  *
  * @class AashModalDialog
  */

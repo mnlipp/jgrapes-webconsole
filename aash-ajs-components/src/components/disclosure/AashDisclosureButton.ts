@@ -59,6 +59,13 @@ interface DisclosureData {
  * <div id="onlyShownWhenDisclosed">Secret content</div>
  * ```
  *
+ * The following properties can be set as HTML attributes:
+ * - `id-ref` — ID of the controlled element
+ * - `wrapper-type` — tag name for the wrapper element (default: "button")
+ * - `on-show` — Alpine expression called when the element is shown
+ * - `on-hide` — Alpine expression called when the element is hidden
+ * - `on-toggle` — Alpine expression called on every toggle
+ *
  * @class AashDisclosureButton
  */
 @AashComponent()

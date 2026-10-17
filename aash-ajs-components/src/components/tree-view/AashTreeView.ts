@@ -14,21 +14,39 @@ import './AashTreeViewGroup';
 import './AashTreeViewItem';
 
 /**
- * @internal AlpineJS data definition for the tree view component.
+ * @internal AlpineJS reactive data definition for the tree view component.
  */
 export interface TreeViewData {
+  /** Controller instance managing tree state */
   ctrl: Controller;
+  /** Collects the segment path from a DOM element to the tree root */
   collectPath: (el: HTMLElement) => string[];
+  /** Resolves a node's label supplier to a string */
   label: (node: TreeNode) => string;
+  /** Click handler delegated to the controller */
   onClick: (event: Event) => void;
+  /** Keyboard handler for tree navigation */
   onKey: (event: KeyboardEvent) => void;
+  /** AlpineJS root element reference */
   $el: HTMLElement;
 }
 
 
 /**
  * @classdesc
- * Generates a tree view.
+ * Generates an accessible tree view with keyboard navigation following the
+ * [WAI-ARIA Tree pattern](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/).
+ *
+ * Supports arrow keys (up/down for sibling navigation, left/right for
+ * collapse/expand), Home/End for first/last item, and Enter/Space for
+ * activation.
+ *
+ * The following properties can be set as HTML attributes:
+ * - `roots` — array of root {@link TreeNode} objects
+ * - `on-toggle` — Alpine expression for expand/collapse veto callback
+ * - `on-focus` — Alpine expression for focus-change callback
+ * - `on-selected` — Alpine expression for selection callback
+ * - `single-path` — boolean flag for single-branch expansion mode
  *
  * Example:
  * ```html
@@ -36,12 +54,12 @@ export interface TreeViewData {
  * </aash-tree-view>
  * <script>
  *   const tree = document.getElementById('myTree');
- *   tree.setRoots([
+ *   tree.roots = [
  *     { segment: 'a', label: 'A',
  *       children: [
  *         { segment: 'a1', label: 'A1', children: [] }
  *       ]}
- *   ]);
+ *   ];
  * </script>
  * ```
  *
@@ -69,7 +87,7 @@ export class AashTreeView extends HTMLElement {
         return this.ctrl.collectPath(el);
       },
 
-      label(node: TreeNode): string {
+       label(node: TreeNode): string {
         if (typeof node.label === 'function') {
           return node.label();
         }
@@ -94,7 +112,7 @@ export class AashTreeView extends HTMLElement {
   protected data(): object {
     return this.ajsData;
   }
-  
+
   /** @internal Renders the tree with Alpine directives. */
   @Renderer()
   protected render() {
@@ -110,7 +128,12 @@ export class AashTreeView extends HTMLElement {
         </template>
       </ul>`;
   }
-  
+
+  /**
+   * @internal Handles click events on tree items. Sets focus and either
+   * toggles expansion or fires the selection callback.
+   * @param event the click event
+   */
   onClick(event: Event) {
     const ctrl = this.ajsData.ctrl;
     const path = ctrl.collectPath(event.target as HTMLElement);
@@ -123,6 +146,11 @@ export class AashTreeView extends HTMLElement {
     ctrl.updateDomFocus();
   }
   
+  /**
+   * @internal Handles keyboard navigation within the tree. Supports arrow keys
+   * for movement, Enter/Space for activation, and Home/End for first/last.
+   * @param event the keyboard event
+   */
   onKey(event: KeyboardEvent) {
     const ctrl = this.ajsData.ctrl;
     let path = ctrl.collectPath(event.target as HTMLElement);
@@ -202,7 +230,7 @@ export class AashTreeView extends HTMLElement {
   }
 
   /**
-   * Replaces the root tree nodes.
+   * Replaces the root tree nodes and resets focus to the first root.
    * @param roots the new root nodes
    */
   @Attribute('roots')
@@ -211,7 +239,9 @@ export class AashTreeView extends HTMLElement {
   }
 
   /**
-   * Sets the toggle vetoer callback.
+   * Sets the expand/collapse veto callback. The callback receives the current
+   * path, the requested expansion state, and the triggering event. Return the
+   * desired state to allow or deny the toggle.
    * @param onToggle the vetoer function
    */
   @Attribute('on-toggle', expressionConverter)
@@ -221,8 +251,8 @@ export class AashTreeView extends HTMLElement {
   }
 
   /**
-   * Sets the focus callback.
-   * @param value the focus handler
+   * Sets the callback fired when keyboard focus moves to a node.
+   * @param value handler receiving the focused path
    */
   @Attribute('on-focus', expressionConverter)
   set onFocus(value: (path: string[]) => void) {
@@ -231,8 +261,8 @@ export class AashTreeView extends HTMLElement {
   }
 
   /**
-   * Sets the selection callback.
-   * @param value the selection handler
+   * Sets the callback fired when a leaf node is activated (click or Enter/Space).
+   * @param value handler receiving the selected path and triggering event
    */
   @Attribute('on-selected', expressionConverter)
   set onSelected(value: (path: string[], event: Event) => void) {
@@ -241,7 +271,8 @@ export class AashTreeView extends HTMLElement {
   }
 
   /**
-   * Whether opening a path closes sibling paths.
+   * When true, expanding a node automatically collapses any previously
+   * expanded node on a different branch.
    */
   @Attribute('single-path', booleanConverter)
   set singlePath(value: boolean) {

@@ -126,7 +126,7 @@ export class Controller {
  * @classdesc
  * Generates an accordion.
  *
- * The primary usage is native {@code <details>}/{@code <summary>} elements
+ * The primary usage is native `<details>`/`<summary>` elements
  * as direct children. The accordion progressively enhances them with
  * ARIA attributes and shared expansion state.
  *
@@ -144,9 +144,13 @@ export class Controller {
  * </aash-accordion>
  * ```
  *
- * For backward compatibility, {@code aash-accordion-section} elements are
- * also supported. Each such element generates a {@code <details>} structure
- * with a nested {@code <summary>}.
+ * For backward compatibility, `aash-accordion-section` elements are
+ * also supported. Each such element generates a `<details>` structure
+ * with a nested `<summary>`.
+ *
+ * The following properties can be set as HTML attributes:
+ * - `always-expanded` — boolean flag requiring at least one section open
+ * - `multiple-expansion` — boolean flag allowing multiple open sections
  *
  * @class AashAccordion
  */

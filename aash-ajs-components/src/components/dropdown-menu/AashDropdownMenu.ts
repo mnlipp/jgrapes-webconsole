@@ -47,6 +47,9 @@ interface DropdownMenuData {
  * </aash-dropdown-menu>
  * ```
  *
+ * The following properties can be set as HTML attributes:
+ * - `action` — Alpine expression for the item-selection callback
+ *
  * @class AashDropdownMenu
  */
 @AashComponent()

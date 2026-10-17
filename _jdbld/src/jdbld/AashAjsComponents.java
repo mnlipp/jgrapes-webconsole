@@ -49,7 +49,7 @@ public class AashAjsComponents extends AbstractProject
             .required(Path.of("src"), "**/*")
             .provideResources(of(new ResourceType<DocumentationDirectory>() {}),
                 p -> Stream.of(DocumentationDirectory.of(p,
-                    p.rootProject().buildDirectory().resolve("aashdoc"))));
+                    p.rootProject().buildDirectory().resolve("aash2doc"))));
 
     }
 }
