@@ -30,7 +30,7 @@
             
         }
 
-        li[role="treeitem"] {
+        li[aria-expanded] {
 
             &[aria-expanded="false"] > ul {
                 display: none;

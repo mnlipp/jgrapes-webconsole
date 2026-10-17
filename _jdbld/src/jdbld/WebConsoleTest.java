@@ -29,6 +29,7 @@ import jdbld.conlet.Logviewer;
 import jdbld.conlet.MarkdownDisplay;
 import jdbld.conlet.OidcLogin;
 import jdbld.conlet.StyleTest;
+import jdbld.conlet.StyleTest2;
 import jdbld.conlet.SysInfo;
 import jdbld.console.AlpineJsConsole;
 import jdbld.console.Bootstrap4Console;
@@ -69,6 +70,7 @@ public class WebConsoleTest extends AbstractProject
         dependency(Reveal, project(HelloWorld.class));
         dependency(Reveal, project(FormTest.class));
         dependency(Reveal, project(StyleTest.class));
+        dependency(Reveal, project(StyleTest2.class));
         dependency(Reveal, project(SysInfo.class));
         dependency(Reveal, project(Logviewer.class));
         dependency(Reveal, project(JmxBrowser.class));

@@ -41,6 +41,7 @@ import jdbld.conlet.MarkdownDisplay;
 import jdbld.conlet.MessageBox;
 import jdbld.conlet.OidcLogin;
 import jdbld.conlet.StyleTest;
+import jdbld.conlet.StyleTest2;
 import jdbld.conlet.SysInfo;
 import jdbld.console.Base;
 import jdbld.console.Bootstrap4Console;
@@ -170,6 +171,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
         dependency(Expose, project(Rbac.class));
         dependency(Expose, project(RcWebcomponents.class));
         dependency(Expose, project(StyleTest.class));
+        dependency(Expose, project(StyleTest2.class));
         dependency(Expose, project(SysInfo.class));
         dependency(Expose, project(Vue.class));
         dependency(Expose, project(VueJs.class));
