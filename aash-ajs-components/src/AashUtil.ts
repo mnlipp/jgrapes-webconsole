@@ -35,10 +35,10 @@ export const defaultConverter: Converter<AutoValue | null> = {
     }
     const trimmed = value.trim();
     if (trimmed.startsWith('[')) {
-      try { return JSON.parse(trimmed); } catch { return trimmed; }
+      return JSON.parse(trimmed);
     }
     if (trimmed.startsWith('{')) {
-      try { return JSON.parse(trimmed); } catch { return trimmed; }
+      return JSON.parse(trimmed);
     }
     if (trimmed === 'true') { return true; }
     if (trimmed === 'false') { return false; }
@@ -113,9 +113,19 @@ export const expressionConverter: Converter<((...args: any[]) => void) | null> =
     if (!value) {
       return null;
     }
+    let toEvaluate: (callback?: (value: any) => void, extras?: {
+            scope?: object;
+            params?: unknown[];
+            context?: unknown; }) => void;
+    Alpine.nextTick(() => {
+      // Delay evaluation until next tick because el's x-data attribute
+      // has not been processed by Alpine yet
+      toEvaluate = Alpine.evaluateLater(el, value);
+    });
     return (...args: any[]) => {
-      const wrapped = `(${value})(...${JSON.stringify(args)})`;
-      Alpine.evaluate(el, wrapped);
+      let result: any;
+      toEvaluate(res => { result = res; }, { params: args });
+      return result;
     };
   },
 
