@@ -110,7 +110,7 @@ export class AashDisclosureButton extends HTMLElement {
                 x-bind:aria-expanded="disclosed ? 'true' : 'false'"
                 x-bind:aria-controls="idRef"
                 @click="toggleDisclosed()">
-            </button>`;
+            </${this.wrapper}>`;
         this.firstElementChild!.innerHTML = content;
     }
 
