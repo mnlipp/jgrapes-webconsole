@@ -77,11 +77,13 @@ public class GhPagesPublisher extends AbstractGenerator {
         try {
             var git = cloneRepository(workDir);
             var toBeRemoved = copyDocs(docDirs, workDir);
-            var rmCmd = git.rm().setCached(false);
-            for (var path : toBeRemoved) {
-                rmCmd.addFilepattern(path.toString());
+            if (!toBeRemoved.isEmpty()) {
+                var rmCmd = git.rm().setCached(false);
+                for (var path : toBeRemoved) {
+                    rmCmd.addFilepattern(path.toString());
+                }
+                rmCmd.call();
             }
-            rmCmd.call();
             git.add().addFilepattern(".").call();
             git.commit().setMessage("Update JGrapes Web Console Docs").call();
             git.push().setCredentialsProvider(
