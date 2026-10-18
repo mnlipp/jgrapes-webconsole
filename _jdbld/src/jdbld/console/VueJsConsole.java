@@ -68,6 +68,6 @@ public class VueJsConsole extends AbstractProject
 //            .required(Path.of("src"), "**/*.ts")
 //            .generated(p -> Stream.of(DocumentationDirectory.of(p,
 //                p.rootProject().buildDirectory()
-//                    .resolve("javadoc/org/jgrapes/webconsole/vuejs/jsdoc"))));
+//                    .resolve("javadoc-webconsole/org/jgrapes/webconsole/vuejs/jsdoc"))));
     }
 }

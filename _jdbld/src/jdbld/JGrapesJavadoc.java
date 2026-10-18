@@ -71,7 +71,7 @@ public class JGrapesJavadoc extends AbstractGenerator implements Renamable {
         }
 
         // Get destination and check if we only have to cleanup.
-        var destDir = project().buildDirectory().resolve("javadoc");
+        var destDir = project().buildDirectory().resolve("javadoc-webconsole");
         var generated = ClassTree.of(project(), destDir);
         if (requested.accepts(CleanlinessType)) {
             generated.cleanup();
@@ -134,7 +134,7 @@ public class JGrapesJavadoc extends AbstractGenerator implements Renamable {
             "--add-stylesheet", project().rootProject()
                 .directory().resolve("misc/javadoc-overwrites.css").toString(),
             "-quiet",
-            "-d", project().buildDirectory().resolve("javadoc").toString(),
+            "-d", destDir.toString(),
             "-cp", classpath,
             "-sourcepath", sourcepath,
             "-subpackages", "org.jgrapes");

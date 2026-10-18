@@ -184,8 +184,8 @@ public class Root extends AbstractRootProject implements Unpublishable {
         // Build javadoc
         generator(JGrapesJavadoc::new);
 
-//        // Publish gh-pages
-//        generator(GhPagesPublisher::new);
+        // Publish gh-pages
+        generator(GhPagesPublisher::new);
 
         // Commands
         commandAlias("version").projects("**")
@@ -207,8 +207,8 @@ public class Root extends AbstractRootProject implements Unpublishable {
         commandAlias("eclipse").projects("**")
             .resources(of(new ResourceType<EclipseConfiguration>() {}));
 //        commandAlias("baseline").resources(of(BndBaselineEvaluation.class));
-//        commandAlias("ghPagesPublication")
-//            .resources(of(GhPagesPublication.class));
+        commandAlias("ghPagesPublication")
+            .resources(of(new ResourceType<GhPagesPublication>() {}));
         commandAlias("prepareRunRepo").projects("**")
             .resources(of(new ResourceType<RunRepo>() {}).using(Consume));
         commandAlias("runGoGo")

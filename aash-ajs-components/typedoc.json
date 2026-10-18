@@ -2,7 +2,7 @@
   "name": "Components for AaSH (ARIA augmented Semantic HTML)",
   "entryPoints": ["./src/AashComponents.ts"],
   "exclude": ["index.js"],
-  "out": "../build/aash2docs",
+  "out": "../build/aash2doc",
   "categorizeByGroup": true,
   "categoryOrder": ["Alpine JS Component", "*"],
   "projectDocuments": ["Overview.md", "WebComponents.md"]

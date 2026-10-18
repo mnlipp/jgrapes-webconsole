@@ -57,7 +57,7 @@ public class Base extends AbstractProject
             .provideResources(of(new ResourceType<DocumentationDirectory>() {}),
                 p -> Stream.of(DocumentationDirectory.of(p,
                     p.rootProject().buildDirectory().resolve(
-                        "javadoc/org/jgrapes/webconsole/base/jsdoc"))));
+                        "javadoc-webconsole/org/jgrapes/webconsole/base/jsdoc"))));
     }
 
     public static class BaseTest extends AbstractProject

@@ -2,7 +2,7 @@
   "name": "Client-side Webconsole base library",
   "entryPoints": ["./src/org/jgrapes/webconsole/base/browser/JGConsole.ts"],
   "readme": "./src/org/jgrapes/webconsole/base/browser/README.md",
-  "out": "../build/javadoc/org/jgrapes/webconsole/base/jsdoc",
+  "out": "../build/javadoc-webconsole/org/jgrapes/webconsole/base/jsdoc",
   "categorizeByGroup": true,
   "categoryOrder": ["*"],
   "excludeExternals": true

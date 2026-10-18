@@ -55,6 +55,6 @@ public class Bootstrap4Console extends AbstractProject
                 "**/*")
             .provideResources(of(new ResourceType<DocumentationDirectory>() {}),
                 p -> Stream.of(DocumentationDirectory.of(p, p.rootProject()
-                    .buildDirectory().resolve("javadoc/jsdoc"))));
+                    .buildDirectory().resolve("javadoc-webconsole/jsdoc"))));
     }
 }
