@@ -18,7 +18,6 @@
 
 package org.jgrapes.webconsole.alpinejs;
 
-import freemarker.template.Configuration;
 import java.net.URI;
 import org.jgrapes.core.Channel;
 import org.jgrapes.http.events.Request;
@@ -32,9 +31,8 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  * are forwarded via the {@link WebConsole} component to the 
  * web console components.
  * 
- * The weblet sets the tag interpolation syntax of freemarker to
- * bracket tag syntax (`[= ...]`) to distinguish freemarker
- * interpolation from Alpine interpolation.
+ * This weblet requires the corresponding [renderer](./jsdoc/index.html)
+ * in the browser.
  */
 public class AlpineJsConsoleWeblet extends FreeMarkerConsoleWeblet {
 
@@ -48,8 +46,6 @@ public class AlpineJsConsoleWeblet extends FreeMarkerConsoleWeblet {
     public AlpineJsConsoleWeblet(Channel webletChannel, Channel consoleChannel,
             URI consolePrefix) {
         super(webletChannel, consoleChannel, consolePrefix);
-//        freeMarkerConfig.setInterpolationSyntax(
-//            Configuration.SQUARE_BRACKET_INTERPOLATION_SYNTAX);
     }
 
     @Override

@@ -24,8 +24,10 @@ import jdbld.Root;
 import jdbld.provider.Forkawesome;
 import jdbld.provider.Gridstack;
 import jdbld.provider.JgwcVueComponents;
+import org.jdrupes.builder.api.DocumentationDirectory;
 import org.jdrupes.builder.api.FileTree;
 import static org.jdrupes.builder.api.Intent.*;
+import org.jdrupes.builder.api.ResourceType;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
@@ -62,12 +64,12 @@ public class VueJsConsole extends AbstractProject
                 "normalize.css"));
 
         // tsdoc
-//        Root.prepareNpm(dependency(Supply, NpmExecutor::new)).name("apidocs")
-//            .provideResources(of(DocumentationDirectory.class))
-//            .args("run", "typedoc")
-//            .required(Path.of("src"), "**/*.ts")
-//            .generated(p -> Stream.of(DocumentationDirectory.of(p,
-//                p.rootProject().buildDirectory()
-//                    .resolve("javadoc-webconsole/org/jgrapes/webconsole/vuejs/jsdoc"))));
+        Root.prepareNpm(dependency(Supply, NpmExecutor::new)).name("apidocs")
+            .args("run", "typedoc")
+            .required(Path.of("src"), "**/*.ts")
+            .provideResources(of(new ResourceType<DocumentationDirectory>() {}),
+                p -> Stream.of(DocumentationDirectory.of(p, p.rootProject()
+                    .buildDirectory().resolve(
+                        "javadoc-webconsole/org/jgrapes/webconsole/vuejs/jsdoc"))));
     }
 }

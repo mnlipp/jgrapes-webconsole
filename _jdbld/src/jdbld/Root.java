@@ -43,6 +43,7 @@ import jdbld.conlet.OidcLogin;
 import jdbld.conlet.StyleTest;
 import jdbld.conlet.StyleTest2;
 import jdbld.conlet.SysInfo;
+import jdbld.console.AlpineJsConsole;
 import jdbld.console.Base;
 import jdbld.console.Bootstrap4Console;
 import jdbld.console.JqueryUiConsole;
@@ -144,6 +145,7 @@ public class Root extends AbstractRootProject implements Unpublishable {
         dependency(Expose, project(AashAlpineJs.class));
         dependency(Expose, project(AashVueComponents.class));
         dependency(Expose, project(AlpineJs.class));
+        dependency(Expose, project(AlpineJsConsole.class));
         dependency(Expose, project(Base.class));
         dependency(Expose, project(Bootstrap4.class));
         dependency(Expose, project(Bootstrap4Console.class));

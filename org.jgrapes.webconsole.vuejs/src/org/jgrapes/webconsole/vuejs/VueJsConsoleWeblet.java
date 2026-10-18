@@ -30,6 +30,9 @@ import org.jgrapes.webconsole.base.freemarker.FreeMarkerConsoleWeblet;
  * events. Some resource requests (page resource, conlet resource)
  * are forwarded via the {@link WebConsole} component to the 
  * web console components.
+ * 
+ * This weblet requires the corresponding [renderer](./jsdoc/index.html)
+ * in the browser.
  */
 public class VueJsConsoleWeblet extends FreeMarkerConsoleWeblet {
 

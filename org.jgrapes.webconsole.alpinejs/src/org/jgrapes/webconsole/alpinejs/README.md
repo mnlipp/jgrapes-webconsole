@@ -1,3 +1,3 @@
 # Overview
 
-A webconsole renderer using [Lit](https://lit.dev/)
+A webconsole renderer using [Alpine.js](https://alpinejs.dev/)

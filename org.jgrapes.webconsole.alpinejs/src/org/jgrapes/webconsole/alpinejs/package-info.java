@@ -18,6 +18,6 @@
 
 /**
  * Provides a web console weblet that implements the main page using the
- * [Vue.js](https://vuejs.org/) library.
+ * [Alpine.js](https://alpine.js/) library.
  */
 package org.jgrapes.webconsole.alpinejs;
