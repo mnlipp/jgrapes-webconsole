@@ -33,7 +33,7 @@ import org.jgrapes.webconsole.base.events.AddPageResources.ScriptResource;
 import org.jgrapes.webconsole.base.events.ConsoleReady;
 
 /**
- * Provider for the JGrapes Web Console Components.
+ * Provider for the Alpine JS based Web Components.
  */
 public class AashAlpineJsProvider extends PageResourceProvider {
 

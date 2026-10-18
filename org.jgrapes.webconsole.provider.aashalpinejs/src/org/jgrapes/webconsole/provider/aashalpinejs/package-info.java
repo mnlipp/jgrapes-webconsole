@@ -16,4 +16,9 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Provider for the
+ * <a href="../../../../../../aash2doc/index.html">AaSH Web Components</a>
+ * (Alpine JS based).
+ */
 package org.jgrapes.webconsole.provider.aashalpinejs;
