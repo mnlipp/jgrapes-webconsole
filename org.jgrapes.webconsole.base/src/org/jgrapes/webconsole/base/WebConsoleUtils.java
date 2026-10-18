@@ -18,10 +18,10 @@
 
 package org.jgrapes.webconsole.base;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -150,11 +150,6 @@ public final class WebConsoleUtils {
      * @return the result
      */
     public static String isoEncode(String value) {
-        try {
-            return URLEncoder.encode(value, "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            // Cannot happen, ISO-8859-1 is specified to be supported
-            throw new IllegalStateException(e);
-        }
+        return URLEncoder.encode(value, StandardCharsets.ISO_8859_1);
     }
 }

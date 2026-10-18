@@ -19,10 +19,10 @@
 package org.jgrapes.webconsole.base;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -383,7 +383,6 @@ public abstract class ConsoleWeblet extends Component {
      * @throws ParseException the parse exception
      */
     @RequestHandler(dynamic = true)
-    @SuppressWarnings("PMD.EmptyCatchBlock")
     public void onGetRedirect(Request.In.Get event, IOSubchannel channel)
             throws InterruptedException, IOException, ParseException {
         HttpResponse response = event.httpRequest().response().get();
@@ -391,12 +390,8 @@ public abstract class ConsoleWeblet extends Component {
             .setContentType("text", "plain", UTF_8)
             .setField(HttpField.LOCATION, prefix);
         channel.respond(new Response(response));
-        try {
-            channel.respond(Output.from(prefix.toString()
-                .getBytes(UTF_8), true));
-        } catch (UnsupportedEncodingException e) {
-            // Supported by definition
-        }
+        channel.respond(Output.from(prefix.toString()
+            .getBytes(StandardCharsets.UTF_8), true));
         event.setResult(true);
         event.stop();
     }

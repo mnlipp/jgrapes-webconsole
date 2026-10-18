@@ -107,7 +107,7 @@ public class WebSocketInputSink extends Thread {
     }
 
     @SuppressWarnings({ "PMD.AvoidLiteralsInIfCondition",
-        "PMD.AvoidInstantiatingObjectsInLoops" })
+        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.OverridingThreadRun" })
     @Override
     public void run() {
         @SuppressWarnings("PMD.CloseResource")
