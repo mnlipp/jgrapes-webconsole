@@ -19,21 +19,31 @@
 package org.jgrapes.webconsole.base;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import org.jdrupes.httpcodec.protocols.http.HttpConstants.HttpStatus;
 import org.jdrupes.httpcodec.protocols.http.HttpField;
@@ -103,6 +113,32 @@ public abstract class ConsoleWeblet extends Component {
     private static final String CONSOLE_SESSION_IDS
         = ConsoleWeblet.class.getName() + ".consoleConnectionId";
     private static final String UTF_8 = "utf-8";
+    @SuppressWarnings({ "PMD.FieldNamingConventions",
+        "PMD.UseConcurrentHashMap" })
+    private static final Map<Locale, List<Locale>> localesByLanguage
+        = new HashMap<>();
+
+    static {
+        Set<Locale> available
+            = new HashSet<>(Arrays.asList(Locale.getAvailableLocales()));
+        for (Locale locale : available) {
+            String language = locale.getLanguage();
+            if (language.isEmpty()) {
+                continue;
+            }
+            @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+            Locale langOnlyLocale = new Locale.Builder()
+                .setLanguage(language).build();
+            if (!available.contains(langOnlyLocale)
+                || locale.equals(langOnlyLocale)) {
+                continue;
+            }
+            @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+            List<Locale> locales = localesByLanguage
+                .computeIfAbsent(langOnlyLocale, key -> new ArrayList<>());
+            locales.add(locale);
+        }
+    }
 
     private URI prefix;
     private final WebConsole console;
@@ -119,7 +155,7 @@ public abstract class ConsoleWeblet extends Component {
     private final ResourceBundle.Control resourceControl
         = new ConsoleResourceBundleControl(resourceClasses);
     @SuppressWarnings("PMD.UseConcurrentHashMap")
-    private final Map<Locale, ResourceBundle> supportedLocales
+    private Map<Locale, ResourceBundle> supportedLocales
         = new HashMap<>();
 
     /**
@@ -336,20 +372,74 @@ public abstract class ConsoleWeblet extends Component {
     /**
      * Update the supported locales.
      */
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     protected final void updateSupportedLocales() {
-        supportedLocales.clear();
+        Map<Locale, ResourceBundle> collected = new ConcurrentHashMap<>();
         ResourceBundle.clearCache(ConsoleWeblet.class.getClassLoader());
-        for (Locale locale : Locale.getAvailableLocales()) {
-            if ("".equals(locale.getLanguage())) {
+        try (ExecutorService executor
+            = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            for (var entry : localesByLanguage.entrySet()) {
+                futures.add(CompletableFuture.runAsync(() -> {
+                    if (checkLocale(entry.getKey())) {
+                        collected.put(entry.getKey(),
+                            ResourceBundle.getBundle("l10n", entry.getKey(),
+                                ConsoleWeblet.class.getClassLoader(),
+                                resourceControl));
+                        for (var locale : entry.getValue()) {
+                            if (checkLocale(locale)) {
+                                collected.put(locale,
+                                    ResourceBundle.getBundle("l10n", locale,
+                                        ConsoleWeblet.class.getClassLoader(),
+                                        resourceControl));
+                            }
+                        }
+                    }
+                }, executor));
+            }
+            CompletableFuture.allOf(
+                futures.toArray(new CompletableFuture[0])).join();
+        }
+        supportedLocales = collected;
+    }
+
+    /**
+     * Check if a resource bundle for the locale exists. This is more
+     * efficient than actually trying to create the bundle.
+     *
+     * @param locale the locale
+     * @return true, if successful
+     */
+    private boolean checkLocale(Locale locale) {
+        ListIterator<Class<?>> iter
+            = resourceClasses.listIterator(resourceClasses.size());
+        // Known to exists
+        while (iter.hasPrevious()) {
+            Class<?> cls = iter.previous();
+            String bundleName = resourceControl.toBundleName("l10n", locale);
+            var resourceName = resourceControl
+                .toResourceName(bundleName, "properties");
+            URL url = cls.getResource(resourceName);
+            if (url == null) {
                 continue;
             }
-            ResourceBundle bundle = ResourceBundle.getBundle("l10n", locale,
-                ConsoleWeblet.class.getClassLoader(), resourceControl);
-            if (bundle.getLocale().equals(locale)) {
-                supportedLocales.put(locale, bundle);
+            URLConnection connection;
+            try {
+                connection = url.openConnection();
+                if (connection == null) {
+                    continue;
+                }
+                try (InputStream inStream = connection.getInputStream()) {
+                    if (inStream == null) {
+                        continue;
+                    }
+                }
+                return true;
+            } catch (IOException e) {
+                continue;
             }
         }
+        return false;
     }
 
     /**
@@ -359,8 +449,9 @@ public abstract class ConsoleWeblet extends Component {
      * @return the resource bundle
      */
     public ResourceBundle consoleResourceBundle(Locale locale) {
-        return ResourceBundle.getBundle("l10n", locale,
-            ConsoleWeblet.class.getClassLoader(), resourceControl);
+        return Optional.ofNullable(supportedLocales.get(locale))
+            .orElseGet(() -> ResourceBundle.getBundle("l10n", locale,
+                ConsoleWeblet.class.getClassLoader(), resourceControl));
     }
 
     /**
