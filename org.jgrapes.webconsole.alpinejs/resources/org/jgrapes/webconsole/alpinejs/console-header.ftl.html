@@ -6,7 +6,7 @@
   <aash2-dropdown-menu id="conlet-menu"
     action="function(value) { $consoleRenderer.addConlet(value) }">
     <template provides="label">
-      <span class='fa fa-puzzle-piece'></span>
+      <span class="as-icon" data-purpose="add-card"></span>
     </template>
     <template x-for="conletData of $consoleRenderer.conletTypeMgr.menuItems()"
       :key="conletData.type">
@@ -18,7 +18,7 @@
   <aash2-dropdown-menu id="language-selector"
     action="function(value) { document.querySelector('html').setAttribute('lang', value) }">
     <template provides="label">
-      <span class='fa fa-language'></span>
+      <span class="as-icon" data-purpose="choose-language"></span>
     </template>
     <template x-for="labelKey of $consoleRenderer.localeMenuItems()">
       <template provides="item" :with-value='`${"$"}{labelKey[1]}`'>

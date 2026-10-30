@@ -26,8 +26,11 @@ body {
 
 body > header {
     padding: 0.3125rem 1rem 0 1rem;
-//    box-shadow: var(--shadow);
-//    margin-bottom: 0.25rem;
+
+    .as-icon::before {
+        height: 1.25em;
+        width: 1.25em;
+    }
 }
 
 body > header > :first-child {

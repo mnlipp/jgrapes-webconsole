@@ -37,7 +37,6 @@
         button {
             display: inline-block;
             border: none;
-            font-size: 80%;
             padding: 0 0.25rem;
             color: var(--primary);
             background-color: transparent;
@@ -47,6 +46,10 @@
             }
 
             @include globals.button-shape-hover;
+        }
+        
+        .as-icon::before {
+            vertical-align: top;
         }
     }
 

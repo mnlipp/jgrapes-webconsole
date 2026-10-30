@@ -177,7 +177,9 @@ export default class AlpineJsRenderer extends JGConsole.Renderer {
         if (options.cancelable) {
             const cancelTpl = document.createElement("template");
             cancelTpl.setAttribute("provides", "cancel-label");
-            cancelTpl.innerHTML = `<span class="fa fa-times"></span>`;
+            cancelTpl.innerHTML = `<span class="as-icon"
+              data-purpose="remove-item"
+              :aria-label="$consoleRenderer.localize('Remove')"></span>`;
             dialog.appendChild(cancelTpl);
         }
         if (options.applyLabel) {

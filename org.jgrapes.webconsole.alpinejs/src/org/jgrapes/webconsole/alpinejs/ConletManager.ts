@@ -182,14 +182,18 @@ export class ConletManager {
             <header class="ui-draggable-handle"
               x-data="conletHeader('${conletId}')">
               <p x-text="evalTitle()"></p>
-              <button x-show="hasHelp()"
-                type='button' class='fa fa-question-circle-o' @click="showHelp()"
-              ></button><button x-show="isEditable"
-                type='button' class='fa fa-wrench' @click="edit()"
-              ></button><button x-show="isRemovable()" 
-                type="button" class="fa fa-times" @click="removePreview()"
-              ></button><button x-show="hasView()"
-                type="button" class="fa fa-expand" @click="showView()"
+              <button x-show="hasHelp()" type="button" class="as-icon"
+                data-purpose="open-help" @click="showHelp()"
+                :aria-label="$consoleRenderer.localize('Help')"></button
+              ><button x-show="isEditable()" type="button" class="as-icon"
+                data-purpose="open-settings" @click="edit()"
+                :aria-label="$consoleRenderer.localize('Settings')"></button
+              ><button x-show="isRemovable()" type="button"
+                class="as-icon" data-purpose="remove-item" @click="removePreview()"
+                :aria-label="$consoleRenderer.localize('Remove')"></button
+              ><button x-show="hasView()" type="button" class="as-icon"
+                data-purpose="show-expanded" @click="showView()"
+                :aria-label="$consoleRenderer.localize('Show details')"
               ></button>
             </header>
             <section></section>`));

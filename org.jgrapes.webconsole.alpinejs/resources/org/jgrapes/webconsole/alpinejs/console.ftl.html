@@ -39,7 +39,10 @@
   <div class="consoleAlpineJs">
     <aash2-tablist id="consoleTabs">
       <template provides="remove-label">
-        <span class="fa fa-times"></span>
+        <span class="as-icon" data-purpose="remove-item"
+          :aria-label="$consoleRenderer.localize('Remove')">
+          <span x-text="$consoleRenderer.localize('Remove')"></span>
+        </span>
       </template>
       <template provides="tab" panel-id="consoleOverviewPanel">
         <span x-text="$consoleRenderer.localize('Overview')"></span>
@@ -71,7 +74,8 @@
       <div role="alert" :class="entry.notificationClass()">
         <p x-html="entry.content"></p>
         <button x-show="entry.options.closeable !== false" type="button"
-          class="fa fa-times"
+          class="as-icon" data-purpose="remove-item"
+          :aria-label="$consoleRenderer.localize('Remove')"
           @click="$consoleRenderer.notificationMgr.remove(entry.id)"></button>
       </div>
     </template>
