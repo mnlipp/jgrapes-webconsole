@@ -19,13 +19,16 @@ it favors a common, exchangeable styling for all components.
 This prohibits the usage of the wide spread "invasive" CSS frameworks that
 spread their presentation classes all over the HTML. The alternative is
 to use the information provided by the (semantic) HTML for selecting
-the styles to be applied. The problem is that even semantic HTML 5 doesn’t 
-provide enough context to reliably style GUI widgets. If however, you add 
+the styles to be applied. (At about 2020 the term "unstyled" came
+up for this type of libraries.)
+
+The problem is that even semantic HTML 5 doesn’t provide enough context
+to reliably style GUI widgets. If however, you add 
 [WAI-ARIA](https://www.w3.org/WAI/standards-guidelines/aria/) attributes 
 to the markup (as you should anyway), it turns out that almost all styling 
-can be based on the HTML without adding presentation classes.
+can be based on the HTML without adding classes to control the presentation.
 (A rough outline of the idea can also be found on 
-"[css-tricks.com](https://css-tricks.com/aria-in-css/)".)
+"[css-tricks.com](https://css-tricks.com/aria-in-css/)".) 
 
 As it turns out, writing ARIA compliant HTML isn't as easy as you might think.
 W3C maintains a document about 
@@ -33,7 +36,8 @@ W3C maintains a document about
 includes 
 [some examples](https://www.w3.org/TR/wai-aria-practices-1.1/examples/).
 Looking at the examples, it is obvious that ARIA compliant UI elements
-must be generated from templates. This is where this library comes in.
+must be generated from templates (although some "libraries" really suggest a
+copy/paste approach). This is where this library comes in.
 
 ## Status
 

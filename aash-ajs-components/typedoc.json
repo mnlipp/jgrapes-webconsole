@@ -5,5 +5,5 @@
   "out": "../build/aash2doc",
   "categorizeByGroup": true,
   "categoryOrder": ["Alpine JS Component", "*"],
-  "projectDocuments": ["Overview.md", "WebComponents.md"]
+  "projectDocuments": ["Overview.md", "WebComponents.md", "Icons.md"]
 }

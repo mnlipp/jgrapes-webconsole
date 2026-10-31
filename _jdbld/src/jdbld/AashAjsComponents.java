@@ -47,6 +47,7 @@ public class AashAjsComponents extends AbstractProject
             .args("run", "build:doc")
             .required(Path.of("package.json"))
             .required(Path.of("src"), "**/*")
+            .required(Path.of("."), "*.md")
             .provideResources(of(new ResourceType<DocumentationDirectory>() {}),
                 p -> Stream.of(DocumentationDirectory.of(p,
                     p.rootProject().buildDirectory().resolve("aash2doc"))));
