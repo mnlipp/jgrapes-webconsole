@@ -80,6 +80,16 @@ button {
         box-shadow: var(--brightening);
     }
 }
+
+// For bottons that are not "real" buttons, some styling has to be undone.
+// This is annoying, but there is no criterion for selecting only "real"
+// buttons in the rule above.
+[role="tab"] button, button.as-icon, button[aria-haspopup="menu"],
+    // Old style accordion (using button instead of details/summary)
+    div[data-aash-role="accordion"] > div > :first-child button {
+    color: inherit;
+    background-color: inherit;    
+}
         
 span[role=button] {
     color: var(--primary);

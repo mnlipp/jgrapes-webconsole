@@ -94,10 +94,6 @@
                 @include globals.button-shape-hover;
             }
         }
-        
-        &[aria-selected="true"] button:first-child {
-            color: inherit;
-        }
 
         &[aria-selected="false"] button:not(:first-child) {
             display: none;
