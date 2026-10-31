@@ -41,6 +41,7 @@ body > header > :first-child * {
 }
 
 body > header > :first-child a {
+    // No link color for logo
     color: inherit;
     text-decoration: none;
 }
