@@ -9,10 +9,10 @@ generating unstyled "ARIA augmented Semantic HTML" (AaSH).
 
 ## Motivation
 
-I came up with the idea of "ARIA augmented Semantic HTML" at the 
-end of 2019 while developing the 
+I came up with the idea of "ARIA augmented Semantic HTML" at the
+end of 2019 while developing the
 [JGrapes Web Console](https://mnlipp.github.io/jgrapes/WebConsole.html),
-a micro service driven micro frontend (with run-time integration via 
+a micro service driven micro frontend (with run-time integration via
 JavaScript). Contrary to the ususal approaches of micro frontends,
 it favors a common, exchangeable styling for all components.
 
@@ -23,17 +23,17 @@ the styles to be applied. (At about 2020 the term "unstyled" came
 up for this type of libraries.)
 
 The problem is that even semantic HTML 5 doesn’t provide enough context
-to reliably style GUI widgets. If however, you add 
-[WAI-ARIA](https://www.w3.org/WAI/standards-guidelines/aria/) attributes 
-to the markup (as you should anyway), it turns out that almost all styling 
+to reliably style GUI widgets. If however, you add
+[WAI-ARIA](https://www.w3.org/WAI/standards-guidelines/aria/) attributes
+to the markup (as you should anyway), it turns out that almost all styling
 can be based on the HTML without adding classes to control the presentation.
-(A rough outline of the idea can also be found on 
-"[css-tricks.com](https://css-tricks.com/aria-in-css/)".) 
+(A rough outline of the idea can also be found on
+"[css-tricks.com](https://css-tricks.com/aria-in-css/)".)
 
 As it turns out, writing ARIA compliant HTML isn't as easy as you might think.
-W3C maintains a document about 
-[best practices](https://www.w3.org/TR/wai-aria-practices-1.1/) that also 
-includes 
+W3C maintains a document about
+[best practices](https://www.w3.org/TR/wai-aria-practices-1.1/) that also
+includes
 [some examples](https://www.w3.org/TR/wai-aria-practices-1.1/examples/).
 Looking at the examples, it is obvious that ARIA compliant UI elements
 must be generated from templates (although some "libraries" really suggest a
@@ -41,7 +41,7 @@ copy/paste approach). This is where this library comes in.
 
 ## Status
 
-This project is currently maintained as a subproject of the 
+This project is currently maintained as a subproject of the
 JGrapes Web Console project. It is continued as need (for the web console)
 arises. In case there should be interest in using this independent of the
 web console development, it will become a top level project of its own.
