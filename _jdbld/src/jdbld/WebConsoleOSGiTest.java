@@ -26,7 +26,6 @@ import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.core.FileTreeBuilder;
 import org.jdrupes.builder.core.FileTreeBuilder.Source;
 import org.jdrupes.builder.java.JavaExecutor;
-import org.jdrupes.builder.java.JavaProject;
 import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.java.LibraryJarFile;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
@@ -34,7 +33,7 @@ import static org.jdrupes.builder.mvnrepo.MvnRepoTypes.*;
 
 @SuppressWarnings("checkstyle:all")
 public class WebConsoleOSGiTest extends AbstractProject
-        implements JavaProject, Unpublishable {
+        implements Unpublishable {
 
     public WebConsoleOSGiTest() {
         super(directory(Path.of("WebConsoleOSGiTest")));

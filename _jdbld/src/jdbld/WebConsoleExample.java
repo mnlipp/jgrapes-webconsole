@@ -23,11 +23,10 @@ import jdbld.conlet.SysInfo;
 import static org.jdrupes.builder.api.Intent.*;
 import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.distribution.UberJarBuilder;
-import org.jdrupes.builder.java.JavaProject;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
 public class WebConsoleExample extends AbstractProject
-        implements JavaProject, Unpublishable {
+        implements Unpublishable {
 
     public WebConsoleExample() {
         super(directory(Path.of("WebConsoleExample")));
