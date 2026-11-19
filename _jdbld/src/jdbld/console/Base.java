@@ -29,6 +29,7 @@ import org.jdrupes.builder.core.AbstractProject;
 import org.jdrupes.builder.ext.nodejs.NpmExecutor;
 import org.jdrupes.builder.java.JavaLibraryProject;
 import org.jdrupes.builder.java.JavaProject;
+import static org.jdrupes.builder.mvnrepo.MvnProperties.*;
 import org.jdrupes.builder.mvnrepo.MvnRepoLookup;
 
 public class Base extends AbstractProject
@@ -37,6 +38,7 @@ public class Base extends AbstractProject
     public Base() {
         super(name("org.jgrapes.webconsole.base"));
         dependency(Expose, new MvnRepoLookup()
+            .addRepositories(get(LookupRepositories))
             .resolve("org.jgrapes:org.jgrapes.core:[1.22.1,2)",
                 "org.jgrapes:org.jgrapes.util:[1.38.0,2)",
                 "org.jgrapes:org.jgrapes.io:[2.12.1,3)",

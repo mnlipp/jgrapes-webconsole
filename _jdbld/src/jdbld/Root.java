@@ -71,6 +71,7 @@ import jdbld.provider.Vuex;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Scm;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.InvalidPatternException;
@@ -107,6 +108,7 @@ import static org.jdrupes.builder.java.JavaTypes.*;
 import org.jdrupes.builder.java.LibraryBuilder;
 import org.jdrupes.builder.junit.JUnitTestRunner;
 import org.jdrupes.builder.mvnrepo.JavadocJarBuilder;
+import org.jdrupes.builder.mvnrepo.MavenContext;
 import org.jdrupes.builder.mvnrepo.MvnDeployDestination;
 import static org.jdrupes.builder.mvnrepo.MvnProperties.*;
 import org.jdrupes.builder.mvnrepo.MvnPublisher;
@@ -134,6 +136,13 @@ public class Root extends AbstractRootProject implements Unpublishable {
 
     public Root() throws IOException {
         super(name("JGrapes-WebConsole"));
+        set(LookupRepositories, new RemoteRepository[] {
+            MavenContext.mavenCentral(),
+            MavenContext.jdbldDistribution(),
+            MavenContext.createRepository("jgrapes-distribution",
+                URI.create("https://codeberg.org/api/packages/JGrapes/maven"),
+                MvnVersionType.RELEASE)
+        });
         set(PublishingDestinations, new MvnPublishingDestination[] {
             new MvnDeployDestination(
                 MvnVersionType.SNAPSHOT, MvnVersionType.RELEASE)
