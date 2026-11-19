@@ -27,6 +27,8 @@
  * and styling for the special case of a aash-tablist.
  */
 
+@use "globals";
+
 [role=tablist] {
     box-shadow: var(--shadow-bottom);
 
@@ -72,7 +74,7 @@
             }
         }
         
-        @include button-shape-hover;
+        @include globals.button-shape-hover;
     }
 }
 
@@ -89,7 +91,7 @@
                 margin-right: -0.25rem;
                 color: var(--primary);
             
-                @include button-shape-hover;
+                @include globals.button-shape-hover;
             }
         }
         

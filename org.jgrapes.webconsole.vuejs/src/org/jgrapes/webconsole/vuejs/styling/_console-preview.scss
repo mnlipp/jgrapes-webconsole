@@ -16,6 +16,8 @@
 // with this program; if not, see <http://www.gnu.org/licenses/>.
 //
 
+@use "globals";
+
 /* Conlet Preview Styling */
 
 .conlet-preview {
@@ -44,7 +46,7 @@
                 margin-right: -0.25rem;
             }
 
-            @include button-shape-hover;
+            @include globals.button-shape-hover;
         }
     }
 

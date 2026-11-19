@@ -16,22 +16,22 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-@import 'styling/globals';
+@use 'styling/globals';
 
-@import 'layout/console';
-@import 'layout/forms';
+@use 'layout/console';
+@use 'layout/forms';
 
-@import 'styling/console-frame';
-@import 'styling/console-icons';
-@import 'styling/console-loader';
-@import 'styling/console-preview';
-@import 'styling/console-notification';
-@import 'styling/ui-accordion';
-@import 'styling/ui-common';
-@import 'styling/ui-disclosure';
-@import 'styling/ui-misc';
-@import 'styling/ui-dropdown';
-@import 'styling/ui-tabs';
-@import 'styling/ui-dialog';
-@import 'styling/ui-form';
-@import 'styling/ui-tree';
+@use 'styling/console-frame';
+@use 'styling/console-icons';
+@use 'styling/console-loader';
+@use 'styling/console-preview';
+@use 'styling/console-notification';
+@use 'styling/ui-accordion';
+@use 'styling/ui-common';
+@use 'styling/ui-disclosure';
+@use 'styling/ui-misc';
+@use 'styling/ui-dropdown';
+@use 'styling/ui-tabs';
+@use 'styling/ui-dialog';
+@use 'styling/ui-form';
+@use 'styling/ui-tree';

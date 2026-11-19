@@ -16,6 +16,8 @@
 // with this program; if not, see <http://www.gnu.org/licenses/>.
 //
 
+@use "globals";
+
 // Thanks to https://type-scale.com/
 
 p {
@@ -114,7 +116,7 @@ a {
             padding-right: 0.5rem;
             
             &[tabindex] {
-                @include button-shape-hover;
+                @include globals.button-shape-hover;
             }
             
             > span {

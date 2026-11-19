@@ -16,6 +16,8 @@
 // with this program; if not, see <http://www.gnu.org/licenses/>.
 //
 
+@use "../styling/globals";
+
 /* Flush footer to bottom */
 body {
     display: flex;
@@ -48,7 +50,7 @@ body > header {
         -webkit-appearance: none;
         -moz-appearance: none;
     
-        @include button-shape-hover;
+        @include globals.button-shape-hover;
     }
     
     .dropdown-menu ul[role="menu"] {

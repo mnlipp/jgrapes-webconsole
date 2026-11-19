@@ -16,6 +16,8 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+@use "./_ui-common";
+
 :not(.tree--no-markup-styling) {
     
     ul[role="tree"] {

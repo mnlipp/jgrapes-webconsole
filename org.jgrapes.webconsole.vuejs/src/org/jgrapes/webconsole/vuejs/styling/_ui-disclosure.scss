@@ -16,6 +16,9 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+@use "globals";
+@use "./_ui-common";
+
 /* ## Disclosure */
 
 [data-aash-role="disclosure-button"] {
@@ -42,7 +45,7 @@
 }
 
 :not(button)[data-aash-role="disclosure-button"] {
-    @include button-shape-hover;
+    @include globals.button-shape-hover;
 }
 
 button[data-aash-role="disclosure-button"] {

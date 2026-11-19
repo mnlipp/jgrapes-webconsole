@@ -16,6 +16,8 @@
 // with this program; if not, see <http://www.gnu.org/licenses/>.
 //
 
+@use "globals";
+
 .dialog__backdrop {
     background: rgba(0, 0, 0, 0.3);
 }
@@ -63,7 +65,7 @@
             color: var(--primary);
             background-color: transparent;
 
-            @include button-shape-hover;
+            @include globals.button-shape-hover;
         }
     }
 
